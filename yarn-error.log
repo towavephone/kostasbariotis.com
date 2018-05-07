@@ -1,5 +1,5 @@
 Arguments: 
-  D:\Program Files\nodejs\node.exe D:\Program Files\Yarn\bin\yarn.js dev
+  D:\Program Files\nodejs\node.exe D:\Program Files\Yarn\bin\yarn.js lint:js
 
 PATH: 
   C:\WINDOWS\system32;C:\WINDOWS;C:\WINDOWS\System32\Wbem;C:\WINDOWS\System32\WindowsPowerShell\v1.0\;D:\Program Files\nodejs\;D:\Program Files (x86)\WinSCP\;D:\Program Files\Git\cmd;D:\Program Files\Yarn\bin\;C:\Users\Administrator\AppData\Local\Microsoft\WindowsApps;;D:\Program Files\Microsoft VS Code\bin;C:\Users\Administrator\AppData\Roaming\npm;C:\Users\Administrator\AppData\Local\Yarn\bin;C:\Users\Administrator\AppData\Local\Keybase\
@@ -28,6 +28,7 @@ npm manifest:
       "deploy": "gh-pages -d public",
       "dev": "gatsby develop",
       "serve": "gatsby serve",
+      "lint": "yarn lint:markdown && yarn lint:js",
       "lint:js": "./node_modules/.bin/eslint --fix src/**/*.js gatsby-config.js gatsby-browser.js gatsby-node.js",
       "test": "echo \"Should probably write some tests!\"",
       "lint:markdown": "markdownlint --config ./.markdownlint.json ./blog/**/*.md"
@@ -51,7 +52,6 @@ npm manifest:
       "gatsby-plugin-sharp": "^1.6.35",
       "gatsby-plugin-sitemap": "^1.2.11",
       "gatsby-remark-autolink-headers": "^1.4.11",
-      "gatsby-remark-copy-linked-files": "^1.5.32",
       "gatsby-remark-images": "^1.5.63",
       "gatsby-remark-prismjs": "^1.2.12",
       "gatsby-source-filesystem": "^1.5.16",
@@ -4792,19 +4792,6 @@ Lockfile:
       babel-runtime "^6.26.0"
       github-slugger "^1.1.1"
       mdast-util-to-string "^1.0.2"
-      unist-util-visit "^1.1.1"
-  
-  gatsby-remark-copy-linked-files@^1.5.32:
-    version "1.5.32"
-    resolved "https://registry.yarnpkg.com/gatsby-remark-copy-linked-files/-/gatsby-remark-copy-linked-files-1.5.32.tgz#cc54437710d5c3c153c2f681adcd487f468abfd1"
-    dependencies:
-      babel-runtime "^6.26.0"
-      cheerio "^1.0.0-rc.2"
-      fs-extra "^4.0.1"
-      is-relative-url "^2.0.0"
-      lodash "^4.17.4"
-      path-is-inside "^1.0.2"
-      probe-image-size "^4.0.0"
       unist-util-visit "^1.1.1"
   
   gatsby-remark-design-system@^1.0.9:
@@ -13709,7 +13696,7 @@ Trace:
   Error: Command failed.
   Exit code: 1
   Command: C:\WINDOWS\system32\cmd.exe
-  Arguments: /d /s /c gatsby develop
+  Arguments: /d /s /c .\node_modules\.bin\eslint --fix src/**/*.js gatsby-config.js gatsby-browser.js gatsby-node.js
   Directory: D:\project\kostasbariotis.com
   Output:
   

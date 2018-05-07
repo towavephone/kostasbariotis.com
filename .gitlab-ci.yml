@@ -1,0 +1,45 @@
+cache:
+  paths:
+  - node_modules
+
+stages:
+- install and lint
+- build
+- deploy to gitlab
+
+install and lint:
+  stage: install and lint
+  script:
+  - yarn
+  - yarn lint
+
+build:
+  stage: build
+  script:
+    - yarn build
+    - ls
+  artifacts:
+    name: "CI_JOB_NAME-$CI_COMMIT_REF_NAME"
+    paths:
+    - public
+
+deploy to gitlab:
+  stage: deploy to gitlab
+  script:
+    - rm -rf /etc/gitlab-runner/GatsbyBlog && mkdir /etc/gitlab-runner/GatsbyBlog
+    - cp -r public/* /etc/gitlab-runner/GatsbyBlog
+    - echo '部署到gitlab上成功'
+  dependencies:
+    - build
+  environment:
+    name: gitlab
+    url: http://blog.towavephone.com
+    on_stop: stop deploy on gitlab
+
+stop deploy on gitlab:
+  stage: deploy to gitlab
+  script: rm -rf /etc/gitlab-runner/GatsbyBlog
+  when: manual
+  environment:
+    name: gitlab
+    action: stop
