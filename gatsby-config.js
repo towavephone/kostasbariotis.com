@@ -1,15 +1,58 @@
+require('dotenv').config();
+
+const query = `{
+    allMarkdownRemark(filter: { frontmatter: { draft: { ne: true } } }){
+      edges {
+        node {
+          objectID: id
+          excerpt(pruneLength: 250)
+          frontmatter {
+            date(formatString: "YYYY-MM-DD HH:mm:ss")
+            title
+            tags
+            path
+          }
+        }
+      }
+    }
+  }`;
+
+const queries = [
+  {
+    query,
+    transformer: ({ data }) => data.allMarkdownRemark.edges.map(({ node }) => node),
+  },
+];
+
 module.exports = {
   pathPrefix: '/',
   siteMetadata: {
-    author: 'Kostas Bariotis',
-    title: `Kostas Bariotis' Blog`,
-    siteUrl: `https://kostasbariotis.com`,
-    description: `Senior full stack engineer <a href="https://geekbot.io">@geekbot_io</a>, co-organizer of <a href="https://devitconf.org">@devitconf</a> & <a href="https://www.meetup.com/Thessaloniki-Node-js-Meetup/">@skgnodejs</a>, host of <a href="http://devastation.tv">Devastation Podcast</a>.`,
+    author: '女王控',
+    title: `女王控的博客`,
+    siteUrl: `http://blog.towavephone.com`,
+    description: `前端工程师，黑猫女王控，欢迎勾搭，技术相关<a href="https://github.com/towavephone" target="_blank">@towavephone</a>，QQ闲聊<a href="tencent://AddContact/?fromId=45&fromSubId=1&subcmd=all&uin=634407147&website=www.oicqzone.com">@towave</a>，bili关注<a href="https://space.bilibili.com/11507708#/" target="_blank">@towave</a>`,
+    algolia: {
+      appId: process.env.ALGOLIA_APP_ID ? process.env.ALGOLIA_APP_ID : '',
+      searchOnlyApiKey: process.env.ALGOLIA_SEARCH_ONLY_API_KEY
+        ? process.env.ALGOLIA_SEARCH_ONLY_API_KEY
+        : '',
+      indexName: process.env.ALGOLIA_INDEX_NAME ? process.env.ALGOLIA_INDEX_NAME : '',
+    },
   },
   plugins: [
     'gatsby-plugin-offline',
     'gatsby-plugin-catch-links',
     'gatsby-plugin-sass',
+    {
+      resolve: `gatsby-plugin-algolia`,
+      options: {
+        appId: process.env.ALGOLIA_APP_ID ? process.env.ALGOLIA_APP_ID : '',
+        apiKey: process.env.ALGOLIA_ADMIN_API_KEY ? process.env.ALGOLIA_ADMIN_API_KEY : '',
+        indexName: process.env.ALGOLIA_INDEX_NAME ? process.env.ALGOLIA_INDEX_NAME : '',
+        queries,
+        chunkSize: 10000, // default: 1000
+      },
+    },
     {
       resolve: 'gatsby-source-filesystem',
       options: {
@@ -28,28 +71,62 @@ module.exports = {
       resolve: 'gatsby-transformer-remark',
       options: {
         plugins: [
+          {
+            resolve: 'gatsby-remark-images',
+            options: {
+              maxWidth: 800,
+              backgroundColor: 'white',
+            },
+          },
           `gatsby-remark-autolink-headers`,
           `gatsby-remark-emoji`,
+          `gatsby-remark-katex`,
           {
-            resolve: `gatsby-remark-prismjs`,
+            resolve: `gatsby-remark-responsive-iframe`,
             options: {
-              classPrefix: 'language-',
+              wrapperStyle: `margin-bottom: 2em`,
             },
           },
           {
-            resolve: 'gatsby-remark-responsive-image',
+            resolve: `gatsby-remark-design-system`,
             options: {
-              maxWidth: 750,
-              linkImagesToOriginal: true,
+              // Class prefix for all elements of the design system specimens
+              // This prefix also needs to be set on wrapper components in your Gatsby project
+              // Default value is 'grds' - so if you want you can leave out this option entirely
+              classPrefix: `grds`,
             },
           },
           {
             resolve: 'gatsby-remark-external-links',
             options: {
               target: '_blank',
-              rel: 'noreferrer noopener',
+              rel: 'nofollow noreferrer noopener',
             },
           },
+          {
+            resolve: 'gatsby-remark-embed-snippet',
+            options: {
+              // Class prefix for <pre> tags containing syntax highlighting;
+              // defaults to 'language-' (eg <pre class="language-js">).
+              // If your site loads Prism into the browser at runtime,
+              // (eg for use with libraries like react-live),
+              // you may use this to prevent Prism from re-processing syntax.
+              // This is an uncommon use-case though;
+              // If you're unsure, it's best to use the default value.
+              classPrefix: 'language-',
+
+              // Example code links are relative to this dir.
+              // eg examples/path/to/file.js
+              directory: `${__dirname}/static/examples/`,
+            },
+          },
+          {
+            resolve: `gatsby-remark-prismjs`,
+            options: {
+              classPrefix: 'language-',
+            },
+          },
+          `gatsby-remark-smartypants`,
         ],
       },
     },
@@ -59,14 +136,14 @@ module.exports = {
     {
       resolve: `gatsby-plugin-google-analytics`,
       options: {
-        trackingId: 'UA-40793458-2',
+        trackingId: 'UA-98114394-3',
       },
     },
     {
       resolve: `gatsby-plugin-manifest`,
       options: {
-        name: 'Kostas Bariotis',
-        short_name: 'KBariotis',
+        name: '黑猫女王控',
+        short_name: '女王控',
         start_url: '/',
         theme_color: '#676d9c',
         display: 'minimal-ui',
@@ -150,7 +227,7 @@ module.exports = {
     {
       resolve: `gatsby-plugin-canonical-urls`,
       options: {
-        siteUrl: `https://kostasbariotis.com`,
+        siteUrl: `http://blog.towavephone.com`,
       },
     },
     {

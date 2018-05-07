@@ -1,6 +1,5 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import dateformat from 'dateformat';
 import { withPrefix } from 'gatsby-link';
 
 export default function ArticleSchema({ authorName, title, description, date }) {
@@ -9,14 +8,14 @@ export default function ArticleSchema({ authorName, title, description, date }) 
     "@type": "BlogPosting",
     "author": "${authorName}",
     "headline": "${title}",
-    "datePublished": "${dateformat(new Date(date), 'isoDateTime')}",
+    "datePublished": "${date}",
     "description": "${description}",
     "publisher": {
       "@type": "Person",
       "name": "${authorName}",
       "logo": {
         "@type": "ImageObject",
-        "url": "${withPrefix('/schema/avatar.jpg')}"
+        "url": "${withPrefix('/schema/avatar.png')}"
       }
     }
   }`;

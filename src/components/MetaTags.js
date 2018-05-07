@@ -2,7 +2,7 @@ import React from 'react';
 import Helmet from 'react-helmet';
 import PropTypes from 'prop-types';
 
-import OGImageImg from './../../static/images/og.jpg';
+import OGImageImg from './../../static/images/avatar.png';
 
 const MetaTags = ({ title, description, path, tags, noIndex, siteUrl }) => (
   <div>
@@ -13,7 +13,7 @@ const MetaTags = ({ title, description, path, tags, noIndex, siteUrl }) => (
       <meta name="description" content={description} />
       <meta name="keywords" content={tags} />
 
-      <meta property="og:site_name" content="Kostas Bariotis" />
+      <meta property="og:site_name" content="女王控" />
       <meta property="og:type" content="website" />
       <meta property="og:title" content={title} />
       <meta property="og:description" content={description} />

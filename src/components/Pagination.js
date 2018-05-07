@@ -7,19 +7,15 @@ const Pagination = ({ prevPath, nextPath, page, pagesSum }) => (
     <nav className="pagination" role="navigation">
       {prevPath ? (
         <GatsbyLink className="newer-posts" to={prevPath}>
-          <span aria-hidden="true">←</span> Newer Posts
+          <span aria-hidden="true">←</span> 上一页
         </GatsbyLink>
-      ) : (
-        <div className="newer-posts">No more pages</div>
-      )}
-      <span className="page-number">{`Page ${page} of ${pagesSum}`}</span>
+      ) : null}
+      <span className="page-number">{`第 ${page} 页，共 ${pagesSum} 页`}</span>
       {nextPath ? (
         <GatsbyLink className="older-posts" to={nextPath}>
-          Older Posts <span aria-hidden="true">→</span>
+          下一页 <span aria-hidden="true">→</span>
         </GatsbyLink>
-      ) : (
-        <div className="older-posts">No more pages</div>
-      )}
+      ) : null}
     </nav>
   </header>
 );

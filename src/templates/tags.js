@@ -11,7 +11,7 @@ import MetaTags from '../components/MetaTags';
 
 export default function Tags({ pathContext, data }) {
   const { siteUrl } = data.site.siteMetadata;
-  const { posts, tag, pagesSum, page } = pathContext;
+  const { posts, tag, pagesSum, page, length } = pathContext;
 
   return (
     <section className="main-content">
@@ -29,7 +29,7 @@ export default function Tags({ pathContext, data }) {
           <header className="header">
             <h1 className="tag-title tag-page-title">{tag}</h1>
           </header>
-          <section className="tag-meta">A {posts.length} posts collection</section>
+          <section className="tag-meta">共 {length} 篇文章</section>
 
           <div className="posts">
             <Pagination page={page} pagesSum={pagesSum} tag={tag} />

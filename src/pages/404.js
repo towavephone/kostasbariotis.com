@@ -5,20 +5,11 @@ import Helmet from 'react-helmet';
 import Separator from './../components/Separator';
 import Menu from './../components/Menu';
 
-function tweet() {
-  window.open(
-    'https://twitter.com/intent/tweet?text=@kbariotis%20I%20found%20a%20missing%20page!%20You%20should%20really%20check%20it.%20🙏',
-    'twitter-share',
-    'width=550,height=235'
-  );
-  return false;
-}
-
 export default function NotFound() {
   return (
     <div>
       <Helmet
-        title="Not found - Kostas Bariotis"
+        title="Not found - 女王控"
         meta={[{ name: 'description', content: 'Not found' }]}
         noIndex={true}
       />
@@ -27,17 +18,19 @@ export default function NotFound() {
         <div className="medium-8 medium-offset-2 large-10 large-offset-1">
           <header className="header">
             <div className="row text-center">
-              <h1>AW NO! The page you are trying to access is not here.</h1>
+              <h1>404 Not Found：该页无法显示</h1>
             </div>
           </header>
           <Separator />
           <p className="not-found-section">
-            Sorry for the inconvience. You can go to the <GatsbyLink to="/">home page</GatsbyLink>{' '}
-            or{' '}
-            <a href="#" onClick={tweet}>
-              tweet me
+            很抱歉，您所访问的地址并不存在，<GatsbyLink to="/">回到首页</GatsbyLink> 或者{' '}
+            <a
+              href="tencent://AddContact/?fromId=45&fromSubId=1&subcmd=all&uin=634407147&website=www.oicqzone.com"
+              title="qq"
+            >
+              QQ联系我
             </a>{' '}
-            about this incident. Thanks ✌️
+            关于这次页面问题。
           </p>
         </div>
       </section>

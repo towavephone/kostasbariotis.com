@@ -2,7 +2,6 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import dateformat from 'dateformat';
 import GatsbyLink from 'gatsby-link';
 import { ShareButtons } from 'react-share';
 import ReactDisqusThread from 'react-disqus-thread';
@@ -35,7 +34,7 @@ export default function Template({ data }) {
   return (
     <div>
       <ArticleSchema
-        authorName={`Kostas Bariotis`}
+        authorName={`女王控`}
         title={`${post.frontmatter.title}`}
         description={post.excerpt}
         date={post.frontmatter.date}
@@ -64,12 +63,9 @@ export default function Template({ data }) {
                     </GatsbyLink>
                   </li>
                   <li>
-                    <div className="author-name">Kostas Bariotis</div>
-                    <time
-                      className="post-date"
-                      dateTime={dateformat(post.frontmatter.date, 'isoDateTime')}
-                    >
-                      {dateformat(post.frontmatter.date, 'd mmmm yyyy')}
+                    <div className="author-name">女王控</div>
+                    <time className="post-date" dateTime={post.frontmatter.date}>
+                      {post.frontmatter.date}
                     </time>
                   </li>
                 </ul>
@@ -88,7 +84,7 @@ export default function Template({ data }) {
                 {!post.frontmatter.draft ? (
                   <ul className="share-buttons list-inline">
                     <li>
-                      <b>Share this post on</b>
+                      <b>分享到</b>
                     </li>
                     <li className="link-twitter">
                       <TwitterShareButton
@@ -117,32 +113,33 @@ export default function Template({ data }) {
                     </li>
                   </ul>
                 ) : (
-                  <small>
-                    This is a draft post, thus sharing is disabled. Please do not share untill is
-                    ready for prime time.
-                  </small>
+                  <small>这是草稿页，默认分享关闭</small>
                 )}
               </section>
             </footer>
 
             <section className="blog-section">
-              <header className="header">
-                <h2>Comments</h2>
-              </header>
               {isProduction && (
-                <ReactDisqusThread
-                  shortname="kostasbariotis"
-                  identifier={uuidv5(fullUrl, uuidv5.URL)}
-                  title={post.frontmatter.title}
-                  url={fullUrl}
-                />
+                <div>
+                  <header className="header">
+                    <h2>评论</h2>
+                  </header>
+                  <ReactDisqusThread
+                    shortname="kostasbariotis"
+                    identifier={uuidv5(fullUrl, uuidv5.URL)}
+                    title={post.frontmatter.title}
+                    url={fullUrl}
+                  />
+                </div>
               )}
             </section>
 
             <section className="blog-section">
-              <header className="header">
-                <h2>Read Next</h2>
-              </header>
+              {next ? (
+                <header className="header">
+                  <h2>阅读下一章</h2>
+                </header>
+              ) : null}
               <NavigateLink post={next} />
             </section>
           </article>
@@ -159,7 +156,7 @@ Template.propTypes = {
 
 export const pageQuery = graphql`
   query BlogPostByPath($mainPostPath: String!, $nextPostPath: String!) {
-    file(relativePath: { eq: "avatar.jpg" }) {
+    file(relativePath: { eq: "avatar.png" }) {
       childImageSharp {
         sizes {
           ...GatsbyImageSharpSizes_withWebp
@@ -177,7 +174,7 @@ export const pageQuery = graphql`
       html
       excerpt
       frontmatter {
-        date(formatString: "MMMM DD, YYYY")
+        date(formatString: "YYYY-MM-DD HH:mm:ss")
         path
         tags
         title
@@ -188,7 +185,7 @@ export const pageQuery = graphql`
       html
       excerpt
       frontmatter {
-        date(formatString: "MMMM DD, YYYY")
+        date(formatString: "YYYY-MM-DD HH:mm:ss")
         path
         tags
         title

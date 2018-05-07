@@ -11,7 +11,7 @@ import MetaTags from '../components/MetaTags';
 
 export default function Pages({ pathContext, data }) {
   const { description, siteUrl } = data.site.siteMetadata;
-  const { posts, page, pagesSum, prevPath, nextPath } = pathContext;
+  const { posts, page, pagesSum, prevPath, nextPath, length } = pathContext;
   return (
     <section className="main-content">
       <MetaTags
@@ -24,7 +24,11 @@ export default function Pages({ pathContext, data }) {
       />
       <Menu />
       <section className="blog container">
-        <div className="medium-8 medium-offset-2 large-10 large-offset-1">
+        <div className="medium-8 medium-offset-2 large-10 large-offset-1 tags-collection">
+          <header className="header">
+            <h1 className="tag-title tag-page-title">全部</h1>
+          </header>
+          <section className="tag-meta">共 {length} 篇文章</section>
           <div className="posts">
             <Pagination page={page} pagesSum={pagesSum} prevPath={prevPath} nextPath={nextPath} />
             <Separator />

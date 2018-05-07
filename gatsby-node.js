@@ -28,7 +28,7 @@ exports.createPages = ({ boundActionCreators, graphql }) => {
             id
             timeToRead
             frontmatter {
-              date
+              date(formatString: "YYYY-MM-DD HH:mm:ss")
               path
               tags
               title
@@ -54,7 +54,7 @@ exports.createPages = ({ boundActionCreators, graphql }) => {
             id
             timeToRead
             frontmatter {
-              date
+              date(formatString: "YYYY-MM-DD HH:mm:ss")
               path
               tags
               title
@@ -69,18 +69,23 @@ exports.createPages = ({ boundActionCreators, graphql }) => {
       return Promise.reject(results.errors);
     }
 
-    const published = results.data.publishedPosts.edges;
-    const drafts = results.data.draftPosts.edges;
-
-    generateContent(createPage, published);
-    generateContent(createPage, drafts);
-
-    createTagPages(createPage, published);
-
-    createPagination(createPage, published, `/page`);
-    createPagination(createPage, drafts, `/drafts/page`);
+    const published = results.data.publishedPosts && results.data.publishedPosts.edges;
+    const drafts = results.data.draftPosts && results.data.draftPosts.edges;
+    if (isArray(published)) {
+      generateContent(createPage, published);
+      createTagPages(createPage, published);
+      createPagination(createPage, published, `/page`);
+    }
+    if (isArray(drafts)) {
+      generateContent(createPage, drafts);
+      createPagination(createPage, drafts, `/drafts/page`);
+    }
   });
 };
+
+function isArray(o) {
+  return Object.prototype.toString.call(o) == '[object Array]';
+}
 
 function generateContent(createPage, posts) {
   const blogPostTemplate = path.resolve(`src/templates/blog-post.js`);
@@ -120,8 +125,8 @@ function createTagPages(createPage, edges) {
 
   Object.keys(posts).forEach(tagName => {
     const pageSize = 5;
-    const pagesSum = Math.ceil(posts[tagName].length / pageSize);
-
+    const tagLength = posts[tagName].length;
+    const pagesSum = Math.ceil(tagLength / pageSize);
     for (let page = 1; page <= pagesSum; page++) {
       createPage({
         path:
@@ -131,6 +136,7 @@ function createTagPages(createPage, edges) {
         component: tagTemplate,
         context: {
           posts: paginate(posts[tagName], pageSize, page),
+          length: tagLength,
           tag: tagName,
           pagesSum,
           page,
@@ -147,7 +153,8 @@ function createPagination(createPage, edges, pathPrefix) {
   const pageTemplate = path.resolve(`src/templates/page.js`);
 
   const pageSize = 5;
-  const pagesSum = Math.ceil(edges.length / pageSize);
+  const length = edges.length;
+  const pagesSum = Math.ceil(length / pageSize);
 
   for (let page = 1; page <= pagesSum; page++) {
     createPage({
@@ -157,6 +164,7 @@ function createPagination(createPage, edges, pathPrefix) {
         posts: paginate(edges, pageSize, page).map(({ node }) => node),
         page,
         pagesSum,
+        length,
         prevPath: page - 1 > 0 ? `${pathPrefix}/${page - 1}` : null,
         nextPath: page + 1 <= pagesSum ? `${pathPrefix}/${page + 1}` : null,
       },

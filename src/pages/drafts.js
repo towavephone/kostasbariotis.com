@@ -18,32 +18,27 @@ export default function Drafts({ data }) {
       <MetaTags
         siteUrl={siteUrl}
         path={'/drafts'}
-        title={`My drafts`}
+        title={`草稿`}
         tags=""
-        description={
-          'These are the draft posts either I am currently working on either I have abandoned them for some reason. You can read them and comment on them if you think you can help me complete them.'
-        }
+        description={'这些是未完成的草稿页'}
         noIndex={true}
       />
       <Menu />
       <section className="blog container">
         <div className="medium-8 medium-offset-2 large-10 large-offset-1">
-          <header className="header">Drafts</header>
-          <p className="drafts-description">
-            These are the draft posts either I am currently working on either I have abandoned them
-            for some reason. You can read them and comment on them if you think you can help me
-            complete them. It will be fun to write an article together. I will also include you as a
-            co-author.
-          </p>
+          <header className="header">草稿</header>
+          <p className="drafts-description">这些是未完成的草稿页</p>
           <Separator />
           <div className="posts">
             <Posts posts={posts} />
             <Separator />
             <article className="post text-right">
               <header className="post-head">
-                <h3 className="post-title">
-                  <GatsbyLink to="/drafts/page/2">Older Posts &gt;</GatsbyLink>
-                </h3>
+                {posts && posts.length > 5 ? (
+                  <h3 className="post-title">
+                    <GatsbyLink to="/drafts/page/2">阅读更多 &gt;</GatsbyLink>
+                  </h3>
+                ) : null}
               </header>
             </article>
           </div>
@@ -76,7 +71,7 @@ export const pageQuery = graphql`
           id
           frontmatter {
             title
-            date(formatString: "MMMM DD, YYYY")
+            date(formatString: "YYYY-MM-DD HH:mm:ss")
             path
             tags
             draft

@@ -1,4 +1,4 @@
 User-agent: *
 Disallow:
 
-Sitemap: https://kostasbariotis.com/sitemap.xml
+Sitemap: http://blog.towavephone.com/sitemap.xml

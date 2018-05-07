@@ -46,7 +46,7 @@ class Menu extends React.Component {
                     }}
                     to="/"
                   >
-                    Home
+                    首页
                   </GatsbyLink>
                 </li>
                 <li>
@@ -57,7 +57,7 @@ class Menu extends React.Component {
                     }}
                     to="/about"
                   >
-                    About
+                    关于
                   </GatsbyLink>
                 </li>
                 <li>
@@ -66,9 +66,9 @@ class Menu extends React.Component {
                     activeStyle={{
                       color: '#e52f45',
                     }}
-                    to="/contact"
+                    to="/search"
                   >
-                    Contact
+                    搜索
                   </GatsbyLink>
                 </li>
               </ul>

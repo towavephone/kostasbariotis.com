@@ -15,6 +15,9 @@ import WebPageSchema from '../components/schemas/WebPageSchema';
 export default function Index({ data }) {
   let { edges: posts } = data.allMarkdownRemark;
   let { siteUrl, description, author } = data.site.siteMetadata;
+  let length = posts.length;
+  // 限制首页展示文章
+  posts.length = 3;
   posts = posts.map(post => post.node);
   return (
     <div>
@@ -22,7 +25,7 @@ export default function Index({ data }) {
       <MetaTags
         noIndex={false}
         tags=""
-        title={'Home'}
+        title={'首页'}
         description={description}
         siteUrl={siteUrl}
         path={'/'}
@@ -41,7 +44,7 @@ export default function Index({ data }) {
             <h1>{author}</h1>
             <p className="header-description" dangerouslySetInnerHTML={{ __html: description }} />
           </div>
-          <header className="header">Latest Posts</header>
+          <header className="header">最近文章</header>
           <Separator />
           <div className="posts">
             <Posts posts={posts} />
@@ -49,7 +52,11 @@ export default function Index({ data }) {
             <article className="post text-right">
               <header className="post-head">
                 <h3 className="post-title">
-                  <GatsbyLink to="/page/2">Older Posts &gt;</GatsbyLink>
+                  {length > 5 ? (
+                    <GatsbyLink to="/page/2">阅读更多 &gt;</GatsbyLink>
+                  ) : (
+                    <GatsbyLink to="/page/1">阅读更多 &gt;</GatsbyLink>
+                  )}
                 </h3>
               </header>
             </article>
@@ -66,7 +73,7 @@ Index.propTypes = {
 
 export const pageQuery = graphql`
   query IndexQuery {
-    file(relativePath: { eq: "avatar.jpg" }) {
+    file(relativePath: { eq: "avatar.png" }) {
       childImageSharp {
         sizes {
           ...GatsbyImageSharpSizes_withWebp
@@ -82,7 +89,7 @@ export const pageQuery = graphql`
     }
     allMarkdownRemark(
       sort: { order: DESC, fields: [frontmatter___date] }
-      limit: 5
+      limit: 6
       filter: { frontmatter: { draft: { ne: true } } }
     ) {
       edges {
@@ -91,7 +98,7 @@ export const pageQuery = graphql`
           id
           frontmatter {
             title
-            date(formatString: "MMMM DD, YYYY")
+            date(formatString: "YYYY-MM-DD HH:mm:ss")
             path
             tags
             draft

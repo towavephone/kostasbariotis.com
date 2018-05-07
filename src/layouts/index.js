@@ -6,7 +6,7 @@ import Helmet from 'react-helmet';
 import '../scss/boot.scss';
 
 import Footer from '../components/Footer';
-
+// layouts/index.js
 export default function IndexLayout({ children, data }) {
   let { description, title } = data.site.siteMetadata;
 
@@ -14,7 +14,7 @@ export default function IndexLayout({ children, data }) {
     <div>
       <Helmet titleTemplate={`%s - ${title}`} defaultTitle={title}>
         <meta name="description" content={description} />
-        <html lang="en" /> {/* this is valid react-helmet usage! */}
+        <html lang="zh-cn" /> {/* this is valid react-helmet usage! */}
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <meta httpEquiv="X-UA-Compatible" content="IE=edge,chrome=1" />

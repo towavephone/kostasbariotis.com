@@ -1,6 +1,5 @@
 import React from 'react';
 import GatsbyLink from 'gatsby-link';
-import dateformat from 'dateformat';
 import PropTypes from 'prop-types';
 
 import CommaSeparatedTags from './CommaSeparatedTags';
@@ -14,8 +13,8 @@ const Posts = ({ posts }) => (
             <GatsbyLink to={post.frontmatter.path}>{post.frontmatter.title}</GatsbyLink>
           </h1>
         </header>
-        <time className="post-date" dateTime={dateformat(post.frontmatter.date, 'isoDateTime')}>
-          {dateformat(post.frontmatter.date, 'dd mmmm yyyy')}
+        <time className="post-date" dateTime={post.frontmatter.date}>
+          {post.frontmatter.date}
         </time>
         <section className="post-excerpt">
           <p>
