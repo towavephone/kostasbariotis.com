@@ -13,15 +13,15 @@ const robotoLighter = new FontFaceObserver('Roboto', { weight: 200 });
 const robotoSlabNormal = new FontFaceObserver('Roboto Slab', { weight: 400 });
 
 exports.onInitialClientRender = () => {
-  Promise.all([robotoSubset.load(), robotoSlabSubset.load()]).then(function() {
+  Promise.all([robotoSubset.load(null, 8000), robotoSlabSubset.load(null, 8000)]).then(function() {
     document.documentElement.classList.add('subset-fonts-enabled');
 
     Promise.all([
-      robotoNormal.load(),
-      robotoSemiBold.load(),
-      robotoBold.load(),
-      robotoLighter.load(),
-      robotoSlabNormal.load(),
+      robotoNormal.load(null, 5000),
+      robotoSemiBold.load(null, 5000),
+      robotoBold.load(null, 5000),
+      robotoLighter.load(null, 5000),
+      robotoSlabNormal.load(null, 5000),
     ]).then(function() {
       document.documentElement.classList.remove('subset-fonts-enabled');
       document.documentElement.classList.add('fonts-enabled');

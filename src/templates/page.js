@@ -15,7 +15,7 @@ export default function Pages({ pathContext, data }) {
   return (
     <section className="main-content">
       <MetaTags
-        title={`Page ${page}`}
+        title={`第 ${page} 页`}
         path={`/page/${page}`}
         siteUrl={siteUrl}
         tags="webdev, programming, javascript"

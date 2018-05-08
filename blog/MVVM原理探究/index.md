@@ -42,7 +42,7 @@ var vm = new MVVM({
 
 效果：
 
-<div align="center"><img class="NoNeedOptimize" src="http://p6aicz9r2.bkt.clouddn.com/static/images/wx20180428234011.gif-big_watermark"/></div>
+![](/images/wx20180428234011.gif)
 
 ### 实现Observer
 
@@ -144,7 +144,7 @@ Watcher.prototype = {
 
 compile主要做的事情是解析模板指令，将模板中的变量替换成数据，然后初始化渲染页面视图，并将每个指令对应的节点绑定更新函数，添加监听数据的订阅者，一旦数据有变动，收到通知，更新视图，如图所示：
 
-<div align="center">{% qnimg wx20180428234629.png alt:模板指令实现 %}</div>
+![](./wx20180428234629.png)
 
 因为遍历解析的过程有多次操作dom节点，为提高性能和效率，会先将跟节点`el`转换成文档碎片`fragment`进行解析编译操作，解析完成，再将`fragment`添加回原来的真实dom节点中
 

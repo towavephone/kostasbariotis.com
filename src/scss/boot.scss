@@ -25,9 +25,11 @@ $font-size-base: 16px;
 @import "variables";
 @import "~bootstrap-sass/assets/stylesheets/bootstrap/utilities";
 @import "~bootstrap-sass/assets/stylesheets/bootstrap/responsive-utilities";
+@import "~instantsearch.css/themes/reset.css";
 @import "~instantsearch.css/themes/algolia.css";
 @import "~gatsby-remark-design-system/theme/gatsby-remark-design-system-theme.scss";
 @import "~katex/dist/katex.min.css";
+
 
 @import "fonts";
 @import "entypo";

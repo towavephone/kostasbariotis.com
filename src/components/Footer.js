@@ -41,7 +41,7 @@ const Footer = () => (
           </a>
         </li>
         <li>
-          <GatsbyLink to="/blog/rss.xml" title="订阅我">
+          <GatsbyLink to="/rss.xml" title="订阅我">
             <i className="icon-rss" />
           </GatsbyLink>
         </li>

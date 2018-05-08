@@ -1,4 +1,4 @@
 User-agent: *
 Disallow:
 
-Sitemap: http://blog.towavephone.com/sitemap.xml
+Sitemap: https://blog.towavephone.com/sitemap.xml
