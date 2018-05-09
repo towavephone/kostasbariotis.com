@@ -6,17 +6,6 @@
     @media(max-width: 768px) {
         margin-top: 2.5em;
     }
-    .clearfix:before,
-    .clearfix:after {
-        display: table;
-        content: "";
-    }
-    .clearfix:after {
-        clear: both;
-    }
-    .clearfix{
-        *zoom: 1;
-    }
     .page-number{
         @media(max-width: 768px) {
             // font-size: 0.8em;

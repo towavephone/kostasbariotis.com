@@ -24,16 +24,4 @@
         max-width: 100%;
         margin-top: 1em;
     }
-
-    .clearfix:before,
-    .clearfix:after {
-        display: table;
-        content: "";
-    }
-    .clearfix:after {
-        clear: both;
-    }
-    .clearfix{
-        *zoom: 1;
-    }
 }

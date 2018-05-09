@@ -103,3 +103,15 @@ a {
   font-size: 1.2em;
   line-height: 1.4em;
 }
+
+.clearfix:before,
+.clearfix:after {
+    display: table;
+    content: "";
+}
+.clearfix:after {
+    clear: both;
+}
+.clearfix{
+    *zoom: 1;
+}
