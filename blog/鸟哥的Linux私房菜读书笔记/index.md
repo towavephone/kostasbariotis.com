@@ -4,7 +4,7 @@ categories:
   - 面试
 date: 2018-04-01 23:33:25
 path: /linux-introduce/
-tags: 系统, Linux
+tags: 面试, 系统, Linux
 ---
 
 # 一、常用操作以及概念

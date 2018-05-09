@@ -46,7 +46,7 @@ date: 2018-04-19 00:04:24
 
 ![](./微信截图_20180416135031.png)
 
-```c++
+```cpp
 abstract class Player    //篮球运动员
 {
     protected string name;
@@ -137,7 +137,7 @@ static void Main(string[] args)
 
 **鸭子适配器**
 
-```c++
+```cpp
 interface Duck
 {
     public void quack();
@@ -221,7 +221,7 @@ static void testDuck(Duck duck)
 
 ![](./微信截图_20180416141540.png)
 
-```c++
+```cpp
 class DatabaseLogAdapter : DatabaseLog, Ilog
 {
     public void Write()
@@ -242,7 +242,7 @@ class FileLogAdapter : FileLog, Ilog
 
 ![](./微信截图_20180416141951.png)
 
-```c++
+```cpp
 class LogAdapter : Ilog
 {
     private Log log;
@@ -283,7 +283,7 @@ class LogAdapter : Ilog
 - 不同品牌手机操作系统不同，软件不通用
 - 用程序模拟，N品牌手机，有一个游戏，运行游戏的程序如何写
 
-```c++
+```cpp
 static void Main(string[] args)
 {
     MobilePhoneNGame game = new MobilePhoneNGame();
@@ -303,7 +303,7 @@ class MobilePhoneNGame
 
 如果有一个M品牌手机，也有游戏可以运行，如何设计？
 
-```c++
+```cpp
 class MobilePhoneGame
 {
     public virtual void Run()
@@ -364,7 +364,7 @@ class MobilePhoneMGame : MobilePhoneGame
 
 这时对于手机品牌和手机软件这两个类都可以独立的变化了！我们要做的工作就是把这两部分之间连接起来，那如何连接呢？Bridge使用了对象聚合的方式，像一座桥。
 
-```c++
+```cpp
 abstract class MobilePhoneSoft  //手机软件
 {
 
@@ -487,7 +487,7 @@ Bridge模式粉墨登场，我们需要解耦这两个方向的变化，把它�
 - 绘制基本图元线对象(Line)、圆对象(Circle)、矩形对象(Rectangle)
 - 绘制组合对象(Picture)，可包含任意基本图元的组合
 
-```c++
+```cpp
 public class Line
 {
     public void Draw()
@@ -585,7 +585,7 @@ public static void Display(ArrayList root)
 
 ![](./微信截图_20180416161233.png)
 
-```c++
+```cpp
 public abstract class Graphics
 {
     public abstract void Draw();
@@ -682,7 +682,7 @@ static void Main(string[] args)
 
 可以将判断代码依赖于抽象编程，将类型转换为抽象类Graphics
 
-```c++
+```cpp
 public class Picture : Graphics
 {
     protected ArrayList picList = new ArrayList();
@@ -765,7 +765,7 @@ public class Picture : Graphics
 
 ![](./微信截图_20180416172449.png)
 
-```c++
+```cpp
 class Person
 {
     private string name;
@@ -826,7 +826,7 @@ static void Main(string[] args)
 
 ![](./微信截图_20180416173121.png)
 
-```c++
+```cpp
 class Person
 {
     private string name;
@@ -920,7 +920,7 @@ static void Main(string[] args)
 
 ![](./微信截图_20180416174138.png)
 
-```c++
+```cpp
 abstract class Appearance
 {
     public abstract void Show();

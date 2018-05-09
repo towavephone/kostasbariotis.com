@@ -19,7 +19,7 @@ export default function Search({ data }) {
         tags=""
       />
       <Menu />
-      <section className="blog container about">
+      <section className="blog container about search">
         <div className="medium-8 medium-offset-2 large-10 large-offset-1">
           <header className="header">
             <div className="row text-center">

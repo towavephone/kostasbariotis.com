@@ -15,7 +15,7 @@ tags: 面试, 设计模式
 
 题目抄错，会做也白搭
 
-```c++
+```cpp
 class TestPaperA
 {
     //试题1
@@ -81,7 +81,7 @@ static void Main(string[] args)
 
 学生甲和学生乙的试卷类非常类似，除了答案不同，没什么区别，如果老师修改题目，2个类都需要修改。
 
-```c++
+```cpp
 class TestPaper
 {
     //试题1
@@ -149,7 +149,7 @@ class TestPaperB : TestPaper
 
 是不是可以进一步的优化？
 
-```c++
+```cpp
 class TestPaper
 {
     public void TestQuestion1()
@@ -238,7 +238,7 @@ static void Main(string[] args)
 - AbstractClass：抽象类 
 - ConcreteClass：具体子类 
 
-```c++
+```cpp
 public abstract class AbstractCar
 {
     protected abstract string StartUp();
@@ -314,7 +314,7 @@ AbstractCar中的DriveOnTheRoad方法叫做template method（模板方法），t
 
 学校有教师和工程师
 
-```c++
+```cpp
 abstract class Employee
 {
     private string name;
@@ -398,7 +398,7 @@ static void Main(string[] args)
 
 ![](./微信截图_20180418121632.png)
 
-```c++
+```cpp
 abstract class Employee
 {
     private string name;
@@ -562,7 +562,7 @@ static void Main(string[] args)
 
 ![](./微信截图_20180418123939.png)
 
-```c++
+```cpp
 abstract class Expression
 {
     abstract public double Interpreter(Syntax root);

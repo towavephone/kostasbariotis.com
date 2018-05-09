@@ -10,7 +10,7 @@
   "scripts": {
     "build": "gatsby build --prefix-paths",
     "deploy": "gh-pages -d public",
-    "dev": "gatsby develop",
+    "dev": "gatsby develop -p 80",
     "serve": "gatsby serve",
     "lint": "yarn lint:markdown && yarn lint:js",
     "lint:js": "./node_modules/.bin/eslint --fix src/**/*.js gatsby-config.js gatsby-browser.js gatsby-node.js",

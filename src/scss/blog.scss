@@ -92,13 +92,23 @@
         h5,
         h6 {
             color: $lightblue;
+            margin-bottom: 1em;
         }
         blockquote {
             color: rgba(255, 255, 255, 0.5);
             border-left-color: $purple;
         }
         p {
-            padding-bottom: 1em;
+            margin-bottom: 1em;
+        }
+        ul, ol{
+            margin-bottom: 1em;
+            li:hover{
+                background-color: rgba(100, 100, 100, 0.4);
+            }
+            p {
+                margin-bottom: 0;
+            }
         }
         .post-footer {
             padding-top: 2em;
@@ -239,6 +249,7 @@ code[class*="language-"]{
 }
   
 .gatsby-highlight {
+    margin-bottom: 1em;
     overflow: auto;
     pre[class*="language-"]{
         float: left;

@@ -10,7 +10,7 @@ path: /offer-sort/
 
 ### 递归式
 
-```c++
+```cpp
 #include<iostream>
 #include<stack>
 using namespace std;
@@ -84,7 +84,7 @@ int main()
 
 ### 非递归式
 
-```c++
+```cpp
 void quickSort(int a[], int left, int right) {
     if(left > right)
     {

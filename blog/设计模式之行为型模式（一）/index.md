@@ -21,7 +21,7 @@ date: 2018-04-19 00:04:40
 
 
 
-```c++
+```cpp
 class Request   //申请
 {
     //申请类别
@@ -136,7 +136,7 @@ static void Main(string[] args)
 
 ![](./微信截图_20180417152941.png)
 
-```c++
+```cpp
 //管理者
 abstract class Manager
 {
@@ -336,7 +336,7 @@ finally
 - Receiver: 接收者
 - Client:客户类
 
-```c++
+```cpp
 //烤肉串者
 public class Barbecuer
 {
@@ -441,7 +441,7 @@ static void Main(string[] args)
 
 每个人都要买车票
 
-```c++
+```cpp
 static void Main(string[] args)
 {
     ArrayList a = new ArrayList() ;
@@ -481,7 +481,7 @@ static void Main(string[] args)
 - Aggregate: 抽象聚合类
 - ConcreteAggregate: 具体聚合类
 
-```c++
+```cpp
 abstract class Iterator
 {
     public abstract object First();
@@ -567,7 +567,7 @@ static void Main(string[] args)
 
 索引器允许类和结构的实例用下标进行访问，这种方式类似于访问数组、集合的元素，但不单单是通过下标，例如通过对象的各属性值也是可以的。索引器写在类或者结构中，其格式类似于：
 
-```c++
+```cpp
 public object this[int index]
 {
     get { return objects[int]; }
@@ -577,7 +577,7 @@ public object this[int index]
 
 索引器是特殊的属性，可以有get、set访问器，可以重载。object是返回的对象类型，this代表类或结构自己，int index表示索引类型。这与索引器的调用格式：对象[索引]，相对应。
 
-```c++
+```cpp
 public class Car
 {
     /// <summary>
@@ -694,7 +694,7 @@ public static void Main(string[] args)
 - Colleague: 抽象同事类
 - ConcreteColleague: 具体同事类
 
-```c++
+```cpp
 abstract class Colleague
 {
     protected Mediator mediator;

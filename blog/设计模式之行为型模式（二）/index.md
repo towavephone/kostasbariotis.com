@@ -20,7 +20,7 @@ tags: 面试, 设计模式
 
 
 
-```c++
+```cpp
 class GameRole
 {
     //生命力
@@ -112,7 +112,7 @@ static void Main(string[] args)
 
 ![](./微信截图_20180417173923.png)
 
-```c++
+```cpp
 class GameRole
 {
     ……
@@ -246,7 +246,7 @@ static void Main(string[] args)
 - 同事背对着大门大喊了一声“耶！我的股票涨停啦！”
 - 程序模拟发生的事情
 
-```c++
+```cpp
 class Secretary   //前台秘书类
 {
     //同事列表
@@ -314,7 +314,7 @@ static void Main(string[] args)
 
 如果有人聊QQ，有人看NBA都需要通知，如何修改？思考：违背了那些原则？
 
-```c++
+```cpp
 //抽象观察者
 abstract class Observer
 {
@@ -383,7 +383,7 @@ class Secretary    //前台秘书类
 
 其实作为通知者，老板、秘书、所有人都可以成为通知者，应该抽象出来
 
-```c++
+```cpp
 //通知者接口
 interface Subject
 {
@@ -498,7 +498,7 @@ static void Main(string[] args)
 
 注册的投资者在股票市场发生变化时，可以自动得到通知
 
-```c++
+```cpp
 abstract class Stock
 {
     // Fields
@@ -660,7 +660,7 @@ public static void Main( string[] args )
 - 睡眠状态 ( h>21 点 )
 - 下班状态
 
-```c++
+```cpp
 public static void WriteProgram()
 {
     if (Hour < 12)
@@ -726,7 +726,7 @@ static void Main(string[] args)
 
 面向过程的思维，通过面向对象完成代码的责任分解
 
-```c++
+```cpp
 public class Work   //工作
 {
     //钟点
@@ -788,7 +788,7 @@ static void Main(string[] args)
 
 ![](./微信截图_20180418005947.png)
 
-```c++
+```cpp
 public class Work    //工作
 {
     private State current;
@@ -895,7 +895,7 @@ static void Main(string[] args)
 - State：抽象状态类 
 - ConcreteState：具体状态类
 
-```c++
+```cpp
 public class Context
 {
     private State state;
@@ -995,7 +995,7 @@ class Program
 
 ![](./微信截图_20180418110919.png)
 
-```c++
+```cpp
 public interface IStrategy
 {
     void operate();

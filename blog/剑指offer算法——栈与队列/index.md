@@ -12,7 +12,7 @@ path: /offer-stack-queue/
 
 
 
-```c++
+```cpp
 #include<iostream>
 #include<stack>
 using namespace std;

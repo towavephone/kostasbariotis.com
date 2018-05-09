@@ -14,7 +14,7 @@ path: /offer-find/
 
 >缺点：实现复杂，容易出错
 
-```c++
+```cpp
 public sealed class Singleton3
 {
     private Singleton3()
@@ -49,7 +49,7 @@ public sealed class Singleton3
 
 >缺点：第一次用到Singleton4的时候就被创建，不能按需创建
 
-```c++
+```cpp
 public sealed class Singleton4
 {
     private Sinleton4(){
@@ -68,7 +68,7 @@ public sealed class Singleton4
 
 ### 实现按需创建实例
 
-```c++
+```cpp
 public sealed class Sinleton5
 {
     Singleton5()
@@ -97,7 +97,7 @@ public sealed class Sinleton5
 
 >要点：从右上角开始遍历，遍历值小于目标值排除此行即到下一行找，大于的话排除此列即到上一列开始找，直到找到为止。
 
-```c++
+```cpp
 #include<iostream>
 #include<cstring>
 #include<vector>
@@ -150,7 +150,7 @@ int main()
 
 >思路：从后往前替换会好的多，合并两个数组时也可以考虑从后往前复制
 
-```c++
+```cpp
 #include<iostream>
 #include<cstring>
 #include<vector>
@@ -219,7 +219,7 @@ int main()
 >思路：注意1，1，1，0，1这种情况，只能遍历得出结果
 
 
-```c++
+```cpp
 #include<iostream>
 #include<vector>
 using namespace std;

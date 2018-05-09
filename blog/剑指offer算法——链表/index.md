@@ -10,7 +10,7 @@ path: /offer-linked-list/
 
 ### 链表末尾添加节点
 
-```c++
+```cpp
 struct ListNode
 {
     int m_nValue;
@@ -41,7 +41,7 @@ void AddToTail(ListNode** pHead, int value)
 
 ### 删除含有某值的节点
 
-```c++
+```cpp
 void RemoveNode(ListNode** pHead, int value)
 {
     if(*pHead == NULL || **pHead == NULL)
@@ -81,7 +81,7 @@ void RemoveNode(ListNode** pHead, int value)
 
 ### 栈实现
 
-```c++
+```cpp
 #include<iostream>
 #include<vector>
 #include<stack>
@@ -159,7 +159,7 @@ int main()
 
 ### 递归实现
 
-```c++
+```cpp
 // 重复部分略过
 static void printListFromTailToHead(struct ListNode* head)
 {

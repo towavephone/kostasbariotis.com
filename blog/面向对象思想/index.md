@@ -212,7 +212,7 @@ public class Music {
 
 ![](./aa42f9c6-ad7a-48f4-8e8b-f3b6de3feaec.png)
 
-```c++
+```cpp
 public class Computer
     private KeyBoard keyboard;
     private Mouse mouse;
@@ -231,7 +231,7 @@ public class Computer
 
 ![](./0e34263d-7287-4ffe-a716-37c53d1a2526.png)
 
-```c++
+```cpp
 public class Company
 {
     private DepartmentA departmentA;
@@ -250,7 +250,7 @@ public class Company
 
 ![](./2017511e-22f0-4d74-873d-1261b71cf5a4.png)
 
-```c++
+```cpp
 public class School
 {
     private Student[] students;  
@@ -272,7 +272,7 @@ public class School
 
 ![](./c7d4956c-9988-4a10-a704-28fdae7f3d28.png)
 
-```c++
+```cpp
 public class Transport
 {
     public void Run

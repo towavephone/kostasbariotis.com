@@ -3,7 +3,7 @@ title: 前端性能优化最佳实践
 date: 2018-1-5 23:49:44
 categories:
 - 前端
-tags: 前端, 前端性能优化
+tags: 面试, 前端, 前端性能优化
 path: /front-end-performance-optimization/
 ---
 本文主要考量客户端性能、服务器端和网络性能，内容框架来自 Yahoo Developer Network，包含 7 个类别共 35 条前端性能优化最佳实践，在此基础上补充了一些相关或者更符合主流技术的内容。

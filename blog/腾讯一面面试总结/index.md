@@ -176,5 +176,57 @@ vue.js 则是采用数据劫持结合发布者-订阅者模式的方式，通过
 
 ## jquery中bind和on的用法？以及他们的区别？优缺点？
 
+### bind()
+
+1. 使用方式：$(selector).bind(event,data,function)；
+2. event：必需项；添加到元素的一个或多个事件，例如 click,dblclick 等；
+3. 单事件处理：例如 $(selector).bind("click",data,function)；
+4. 多事件处理：
+    1. 利用空格分隔多事件，例如 $(selector).bind("click dbclick mouseout",data,function);
+    2. 利用大括号灵活定义多事件，例如 $(selector).bind({event1:function, event2:function, ...})；
+    3. 空格相隔方式：绑定较为死板，不能给事件单独绑定函数,适合处理多个事件调用同一函数情况；
+    4. 大括号替代方式：绑定较为灵活，可以给事件单独绑定函数；
+5. data：可选；需要传递的参数；
+6. function：必需；当绑定事件发生时，需要执行的函数；
+7. 适用所有版本，但是根据官网解释，自从jquery1.7版本以后bind()函数推荐用on()来代替。
+
+### on()
+
+1. 使用方式：$(selector).on(event,childselector,data,function):
+2. event：必需项；添加到元素的一个或多个事件，例如 click,dblclick 等；
+3. 单事件处理：例如 $(selector).on("click",childselector,data,function);
+4. 多事件处理：
+    1. 利用空格分隔多事件，例如 $(selector).on("click dbclick mouseout",childseletor,data,function);
+    2. 利用大括号灵活定义多事件，例如 $(selector).on({event1:function, event2:function, ...},childselector);　
+    3. 空格相隔方式：绑定较为死板，不能给事件单独绑定函数,适合处理多个事件调用同一函数情况；
+    4. 大括号替代方式：绑定较为灵活，可以给事件单独绑定函数；　
+5. childSelector: 可选；需要添加事件处理程序的元素，一般为selector的子元素；　　  
+6. data：可选；需要传递的参数；
+7. function：必需；当绑定事件发生时，需要执行的函数；
+8. jquery1.7及其以上版本；jquery1.7版本出现之后用于替代bind()，live()绑定事件方式；
+
+### 相同点：
+
+1. 都支持单元素多事件的绑定，空格相隔方式或者大括号替代方式;
+2. 均是通过事件冒泡方式，将事件传递到document进行事件的响应；
+
+### 比较和联系:
+
+1. bind()函数只能针对已经存在的元素进行事件的设置；但是live(),on(),delegate()均支持未来新添加元素的事件设置；
+2. bind()函数在jquery1.7版本以前比较受推崇，1.7版本出来之后，官方已经不推荐用bind()，替代函数为on()，这也是1.7版本新添加的函数，同样，可以用来代替live()函数，live()函数在1.9版本已经删除；
+3. live()函数和delegate()函数两者类似，但是live()函数在执行速度，灵活性和CSS选择器支持方面较delegate()差些，想了解具体情况，[请戳这](http://kb.cnblogs.com/page/94469/)；
+4. bind()支持Jquery所有版本；live()支持jquery1.8-；delegate()支持jquery1.4.2+；on()支持jquery1.7+；
+5. 如果项目中引用jquery版本为低版本，推荐用delegate(),高版本jquery可以使用on()来代替。
+
+
+10. 商家后台技术栈？react是什么东西？react虚拟dom算法的实现方式？虚拟dom是什么？
+11. 重绘与重排是什么？他们的区别？有一个动画怎样实现使它的dom的重排重绘改变最小？也就是更流畅？
+12. 什么是一级dom和二级dom？
+13. 什么是事件委托？
+14. 跨域的几种实现方式？其中postMessage内部的实现方式？调用过程？伪装域名怎么解决？其中服务器端怎么实现Access-Control-Allow-Origin的跨域的（怎么拦截跨域的）？
+15. 浏览器事件规则的传递？
+16. 缓存的实现方式？
+17. dns的查询过程？
+
 
 

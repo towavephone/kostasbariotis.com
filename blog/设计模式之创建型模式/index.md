@@ -39,7 +39,7 @@ date: 2018-04-19 00:03:47
 
 ![](./微信截图_20180414223904.png)
 
-```c++
+```cpp
 public class Singleton 
 {
     //4：定义一个变量来存储创建好的类实例
@@ -114,7 +114,7 @@ public class Singleton
 - 形象点说呢，就是你不去动它的话，它自己是不会实例化的，所以可以称之为懒汉。
 - 前面在介绍单例模式的这几个 Demo 中都是使用的懒汉式单例
 
-```c++
+```cpp
 public class Singleton
 {
     private static Singleton singleton;
@@ -152,7 +152,7 @@ public class Singleton
 - 其由于肚子饿了，所以到处找东西吃，人也变得主动了很多，所以根本就不需要别人来催他实例化单例类的为一实例，
 - 其自己就会主动实例化单例类的这个唯一类。
 
-```c++
+```cpp
 // 
 public class Singleton
 {
@@ -176,7 +176,7 @@ public class Singleton
 
 **单例模式—管理多个对象**
 
-```c++
+```cpp
 public class Singleton
 {
     private static int maxTeacherNum = 5;
@@ -225,7 +225,7 @@ static void Main(string[] args)
 
 ### 简单工厂问题背景
 
-```c++
+```cpp
 class Operation
 {
     public static double GetResult(double numberA, double numberB, string operate)
@@ -255,7 +255,7 @@ Switch中添加一个分支就可以了，运算 + - * /  的代码GetResult是�
 
 ![](./简单工厂20180415131811.png)
 
-```c++
+```cpp
 class Operation
 {
     private double _numberA = 0;
@@ -305,7 +305,7 @@ strResult = add.GetResult().ToString();
 
 ![](./微信截图20180415125801.png)
 
-```c++
+```cpp
 class OperationFactory
 {
     public static Operation createOperate(string operate)
@@ -349,7 +349,7 @@ strResult = oper.GetResult().ToString();
 
 ![](./简单工厂20180415134957.png)
 
-```c++
+```cpp
 public class OperationFactory //工厂角色
 {
     public static Operation createOperate(string operate)
@@ -395,7 +395,7 @@ public class OperationFactory //工厂角色
 
 ![](./工厂方法20180415130256.png)
 
-```c++
+```cpp
 // 工厂方法
 interface IFactory
 {
@@ -470,7 +470,7 @@ strResult = oper.GetResult().ToString();
 - 数据库中有用户表(User)，用户类有2个字段ID和Name
 - 程序中有用户管理，可以对用户添加和查询
 
-```c++
+```cpp
 // 用户类，假定用户只有ID 和 Name两个字段
 class User
 {
@@ -521,7 +521,7 @@ static void Main(string[] args)
 
 利用上面学习到的工厂方法修改代码如下：
 
-```c++
+```cpp
 interface IUser
 {
     void Insert(User user);
@@ -590,7 +590,7 @@ static void Main(string[] args)
 - 数据库只有一个表吗？
 - 假如增加部门表，如何处理？
 
-```c++
+```cpp
 class Department
 {
     private int _id;
@@ -726,7 +726,7 @@ static void Main(string[] args)
 
 ![](./微信截图_20180415164857.png)
 
-```c++
+```cpp
 private void button1_Click(object sender, EventArgs e)
 {
     Graphics person = pictureBox1.CreateGraphics();
@@ -750,7 +750,7 @@ private void button1_Click(object sender, EventArgs e)
 
 ![](./微信截图_20180415170236.png)
 
-```c++
+```cpp
 abstract class PersonBuilder
 {
     protected Graphics g;
@@ -831,7 +831,7 @@ class PersonFatBuilder : PersonBuilder
 
 继承自抽象类，如果不重写抽象方法，编译器都不通过?
 
-```c++
+```cpp
 private void button2_Click(object sender, EventArgs e)
 {
     Pen p = new Pen(Color.Yellow);
@@ -850,7 +850,7 @@ private void button2_Click(object sender, EventArgs e)
 
 ![](./微信截图_20180415171210.png)
 
-```c++
+```cpp
 class PersonDirector
 {
     private PersonBuilder pb;
@@ -898,7 +898,7 @@ private void button3_Click(object sender, EventArgs e)
 
 ![](./微信截图_20180415172543.png)
 
-```c++
+```cpp
 class Product
 {
     private string partA;
@@ -1028,7 +1028,7 @@ static void Main(string[] args)
 
 Mail（一步一步构造一个完整的邮件对象，然后发送）
 
-```c++
+```cpp
 public void set主题(String 主题) {
     this.主题 = 主题;}
 public void set发件人(Email地址 发件人) {
@@ -1053,7 +1053,7 @@ public void set附件(List<File> files) {
 
 **简历投递**
 
-```c++
+```cpp
 class Resume     //简历类
 {  
     private string name, sex , age , timeArea, company , AimCompany;
@@ -1084,7 +1084,7 @@ class Resume     //简历类
 
 内容相似只能Ctrl+C, Ctrl+V?
 
-```c++
+```cpp
 static void Main(string[] args)
 {
     Resume a = new Resume(“张三");
@@ -1110,7 +1110,7 @@ static void Main(string[] args)
 
 以下做原型模式的改进
 
-```c++
+```cpp
 class Resume: Icloneable //简历类
 {  
     private string name, sex , age , timeArea, company , AimCompany;
@@ -1171,7 +1171,7 @@ static void Main(string[] args)
 
 ![](./微信截图_20180416122107.png) 
 
-```c++
+```cpp
 public abstract class Key
 {
     private string name;
@@ -1263,7 +1263,7 @@ public static void Main(string[] args)
 
 **抽象原型类**
 
-```c++
+```cpp
 abstract class Prototype
 {
     private string id;
@@ -1286,7 +1286,7 @@ abstract class Prototype
 
 **具体原型类**
 
-```c++
+```cpp
 class ConcretePrototype1 : Prototype
 {
     // Constructor 
@@ -1304,7 +1304,7 @@ class ConcretePrototype1 : Prototype
 
 **客户端代码**
 
-```c++
+```cpp
 static void Main(string[] args)
 {
     Prototype p1, c1;
@@ -1328,7 +1328,7 @@ static void Main(string[] args)
 
 接上例中的简历内容，给Resume添加一些新的内容
 
-```c++
+```cpp
 public class IDInfo
 {
     public int IdNumber;
@@ -1392,7 +1392,7 @@ static void Main(string[] args)
 - 在浅克隆中，被复制对象的所有变量都具有与原来的对象相同的值，而所有对其它对象的引用仍然指向原来的对象。换言之，浅克隆仅仅复制所考虑的对象，而不复制它所引用的对象，也就是说其中的成员对象并不复制。在浅克隆中，当对象被复制时它所包含的成员对象却没有被复制。
 - 在深克隆中，对象在复制的同时其成员对象也将复制。
 
-```c++
+```cpp
 // 将代码加入Resume类中
 public Object DeepClone()
 {

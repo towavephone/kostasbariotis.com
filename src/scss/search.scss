@@ -1,37 +1,39 @@
-.ais-Hits-item{
-    width: 100%;
-    box-shadow: none;
-    border: none;
-    padding: 0;
-    margin-top: 0;
-}
-p, .ais-Stats-text{
-    color: rgba(255, 255, 255, 0.5);
-}
-.ais-SearchBox{
-    float: left;
-    width: 70%;
-}
-.ais-HitsPerPage{
-    float: right;
-    width: 20%;
-    .ais-HitsPerPage-select {
+.search{
+    .ais-Hits-item{
         width: 100%;
+        box-shadow: none;
+        border: none;
+        padding: 0;
+        margin-top: 0;
     }
-}
-.ais-Pagination{
-    max-width: 100%;
-    margin-top: 1em;
-}
+    p, .ais-Stats-text{
+        color: rgba(255, 255, 255, 0.8);
+    }
+    .ais-SearchBox{
+        float: left;
+        width: 70%;
+    }
+    .ais-HitsPerPage{
+        float: right;
+        width: 20%;
+        .ais-HitsPerPage-select {
+            width: 100%;
+        }
+    }
+    .ais-Pagination{
+        max-width: 100%;
+        margin-top: 1em;
+    }
 
-.clearfix:before,
-.clearfix:after {
-    display: table;
-    content: "";
-}
-.clearfix:after {
-    clear: both;
-}
-.clearfix{
-    *zoom: 1;
+    .clearfix:before,
+    .clearfix:after {
+        display: table;
+        content: "";
+    }
+    .clearfix:after {
+        clear: both;
+    }
+    .clearfix{
+        *zoom: 1;
+    }
 }

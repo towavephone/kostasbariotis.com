@@ -10,7 +10,7 @@ original: https://github.com/DMQ/mvvm
 
 接上文[腾讯面试总结](/tx-interview-part-1-summary/)
 
-## 剖析Vue实现原理 - 如何实现双向绑定mvvm
+## 剖析Vue实现原理
 
 ```html
 <div id="mvvm-app">
@@ -37,8 +37,6 @@ var vm = new MVVM({
     });
 </script>
 ```
-
-
 
 效果：
 

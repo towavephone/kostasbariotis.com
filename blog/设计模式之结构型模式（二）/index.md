@@ -23,7 +23,7 @@ date: 2018-04-19 00:04:26
 
 ![](./微信截图_20180416214717.png)
 
-```c++
+```cpp
 //顾客类
 public class Customer
 {
@@ -104,7 +104,7 @@ static void Main(string[] args)
 
 ![](./微信截图_20180416220421.png)
 
-```c++
+```cpp
 public class Mortgage     //外观类
 {
     private Bank bank = new Bank();
@@ -162,7 +162,7 @@ static void Main(string[] args)
 
 Client对象需要引用到所有的录像机(Camera)、电灯(Light)、感应器(Sensor)和警报器(Alarm)对象。
 
-```c++
+```cpp
 public class Camera
 {
     public void TurnOn()
@@ -233,7 +233,7 @@ public static void Main( string[] args ){
 
 ![](./微信截图_20180417002439.png)
 
-```c++
+```cpp
 public class SecurityFacade
 {
     private static Camera camera1, camera2;
@@ -311,7 +311,7 @@ public static void Main( string[] args )
 
 如何设计能有效减少系统开销?
 
-```c++
+```cpp
 class Game  //游戏
 {
     private string name = "";
@@ -363,7 +363,7 @@ static void Main(string[] args)
 
 ![](./微信截图_20180417010630.png)
 
-```c++
+```cpp
 abstract class Game   //游戏
 {
     public abstract void Play();
@@ -429,7 +429,7 @@ static void Main(string[] args)
 
 ![](./微信截图_20180417011251.png)
 
-```c++
+```cpp
 public class User //用户
 {
     private string name;
@@ -520,7 +520,7 @@ static void Main(string[] args)
 
 ### 模式使用
 
-```c++
+```cpp
 //快递工作人员
 class ExpressPerson
 {
@@ -595,7 +595,7 @@ static void Main(string[] args)
 
 ![](./微信截图_20180417130415.png)
 
-```c++
+```cpp
 //寄东西
 interface GiveObject
 {
