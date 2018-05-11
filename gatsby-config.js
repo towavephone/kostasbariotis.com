@@ -10,7 +10,6 @@ const query = `{
             title
             tags
             path
-            objectID: path
           }
         }
       }
@@ -20,7 +19,11 @@ const query = `{
 const queries = [
   {
     query,
-    transformer: ({ data }) => data.allMarkdownRemark.edges.map(({ node }) => node),
+    transformer: ({ data }) =>
+      data.allMarkdownRemark.edges.map(({ node }) => {
+        node.objectID = node.frontmatter.path;
+        return node;
+      }),
   },
 ];
 
@@ -40,7 +43,6 @@ module.exports = {
     },
   },
   plugins: [
-    'gatsby-plugin-offline',
     'gatsby-plugin-catch-links',
     'gatsby-plugin-sass',
     {
@@ -214,7 +216,11 @@ module.exports = {
                   });
                 });
             },
-            setup: ({ query: { site: { siteMetadata } } }) => {
+            setup: ({
+              query: {
+                site: { siteMetadata },
+              },
+            }) => {
               return {
                 title: siteMetadata.title,
                 description: siteMetadata.description,
@@ -249,5 +255,6 @@ module.exports = {
         ],
       },
     },
+    'gatsby-plugin-offline',
   ],
 };

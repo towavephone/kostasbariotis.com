@@ -175,3 +175,12 @@ function createPagination(createPage, edges, pathPrefix) {
 function paginate(array, page_size, page_number) {
   return array.slice(0).slice((page_number - 1) * page_size, page_number * page_size);
 }
+
+exports.modifyWebpackConfig = ({ config, stage }) => {
+  if (stage === 'build-html') {
+    config.loader('null', {
+      test: /gitalk/,
+      loader: 'null-loader',
+    });
+  }
+};

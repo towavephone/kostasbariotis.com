@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 
 const Pagination = ({ tag, page, pagesSum }) => (
   <header className="header extra-pagination inner text-center">
-    <nav className="pagination" role="navigation">
+    <nav className="pagination clearfix" role="navigation">
       {page === 2 && (
         <GatsbyLink className="newer-posts" to={`/tag/${tag}/`}>
           <span aria-hidden="true">←</span> 上一页

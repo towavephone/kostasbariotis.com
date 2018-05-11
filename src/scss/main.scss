@@ -22,7 +22,7 @@ body {
       font-size: 0.99em;
     }
 
-    background: $background;
+    // background: $background;
     filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#007db9e8', endColorstr='#221931', GradientType=0);
     background-repeat: no-repeat;
 
@@ -102,4 +102,16 @@ a {
 .header-description {
   font-size: 1.2em;
   line-height: 1.4em;
+}
+
+.clearfix:before,
+.clearfix:after {
+    display: table;
+    content: "";
+}
+.clearfix:after {
+    clear: both;
+}
+.clearfix{
+    *zoom: 1;
 }
