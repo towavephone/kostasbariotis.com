@@ -52,11 +52,7 @@ export default function Index({ data }) {
             <article className="post text-right">
               <header className="post-head">
                 <h3 className="post-title">
-                  {length > 5 ? (
-                    <GatsbyLink to="/page/2">阅读更多 &gt;</GatsbyLink>
-                  ) : (
-                    <GatsbyLink to="/page/1">阅读更多 &gt;</GatsbyLink>
-                  )}
+                  {length > 3 ? <GatsbyLink to="/page/1">阅读更多 &gt;</GatsbyLink> : null}
                 </h3>
               </header>
             </article>
@@ -89,7 +85,7 @@ export const pageQuery = graphql`
     }
     allMarkdownRemark(
       sort: { order: DESC, fields: [frontmatter___date] }
-      limit: 6
+      limit: 4
       filter: { frontmatter: { draft: { ne: true } } }
     ) {
       edges {

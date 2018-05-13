@@ -124,3 +124,7 @@ a {
 .clearfix{
     *zoom: 1;
 }
+
+th,td {
+    border: solid $lightblue 1px;
+}
