@@ -15,7 +15,7 @@
     },
     "scripts": {
         "build": "gatsby build --prefix-paths",
-        "deploy": "gh-pages -d public",
+        "deploy": "gh-pages -d public -r git@github.com:towavephone/towavephone.github.io.git -b master",
         "dev": "gatsby develop -p 80",
         "serve": "gatsby serve",
         "lint": "yarn lint:markdown && yarn lint:js",

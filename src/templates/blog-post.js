@@ -31,7 +31,7 @@ export default class Template extends React.Component {
       const gitalk = new Gitalk({
         clientID: 'c6d8d75c91d5c0cfa42d',
         clientSecret: 'b8e5e295b87b062e292978826729dc7178187fbe',
-        repo: 'kostasbariotis.com',
+        repo: 'GatsbyBlog',
         admin: ['towavephone'],
         owner: 'towavephone',
         id: post.frontmatter.path,
