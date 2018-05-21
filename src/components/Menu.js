@@ -55,6 +55,17 @@ class Menu extends React.Component {
                     activeStyle={{
                       color: '#e52f45',
                     }}
+                    to="/tags"
+                  >
+                    标签
+                  </GatsbyLink>
+                </li>
+                <li>
+                  <GatsbyLink
+                    exact
+                    activeStyle={{
+                      color: '#e52f45',
+                    }}
                     to="/about"
                   >
                     关于
