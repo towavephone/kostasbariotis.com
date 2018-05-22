@@ -8,6 +8,6 @@ path: /snow-css/
 ---
 
 
-<iframe src="/examples/snow.html" width="100%" height="400"></iframe>
+<iframe src="/examples/snow.html" width="800" height="400"></iframe>
 
 `embed:snow.html`

@@ -109,9 +109,73 @@ px，还有pt、cm、mm、pc。
 
 规范顾及不到的细致末节的实现
 
+# 流、元素与基本尺寸
 
+<iframe src="/examples/clearfix-listitem.html" width="400" height="100"></iframe>
 
+`embed:clearfix-listitem.html`
 
+## 块级元素
 
+块级元素具有换行特性，因此可以利用它配合clear属性清除浮动。
 
+清除浮动时不会使用list-item的原因：
+
+1. 字符比较多
+2. 会出现不需要的项目符号
+3. IE浏览器不支持伪元素的display值为list-item
+
+### 为什么list-item元素会出现项目符号
+
+- 生成了一个附加的标记盒子，专门用来放圆点、数字这些项目符号的。
+- IE浏览器下伪元素不支持的原因就是无法创建这个标记盒子。
+
+### display:inline-table的盒子是怎样组成的
+
+<iframe src="/examples/inline-table.html" width="400" height="100"></iframe>
+
+`embed:inline-table.html`
+
+外面是内联盒子，里面是table盒子。
+
+### width/height作用在哪个盒子上
+
+是内在盒子，也就是容器盒子。
+
+## width/height作用的具体细节
+
+### width:auto
+
+有以下4种宽度表现
+
+1. 充分利用可用空间，如`<div>`、`<p>`这些元素的宽度默认100%于父级容器，叫fill-available
+2. 收缩与包裹，典型代表就是浮动、绝对定位、inline-block或table元素，叫fit-content
+3. 收缩到最小，最容易出现在table-layout为auto的表格中，叫min-content，如以下实例
+4. 超出容器限制，例如内容很长的连续英文和数字，或内联元素被设置了white-space:nowrap，如以下实例
+
+<iframe src="/examples/min-content.html" width="400" height="100"></iframe>
+
+`embed:min-content.html`
+
+<iframe src="/examples/over-container-limit.html" width="400" height="100"></iframe>
+
+`embed:over-container-limit.html`
+
+其中，第一个是外部尺寸，其他都是内部尺寸。
+
+### 外部尺寸与流体特性
+
+#### 正常流宽度
+
+一种margin、border、padding、content自动分配水平空间的机制。
+
+如下，这是一个对比演示，上下两个导航都有margin和padding，前者无width设置，完全借助流特性，后者宽度100%，流动性丢失，不会完全利用空间。
+
+<iframe src="/examples/lose-flow.html" width="400" height="100"></iframe>
+
+`embed:lose-flow.html`
+
+#### 格式化宽度
+
+仅出现在绝对定位中
 
