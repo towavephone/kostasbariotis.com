@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+        img {
+            width: 200px;
+        }
+
+        body {
+            background-color: white;
+        }
+
+        .box {
+            position: relative;
+
+            display: table;
+            margin: 0 auto;
+            border: 1px solid;
+        }
+
+        .prev,
+        .next {
+            position: absolute;
+            width: 10%;
+            height: 100%;
+            top: 0;
+            opacity: 0.5;
+
+            display: flex;
+            align-items: center;
+        }
+
+        .prev {
+            left: 0;
+            background-color: aquamarine;
+        }
+
+        .next {
+            right: 0;
+            background-color: blueviolet;
+        }
+
+        a,
+        a:hover {
+            text-decoration: none;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="box">
+        <a href="javascript:" class="prev" title="上一张">上一张</a>
+        <a href="javascript:" class="next" title="下一张">下一张</a>
+        <img src="../images/avatar.png">
+    </div>
+</body>
+
+</html>
