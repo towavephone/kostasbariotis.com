@@ -124,7 +124,11 @@ a {
 .clearfix{
     *zoom: 1;
 }
-
+table{
+    width:100%;
+    margin-bottom: 1em;
+}
 th,td {
-    border: solid $lightblue 1px;
+    padding: 8px;
+    border: solid $lightblue 2px;
 }

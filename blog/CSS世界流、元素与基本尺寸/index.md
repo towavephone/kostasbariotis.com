@@ -253,3 +253,107 @@ input,textarea,img,video,object{
 <iframe src="/examples/image-pre-next.html" width="400" height="100"></iframe>
 
 `embed:image-pre-next.html`
+
+## min-width/max-width和min-height/max-height
+
+### 为流体而生的min-width/max-width
+
+适配自适应布局或流体布局
+
+**公众号图片运用**
+
+- height:auto是必须的，否则原始图片有设定height的话，max-width生效的时候图片就会被水平压缩，保证宽度不超出的同时使图片保持原来的比例
+- 可能会有体验上的问题，加载图片时高度会从0变成计算高度，导致页面有瀑布式的下落
+
+```css
+img{
+    max-height:100%;
+    height:auto!important;
+}
+```
+
+### 初始值
+
+width/height初始值是auto，而max-width/max-height初始值为none，文档中min-width/min-height初始值为0，但是浏览器中初始值为auto
+
+#### max-width初始值是none的原因
+
+子元素width超过父元素时，如果父元素未设置max-width，即默认max-width为auto时，此时max-height计算值为父元素width，导致子元素显示不完整。
+
+### 优先级
+
+#### 超越!important
+
+max-width会覆盖width，比!important更高的优先级
+
+<iframe src="/examples/max-width-over-important.html" width="400" height="100"></iframe>
+
+`embed:max-width-over-important.html`
+
+#### 超越最大
+
+当min-width大于max-width时，min-width会覆盖max-width
+
+### 任意高度元素的展开收起动画技术
+
+场景：元素展开收起时有明显高度滑动效果，传统实现可以使用jquery的slideUp()/slideDown()方法，但是移动端有CSS3动画，所以移动端的js框架都是没有动画模块的，需要用CSS来实现动画。
+
+<iframe src="/examples/slide-up-down-height.html" width="400" height="100"></iframe>
+
+`embed:slide-up-down-height.html`
+
+从0到auto是无法计算的，正如height:100%无法和auto计算一样，所以没有动画效果。
+
+<iframe src="/examples/slide-up-down-max-height.html" width="400" height="100"></iframe>
+
+`embed:slide-up-down-max-height.html`
+
+建议max-height使用足够安全的最小值，这样即使收起有延迟，也会因为时间很短，不会影响体验。
+
+## 内联元素
+
+### 哪些是内联元素
+
+1. 从定义看：内联元素的内联特指外在盒子，和display:inline的元素不是一个概念
+2. 从表现看：可以和文字在一行显示，注意浮动元素不是内联元素，比如当后面文字足够多的时候，文字并不是在浮动元素的下面，而是继续在后面，说明文字和浮动元素不在一行，也说明了浮动元素会生成块盒子，就是BFC
+
+### 内联盒模型
+
+1. 内容区域：一种围绕文字看不见的盒子，其大小仅受字符本身特性控制，本质上是一个字符盒子，也就是文本选中的区域
+    ```html{2}
+    <p>
+        这是一行普通的文字，这里有个<em>em</em>标签
+    </p>
+    ```
+2. 内联盒子：元素的外在盒子，决定元素是内联还是块级。又分为内联盒子和匿名内联盒子，如span、a、em等内联盒子，只是文字就属于匿名内联盒子。
+    ```html{2,3,4}
+    <p>
+        这是一行普通的文字，这里有个
+        <em>em</em>
+        标签
+    </p>
+    ```
+3. 行框盒子：每一行就是一个行框盒子，是由一个个内联盒子组成的
+    ```html{2}
+    <p>
+        这是一行普通的文字，这里有个<em>em</em>标签
+    </p>
+    ```
+4. 包含盒子（包含块）：<p>标签就是一个包含盒子，此盒子由一个个行框盒子组成
+    ```html{1}
+    <p>这是一行普通的文字，这里有个<em>em</em>标签</p>
+    ```
+
+### 幽灵空白节点
+
+>在HTML5中，内联元素的所有解析和渲染表现就好像每个行框盒子前面有一个空白结点一样。
+该节点永远透明，不占据任何宽度，看不见也无法通过脚本获取，就好像幽灵一样。
+但又好像确实存在，表现如文本节点一样
+
+如下例：
+
+<iframe src="/examples/prove-inline-blank-node.html" width="400" height="100"></iframe>
+
+`embed:prove-inline-blank-node.html`
+
+<span>元素前面有一个宽度为0的空白字符，具有该元素的字体和行高属性的0宽度的内联盒

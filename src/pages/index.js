@@ -13,10 +13,12 @@ import MetaTags from './../components/MetaTags';
 import WebPageSchema from '../components/schemas/WebPageSchema';
 
 export default function Index({ data }) {
-  let { edges: posts } = data.allMarkdownRemark;
+  let { edges } = data.allMarkdownRemark;
   let { siteUrl, description, author } = data.site.siteMetadata;
-  let length = posts.length;
+  let length = edges.length;
   // 限制首页展示文章
+  // 注意此处需深拷贝，否则再次回到首页看不到阅读更多
+  let [...posts] = edges;
   posts.length = 3;
   posts = posts.map(post => post.node);
   return (

@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+        body {
+            background-color: white;
+        }
+
+        #check,
+        :checked~.check-in,
+        .check-out {
+            display: none;
+        }
+
+        :checked~.check-out {
+            display: inline-block;
+        }
+
+        .element {
+            height: 0;
+            overflow: hidden;
+            transition: height 1s;
+        }
+
+        :checked~.element {
+            height: auto;
+        }
+
+        p {
+            width: 200px;
+        }
+    </style>
+</head>
+
+<body>
+    <input id="check" type="checkbox">
+    <p>个人觉得，display:table-cell其他大师法萨芬顺</p>
+    <div class="element">
+        <p>发发发发送该顺德工商公司广东省不是不报部分的苟富贵公司多个顺德工商多个表单符合规范化和客服哈克热乎乎个梵蒂冈还是给好几个德工商广东省过分的话代课教师共和国本哈根换个角度说不过看吧告诉大家改变世界给送给收到该公司多个</p>
+    </div>
+    <label for="check" class="check-in">更多↓</label>
+    <label for="check" class="check-out">收起↑</label>
+</body>
+
+</html>
