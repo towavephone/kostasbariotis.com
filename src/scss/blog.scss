@@ -97,18 +97,13 @@
         }
         table{
             margin-bottom: 1em;
-            tbody{
-                display: block;
-                overflow: auto;
-                max-height: 20em;
-            }
-            thead, tbody tr{
+            display: block;
+            overflow: auto;
+            max-height: 20em;
+            thead, tbody{
                 display:table;
                 width:100%;
                 table-layout:fixed;
-            }
-            thead {
-                width: calc(100% - 1em + 2px);
             }
             th,td {
                 padding: 10px;
