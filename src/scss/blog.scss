@@ -95,6 +95,34 @@
                 margin-bottom: 0;
             }
         }
+        table{
+            margin-bottom: 1em;
+            tbody{
+                display: block;
+                overflow: auto;
+                max-height: 20em;
+            }
+            thead, tbody tr{
+                display:table;
+                width:100%;
+                table-layout:fixed;
+            }
+            thead {
+                width: calc(100% - 1em + 2px);
+            }
+            th,td {
+                padding: 10px;
+                border: solid $lightblue 1px;
+            }
+            tr:nth-child(2n) {
+                background: rgba(158,188,226,.12);
+            }
+        }
+        
+        pre{
+            max-height: 20em;
+            overflow: auto;
+        }
         .post-footer {
             padding-top: 2em;
             padding-bottom: 2em;
