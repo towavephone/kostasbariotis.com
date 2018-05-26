@@ -452,10 +452,12 @@ console.log(b);//ReferenceError
 
 变量和函数在内的所有声明都会在任何代码被执行前首先被处理，这个过程叫做提升。
 
+---
+
 ```js
 a=2;
 var a;
-console.log(a);
+console.log(a);//2
 ```
 
 编译成：
@@ -466,8 +468,10 @@ a=2;
 console.log(a);
 ```
 
+---
+
 ```js
-console.log(a);
+console.log(a);//undefined
 var a=2;
 ```
 
@@ -477,4 +481,259 @@ var a=2;
 var a;
 console.log(a);
 a=2;
+```
+
+---
+
+```js
+foo();
+function foo(){
+    console.log(a); //undefined
+    var a=2;
+}
+```
+
+编译成：
+
+```js
+function foo(){
+    var a;
+    console.log(a);
+    a=2;
+}
+foo();
+```
+
+---
+
+函数表达式不会提升
+
+```js
+foo();//TypeError
+var foo=function bar(){
+    //...
+};
+```
+
+编译为：
+
+```js
+var foo;
+foo();//TypeError
+foo=function bar(){
+    //...
+};
+```
+
+---
+
+即使是具名的函数表达式，名称标识符在赋值之前也无法使用
+
+```js
+foo();//TypeError
+bar();//ReferenceError
+var foo=function bar(){
+    //...
+}
+```
+
+编译成：
+
+```js
+var foo;
+foo();
+bar();
+foo=function(){
+    var bar = ...self...
+    //...
+}
+```
+
+## 函数优先
+
+函数声明和变量声明都会被提升，但是函数会首先被提升，然后才是变量，冲突时重复的声明会被忽略
+
+---
+
+var foo尽管出现在function foo()...声明之前，但它是重复的声明（被忽略），因为函数声明会被提升到普通变量之前
+
+```js
+foo();//1
+var foo;
+function foo(){
+    console.log(1);
+}
+foo=function(){
+    console.log(2);
+}
+```
+
+编译成：
+
+```js
+function foo(){
+    console.log(1);
+}
+foo();
+foo=function(){
+    console.log(2);
+}
+```
+
+---
+
+尽管重复的var声明会被忽略掉，但出现在后面的函数声明还是可以覆盖前面的
+
+```js
+foo();//3
+function foo(){
+    console.log(1);
+}
+var foo=function(){
+    console.log(2);
+}
+function foo(){
+    console.log(3);
+}
+```
+
+编译成：
+
+```js
+function foo(){
+    console.log(3);
+}
+foo();//3
+foo=function(){
+    console.log(2);
+}
+```
+
+---
+
+一个普通块内部的函数声明通常会被提升到所在作用域的顶部，注意这个行为不可靠，在未来的版本中会发生改变，应该尽可能的避免在块内部声明函数
+
+```js{1}
+foo();//TypeError，按照定义应该是b，此处有疑问
+var a=true;
+if(a){
+    function foo(){console.log("a");}
+}else{
+    function foo(){console.log("b");}
+}
+```
+
+编译成：
+
+```js
+function foo () { console.log("b"); }
+foo();
+```
+
+# 作用域闭包
+
+当函数可以记住并访问所在的词法作用域时，就产生了闭包，即使函数是在当前词法作用域之外执行
+
+---
+
+```js
+function foo(){
+    var a=2;
+    function bar(){
+        console.log(a);//2
+    }
+    return bar;
+}
+var baz=foo();
+baz();//2
+```
+
+- 函数bar的词法作用域能够访问foo()的内部作用域，然后bar()本身当做一个值类型传递
+- bar()涵盖foo()内部作用域的闭包，使得该作用域能够一直存活，不会被垃圾回收器回收，以供bar()在之后任何时间进行引用，bar一直持有对该作用域引用，这个引用就叫做闭包
+
+---
+
+```js
+function wait(message){
+    setTimeout(function timer(){
+        //timer函数一直持有对wait作用域的闭包
+        console.log(message);
+    },1000);
+}
+wait("Hello,closure!");
+```
+
+---
+
+```js
+var a=2;
+(function IIFE(){
+    console.log(a);
+})();
+```
+
+IIFE不是典型的闭包，因为函数并不是在它本身的词法作用域以外执行的。它是在定义时所在的作用域执行，也就是全局作用域也持有a，a是通过普通的词法作用域而非闭包被发现的。
+
+## 循环和闭包
+
+```js
+for(var i=1;i<=5;i++){
+    setTimeout(function timer(){
+        console.log(i);//五个6
+    },i*1000);
+}
+```
+
+- 这个循环的终止条件i不再<=5，条件首次成立时i的值是6
+- 延迟函数的回调会在循环结束时才执行，同步环境执行 -> 事件循环1（microtask queue的All）-> 事件循环2(macrotask queue中的一个) -> 事件循环1（microtask queue的All）-> 事件循环2(macrotask queue中的一个)...
+    1. 主线程读取JS代码，此时为同步环境，形成相应的堆和执行栈；
+    2. 主线程遇到异步任务，指给对应的异步进程进行处理（WEB API）；
+    3. 异步进程处理完毕（Ajax返回、DOM事件处罚、Timer等），将相应的异步任务推入任务队列；
+    4. 主线程查询任务队列，执行microtask queue（promise,MutationObserver），将其按序执行，全部执行完毕；
+    5. 主线程查询任务队列，执行macrotask queue（onclick，setTimeout，Ajax），取队首任务执行，执行完毕；
+    6. 重复step4、step5。
+
+---
+
+试图输出1,2,3,4,5
+
+```js
+for(var i=1;i<=5;i++){
+    (function(){
+        setTimeout(function timer(){
+            console.log(i);//五个6
+        },i*1000);
+    })();
+}
+```
+
+此时闭包函数的作用域为空，i向上进行RHS引用，直至最外层，得到i=6，即i未记住所在的词法作用域时，不能形成闭包
+
+---
+
+```js
+for(var i=1;i<=5;i++){
+    (function(){
+        var j=i;
+        setTimeout(function timer(){
+            console.log(j);//1,2,3,4,5
+        },j*1000);
+    })();
+}
+```
+
+每次迭代都会保存i的值，i已记住所在的词法作用域，形成闭包
+
+---
+
+改进
+
+```js
+for(var i=1;i<=5;i++){
+    (function(j){
+        setTimeout(function timer(){
+            console.log(j);//1,2,3,4,5
+        },j*1000);
+    })(i);
+}
 ```
