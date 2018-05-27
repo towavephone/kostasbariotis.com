@@ -256,5 +256,217 @@ var obj1={
 obj1.obj2.foo();//42
 ```
 
+#### 隐式丢失
+
+被隐式绑定的函数会丢失绑定对象，也就是说应用默认绑定，虽然bar是obj.foo的一个引用，但是实际上，它引用的是foo函数本身
+
+```js
+function foo(){
+    console.log(this.a);
+}
+var obj={
+    a:2,
+    foo:foo
+};
+var bar=obj.foo;//函数别名
+var a="oops,global";
+bar();//oops,global
+```
+
+参数传递就是一种隐式赋值，结果一样
+
+```js
+function foo(){
+    console.log(this.a);
+}
+function doFoo(fn){
+    //fn其实引用的是foo，和上面一样，参数隐式赋值
+    fn();//调用位置
+}
+var obj={
+    a:2,
+    foo:foo
+};
+var a="oops,global";
+doFoo(obj.foo);//oops,global
+```
+
+函数传入语言内置的函数，结果一样
+
+```js
+function foo(){
+    console.log(this.a);
+}
+var obj={
+    a:2,
+    foo:foo
+};
+var a="oops,global";
+setTimeout(obj.foo,100);//oops,global
+// function(fn,delay){
+//     fn();//调用位置，和上面一样
+// }
+```
+
+还有调用函数的函数可能会修改this，有些js库中的事件会把回调函数中的this强制绑定到触发事件的DOM上
+
+正因为隐式绑定的不确定性，下面就通过固定this来修复这个问题
+
+### 显式绑定
+
+call,apply第一个参数显式绑定到this上
+
+```js
+function foo(){
+    console.log(this.a);
+}
+var obj={
+    a:2
+};
+foo.call(obj);//2
+```
+
+如果传入了一个原始值来当做this的绑定对象，这个原始值会被转换成它的对象形式，这通常被称为装箱
+
+但是显式绑定仍然无法解决之前的丢失绑定的问题
+
+#### 硬绑定
+
+这种绑定是一种显式的强制绑定，总会在调用bar时强制在obj上调用bar
+
+```js
+function foo(){
+    console.log(this.a);
+}
+var obj={
+    a:2
+};
+var bar=function(){
+    foo.call(obj);
+}
+bar();//2
+setTimeout(bar,100);//2
+bar.call(window);//2
+```
+
+应用场景之一：创建一个包裹函数，负责接收参数并返回值
+
+```js
+function foo(something){
+    console.log(this.a,something);
+    return this.a+something;
+}
+var obj={
+    a:2
+};
+var bar=function(){
+    return foo.apply(obj,arguments);
+}
+var b=bar(3);//2,3
+console.log(b);//5
+```
+
+应用场景之二：创建一个可以重复使用的辅助函数
+
+```js
+function foo(something){
+    console.log(this.a,something);
+    return this.a+something;
+}
+function bind(fn,obj){
+    return function(){
+        return fn.apply(obj,arguments);
+    }
+}
+var obj={
+    a:2
+};
+var b=bind(foo,obj)(3);
+console.log(b);
+```
+
+由于硬绑定是一种非常常用的模式，ES5提供了内置方法Function.prototype.bind
+
+```js
+function foo(something){
+    console.log(this.a,something);
+    return this.a+something;
+}
+var obj={
+    a:2
+};
+var b=foo.bind(obj)(3);
+console.log(b);
+```
+
+#### API调用的上下文
+
+第三方库的许多函数，以及js语言和宿主环境的许多内置函数，都提供了一个可选的参数，通常被称为上下文，其作用和bind一样，确保你的回调函数使用指定的this
+
+```js
+function foo(el){
+    console.log(el,this.id);
+}
+var obj={
+    id:"awesome"
+};
+[1,2,3].forEach(foo,obj);
+// 1 "awesome"
+// 2 "awesome"
+// 3 "awesome"
+```
+
+### new绑定
+
+new调用函数或者发生构造函数调用时，会执行：
+
+1. 创建（或者说构造）一个全新对象
+2. 这个新对象会被执行[[Prototype]]连接
+3. 这个新对象会绑定到函数调用的this
+4. 如果函数没有返回其他对象，那么new表达式中的函数调用会自动返回这个对象
+
+```js
+function foo(a){
+    this.a=a;
+}
+var bar=new foo(2);
+console.log(bar.a);//2
+```
+
+## 优先级
+
+```js
+function foo(){
+    console.log(this.a);
+}
+var obj1={
+    a:2,
+    foo:foo
+};
+var obj2={
+    a:3,
+    foo:foo
+};
+obj1.foo.call(obj1);//2
+obj2.foo.call(obj2);//3
+```
+
+显式绑定优先级高于隐式绑定
+
+```js
+function foo(something){
+    this.a=something;
+}
+var obj1={
+    foo:foo
+};
+var obj2={};
+obj1.foo(2);
+console.log(obj1.a);
+obj1
+```
+
+
+
 
 
