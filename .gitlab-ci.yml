@@ -1,6 +1,7 @@
 cache:
   paths:
   - node_modules
+  - .cache
 
 stages:
 - deploy to gitlab
@@ -15,10 +16,6 @@ deploy to gitlab:
     - rm -rf /etc/gitlab-runner/GatsbyBlog && mkdir /etc/gitlab-runner/GatsbyBlog
     - cp -r public/* /etc/gitlab-runner/GatsbyBlog
     - echo '部署到gitlab上成功'
-  artifacts:
-    name: "CI_JOB_NAME-$CI_COMMIT_REF_NAME"
-    paths:
-    - public
   environment:
     name: gitlab
     url: https://blog.towavephone.com
