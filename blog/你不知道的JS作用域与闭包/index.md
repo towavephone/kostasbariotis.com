@@ -2,7 +2,7 @@
 title: 你不知道的JS作用域与闭包
 categories:
   - 前端
-tags: 前端, JS
+tags: 前端, JS, 你不知道的JS
 path: /you-dont-know-js-scope-closure/
 date: 2018-5-26 17:18:46
 ---
@@ -737,3 +737,147 @@ for(var i=1;i<=5;i++){
     })(i);
 }
 ```
+
+### 重返块作用域
+
+可以考虑将作用域转换为块作用域
+
+```js
+for(var i=1;i<=5;i++){
+    let j=i;//闭包的块作用域
+    setTimeout(function timer(){
+        console.log(j);//1,2,3,4,5
+    },j*1000);
+}
+```
+
+改进
+
+```js
+for(let i=1;i<=5;i++){
+    setTimeout(function timer(){//块作用域与闭包运用
+        console.log(i);//1,2,3,4,5
+    },i*1000);
+}
+```
+
+## 模块
+
+```js
+function foo(){
+    var something="cool";
+    var another=[1,2,3];
+    function doSomething(){
+        console.log(something);
+    }
+    function doAnother(){
+        console.log(another.join(","))
+    }
+    return {
+        doSomething:doSomething,
+        doAnother:doAnother
+    }
+}
+var foo = foo();
+foo.doSomething();//cool
+foo.doAnother();//1,2,3
+```
+
+这个模式就被称为模块，模块具备的必要条件：
+
+1. 必须有外部的封闭函数，该函数至少被调用一次
+2. 封闭函数必须返回至少一个内部函数，这样内部函数才能在私有作用域中形成闭包，并还可以访问或者修改私有的状态
+
+可以对模块进行改进，只需要一个实例
+
+```js
+var foo=(function foo(){
+    var something="cool";
+    var another=[1,2,3];
+    function doSomething(){
+        console.log(something);
+    }
+    function doAnother(){
+        console.log(another.join(","))
+    }
+    return {
+        doSomething:doSomething,
+        doAnother:doAnother
+    }
+})();
+foo.doSomething();//cool
+foo.doAnother();//1,2,3
+```
+
+命名将要作为公共API返回的对象
+
+```js
+var foo=(function Module(id){
+    function change(){
+        publicAPI.identity=identity2;
+    }
+    function identity1(){
+        console.log(id);
+    }
+    function identity2(){
+        console.log(id.toUpperCase());
+    }
+    var publicAPI={
+        change:change,
+        identity:identity1
+    }
+    return publicAPI;
+})("foo fff");
+foo.identity();
+foo.change();
+foo.identity();
+```
+
+### 现代的模块机制
+
+```js{7}
+var MyModules=(function Manager(){
+    var modules={};
+    function define(name,deps,impl){
+        for(var i=0;i<deps.length;i++){
+            deps[i]=modules[deps[i]];
+        }
+        modules[name]=impl.apply(impl,deps);
+    }
+    function get(name){
+        return modules[name];
+    }
+    return {
+        define:define,
+        get:get
+    };
+})();
+```
+
+定义模块：
+
+```js
+MyModules.define("bar",[],function(){
+    function hello(who){
+        return "Let me introduce: "+who;
+    }
+    return {
+        hello:hello
+    };
+});
+MyModules.define("foo",["bar"],function(bar){
+    var hungry="hippo";
+    function awesome(){
+        console.log(bar.hello(hungry).toUpperCase());
+    }
+    return {awesome:awesome};
+})
+var bar=MyModules.get("bar");
+var foo=MyModules.get("foo");
+console.log(bar.hello("hippo"));
+foo.awesome();
+```
+
+### 未来的模块机制
+
+es6的import和export类似于以上机制
