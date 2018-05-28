@@ -1,9 +1,9 @@
 ---
-title: 你不知道的JS对象原型与this
+title: 你不知道的JS之this
 categories:
   - 前端
 tags: 前端, JS, 你不知道的JS
-path: /you-dont-know-js-object-prototype-this/
+path: /you-dont-know-js-this/
 date: 2018-5-27 14:34:18
 ---
 # 关于this
@@ -435,6 +435,8 @@ console.log(bar.a);//2
 
 ## 优先级
 
+显式绑定优先级高于隐式绑定
+
 ```js
 function foo(){
     console.log(this.a);
@@ -447,11 +449,13 @@ var obj2={
     a:3,
     foo:foo
 };
-obj1.foo.call(obj1);//2
-obj2.foo.call(obj2);//3
+obj1.foo();//2，隐式绑定
+obj2.foo();//3，隐式绑定
+obj1.foo.call(obj2);//3，显式绑定优先级高于隐式绑定
+obj2.foo.call(obj1);//2，显式绑定优先级高于隐式绑定
 ```
 
-显式绑定优先级高于隐式绑定
+new绑定比隐式绑定优先级高
 
 ```js
 function foo(something){
@@ -462,11 +466,174 @@ var obj1={
 };
 var obj2={};
 obj1.foo(2);
-console.log(obj1.a);
-obj1
+console.log(obj1.a);//2，隐式绑定
+obj1.foo.call(obj2,3);
+console.log(obj2.a);//3，显式绑定高于隐式绑定
+var bar=new obj1.foo(4);
+console.log(obj1.a);//2，隐式绑定
+console.log(bar.a);//4，new绑定高于隐式绑定
 ```
 
+因为new和apply/call无法一起使用，但是可以通过硬绑定来测试优先级
 
+```js
+function foo(something){
+    this.a=something;
+}
+var obj1={};
+var bar=foo.bind(obj1);
 
+bar(2);
+console.log(obj1.a);//2，显式绑定
 
+var baz=new bar(3);
+console.log(obj1.a);//2，不变
+console.log(baz.a);//3，new绑定高于显式绑定
+```
 
+new是怎么修改硬绑定的？
+
+```js{9,13-14}
+if(!Function.prototype.bind){
+    Function.prototype.bind=function(oThis){
+        if(typeof this!=="function"){
+            throw new TypeError("Function.prototype.bind - what is trying to be bound is not callable");
+        };
+    }
+    var aArgs=Array.prototype.slice.call(arguments,1),fToBind=this,fNOP=function(){},fBound=function(){
+        return fToBind.apply(
+            (this instanceof fNOP && oThis ? this : oThis),
+            aArgs.concat(Array.prototype.slice.call(arguments))
+        );
+    };
+    fNOP.prototype=this.prototype;
+    fBound.prototype=new fNOP();
+    return fBound;
+}
+```
+
+标记部分会判断硬绑定函数是否被new调用，是的话会使用新的this替换硬绑定的this
+
+之所以在new中使用硬绑定函数，主要目的是预先设置函数的一些参数，这样在使用new进行初始化是就可以只传入其余参数。bind的功能之一就是把除了第一个参数之外的其他参数都传给下层函数。
+
+```js
+function foo(p1,p2){
+    this.val=p1+p2;
+}
+var bar=foo.bind(null,"p1");//使用null的原因是不关心硬绑定的this是什么，反正之后的new绑定会更改
+var baz=new bar("p2");
+console.log(baz.val);//p1p2
+```
+
+### 判断this
+
+new绑定>显式绑定>隐式绑定>默认绑定
+
+## 绑定例外
+
+### 被忽略的this
+
+- 如果把null，undefined作为this的绑定对象传入call、apply、bind，这些值调用时会被忽略，应用的是默认的绑定规则
+- 使用apply来展开一个数组，并当作参数传入一个参数；类似的，bind可以对参数进行柯里化（预先设置一些参数)
+
+```js
+function foo(a,b){
+    this.a=a;
+    console.log("a:"+a+",b:"+b);
+}
+foo.apply(null,[2,3]);//a:2,b:3
+var bar=foo.bind(null,2);
+bar(3);//a:2,b:3
+console.log(a);//2，this绑定到全局对象
+```
+
+总是使用null来忽略this绑定会产生一些副作用，比如一些第三方库确实用到了this，那默认绑定会将this绑定到全局对象，这会造成不可预计的
+后果
+
+#### 更安全的this 
+
+解决方法：传入一个特殊的对象，把this绑定到这个对象上不会产生副作用，简称DMZ（非军事区）空对象
+
+```js
+function foo(a,b){
+    console.log("a:"+a+",b:"+b);
+    this.a=a;
+}
+//DMZ空对象
+var nullObject=Object.create(null);
+foo.apply(nullObject,[2,3]);//a:2,b:3
+var bar=foo.bind(nullObject,2);
+bar(3);//a:2,b:3
+console.log(a);//Uncaught ReferenceError: a is not defined，this绑定到DMZ空对象
+```
+
+### 间接引用
+
+创建一个函数的间接引用，会应用默认规则
+
+```js
+function foo(){
+    console.log(this.a);
+}
+var a=2;
+var o={a:3,foo:foo};
+var p={a:4};
+o.foo();//3
+(p.foo=o.foo)();//2，调用位置是foo()，这里会应用默认绑定
+```
+
+### 软绑定
+
+硬绑定会大大降低函数的灵活性，使用硬绑定之后就无法使用隐式绑定或显式绑定来修改this
+
+如果可以给默认绑定指定一个全局对象和undefined以外的值，那就可以实现和硬绑定相同的效果，同时保留隐式绑定或者显式绑定修改this的能力
+
+```js
+if(!Function.prototype.softBind){
+    Function.prototype.softBind=function(obj){
+        var fn=this;
+        var curried=[].slice.call(arguments,1);
+        console.log(curried);
+        var bound=function(){
+            debugger
+            return fn.apply(
+                (!this||this===(window||global))?obj:this,//软绑定关键步骤
+                curried.concat.apply(curried,arguments)//柯里化相关
+            );
+        };
+        bound.prototype=Object.create(fn.prototype);
+        return bound;
+    }
+}
+function foo(){
+    console.log("name:"+this.name+","+[].slice.call(arguments).join(","));
+}
+var obj={name:"obj"},obj2={name:"obj2"},obj3={name:"obj3"};
+var fooOBJ=foo.softBind(obj,"1");//已经绑定到全局对象，会被修改，软绑定
+fooOBJ("2","3");//name:obj,1,2,3，参数柯里化
+obj2.foo=foo.softBind(obj);
+obj2.foo();//name:obj2，隐式绑定，绑定到obj2
+fooOBJ.call(obj3);//name:obj3,1，显式绑定，绑定到obj3
+setTimeout(obj2.foo,10);//name:obj //已经绑定到全局对象，会被修改，软绑定
+```
+
+## this词法
+
+箭头函数根据外层作用域来决定this，不使用以上规则
+
+```js
+function foo(){
+    return (a)=>{
+        console.log(this.a);
+    }
+}
+var obj1={a:2};
+var obj2={a:3};
+var bar=foo.call(obj1);
+bar.call(obj2);//2
+```
+
+代码风格任选其一：
+
+1. 只使用词法作用域并完全抛弃错误的this风格的写法，例如self=this,箭头函数
+2. 完全采用this风格，在必要时使用bind()，尽量避免使用self=this,箭头函数
