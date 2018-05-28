@@ -97,4 +97,72 @@ Firefox下的`<img>`、chrome下`<img alt="任意值">`是一个普通的内联�
 
 基于伪元素的图片内容生成技术
 
+1. 不能有src属性（证明观点的关键所在）
+2. 不能使用content属性生成图片（针对chrome）
+3. 需要有alt属性并有值（针对chrome）
+4. Firefox下::before伪元素的content值会被无视，::after无此问题，应该与Firefox自己占用了有关
 
+<iframe src="/examples/image-alt-show.html" width="400" height="100"></iframe>
+
+`embed:image-alt-show.html`
+
+#### content
+
+img可以用content属性来生成图片
+
+hover实现另一张图片
+
+<iframe src="/examples/image-hover-content.html" width="400" height="100"></iframe>
+
+`embed:image-hover-content.html`
+
+网站名称和标志图片使用背景图，在不改变html的情况下（为了SEO）改变背景图
+
+<iframe src="/examples/h1-content-image.html" width="400" height="100"></iframe>
+
+`embed:h1-content-image.html`
+
+上述的文字虽然被替换了，但在移动端Retina清晰度不足，导致图片模糊，应尽量采用svg图片
+
+### content与替换元素关系剖析
+
+content属性生成的对象称为"匿名替换元素"，也就是生成的替换元素
+
+表现的特征为：
+
+1. content生成的文本是无法选中、无法复制的、无法SEO，仅用来生成一些无关紧要的内容，如装饰性图形或序号之类
+2. :empty伪类忽略content生成的内容
+3. content动态生成值无法获取
+
+<iframe src="/examples/content-empty-class.html" width="400" height="100"></iframe>
+
+`embed:content-empty-class.html`
+
+```css
+/* 动态生成值 */
+.total::after{
+    content:counter(icecream);
+}
+```
+
+## content内容生成技术
+
+IE浏览器仅支持单冒号的伪元素，为了兼容性，下面内容全部使用单冒号
+
+### content辅助元素生成
+
+应用之一：清除浮动带来的影响
+
+```css
+.clear:after{
+    content:'';
+    display:table;/*或者是block*/
+    clear:both;
+}
+```
+
+应用之二：辅助实现两端对齐以及垂直居中、上边缘、下边缘对齐效果
+
+<iframe src="/examples/content-auto-divide.html" width="400" height="100"></iframe>
+
+`embed:content-auto-divide.html`
