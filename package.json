@@ -10,7 +10,7 @@
     },
     "husky": {
         "hooks": {
-            "pre-commit": "yarn lint:markdown && lint-staged"
+            "pre-commit": "yarn lint:markdown"
         }
     },
     "scripts": {
@@ -22,7 +22,7 @@
         "lint:js": "./node_modules/.bin/eslint --fix src/**/*.js gatsby-config.js gatsby-browser.js gatsby-node.js",
         "test": "echo \"Should probably write some tests!\"",
         "lint:markdown": "markdownlint --config ./.markdownlint.json ./blog/**/*.md",
-        "precommit": "yarn lint:markdown && lint-staged",
+        "precommit": "yarn lint:markdown",
         "cleanup": "rm -rf node_modules/gh-pages/.cache"
     },
     "devDependencies": {
@@ -40,6 +40,7 @@
     },
     "dependencies": {
         "bootstrap-sass": "^3.3.7",
+        "classnames": "^2.2.5",
         "dom-helpers": "^3.3.1",
         "dotenv": "^5.0.1",
         "fontfaceobserver": "^2.0.13",

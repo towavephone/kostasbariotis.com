@@ -186,6 +186,13 @@
                 border: 3px solid white;
             }
         }
+        .timeSize{
+            margin-top: -10px;
+            @media (max-width: 768px) {
+                text-align: center;
+                font-size: 0.9em;
+            }
+        }
         .tags {
             @media (max-width: 991px) {
                 text-align: left;
@@ -227,6 +234,81 @@
                     }
                 }
             }
+        }
+    }
+
+    .headings {
+        position:absolute;
+        top:0;
+        left:-300px;
+        bottom:0;
+        max-width:300px;
+        background-color: $darkpurple;
+        box-shadow: 0 0 20px #101c2e;
+        transition: left .2s ease-in-out;
+        z-index: 2;
+        padding: 10px;
+        overflow: auto;
+        &.fixed{
+            position:fixed;
+        }
+        .index-title{
+            margin: 20px 0;
+            color: #ea70a1;
+            font-weight: bolder;
+            text-align: center;
+        }
+        .index-list
+        {
+            ul{
+                list-style: none;
+            }
+            li{
+                position: relative;
+                margin-bottom: 0.1em;
+                white-space: word-wrap;
+                word-break: break-all;
+            }
+            a{
+                text-indent: 5px;
+                &.active{
+                    color:#ffffff;
+                }
+                &::before{
+                    position: absolute;
+                    top: 0;
+                    left: -1em;
+                    content: "# ";
+                    color: $red;
+                }
+            }
+        }
+    }
+
+    .collapse-icon{
+        padding:8px;
+        position:fixed;
+        left:-100px;
+        bottom:40px;
+        cursor:pointer;
+        border-radius:30px;
+        box-shadow:0 0 10px $lightpurple;
+        background-color:#122748;
+        transition:left .2s ease-in-out;
+        &.show{
+            left:25px;
+        }
+    }
+
+    &.collapse-catalog{
+        .post{
+            transform:translate(200px, 0);
+        }
+        .headings{
+            left:0;
+        }   
+        .collapse-icon.show{
+            left: 325px;
         }
     }
 }

@@ -124,3 +124,48 @@ a {
 .clearfix{
     *zoom: 1;
 }
+
+.totop{
+    display:inline-flex;
+    flex-direction:row;
+    position:fixed;
+    padding:8px;
+    width: 60px;
+    height:24px;
+    right:25px;
+    bottom:-100px;
+    transition:all .2s ease-in-out;
+    border-radius:20px;
+    box-shadow:0 0 20px $lightpurple;
+    background-color: #122748;
+    overflow:hidden;
+    box-sizing:content-box;
+    cursor:pointer;
+    i {
+        flex-basis:24px;
+        z-index:2;
+    }
+    .progress{
+        color:#fff;
+        flex-basis:26px;
+        text-align:right;
+        z-index:2;
+        font-size:0.6em;
+    }
+    .bg{
+        position:absolute;
+        left:0;
+        right:0;
+        bottom:0;
+        height:100%;
+        background-color: $red;
+        transition:all .2s ease-in-out;
+        z-index: -1;
+    }
+    &.show{
+        bottom:40px;
+    }
+}
+    
+
+   
