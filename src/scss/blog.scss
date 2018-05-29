@@ -173,10 +173,13 @@
         }
     }
     .post-meta {
+        .author-name{
+            line-height: 2em;
+        }
         .author-avatar div {
             display: inline-block;
-            width: 2.5em;
-            height: 2.5em;
+            width: 3em;
+            height: 3em;
 
             img {
                 border-radius: 50%;

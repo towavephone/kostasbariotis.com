@@ -18,11 +18,14 @@ import Separator from '../components/Separator';
 import MetaTags from '../components/MetaTags';
 import Gitalk from 'gitalk';
 import ArticleSchema from '../components/schemas/ArticleSchema';
+// import { events, query as domQuery } from 'dom-helpers';
+// import { throttle } from 'lodash';
 
 export default class Template extends React.Component {
   constructor(props) {
     super(props);
     this.isProduction = process.env.NODE_ENV === 'production';
+    // this._handleScroll = throttle(this.handleScroll, 200);
   }
 
   componentDidMount() {
@@ -42,6 +45,11 @@ export default class Template extends React.Component {
       });
       gitalk.render('gitalk-container');
     }
+    // 监听滚动事件
+    // events.on(window.document, 'scroll', this._handleScroll);
+    // events.on(window, 'hashchange', this.handleHashChange);
+    // const hash = decodeURIComponent(window.location.hash);
+    // if (hash) this.props.scrollTo(hash);
   }
   render() {
     const { data } = this.props;
@@ -88,13 +96,17 @@ export default class Template extends React.Component {
                     </li>
                   </ul>
                 </div>
-                <div className="medium-8">
+                <div className="medium-offset-3 medium-5" style={{ textAlign: 'right' }}>
                   <BulletListTags tags={post.frontmatter.tags} draft={post.frontmatter.draft} />
+                  <div className="timeSize" style={{ marginTop: '-10px' }}>
+                    阅读时间：{post.timeToRead}分钟 文章字数：{post.wordCount.words}字
+                  </div>
                 </div>
               </div>
             </section>
             <Separator />
             <article className="main-post {{post_class}}">
+              <section dangerouslySetInnerHTML={{ __html: post.tableOfContents }} />
               <section className="post-content" dangerouslySetInnerHTML={{ __html: post.html }} />
               <Separator />
               <footer className="post-footer">
@@ -186,6 +198,11 @@ export const pageQuery = graphql`
     mainPost: markdownRemark(frontmatter: { path: { eq: $mainPostPath } }) {
       html
       excerpt
+      timeToRead
+      tableOfContents
+      wordCount {
+        words
+      }
       frontmatter {
         date(formatString: "YYYY-MM-DD HH:mm:ss")
         path

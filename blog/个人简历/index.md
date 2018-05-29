@@ -23,13 +23,26 @@ draft: true
 - 涂波涛/男/1993 
 - 本科/武汉科技大学/软件工程
 - 工作年限：1年
-- 技术博客：http://www.towavephone.com
+- 技术博客：https://blog.towavephone.com/
 - Github: https://github.com/towavephone
 - 目前状况：我目前已离职，可迅速到岗
 
 # 工作经历
 
 ## 拼多多(上海)有限公司 （ 2016年7月 ~ 2018年3月 ）
+
+### 满减券后台运营项目 
+
+- Situation & Task
+    - 由于业务迭代速度加快，原来批量发放优惠券的最大数量不足以满足运营日常处理的速度。
+- Action
+    - 此项目团队一共 3 人，由我推动前端性能优化重构，其中后端研发、大数据组也一起参与。
+    - 负责重构前端页面，应用锁机制确保不会多次发同一批优惠券。
+    - 利用 React Bootstarp Table 实现了批量添加删除查询优惠券的功能。
+- Result
+    - 前端发放优惠券的时间由 3 分钟减少到至多 1 分钟，性能直观感受提升 50%，运营处理优惠券的时间缩短 1 倍。
+    - 可以发送多种不同价值、不同数量的优惠券相比原来只能发一种相同价值、不同数量的优惠券，效率有很大的提升。
+    - 整体项目的结果明显，得到了主管与同事们的一致好评。
 
 ### 满减券后台运营项目 
 
@@ -72,7 +85,7 @@ draft: true
 - [技术博客](https://blog.towavephone.com/) : gatsby做的技术博客，用到了离线加载，PWA，PRPL架构，GraphQL等等，gitlab/jenkins 自动化测试部署。
 - [公司官网](http://www.meidengpaper.com/) : 练手项目，某公司官网，前端 React + Webpack + Babel，后端 Node.js + Express + MySQL , gitlab/jenkins 自动化测试部署。
 - [博客](http://www.towavephone.com/) : hexo + yelee 样式做的博客，gitlab/jenkins 自动化测试部署。
-- [MD-Blog](http://frontendstarter.towavephone.com/) : 2017 年流行技术栈脚手架项目。
+- [脚手架项目](http://frontendstarter.towavephone.com/) : 2017 年流行技术栈脚手架项目。
 - [安卓内存清理](https://github.com/towavephone/MemoryCleaner) : 在校期间做的安卓项目，至今（2018-5-24 16:23:31） fork 数 33。
 
 # 技能清单
@@ -80,7 +93,7 @@ draft: true
 以下均为我掌握的技能
 
 - Web开发：JavaScript = jQuery > CSS = HTML
-- 前端框架：React > ionic = AngularJS
+- 前端框架：React > AngularJS
 - 前端工具：Webpack > ESLint > Sass = Gulp
 - 数据库相关：MySQL > SQLite
 - 版本管理、文档和自动化部署工具：GitLab > Jenkins

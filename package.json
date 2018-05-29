@@ -10,7 +10,7 @@
     },
     "husky": {
         "hooks": {
-          "pre-commit": "yarn lint:markdown && lint-staged"
+            "pre-commit": "yarn lint:markdown && lint-staged"
         }
     },
     "scripts": {
@@ -40,6 +40,7 @@
     },
     "dependencies": {
         "bootstrap-sass": "^3.3.7",
+        "dom-helpers": "^3.3.1",
         "dotenv": "^5.0.1",
         "fontfaceobserver": "^2.0.13",
         "gatsby": "^1.9.261",
@@ -72,6 +73,7 @@
         "gatsby-transformer-sharp": "^1.6.24",
         "gitalk": "^1.2.2",
         "instantsearch.css": "^7.1.0",
+        "lodash": "^4.17.10",
         "prop-types": "^15.6.1",
         "react-helmet": "^5.2.0",
         "react-instantsearch": "^5.0.3",
