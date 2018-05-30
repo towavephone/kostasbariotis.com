@@ -1,6 +1,5 @@
 import React from 'react';
 import GatsbyLink from 'gatsby-link';
-import cx from 'classnames';
 
 class Menu extends React.Component {
   constructor(props) {
@@ -15,6 +14,10 @@ class Menu extends React.Component {
     this.setState({
       menuOpened: !this.state.menuOpened,
     });
+  }
+
+  openLink=()=>{
+    this.handleClick();
   }
   render() {
     return (
@@ -35,14 +38,11 @@ class Menu extends React.Component {
               </button>
             </div>
             <div
-              className={cx({
-                'collapse navbar-collapse': true,
-                in: this.state.menuOpened,
-              })}
+              className={`collapse navbar-collapse ${this.state.menuOpened ? 'in' : ''}`}
               id="main-menu"
             >
               <ul className="nav navbar-nav navbar-right">
-                <li>
+                <li onClick={() => this.openLink()}>
                   <GatsbyLink
                     exact
                     activeStyle={{
@@ -53,7 +53,7 @@ class Menu extends React.Component {
                     首页
                   </GatsbyLink>
                 </li>
-                <li>
+                <li onClick={() => this.openLink()}>
                   <GatsbyLink
                     exact
                     activeStyle={{
@@ -64,7 +64,7 @@ class Menu extends React.Component {
                     标签
                   </GatsbyLink>
                 </li>
-                <li>
+                <li onClick={() => this.openLink()}>
                   <GatsbyLink
                     exact
                     activeStyle={{
@@ -75,7 +75,7 @@ class Menu extends React.Component {
                     关于
                   </GatsbyLink>
                 </li>
-                <li>
+                <li onClick={() => this.openLink()}>
                   <GatsbyLink
                     exact
                     activeStyle={{
