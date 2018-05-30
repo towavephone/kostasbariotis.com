@@ -5,7 +5,6 @@ import PropTypes from 'prop-types';
 import Img from 'gatsby-image';
 
 import Separator from './../components/Separator';
-import Menu from './../components/Menu';
 import MetaTags from './../components/MetaTags';
 
 export default function About({ data }) {
@@ -19,7 +18,6 @@ export default function About({ data }) {
         noIndex={false}
         tags=""
       />
-      <Menu />
       <section className="blog container about">
         <div className="medium-8 medium-offset-2 large-10 large-offset-1">
           <header className="header">

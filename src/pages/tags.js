@@ -4,7 +4,6 @@ import PropTypes from 'prop-types';
 import Img from 'gatsby-image';
 
 import Separator from './../components/Separator';
-import Menu from './../components/Menu';
 import MetaTags from './../components/MetaTags';
 import TagsComponent from './../components/TagsComponent';
 
@@ -44,7 +43,6 @@ export default function Tags({ data }) {
         noIndex={false}
         tags=""
       />
-      <Menu />
       <section className="blog container about tags">
         <div className="medium-8 medium-offset-2 large-10 large-offset-1 post-meta">
           <header className="header">

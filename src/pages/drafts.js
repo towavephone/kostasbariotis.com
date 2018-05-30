@@ -5,7 +5,6 @@ import PropTypes from 'prop-types';
 import GatsbyLink from 'gatsby-link';
 
 import Separator from './../components/Separator';
-import Menu from './../components/Menu';
 import Posts from './../components/Posts';
 import MetaTags from './../components/MetaTags';
 
@@ -23,7 +22,6 @@ export default function Drafts({ data }) {
         description={'这些是未完成的草稿页'}
         noIndex={true}
       />
-      <Menu />
       <section className="blog container">
         <div className="medium-8 medium-offset-2 large-10 large-offset-1">
           <header className="header">草稿</header>

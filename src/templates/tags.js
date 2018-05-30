@@ -4,7 +4,6 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 import Posts from '../components/Posts';
-import Menu from '../components/Menu';
 import Pagination from '../components/TagsPagination';
 import Separator from '../components/Separator';
 import MetaTags from '../components/MetaTags';
@@ -23,7 +22,6 @@ export default function Tags({ pathContext, data }) {
         path={`/tag/${tag}`}
         noIndex={false}
       />
-      <Menu />
       <section className="blog container tags-collection">
         <div className="medium-8 medium-offset-2 large-10 large-offset-1">
           <header className="header">

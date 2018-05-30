@@ -3,7 +3,6 @@ import GatsbyLink from 'gatsby-link';
 import Helmet from 'react-helmet';
 
 import Separator from './../components/Separator';
-import Menu from './../components/Menu';
 
 export default function NotFound() {
   return (
@@ -13,7 +12,6 @@ export default function NotFound() {
         meta={[{ name: 'description', content: 'Not found' }]}
         noIndex={true}
       />
-      <Menu />
       <section className="blog container about">
         <div className="medium-8 medium-offset-2 large-10 large-offset-1">
           <header className="header">

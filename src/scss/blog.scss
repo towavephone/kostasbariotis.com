@@ -3,6 +3,7 @@
     .home-template & {
         margin-top: 5em;
     }
+    
     @media(max-width: 768px) {
         margin-top: 2.5em;
     }
@@ -240,21 +241,23 @@
     .headings {
         position:absolute;
         top:0;
-        left:-300px;
+        left: -420px;
         bottom:0;
-        max-width:300px;
+        min-width: 300px;
+        max-width: 400px;
         background-color: $darkpurple;
-        box-shadow: 0 0 20px #101c2e;
+        box-shadow: 0 3px 10px $lightpurple;
         transition: left .2s ease-in-out;
         z-index: 2;
         padding: 10px;
         overflow: auto;
         &.fixed{
             position:fixed;
+            top:60px;
         }
         .index-title{
             margin: 20px 0;
-            color: #ea70a1;
+            color: $red;
             font-weight: bolder;
             text-align: center;
         }
@@ -265,12 +268,14 @@
             }
             li{
                 position: relative;
-                margin-bottom: 0.1em;
+                margin-bottom: 0;
                 white-space: word-wrap;
                 word-break: break-all;
+                p{
+                    margin-bottom: 0;
+                }
             }
             a{
-                text-indent: 5px;
                 &.active{
                     color:#ffffff;
                 }
@@ -308,7 +313,7 @@
             left:0;
         }   
         .collapse-icon.show{
-            left: 325px;
+            left: 425px;
         }
     }
 }

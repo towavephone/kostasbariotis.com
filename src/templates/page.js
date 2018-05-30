@@ -6,7 +6,6 @@ import PropTypes from 'prop-types';
 import Pagination from '../components/Pagination';
 import Posts from '../components/Posts';
 import Separator from '../components/Separator';
-import Menu from '../components/Menu';
 import MetaTags from '../components/MetaTags';
 
 export default function Pages({ pathContext, data }) {
@@ -22,7 +21,6 @@ export default function Pages({ pathContext, data }) {
         description={description}
         noIndex={false}
       />
-      <Menu />
       <section className="blog container">
         <div className="medium-8 medium-offset-2 large-10 large-offset-1 tags-collection">
           <header className="header">

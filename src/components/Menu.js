@@ -1,5 +1,6 @@
 import React from 'react';
 import GatsbyLink from 'gatsby-link';
+import cx from 'classnames';
 
 class Menu extends React.Component {
   constructor(props) {
@@ -34,7 +35,10 @@ class Menu extends React.Component {
               </button>
             </div>
             <div
-              className={`collapse navbar-collapse ${this.state.menuOpened ? 'in' : ''}`}
+              className={cx({
+                'collapse navbar-collapse': true,
+                in: this.state.menuOpened,
+              })}
               id="main-menu"
             >
               <ul className="nav navbar-nav navbar-right">

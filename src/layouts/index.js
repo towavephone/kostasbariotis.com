@@ -3,26 +3,25 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import Helmet from 'react-helmet';
 import '../scss/boot.scss';
-
 import Footer from '../components/Footer';
 import { events, query as domQuery } from 'dom-helpers';
 import { throttle } from 'lodash';
 import { scrollTop, isMobile, isEmptyObject } from '../utils/common';
 import Icon from '../components/Icon';
 import cx from "classnames";
+import Menu from '../components/Menu';
+import GatsbyLink from 'gatsby-link';
 // layouts/index.js
 export default class IndexLayout extends Component {
     constructor(props) {
         super(props);
         this.state = {
             menu: false,
-            header: true,
-            enableHideHeader: true,
+            showHeader: false,
             transparent: true,
-            scale: 1,
-            cover: '',
-            title: '',
+            title:'',
             progress: 0,
+            enableHideHeader: true
         };
         if (typeof window !== 'undefined') {
             this.smoothScroll = window.smoothScroll;
@@ -31,82 +30,77 @@ export default class IndexLayout extends Component {
         this._handleScroll = throttle(this.handleScroll, 200)
     }
     componentDidMount() {
-        events.on(window.document, 'scroll', this._handleScroll)
-        this.handleScroll({ target: window.document.body })
+        events.on(window.document, 'scroll', this._handleScroll);
+        this.handleScroll({ target: window.document.body });
     }
 
     componentWillUnmount() {
-        events.off(window.document, 'scroll', this._handleScroll)
-        this.smoothScroll.destroy()
+        events.off(window.document, 'scroll', this._handleScroll);
+        this.smoothScroll.destroy();
     }
     // 滚动事件
     handleScroll = e => {
-        const scrollTop = domQuery.scrollTop(e.target)
+        const scrollTop = domQuery.scrollTop(e.target);
         const scrollHeight =
             window.document.documentElement.scrollHeight ||
-            window.document.body.scrollHeight
-        const height = window.innerHeight
-        const { transparent, progress } = this.state
-        const scrollDirection = scrollTop > this.lastScrollTop
-        const scrollDistance = Math.abs(scrollTop - this.lastScrollTop)
-        const state = {}
+            window.document.body.scrollHeight;
+        const height = window.innerHeight;
+        const { transparent, progress, enableHideHeader } = this.state;
+        const scrollDirection = scrollTop > this.lastScrollTop;
+        const scrollDistance = Math.abs(scrollTop - this.lastScrollTop);
+        const contentToTop = document.getElementsByClassName('separator')[0].offsetTop + 220;
+        const state = {};
 
-        this.lastScrollTop = scrollTop
+        this.lastScrollTop = scrollTop;
 
-        if (scrollTop <= height) {
-            state.scale = 1 + scrollTop / (2 * height)
-        }
-
-        if (scrollTop >= height - 192) {
-            if (scrollDirection && scrollDistance >= 20 && this.state.header) {
+        if (scrollTop >= contentToTop) {
+            if (scrollDirection && scrollDistance >= 20 && this.state.showHeader) {
                 // 向下滚动，影藏 header
-                state.header = false
+                state.showHeader = false;
             }
 
-            if (!scrollDirection && scrollDistance >= 20 && !this.state.header) {
+            if (!scrollDirection && scrollDistance >= 20 && !this.state.showHeader) {
                 // 向上滚动，显示 header
-                state.header = true
+                state.showHeader = true;
             }
 
             if (transparent) {
-                state.transparent = false
+                state.transparent = false;
             }
 
             state.progress = (
-                (scrollTop - height + 192) /
-                (scrollHeight - height + 192 - height) *
+                (scrollTop - contentToTop) /
+                (scrollHeight - contentToTop - height) *
                 100
-            ).toFixed(0)
+            ).toFixed(0);
         }
 
-        if (scrollTop <= height - 192) {
-            if (!this.state.header) {
-                state.header = true
-            }
-
+        if (scrollTop <= contentToTop) {
+            state.enableHideHeader = true;
+            state.showHeader = false;
             if (!transparent) {
-                state.transparent = true
+                state.transparent = true;
             }
 
             if (progress) {
-                state.progress = 0
+                state.progress = 0;
             }
         }
 
-        if (!isEmptyObject(state)) this.setState(state)
+        if (!isEmptyObject(state)) this.setState(state);
     }
 
     // 切换 菜单栏显隐
     toggleMenu = menu => {
         if (!menu) {
-            window.document.documentElement.classList.add('disabled')
+            window.document.documentElement.classList.add('disabled');
         } else {
-            window.document.documentElement.classList.remove('disabled')
+            window.document.documentElement.classList.remove('disabled');
         }
 
         this.setState({
             menu: !menu,
-        })
+        });
     }
     scrollTo = hash => {
         if (!hash) {
@@ -117,34 +111,36 @@ export default class IndexLayout extends Component {
                     offset: 0,
                     easing: 'easeInOutCubic',
                 }
-            )
+            );
 
-            return
+            return;
         }
-        const value = hash[0] === '#' ? hash.slice(1) : hash
+        const value = hash[0] === '#' ? hash.slice(1) : hash;
         this.smoothScroll.animateScroll(
             window.document.querySelector(`[id='${value}']`),
             null,
             { offset: 50, easing: 'easeInOutCubic' }
-        )
+        );
     }
     enableHideHeader = enable => {
         this.setState({
             enableHideHeader: enable,
-        })
+        });
+    }
+    openLink=()=>{
+        this.toggleMenu(true);
     }
     render() {
         const {
             menu,
-            header,
+            showHeader,
             enableHideHeader,
             transparent,
-            scale,
-            progress,
+            progress
         } = this.state;
         let { data, children } = this.props;
         let { description, title } = data.site.siteMetadata;
-        const showHeader = !enableHideHeader || header;
+        var isVisibleHeader = showHeader || !enableHideHeader;
         return (
             <div>
                 <Helmet titleTemplate={`%s - ${title}`} defaultTitle={title}>
@@ -155,11 +151,48 @@ export default class IndexLayout extends Component {
                     <meta httpEquiv="X-UA-Compatible" content="IE=edge,chrome=1" />
                     <meta name="HandheldFriendly" content="True" />
                 </Helmet>
+                <div className={cx({ 'fixed-header': true, 'show': isVisibleHeader })}>
+                    <p onClick={() => this.scrollTo()}>{title}</p>
+                    <div onClick={() => this.toggleMenu(isVisibleHeader && menu)}>
+                        <Icon
+                            type={isVisibleHeader && menu ? 'cross' : 'menu'}
+                        />
+                    </div>
+                </div>
+                <Menu />
+                <div className={cx({
+                    'header-menu': true,
+                    active: isVisibleHeader && menu,
+                })}>
+                    <div className="menu-list">
+                        <li className="menu-item" onClick={() => this.openLink()}>
+                            <GatsbyLink exact to="/">
+                                首页
+                            </GatsbyLink>
+                        </li>
+                        <li className="menu-item" onClick={() => this.openLink()}>
+                            <GatsbyLink exact to="/tags">
+                                标签
+                            </GatsbyLink>
+                        </li>
+                        <li className="menu-item" onClick={() => this.openLink()}>
+                            <GatsbyLink exact to="/about">
+                                关于
+                            </GatsbyLink>
+                        </li>
+                        <li className="menu-item" onClick={() => this.openLink()}>
+                            <GatsbyLink exact to="/search">
+                                搜索
+                            </GatsbyLink>
+                        </li>
+                    </div>
+                </div>
                 <section className="main-content">
                     {children({
                         ...this.props,
                         scrollTo: this.scrollTo,
-                        enableHideHeader: this.enableHideHeader
+                        enableHideHeader: this.enableHideHeader,
+                        setTitle:this.setTitle
                     })}
                 </section>
                 <Footer />
@@ -167,7 +200,7 @@ export default class IndexLayout extends Component {
                     className={cx({ totop: true, show: !transparent })}
                     onClick={() => this.scrollTo()}
                 >
-                    <Icon type="arrow-up"/>
+                    <Icon type="arrow-up" />
                     <span className="progress">{progress}%</span>
                     <div className="bg" style={{ height: `${progress}%` }} />
                 </div>

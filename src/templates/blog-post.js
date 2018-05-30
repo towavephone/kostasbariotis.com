@@ -8,7 +8,6 @@ import {
     RedditShareButton,
 } from 'react-share';
 import Img from 'gatsby-image';
-import Menu from '../components/Menu';
 import BulletListTags from '../components/BulletListTags';
 import NavigateLink from '../components/NavigateLink';
 import Separator from '../components/Separator';
@@ -28,7 +27,7 @@ export default class Template extends Component {
         this.state = {
             collapse: false,
             collapseFirst: true,
-            transparent: false,
+            transparent: true,
             anchors: [],
         }
         this._handleScroll = throttle(this.handleScroll, 200);
@@ -70,44 +69,44 @@ export default class Template extends Component {
     }
     // 滚动事件
     handleScroll = e => {
-        const scrollTop = domQuery.scrollTop(e ? e.target : window)
-        const height = window.innerHeight
-        const { transparent, anchors } = this.state
+        const scrollTop = domQuery.scrollTop(e ? e.target : window);
+        const height = window.innerHeight;
+        const { transparent, anchors } = this.state;
+        const contentToTop = document.getElementsByClassName('separator')[0].offsetTop + 220;
+        if (scrollTop > contentToTop && transparent) {
+            this.setState({ transparent: false });
+        }
 
-        // if (scrollTop > height - 192 && transparent) {
-        //     this.setState({ transparent: false })
-        // }
-
-        // if (scrollTop <= height - 192 && !transparent) {
-        //     this.setState({ transparent: true })
-        // }
+        if (scrollTop <= contentToTop && !transparent) {
+            this.setState({ transparent: true, collapse: false});
+        }
 
         // 滚动位置检测
-        let index = 0
+        let index = 0;
 
         anchors.forEach((anchor, idx) => {
-            const { top, anchor: a } = anchor
+            const { top, anchor: a } = anchor;
 
             if (idx === index) {
                 if (scrollTop > top - 60) {
-                    index++
+                    index++;
                 } else {
-                    index--
+                    index--;
                 }
             }
 
-            a.classList.remove('active')
+            a.classList.remove('active');
         })
 
         if (anchors.length > 0) {
             if (index <= 0) {
                 // 取第一个
-                anchors[0].anchor.classList.add('active')
+                anchors[0].anchor.classList.add('active');
             } else if (index >= anchors.length) {
                 // 取最后一个
-                anchors[anchors.length - 1].anchor.classList.add('active')
+                anchors[anchors.length - 1].anchor.classList.add('active');
             } else {
-                anchors[index].anchor.classList.add('active')
+                anchors[index].anchor.classList.add('active');
             }
         }
     }
@@ -191,7 +190,6 @@ export default class Template extends Component {
                     siteUrl={siteUrl}
                     noIndex={post.frontmatter.draft}
                 />
-                <Menu />
                 <main className={cx({ 'blog container': true, 'collapse-catalog':collapse })}  role="main">
                     <div className="medium-8 medium-offset-2 large-10 large-offset-1 post">
                         <header className="post-head">
@@ -288,7 +286,7 @@ export default class Template extends Component {
                     </div>
                     {!isMobile() ? (
                         <div className={cx({ headings: true, fixed: !transparent })}>
-                            <div className="index-title">{this.props.index}</div>
+                            <div className="index-title">目录</div>
                             <div
                                 ref={el => (this.$category = el)}
                                 className="index-list"

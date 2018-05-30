@@ -6,7 +6,6 @@ import GatsbyLink from 'gatsby-link';
 import Img from 'gatsby-image';
 
 import Separator from './../components/Separator';
-import Menu from './../components/Menu';
 import Posts from './../components/Posts';
 import MetaTags from './../components/MetaTags';
 
@@ -21,6 +20,7 @@ export default function Index({ data }) {
   let [...posts] = edges;
   posts.length = 3;
   posts = posts.map(post => post.node);
+
   return (
     <div>
       <WebPageSchema title={author} description={description} url={siteUrl} />
@@ -32,7 +32,6 @@ export default function Index({ data }) {
         siteUrl={siteUrl}
         path={'/'}
       />
-      <Menu />
       <section className="blog container">
         <div className="medium-8 medium-offset-2 large-10 large-offset-1">
           <div className="blog-header">
