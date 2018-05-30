@@ -1,6 +1,6 @@
 ---
 title: CSS世界四大盒尺寸
-date: 2018-5-23 17:45:09
+date: 2018-5-30 21:53:03
 path: /CSS-world-four-kinds-of-box/
 tags: 前端, CSS, CSS世界
 ---
@@ -151,7 +151,7 @@ IE浏览器仅支持单冒号的伪元素，为了兼容性，下面内容全部
 
 ### content辅助元素生成
 
-应用之一：清除浮动带来的影响
+#### 清除浮动带来的影响
 
 ```css
 .clear:after{
@@ -161,8 +161,47 @@ IE浏览器仅支持单冒号的伪元素，为了兼容性，下面内容全部
 }
 ```
 
-应用之二：辅助实现两端对齐以及垂直居中、上边缘、下边缘对齐效果
+#### 辅助实现两端对齐以及垂直居中、上边缘、下边缘对齐效果
 
 <iframe src="/examples/content-auto-divide.html" width="400" height="100"></iframe>
 
 `embed:content-auto-divide.html`
+
+:before用于实现底对齐，:after伪元素用于辅助实现两端对齐
+
+### content字符内容生成
+
+#### 生成专用图标
+
+<iframe src="/examples/content-font-face.html" width="400" height="100"></iframe>
+
+`embed:content-font-face.html`
+
+#### 插入换行实现某些布局或效果
+
+```css
+:after{
+    /* LF字符，指代换行，还有CR指代回车 */
+    content:'\A';
+    white-space:pre;
+}
+```
+
+#### 实现正在加载中
+
+<iframe src="/examples/content-LF-loading.html" width="400" height="100"></iframe>
+
+`embed:content-LF-loading.html`
+
+1. 为什么使用dot这个元素
+    - dot是自定义的一个标签元素，除了简约，语义化明显之外，更重要的是方便向下兼容，IE8不认识此标签，因此会只显示默认的3个点，对CSS代码完全忽略
+2. 为什么使用::before，不用::after
+    - 伪元素使用before同时display设置block，是为了在高版本浏览器下原来的3个点推到最下面，不会影响content的3行内容显示，如果使用after很难实现
+3. 为什么3个点在第一行
+    - 第3个点在第一行的目的在于兼容IE9浏览器，因为IE9浏览器认识dot以及before，但是不支持animation属性，所以为了IE9能正常显示，把3个点放在第一行
+4. white-space为何使用的是pre-wrap
+    - 效果相同，不必深究，后面会介绍
+
+#### content图片生成
+
+直接用url功能符生成图片

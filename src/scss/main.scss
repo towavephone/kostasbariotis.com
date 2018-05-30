@@ -182,14 +182,13 @@ a {
     transition: transform .3s;
     p{
         position: absolute;
-        top: 0;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        height: fit-content;
-        width: fit-content;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%,-50%);
+        // height: fit-content;
+        // width: fit-content;
         cursor: pointer;
-        margin: auto;
+        // margin: auto;
     }
     i{
         font-size: 48px;

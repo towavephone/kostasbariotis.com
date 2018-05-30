@@ -262,8 +262,10 @@
         }
         .index-list
         {
+            font-size: 0.8em;
             ul{
                 list-style: none;
+                counter-reset: catalog;
             }
             li{
                 position: relative;
@@ -272,11 +274,18 @@
                 word-break: break-all;
                 p{
                     margin-bottom: 0;
+                    display: inline-block;
+                }
+                &::before{
+                    content: counters(catalog, '-') '. '; 
+                    counter-increment: catalog;
+                    color: $red;
                 }
             }
             a{
                 &.active{
-                    color:#ffffff;
+                    color: #fff;
+                    font-weight: 900;
                 }
                 &::before{
                     position: absolute;
@@ -354,6 +363,7 @@ code[class*="language-"]{
         overflow: initial;
     }
 }
+
 .blog-section {
     margin-top: 2.5em;
 
@@ -364,6 +374,11 @@ code[class*="language-"]{
     .text-right {
         @media(max-width: $desktop-width) {
             text-align: left;
+        }
+    }
+    #gitalk-container {
+        textarea,p{
+            color: #000;
         }
     }
 }
@@ -419,8 +434,3 @@ code[class*="language-"]{
     fill: currentColor;
 }
 
-#gitalk-container {
-    textarea{
-        color: #000;
-    }
-}
