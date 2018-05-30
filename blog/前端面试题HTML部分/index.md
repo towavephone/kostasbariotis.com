@@ -155,7 +155,7 @@ div.dataset.commentNum; // 10
 | 容量（每个域名）                                   | 4kb                                                | 5MB            | 5MB              |
 | 访问权限                                           | 任意窗口                                           | 任意窗口       | 当前页面窗口     |
 
-## 请描述`script`、`script async`和`script defer`的区别
+## 请描述 script、script async 和 script defer 的区别
 
 - `<script>` - HTML 解析中断，脚本被提取并立即执行。执行结束后，HTML 解析继续。
 - `<script async>` - 脚本的提取、执行的过程与 HTML 解析过程并行，脚本执行完毕可能在 HTML 解析完毕之前。当脚本与页面上其他脚本独立时，可以使用 `async`，比如用作页面统计分析。
@@ -163,13 +163,13 @@ div.dataset.commentNum; // 10
 
 注意：没有src属性的脚本，async和defer属性会被忽略。
 
-## 为什么最好把 `CSS` 的 `link` 标签放在 `head` 之间？为什么最好把 `JS` 的 `script` 标签恰好放在 `body` 之前，有例外情况吗？
+## 为什么最好把 CSS 的 link 标签放在 head 之间？为什么最好把 JS 的 script 标签恰好放在 body 之前，有例外情况吗？
 
-### 把 `link` 放在 `head` 中
+### 把 link 放在 head 中
 
 把 `<link>` 标签放在 `<head></head>` 之间是规范要求的内容。此外，这种做法可以让页面逐步呈现，提高了用户体验。将样式表放在文档底部附近，会使许多浏览器（包括 `Internet Explorer`）不能逐步呈现页面。一些浏览器会阻止渲染，以避免在页面样式发生变化时，重新绘制页面中的元素。这种做法可以防止呈现给用户空白的页面或没有样式的内容。
 
-### 把 `script` 标签恰好放在 `body` 之前
+### 把 script 标签恰好放在 body 之前
 
 脚本在下载和执行期间会阻止 HTML 解析。把 `<script>` 标签放在底部，保证 `HTML` 首先完成解析，将页面尽早呈现给用户。
 
@@ -187,7 +187,7 @@ div.dataset.commentNum; // 10
 确定显示内容的优先级（分层次渲染）——为了尽快将页面呈现给用户，页面只包含基本的最少量的 CSS、脚本和内容，然后可以使用延迟加载脚本或监听DOMContentLoaded/load事件加载其他资源和内容。
 异步加载 HTML 片段——当页面通过后台渲染时，把 HTML 拆分，通过异步请求，分块发送给浏览器。更多相关细节可以在[这里](http://www.ebaytechblog.com/2014/12/08/async-fragments-rediscovering-progressive-html-rendering-with-marko/)找到。
 
-## 为什么在 `img` 标签中使用 `srcset` 属性？请描述浏览器遇到该属性后的处理过程。
+## 为什么在 img 标签中使用 srcset 属性？请描述浏览器遇到该属性后的处理过程。
 
 因为需要设计响应式图片。我们可以使用两个新的属性 `srcset` 和 `sizes` 来提供更多额外的资源图像和提示，帮助浏览器选择正确的一个资源。
 
@@ -226,7 +226,7 @@ sizes 定义了一组媒体条件（例如屏幕宽度）并且指明当某些�
 6. 元素溢出的处理：
   在 IE Standard Mode 下，overflow 取默认值 visible，即溢出可见，这种情况下，溢出内容不会被裁剪，呈现在元素框外。而在 Quirks Mode 下，该溢出被当做扩展 box 来对待，即元素的大小由其内容决定，溢出不会被裁剪，元素框自动调整，包含溢出内容。
 
-## 使用 XHTML 的局限有哪些？如果页面使用 `application/xhtml+xml` 会有什么问题吗？
+## 使用 XHTML 的局限有哪些？如果页面使用 application/xhtml+xml 会有什么问题吗？
 
 xhtml 语法要求严格，必须有 head、body 每个 dom 必须要闭合。空标签也必须闭合。例如 `<img />`, `<br/>`, `<input/>` 等。另外要在属性值上使用双引号。一旦遇到错误，立刻停止解析，并显示错误信息。 如果页面使用 `application/xhtml+xml`，一些老的浏览器会不兼容。
 
@@ -274,7 +274,7 @@ xhtml 语法要求严格，必须有 head、body 每个 dom 必须要闭合。�
     当第一张页面提交后，服务器端作出响应返回第二张页面，此页面中用隐藏域记录了来自登陆时的用户名
 5. ip地址
 
-## `img` 的 `title` 和 `alt` 有什么区别
+## img 的 title 和 alt 有什么区别
 
 1. title 是 [global attributes](http://www.w3.org/TR/html-markup/global-attributes.html#common.attrs.core) 之一，用于为元素提供附加的 advisory information。通常当鼠标滑动到元素上的时候显示。
 2. alt 是 `<img>` 的特有属性，是图片内容的等价描述，用于图片无法加载时显示、读屏器阅读图片。可提图片高可访问性，除了纯装饰图片外都必须设置有意义的值，搜索引擎会重点分析。
@@ -528,11 +528,11 @@ name=qiu&age=25
     - **504 Gateway Timeout**
     - **505 HTTP Version Not Supported**
 
-## `keygen`是正确的HTML5标签吗？
+## keygen 是正确的HTML5标签吗？
 
 `<keygen>` 标签规定用于表单的密钥对生成器字段。当提交表单时，私钥存储在本地，公钥发送到服务器。是HTML5 标签。
 
-## `bdo` 标签是否可以改变文本方向？
+## bdo 标签是否可以改变文本方向？
 
 `<bdo>`标签覆盖默认的文本方向。
 

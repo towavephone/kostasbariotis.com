@@ -245,7 +245,7 @@
         bottom:0;
         min-width: 300px;
         max-width: 400px;
-        background-color: $darkpurple;
+        background-color: $darkblue;
         transition: left .2s ease-in-out;
         z-index: 2;
         padding: 10px;
@@ -297,7 +297,7 @@
         cursor:pointer;
         border-radius:30px;
         box-shadow:0 0 10px $lightpurple;
-        background-color:#122748;
+        background-color: $darkblue;
         transition:left .2s ease-in-out;
         &.show{
             left:25px;

@@ -21,7 +21,7 @@ date: 2018-04-14 17:25:42
 
 
 
-## 请简述`JavaScript`中的`this`
+## 请简述JavaScript中的this
 
 JS 中的`this`是一个相对复杂的概念，不是简单几句能解释清楚的。粗略地讲，函数的调用方式决定了`this`的值。我阅读了网上很多关于`this`的文章，[Arnav Aggrawal](https://medium.com/@arnav_aggarwal) 写的比较清楚。`this`取值符合以下规则：
 
@@ -61,7 +61,7 @@ JS 中的`this`是一个相对复杂的概念，不是简单几句能解释清�
 * <https://auth0.com/blog/javascript-module-systems-showdown/>
 * <https://stackoverflow.com/questions/16521471/relation-between-commonjs-amd-and-requirejs>
 
-## 请解释下面代码为什么不能用作 IIFE：`function foo(){ }();`，需要作出哪些修改才能使其成为 IIFE？
+## 请解释下面代码为什么不能用作 IIFE：function foo(){ }();，需要作出哪些修改才能使其成为 IIFE？
 
 IIFE（Immediately Invoked Function Expressions）代表立即执行函数。 JavaScript 解析器将 `function foo(){ }();`解析成`function foo(){ }`和`();`。其中，前者是函数声明；后者（一对括号）是试图调用一个函数，却没有指定名称，因此它会抛出`Uncaught SyntaxError: Unexpected token )`的错误。
 
@@ -81,7 +81,7 @@ console.log(foo); // undefined
 * <http://lucybain.com/blog/2014/immediately-invoked-function-expression/>
 * <https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/void>
 
-## `null`、`undefined`和未声明变量之间有什么区别？如何检查判断这些状态值？
+## null、undefined和未声明变量之间有什么区别？如何检查判断这些状态值？
 
 当你没有提前使用`var`、`let`或`const`声明变量，就为一个变量赋值时，该变量是未声明变量（undeclared variables）。未声明变量会脱离当前作用域，成为全局作用域下定义的变量。在严格模式下，给未声明的变量赋值，会抛出`ReferenceError`错误。和使用全局变量一样，使用未声明变量也是非常不好的做法，应当尽可能避免。要检查判断它们，需要将用到它们的代码放在`try`/`catch`语句中。
 
@@ -139,7 +139,7 @@ console.log(foo == undefined); // true. 错误，不要使用非严格相等！
 * <https://developer.mozilla.org/en-US/docs/Web/JavaScript/Closures>
 * <https://medium.com/javascript-scene/master-the-javascript-interview-what-is-a-closure-b2f0d2152b36>
 
-## 请说明`.forEach`循环和`.map()`循环的主要区别，它们分别在什么情况下使用？
+## 请说明.forEach循环和.map()循环的主要区别，它们分别在什么情况下使用？
 
 为了理解两者的区别，我们看看它们分别是做什么的。
 
@@ -229,7 +229,7 @@ console.log(double); // [2, 4, 6]
 
 * <https://stackoverflow.com/questions/7614317/what-is-the-difference-between-native-objects-and-host-objects>
 
-## 下列语句有什么区别：`function Person(){}`、`var person = Person()`和`var person = new Person()`？
+## 下列语句有什么区别：function Person(){}、var person = Person()和var person = new Person()？
 
 这个问题问得很含糊。我猜这是在考察 JavaScript 中的构造函数（constructor）。从技术上讲，`function Person(){}`只是一个普通的函数声明。使用 PascalCase 方式命名函数作为构造函数，是一个惯例。
 
@@ -255,7 +255,7 @@ console.log(person.name); // "john"
 
 * <https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/new>
 
-## `.call`和`.apply`有什么区别？
+## .call和.apply有什么区别？
 
 `.call`和`.apply`都用于调用函数，第一个参数将用作函数内 this 的值。然而，`.call`接受逗号分隔的参数作为后面的参数，而`.apply`接受一个参数数组作为后面的参数。一个简单的记忆方法是，从`call`中的 C 联想到逗号分隔（comma-separated），从`apply`中的 A 联想到数组（array）。
 
@@ -268,7 +268,7 @@ console.log(add.call(null, 1, 2)); // 3
 console.log(add.apply(null, [1, 2])); // 3
 ```
 
-## 请说明`Function.prototype.bind`的用法。
+## 请说明Function.prototype.bind的用法。
 
 摘自[MDN](https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Global_objects/Function/bind)：
 
@@ -280,7 +280,7 @@ console.log(add.apply(null, [1, 2])); // 3
 
 * <https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Global_objects/Function/bind>
 
-## 什么时候会用到`document.write()`？
+## 什么时候会用到document.write()？
 
 `document.write()`用来将一串文本写入由`document.open()`打开的文档流中。当页面加载后执行`document.write()`时，它将调用`document.open`，会清除整个文档（`<head>`和`<body>`会被移除！），并将文档内容替换成给定的字符串参数。因此它通常被认为是危险的并且容易被误用。
 
@@ -438,7 +438,7 @@ console.log(bar); // [Function: bar]
 
 当一个事件在 DOM 元素上触发时，如果有事件监听器，它将尝试处理该事件，然后事件冒泡到其父级元素，并发生同样的事情。最后直到事件到达祖先元素。事件冒泡是实现事件委托的原理（event delegation）。
 
-## “attribute” 和 “property” 之间有什么区别？
+## attribute 和 property 之间有什么区别？
 
 “Attribute” 是在 HTML 中定义的，而 “property” 是在 DOM 上定义的。为了说明区别，假设我们在 HTML 中有一个文本框：`<input type="text" value="Hello">`。
 
@@ -469,7 +469,7 @@ console.log(input.value); // Hello World!
 
 * <http://lucybain.com/blog/2014/js-extending-built-in-objects/>
 
-## document 中的`load`事件和`DOMContentLoaded`事件之间的区别是什么？
+## document 中的 load 事件和 DOMContentLoaded 事件之间的区别是什么？
 
 当初始的 HTML 文档被完全加载和解析完成之后，`DOMContentLoaded`事件被触发，而无需等待样式表、图像和子框架的完成加载。
 
@@ -480,7 +480,7 @@ console.log(input.value); // Hello World!
 * <https://developer.mozilla.org/en-US/docs/Web/Events/DOMContentLoaded>
 * <https://developer.mozilla.org/en-US/docs/Web/Events/load>
 
-## `==`和`===`的区别是什么？
+## == 和 === 的区别是什么？
 
 `==`是抽象相等运算符，而`===`是严格相等运算符。`==`运算符是在进行必要的类型转换后，再比较。`===`运算符不会进行类型转换，所以如果两个值不是相同的类型，会直接返回`false`。使用`==`时，可能发生一些特别的事情，例如：
 
@@ -535,7 +535,7 @@ duplicate([1, 2, 3, 4, 5]); // [1,2,3,4,5,1,2,3,4,5]
 
 * <https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Operators/Conditional_Operator>
 
-## 什么是`"use strict";`？使用它有什么优缺点？
+## 什么是"use strict";？使用它有什么优缺点？
 
 'use strict' 是用于对整个脚本或单个函数启用严格模式的语句。严格模式是可选择的一个限制 JavaScript 的变体一种方式 。
 
@@ -562,7 +562,7 @@ duplicate([1, 2, 3, 4, 5]); // [1,2,3,4,5,1,2,3,4,5]
 * <http://2ality.com/2011/10/strict-mode-hatred.html>
 * <http://lucybain.com/blog/2014/js-use-strict/>
 
-## 创建一个循环，从 1 迭代到 100，`3`的倍数时输出 "fizz"，`5`的倍数时输出 "buzz"，同时为`3`和`5`的倍数时输出 "fizzbuzz"。
+## 创建一个循环，从 1 迭代到 100，3的倍数时输出 "fizz"，5的倍数时输出 "buzz"，同时为3和5的倍数时输出 "fizzbuzz"。
 
 来自 [Paul Irish](https://gist.github.com/jaysonrowe/1592432#gistcomment-790724)的 FizzBuzz。
 
@@ -584,7 +584,7 @@ for (let i = 1; i <= 100; i++) {
 
 每个脚本都可以访问全局作用域，如果人人都使用全局命名空间来定义自己的变量，肯定会发生冲突。使用模块模式（IIFE）将变量封装在本地命名空间中。
 
-## 为什么要使用`load`事件？这个事件有什么缺点吗？你知道一些代替方案吗，为什么使用它们？
+## 为什么要使用 load 事件？这个事件有什么缺点吗？你知道一些代替方案吗，为什么使用它们？
 
 在文档装载完成后会触发`load`事件。此时，在文档中的所有对象都在 DOM 中，所有图像、脚本、链接和子框架都完成了加载。
 
@@ -633,7 +633,7 @@ TODO.
 
 * <https://medium.com/javascript-scene/master-the-javascript-interview-what-is-a-promise-27fc71e77261>
 
-## `Promise`代替回调函数有什么优缺点？
+## Promise代替回调函数有什么优缺点？
 
 **优点：**
 
@@ -765,7 +765,7 @@ console.log(student1, student2);
 * https://2014.jsconf.eu/speakers/philip-roberts-what-the-heck-is-the-event-loop-anyway.html
 * http://theproactiveprogrammer.com/javascript/the-javascript-event-loop-a-stack-and-a-queue/
 
-## 请解释`function foo() {}`和`var foo = function() {}`之间`foo`的用法上的区别。
+## 请解释function foo() {}和var foo = function() {}之间foo的用法上的区别。
 
 前者是函数声明，后者是函数表达式。关键的区别在于函数声明会使函数体提升（具有与变量相同的提升行为），但函数表达式的函数体不能。有关变量提升的更多解释，请参阅上面关于变量提升的问题。如果你试图在定义函数表达式之前调用它，你会得到一个`Uncaught TypeError: XXX is not a function`的错误。
 
@@ -791,7 +791,7 @@ var foo = function() {
 
 * https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/function
 
-## 使用`let`、`var`和`const`创建变量有什么区别？
+## 使用let、var和const创建变量有什么区别？
 
 用`var`声明的变量的作用域是它当前的执行上下文，它可以是嵌套的函数，也可以是声明在任何函数外的变量。`let`和`const`是块级作用域，意味着它们只能在最近的一组花括号（function、if-else 代码块或 for 循环中）中访问。
 

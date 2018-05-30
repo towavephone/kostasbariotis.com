@@ -176,7 +176,7 @@ a {
     display: inline-block;
     z-index: 1000;
     overflow: hidden;
-    background: $darkpurple;
+    background: $darkblue;
     visibility: hidden;
     transform: translateY(-100%);
     transition: transform .3s;
@@ -228,7 +228,7 @@ html.disabled{
     right:50%;
     bottom:50%;
     text-align:center;
-    background-color: $darkpurple;
+    background-color: $darkblue;
     transition:all .4s cubic-bezier(.455,.03,.515,.955);;
     opacity:0;
     overflow:hidden;
@@ -273,13 +273,13 @@ html.disabled{
 ::-webkit-scrollbar{
     width: 10px;
     height: 10px;
-    background-color: $darkpurple;
+    background-color: $darkblue;
 }
 /*定义滚动条的轨道，内阴影及圆角*/
 ::-webkit-scrollbar-track{
     -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.6);
     border-radius: 10px;
-    background-color: $darkpurple;
+    background-color: $darkblue;
 }
 /*定义滑块，内阴影及圆角*/
 ::-webkit-scrollbar-thumb{

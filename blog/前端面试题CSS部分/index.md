@@ -38,7 +38,7 @@ date: 2018-4-12 17:44:07
 
 * <https://stackoverflow.com/questions/6887336/what-is-the-difference-between-normalize-css-and-reset-css>
 
-# 请阐述`Float`定位的工作原理。
+# 请阐述 Float 定位的工作原理。
 
 浮动（float）是 CSS 定位属性。浮动元素从网页的正常流动中移出，但是保持了部分的流动性，会影响其他元素的定位（比如文字会围绕着浮动元素）。这一点与绝对定位不同，绝对定位的元素完全从文档流中脱离。
 
@@ -113,7 +113,7 @@ CSS 的`clear`属性通过使用`left`、`right`、`both`，让该元素向下�
 
 * <https://css-tricks.com/all-about-floats/>
 
-# 请阐述`z-index`属性，并说明如何形成层叠上下文（stacking context）。
+# 请阐述 z-index 属性，并说明如何形成层叠上下文（stacking context）。
 
 CSS 中的`z-index`属性控制重叠元素的垂直叠加顺序。`z-index`只能影响`position`值不是`static`的元素。
 
@@ -237,7 +237,7 @@ BFC就是页面上的一个隔离的独立容器，容器里面的子元素不�
 
 不好意思，不熟悉。
 
-# 除了`screen`，你还能说出一个 @media 属性的例子吗？
+# 除了screen，你还能说出一个 @media 属性的例子吗？
 
 TODO
 
@@ -330,20 +330,20 @@ CSS 盒模型负责计算：
 
 * <https://www.smashingmagazine.com/2010/06/the-principles-of-cross-browser-css-coding/#understand-the-css-box-model>
 
-# `* { box-sizing: border-box; }`会产生怎样的效果？
+# * { box-sizing: border-box; }会产生怎样的效果？
 
 * 元素默认应用了`box-sizing: content-box`，元素的宽高只会决定内容（content）的大小。
 * `box-sizing: border-box`改变计算元素`width`和`height`的方式，`border`和`padding`的大小也将计算在内。
 * 元素的`height` = 内容（content）的高度 + 垂直方向的`padding` + 垂直方向`border`的宽度
 * 元素的`width` = 内容（content）的宽度 + 水平方向的`padding` + 水平方向`border`的宽度
 
-# `display`的属性值都有哪些？
+# display 的属性值都有哪些？
 
 * `none`, `block`, `inline`, `inline-block`, `table`, `table-row`, `table-cell`, `list-item`.
 
 TODO
 
-# `inline`和`inline-block`有什么区别？
+# inline 和 inline-block 有什么区别？
 
 我把`block`也加入其中，为了获得更好的比较。
 
@@ -356,7 +356,7 @@ TODO
 | 边距（margin）和填充（padding） | 各个方向都存在                                              | 各个方向都存在                             | 只有水平方向存在。垂直方向会被忽略。 尽管`border`和`padding`在`content`周围，但垂直方向上的空间取决于'line-height' |
 | 浮动（float）                   | -                                                           | -                                          | 就像一个`block`元素，可以设置垂直边距和填充。                                                                      |
 
-# `relative`、`fixed`、`absolute`和`static`四种定位有什么区别？
+# relative、fixed、absolute 和 static 四种定位有什么区别？
 
 经过定位的元素，其`position`属性值必然是`relative`、`absolute`、`fixed`或`sticky`。
 
@@ -419,7 +419,7 @@ TODO
 
 * <https://www.sitepoint.com/css-techniques-for-retina-displays/>
 
-# 什么情况下，用`translate()`而不用绝对定位？什么时候，情况相反。
+# 什么情况下，用 translate() 而不用绝对定位？什么时候，情况相反。
 
 `translate()`是`transform`的一个值。改变`transform`或`opacity`不会触发浏览器重新布局（reflow）或重绘（repaint），只会触发复合（compositions）。而改变绝对定位会触发重新布局，进而触发重绘和复合。`transform`使浏览器为元素创建一个 GPU 图层，但改变绝对定位会使用到 CPU。 因此`translate()`更高效，可以缩短平滑动画的绘制时间。
 
