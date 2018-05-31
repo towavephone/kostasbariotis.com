@@ -248,7 +248,7 @@
         background-color: $darkblue;
         transition: left .2s ease-in-out;
         z-index: 2;
-        padding: 10px;
+        padding: 5px;
         overflow: auto;
         &.fixed{
             position:fixed;
@@ -266,18 +266,20 @@
             ul{
                 list-style: none;
                 counter-reset: catalog;
+                -webkit-padding-start: 20px;
             }
             li{
                 position: relative;
                 margin-bottom: 0;
-                white-space: word-wrap;
-                word-break: break-all;
+                overflow:hidden;
+                text-overflow:ellipsis;
+                white-space:nowrap;
                 p{
                     margin-bottom: 0;
                     display: inline-block;
                 }
                 &::before{
-                    content: counters(catalog, '-') '. '; 
+                    content:'# ' counters(catalog, '.') ' '; 
                     counter-increment: catalog;
                     color: $red;
                 }
@@ -287,13 +289,13 @@
                     color: #fff;
                     font-weight: 900;
                 }
-                &::before{
-                    position: absolute;
-                    top: 0;
-                    left: -1em;
-                    content: "# ";
-                    color: $red;
-                }
+                // &::before{
+                //     position: absolute;
+                //     top: 0;
+                //     left: -1em;
+                //     content: "# ";
+                //     color: $red;
+                // }
             }
         }
     }

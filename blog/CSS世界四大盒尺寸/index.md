@@ -204,5 +204,118 @@ IE浏览器仅支持单冒号的伪元素，为了兼容性，下面内容全部
 
 #### content图片生成
 
-直接用url功能符生成图片
+直接用url功能符生成图片，虽然支持png、jpg、ico、svg以及base64，但生成的图片的宽高无法改变图片的固有尺寸，此时更多的是用background-image模拟，类似这样
+
+```css
+div:before{
+    content:'';
+    background:url(1.jpg);
+}
+```
+
+content生成图片的意义在于base64位图片，由于它内联在CSS文件中，因此直接出现，没有尺寸为0的状态，同时无须设置display:block，不会出现页面加载的晃动情况
+
+<iframe src="/examples/content-image-base64.html" width="400" height="100"></iframe>
+
+`embed:content-image-base64.html`
+
+#### content 开启闭合符号生成
+
+```css
+.ask:before{
+    content:'提问："';
+}
+.answer:before{
+    content:'回答："';
+}
+.ask:after,.answer:after{
+    content:'"';
+}
+```
+
+相当于
+
+```css
+.ask{
+    quotes:'提问："' '"';
+}
+.answer{
+    quotes:'回答: "' '"';
+}
+.ask:before,.answer:before{
+    content:open-quote;
+}
+.ask:after,.answer:after{
+    content:close-quote;
+}
+```
+
+#### content attr 属性值内容生成
+
+前面alt属性显示图片描述信息的例子，还有可以生成自定义的HTML属性
+
+```css
+.icon:before{
+    content:attr(data-title);
+}
+```
+
+#### 深入理解content计数器
+
+##### counter-reset
+
+计数器重置，默认是0，可以是负数，可以多个技术器同时命名，空格分隔，还可以设置为none或inherit
+
+```css
+/* 显示23 */
+.xxx{
+    有两个计数器分别是wangxiaoer初始值为2，wangxiaosan初始值为3
+    counter-reset:wangxiaoer 2 wangxiaosan 3;
+}
+```
+
+##### counter-increment
+
+计数器递增，值为counter-reset的1个或多个关键字，后面跟数字，表示每次递增的值，省略时默认为1
+
+普照规则：普照源唯一（counter-reset），每普照一次（counter-increment）一次，普照源增加一次计数值
+
+```css
+/*显示3，不是2，counter-increment默认值起作用，父类普照一次*/
+.counter{
+    counter-reset:wangxiaoer 2;
+    counter-increment:wangxiaoer;
+}
+.counter:before{
+    content:counter(wangxiaoer);
+}
+```
+
+```css
+/* 显示4，父类普照1，子类普照1次 */
+.counter{
+    counter-reset:wangxiaoer 2;
+    counter-increment:wangxiaoer;
+}
+.counter:before{
+    content:counter(wangxiaoer);
+    counter-increment:wangxiaoer;
+}
+```
+
+```css
+/* 显示34，子类分别普照一次，累加 */
+.counter{
+    counter-reset:wangxiaoer 2;
+}
+.counter:before,.counter:after{
+    content:counter(wangxiaoer);
+    counter-increment:wangxiaoer;
+}
+```
+
+
+
+
+
 

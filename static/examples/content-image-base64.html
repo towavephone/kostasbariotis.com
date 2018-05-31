@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<style>
+    body {
+        background-color: white;
+    }
+
+    a {
+        text-decoration: underline;
+        color: #cd0000;
+    }
+
+    a[target="_blank"]:after {
+        content: url(data:image/gif;base64,R0lGODlhBQAFAIABAM0AAAAAACH5BAEAAAEALAAAAAAFAAUAAAIHRIB2eKuOCgA7);
+    }
+
+    /* a[target="_blank"]:after {
+        content:'';
+        display: inline-block;
+        width: 6px;
+        height: 6px;
+        background: url('blank.gif');
+    } */
+</style>
+
+<body>
+    <p>下面这段话所有链接地址都是本实例。</p>
+    <p>点击
+        <a href="">这个链接</a>当前页刷新，看看有没有标记；点击
+        <a href="" target="_blank">这个链接</a>，新标签页新打开一次本页面，看看有没有标记。
+    </p>
+</body>
+
+</html>
