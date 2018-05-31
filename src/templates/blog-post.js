@@ -23,7 +23,7 @@ import { isMobile } from '../utils/common';
 export default class Template extends Component {
     constructor(props) {
         super(props);
-        this.isProduction = process.env.NODE_ENV === 'production';
+        this.isProduction = true;
         this.state = {
             collapse: false,
             collapseFirst: true,
