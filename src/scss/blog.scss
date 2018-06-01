@@ -243,8 +243,7 @@
         top:0;
         left: -420px;
         bottom:0;
-        min-width: 300px;
-        max-width: 400px;
+        width: 350px;
         background-color: $darkblue;
         transition: left .2s ease-in-out;
         z-index: 2;
@@ -255,7 +254,7 @@
             top:48px;
         }
         .index-title{
-            margin: 20px 0;
+            margin: 10px 0;
             color: $red;
             font-weight: bolder;
             text-align: center;
@@ -310,6 +309,7 @@
         box-shadow:0 0 10px $lightpurple;
         background-color: $darkblue;
         transition:left .2s ease-in-out;
+        z-index:3;
         &.show{
             left:25px;
         }
@@ -317,13 +317,21 @@
 
     &.collapse-catalog{
         .post{
-            transform:translate(200px, 0);
+            @media (min-width: 768px) {
+                transform:translate(200px, 0);
+            }
         }
         .headings{
             left:0;
+            @media (max-width: 768px) {
+                right: 0;
+                width: 100%;
+            }
         }   
         .collapse-icon.show{
-            left: 425px;
+            @media (min-width: 768px) {
+                left: 375px;
+            }
         }
     }
 }

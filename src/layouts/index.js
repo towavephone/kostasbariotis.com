@@ -6,7 +6,7 @@ import '../scss/boot.scss';
 import Footer from '../components/Footer';
 import { events, query as domQuery } from 'dom-helpers';
 import { throttle } from 'lodash';
-import { scrollTop, isMobile, isEmptyObject } from '../utils/common';
+import { scrollTop, isEmptyObject } from '../utils/common';
 import Icon from '../components/Icon';
 import cx from "classnames";
 import Menu from '../components/Menu';
@@ -192,7 +192,7 @@ export default class IndexLayout extends Component {
                         ...this.props,
                         scrollTo: this.scrollTo,
                         enableHideHeader: this.enableHideHeader,
-                        setTitle:this.setTitle
+                        setTitle:this.setTitle,
                     })}
                 </section>
                 <Footer />

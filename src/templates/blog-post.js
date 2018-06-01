@@ -18,7 +18,6 @@ import { events, query as domQuery } from 'dom-helpers';
 import { throttle } from 'lodash';
 import Icon from '../components/Icon';
 import cx from 'classnames';
-import { isMobile } from '../utils/common';
 
 export default class Template extends Component {
     constructor(props) {
@@ -156,7 +155,7 @@ export default class Template extends Component {
         }
 
         if (this.state.collapseFirst) {
-            if (!isMobile()) this.dealWithCategory(this._handleScroll);
+            this.dealWithCategory(this._handleScroll);
         }
 
         this.setState({
@@ -284,27 +283,23 @@ export default class Template extends Component {
                             </section>
                         </article>
                     </div>
-                    {!isMobile() ? (
-                        <div className={cx({ headings: true, fixed: !transparent })}>
-                            <div className="index-title">目录</div>
-                            <div
-                                ref={el => (this.$category = el)}
-                                className="index-list"
-                                dangerouslySetInnerHTML={{ __html: post.tableOfContents }}
-                            />
-                        </div>
-                    ) : null}
-                    {!isMobile() ? (
+                    <div className={cx({ headings: true, fixed: !transparent })}>
+                        <div className="index-title">目录</div>
                         <div
-                            className={cx({ 'collapse-icon': true, show: !transparent })}
-                            onClick={this.handleToggleCollapse}
-                        >
-                            <Icon
-                                type={collapse ? 'arrow-left' : 'arrow-right'}
-                                style={{ color: '#fff', fontSize: '24px' }}
-                            />
-                        </div>
-                    ) : null}
+                            ref={el => (this.$category = el)}
+                            className="index-list"
+                            dangerouslySetInnerHTML={{ __html: post.tableOfContents }}
+                        />
+                    </div>
+                    <div
+                        className={cx({ 'collapse-icon': true, show: !transparent })}
+                        onClick={this.handleToggleCollapse}
+                    >
+                        <Icon
+                            type={collapse ? 'cross' : 'text-document'}
+                            style={{ color: '#fff', fontSize: '24px' }}
+                        />
+                    </div>
                 </main>
             </div>
         );
