@@ -1,15 +1,14 @@
 const path = require('path');
-const { createFilePath } = require(`gatsby-source-filesystem`);
+// const { createFilePath } = require(`gatsby-source-filesystem`);
 // 创建 node
-exports.onCreateNode = ({ node, getNode, boundActionCreators }) => {
+exports.onCreateNode = ({ node, boundActionCreators }) => {
   if (node.internal.type === 'MarkdownRemark') {
     const { createNodeField } = boundActionCreators;
-    const slug = createFilePath({ node, getNode, basePath: 'pages' });
-
+    // const slug = createFilePath({ node, getNode, basePath: 'pages' });
     createNodeField({
       node,
       name: 'slug',
-      value: slug,
+      value: node.frontmatter.path,
     });
   }
 };
