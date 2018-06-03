@@ -246,7 +246,7 @@
         width: 350px;
         background-color: $darkblue;
         transition: left .2s ease-in-out;
-        z-index: 2;
+        z-index: 3;
         padding: 5px;
         overflow: auto;
         &.fixed{
@@ -386,12 +386,16 @@ code[class*="language-"]{
             text-align: left;
         }
     }
-    #gitalk-container {
+       
+    .gt-container {
+        .gt-svg svg{
+            fill: #6190e8;
+        }
         textarea,.gt-comment-content p{
             color: #000;
         }
-        .gt-container .gt-svg svg{
-            fill: #6190e8;
+        .gt-meta{
+            z-index:2;
         }
     }
 }
