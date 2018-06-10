@@ -157,3 +157,324 @@ bar():
 所以多线程是非常复杂的，如果不通过特殊的步骤来防止中断和交错运行，可能会得到不确定的行为
 
 js从不跨线程共享数据，但并不保证js总是确定性的，foo和bar的相对顺序的改变可能会导致不同的结果
+
+### 完整运行
+
+由于js单线程特性，foo以及bar中的代码具有原子性，也就是说一旦foo开始运行，它的所有代码都会在bar中的任意代码运行之前完成，或者相反，这称为完整运行特性
+
+```js
+var a=1;
+var b=2;
+function foo(){
+    a++;
+    b=b*a;
+    a=b+3;
+}
+function bar(){
+    b--;
+    a=8+b;
+    b=a*2;
+}
+ajax("http://some.url.1",foo);
+ajax("http://some.url.2",bar);
+```
+
+会被解析为：
+
+```js
+//块1
+var a=1;
+var b=2;
+//块2
+a++;
+b=b*a;
+a=b+3;
+//块3
+b--;
+a=8+b;
+b=a*2;
+```
+
+块2和块3哪个都有可能先运行，所以有两种输出，是函数顺序级别的不确定，而不是多线程下语句的顺序级别
+
+在js的特性中，这种函数顺序的不确定性就是通常所说的竞态条件，foo和bar相互竞争，看谁先运行
+
+## 并发
+
+单线程事件循环是并发的一种形式
+
+### 非交互
+
+如果进程间没有相互影响的话，不确定性是完全可以接受的，如以下代码
+
+```js
+var res={};
+function foo(results){
+    res.foo=results;
+}
+function bar(result){
+    res.bar=results;
+}
+ajax("http://some.url.1",foo);
+ajax("http://some.url.2",bar);
+```
+
+不管如何执行，结果一样，这就是非交互
+
+### 交互
+
+更常见的情况是，并发的进程需要交流，通过作用域或DOM间接交互，正如前面介绍的，如果出现这样的交互，就需要对他们的交互进行协调以避免竞态的出现
+
+```js
+var res={};
+function response(data){
+    res.push(data);
+}
+ajax("http://some.url.1",response);
+ajax("http://some.url.2",response);
+```
+
+不同的调用顺序会导致数组顺序的不同，这种不确定性很有可能就是竞态条件的bug
+
+需要协调交互顺序来处理竞态条件
+
+```js
+var res=[];
+function response(data){
+    if(data.url=="http://some.url.1"){
+        res[0]=data;
+    }else{
+        res[1]=data;
+    }
+}
+ajax("http://some.url.1",response);
+ajax("http://some.url.2",response);
+```
+
+有些并发场景不做协调，就总是出错，考虑
+
+```js
+var a,b;
+function foo(x){
+    a=x*2;
+    baz();
+}
+function bar(y){
+    b=y*2;
+    baz();
+}
+function baz(){
+    console.log(a+b);
+}
+ajax("http://some.url.1",foo);
+ajax("http://some.url.2",bar);
+```
+
+在这个例子中，无论bar与foo哪一个先触发，总会使baz过早运行（a或者b处于未定义状态）；但对baz的第二次调用就没有问题，因为这时候a,b都已经可用了
+
+解决方法如下
+
+```js
+var a,b;
+function foo(x){
+    a=x*2;
+    if(a&&b){
+        baz();
+    }
+}
+function bar(y){
+    b=y*2;
+    if(a&&b){
+        baz();
+    }
+}
+function baz(){
+    console.log(a+b);
+}
+ajax("http://some.url.1",foo);
+ajax("http://some.url.2",bar);
+```
+
+另一种可能遇到的并发交互条件有时称为竞态(race)，但更精确的叫法是门闩(latch)，它的特性可以描述为只有第一名取胜，不确定性是可以接受的
+
+```js
+var a;
+function foo(x){
+    a=x*2;
+    baz();
+}
+function bar(x){
+    a=x/2;
+    baz();
+}
+function baz(){
+    console.log(a);
+}
+ajax("http://some.url.1",foo);
+ajax("http://some.url.2",bar);
+```
+
+不管哪一个先触发，都会覆盖另外一个给a赋的值，也会重复调用baz
+
+可以通过一个简单的门闩协调这个过程，只让第一个通过
+
+```js
+var a;
+function foo(x){
+    if(!a){
+        a=x*2;
+        baz();
+    }
+}
+function bar(x){
+    if(!a){
+        a=x/2;
+        baz();
+    }
+}
+function baz(){
+    console.log(a);
+}
+ajax("http://some.url.1",foo);
+ajax("http://some.url.2",bar);
+```
+
+以上例子只会让第一个运行的通过
+
+### 协作
+
+并发协作：取到一个长期运行的进程，并将其分割成多个步骤或多批任务，使得其他并发进程有机会将自己的运算插入到事件循环队列中交替运行
+
+```js
+var res=[];
+function response(data){
+    res=res.concat(data.map(function(val){
+        return val*2;
+    })
+}
+ajax("http://some.url.1",response);
+ajax("http://some.url.2",response);
+```
+
+假设ajax请求的数据规模达到上千万，那么就会阻塞UI事件的运行，所以需要创建一个协作性更强且不会阻塞事件循环队列的并发系统，可以分批处理这些结果，每次处理后返回事件循环，让其他等待事件有机会运行
+
+```js
+var res=[];
+function response(data){
+    var chunk=data.splice(0,1000);
+    res=res.concat(chunk.map(function(val){
+            return val*2;
+        })
+    );
+    if(data.length>0){
+        //异步调度下一次批处理
+        setTimeout(function(){
+            response(data);
+        },0);
+    }
+}
+ajax("http://some.url.1",response);
+ajax("http://some.url.2",response);
+```
+
+每次只处理1000条数据，确保运行时间会很短，即使这意味着更多的后续进程，因为事件循环队列的交替运行会提高响应
+
+当然这些结果的顺序是不可预测的，使用setTimeout进行异步调度，其意义在于把这个函数插入到当前事件循环队列的结尾处
+
+## 任务
+
+在ES6中，promise的异步建立在事件循环队列之上，叫做任务队列
+
+它是挂在事件循环队列的每个tick之后的一个队列，任务循环可能无限循环，进而导致程序卡死，无法转移到下一个事件循环tick
+
+设想一个调度任务的API，称之为schedule，考虑
+
+```js
+console.log("A");
+setTimeout(function(){
+    console.log("B");
+},0);
+schedule(function(){
+    console.log("C");
+    schedule(function(){
+        console.log("D");
+    });
+});
+```
+
+实际打印的结果是ACDB，因为任务处理是在当前事件循环tick结尾处，且定时器触发是为了调度下一个事件循环tick（如果可用的话）
+
+## 语句顺序
+
+代码中语句的顺序和js引擎执行语句的顺序并不一定要一致
+
+```js
+var a,b;
+a=10;
+b=30;
+a=a+1;
+b=b+1;
+console.log(a+b);//42
+```
+
+js引擎会这样优化以提高执行速度
+
+```js
+var a,b;
+a=11;
+b=31;
+console.log(42);
+```
+
+或者
+
+```js
+console.log(42);
+```
+
+但是有一种场景其中特定的优化是不安全的，因此也是不允许的
+
+```js
+var a,b;
+a=10;
+b=30;
+// 我们需要a和b处于递增之前的状态
+console.log(a*b);
+a=a+1;
+b=b+1;
+console.log(a+b);
+```
+
+还有其他一些例子，其中编译器排序会产生可见的副作用（因此必须禁止），比如会产生副作用的函数调用或ES6代理对象
+
+```js
+function foo(){
+    console.log(b);
+    return 1;
+}
+var a,b,c;
+// ES5.1 getter字面量语法
+c={
+    get bar(){
+        console.log(a);
+        return 1;
+    }
+};
+a=10;
+b=30;
+a+=foo();//30
+b+=c.bar;//11
+console.log(a+b);//42
+```
+
+如果不是代码片段中的语句console.log，js引擎如果愿意的话，本来可以自由的把代码重新排序
+
+```js
+//...
+a=10+foo();
+b=30+c.bar;
+//...
+```
+
+编译器语句的重排序几乎就是并发和交互的微型隐喻，作为一个一般性的概念，理解后有助于理清异步js的代码流问题
+
