@@ -87,7 +87,7 @@ class Menu extends React.Component {
                   </GatsbyLink>
                 </li>
                 {
-                    !this.props.isProuction?<li onClick={() => this.openLink()}>
+                    !this.props.isProduction?<li onClick={() => this.openLink()}>
                         <GatsbyLink
                             exact
                             activeStyle={{
