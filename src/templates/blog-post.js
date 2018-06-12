@@ -287,7 +287,7 @@ export default class Template extends Component {
                         <div className="index-title">目录</div>
                         <div
                             ref={el => (this.$category = el)}
-                            className="index-list"
+                            className={cx('index-list',{'catalog':post.frontmatter.catalog_number!==undefined&&post.frontmatter.catalog_number!==null?post.frontmatter.catalog_number:true})}
                             dangerouslySetInnerHTML={{ __html: post.tableOfContents }}
                         />
                     </div>
@@ -341,6 +341,7 @@ export const pageQuery = graphql`
         tags
         title
         draft
+        catalog_number
       }
     }
     nextPost: markdownRemark(frontmatter: { path: { eq: $nextPostPath } }) {

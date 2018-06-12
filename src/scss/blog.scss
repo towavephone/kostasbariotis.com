@@ -264,7 +264,6 @@
             font-size: 0.8em;
             ul{
                 list-style: none;
-                counter-reset: catalog;
                 -webkit-padding-start: 20px;
             }
             li{
@@ -278,8 +277,7 @@
                     display: inline-block;
                 }
                 &::before{
-                    content:'# ' counters(catalog, '.') ' '; 
-                    counter-increment: catalog;
+                    content:'# ';
                     color: $red;
                 }
             }
@@ -288,13 +286,16 @@
                     color: #fff;
                     font-weight: 900;
                 }
-                // &::before{
-                //     position: absolute;
-                //     top: 0;
-                //     left: -1em;
-                //     content: "# ";
-                //     color: $red;
-                // }
+            }
+        }
+        .catalog{
+            ul{
+                counter-reset: catalog;
+            }  
+            li::before{
+                content:'# ' counters(catalog, '.') ' '; 
+                counter-increment: catalog;
+                // color: $red;
             }
         }
     }

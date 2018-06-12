@@ -15,6 +15,7 @@ import GatsbyLink from 'gatsby-link';
 export default class IndexLayout extends Component {
     constructor(props) {
         super(props);
+        this.isProduction = process.env.NODE_ENV === 'production';
         this.state = {
             menu: false,
             showHeader: false,
@@ -159,7 +160,7 @@ export default class IndexLayout extends Component {
                         />
                     </div>
                 </div>
-                <Menu />
+                <Menu isProduction={this.isProduction}/>
                 <div className={cx({
                     'header-menu': true,
                     active: isVisibleHeader && menu,
@@ -185,6 +186,13 @@ export default class IndexLayout extends Component {
                                 搜索
                             </GatsbyLink>
                         </li>
+                        {
+                            !this.isProduction?<li className="menu-item" onClick={() => this.openLink()}>
+                            <GatsbyLink exact to="/drafts">
+                                草稿
+                            </GatsbyLink>
+                        </li>:null
+                        }
                     </div>
                 </div>
                 <section className="main-content">

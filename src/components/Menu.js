@@ -86,6 +86,19 @@ class Menu extends React.Component {
                     搜索
                   </GatsbyLink>
                 </li>
+                {
+                    !this.props.isProuction?<li onClick={() => this.openLink()}>
+                        <GatsbyLink
+                            exact
+                            activeStyle={{
+                            color: '#e52f45',
+                            }}
+                            to="/drafts"
+                        >
+                            草稿
+                        </GatsbyLink>
+                    </li>:null
+                }
               </ul>
             </div>
           </div>

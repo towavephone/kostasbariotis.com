@@ -1,4 +1,4 @@
 User-agent: *
-Disallow:
+Disallow: /tags/
 
 Sitemap: https://blog.towavephone.com/sitemap.xml
