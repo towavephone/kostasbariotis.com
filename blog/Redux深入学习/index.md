@@ -28,7 +28,7 @@ tags: 前端, React, Redux
 
 为了区分这三种 action，可能在 action 里添加一个专门的 status 字段作为标记位
 
-```json
+```js
 { type: 'FETCH_POSTS' }
 { type: 'FETCH_POSTS', status: 'error', error: 'Oops' }
 { type: 'FETCH_POSTS', status: 'success', response: { ... } }
@@ -36,7 +36,7 @@ tags: 前端, React, Redux
 
 又或者为它们定义不同的 type：
 
-```json
+```js
 { type: 'FETCH_POSTS_REQUEST' }
 { type: 'FETCH_POSTS_FAILURE', error: 'Oops' }
 { type: 'FETCH_POSTS_SUCCESS', response: { ... } }
@@ -49,3 +49,237 @@ tags: 前端, React, Redux
 ## 同步 Action 创建函数（Action Creator）
 
 下面先定义几个同步的 action 类型 和 action 创建函数。比如，用户可以选择要显示的 subreddit
+
+`action.js`
+
+```js
+export const SELECT_SUBREDDIT = 'SELECT_SUBREDDIT'
+
+export function selectSubreddit(subreddit) {
+  return {
+    type: SELECT_SUBREDDIT,
+    subreddit
+  }
+}
+```
+
+也可以按 "刷新" 按钮来更新它
+
+```js
+export const INVALIDATE_SUBREDDIT = 'INVALIDATE_SUBREDDIT'
+
+export function invalidatesubreddit(subreddit) {
+  return {
+    type: INVALIDATE_SUBREDDIT,
+    subreddit
+  }
+}
+```
+
+这些是用户操作来控制的 action。也有另外一类 action，是由网络请求来控制。后面会介绍如何使用它们，现在，我们只是来定义它们
+
+当需要获取指定 subreddit 的帖子的时候，需要 dispatch REQUEST_POSTS action
+
+```js
+export const REQUEST_POSTS = 'REQUEST_POSTS'
+
+export function requestPosts(subreddit) {
+  return {
+    type: REQUEST_POSTS,
+    subreddit
+  }
+}
+```
+
+把 REQUEST_POSTS 和 SELECT_SUBREDDIT 或 INVALIDATE_SUBREDDIT 分开很重要。虽然它们的发生有先后顺序，但随着应用变得复杂，有些用户操作（比如，预加载最流行的 subreddit，或者一段时间后自动刷新过期数据）后需要马上请求数据。路由变化时也可能需要请求数据，所以一开始如果把请求数据和特定的 UI 事件耦合到一起是不明智的
+
+最后，当收到请求响应时，我们会 dispatch RECEIVE_POSTS
+
+```js
+export const RECEIVE_POSTS = 'RECEIVE_POSTS'
+
+export function receivePosts(subreddit, json) {
+  return {
+    type: RECEIVE_POSTS,
+    subreddit,
+    posts: json.data.children.map(child => child.data),
+    receivedAt: Date.now()
+  }
+}
+```
+
+以上就是现在需要知道的所有内容。稍后会介绍如何把 dispatch action 与网络请求结合起来
+
+### 错误处理须知
+
+在实际应用中，网络请求失败时也需要 dispatch action。虽然在本教程中我们并不做错误处理，但是这个真实场景的案例会演示一种实现方案。
+
+## 设计state结构
+
+在功能开发前需要设计应用的 state 结构。在写异步代码的时候，需要考虑更多的 state，所以我们要仔细考虑一下
+
+这部分内容通常让初学者感到迷惑，因为选择哪些信息才能清晰地描述异步应用的 state 并不直观，还有怎么用一个树来把这些信息组织起来
+
+以最通用的案例来打头：列表。Web 应用经常需要展示一些内容的列表。比如，帖子的列表，朋友的列表。首先要明确应用要显示哪些列表。然后把它们分开储存在 state 中，这样你才能对它们分别做缓存并且在需要的时候再次请求更新数据
+
+"Reddit 头条" 应用会长这个样子
+
+```js
+{
+  selectedsubreddit: 'frontend',
+  postsBySubreddit: {
+    frontend: {
+      isFetching: true,
+      didInvalidate: false,
+      items: []
+    },
+    reactjs: {
+      isFetching: false,
+      didInvalidate: false,
+      lastUpdated: 1439478405547,
+      items: [
+        {
+          id: 42,
+          title: 'Confusion about Flux and Relay'
+        },
+        {
+          id: 500,
+          title: 'Creating a Simple Application Using React JS and Flux Architecture'
+        }
+      ]
+    }
+  }
+}
+```
+
+下面列出几个要点：
+
+- 分开存储 subreddit 信息，是为了缓存所有 subreddit。当用户来回切换 subreddit 时，可以立即更新，同时在不需要的时候可以不请求数据。不要担心把所有帖子放到内存中（会浪费内存）：除非你需要处理成千上万条帖子，同时用户还很少关闭标签页，否则你不需要做任何清理
+
+- 每个帖子的列表都需要使用 isFetching 来显示进度条，didInvalidate 来标记数据是否过期，lastUpdated 来存放数据最后更新时间，还有 items 存放列表信息本身。在实际应用中，你还需要存放 fetchedPageCount 和 nextPageUrl 这样分页相关的 state
+
+### 嵌套内容须知
+
+在这个示例中，接收到的列表和分页信息是存在一起的。但是，这种做法并不适用于有互相引用的嵌套内容的场景，或者用户可以编辑列表的场景。想像一下用户需要编辑一个接收到的帖子，但这个帖子在 state tree 的多个位置重复出现。这会让开发变得非常困难
+
+如果你有嵌套内容，或者用户可以编辑接收到的内容，你需要把它们分开存放在 state 中，就像数据库中一样。在分页信息中，只使用它们的 ID 来引用。这可以让你始终保持数据更新。真实场景的案例中演示了这种做法，结合 normalizr 来把嵌套的 API 响应数据范式化，最终的 state 看起来是这样
+
+```js
+{
+  selectedsubreddit: 'frontend',
+  entities: {
+    users: {
+      2: {
+        id: 2,
+        name: 'Andrew'
+      }
+    },
+    posts: {
+      42: {
+        id: 42,
+        title: 'Confusion about Flux and Relay',
+        author: 2
+      },
+      100: {
+        id: 100,
+        title: 'Creating a Simple Application Using React JS and Flux Architecture',
+        author: 2
+      }
+    }
+  },
+  postsBySubreddit: {
+    frontend: {
+      isFetching: true,
+      didInvalidate: false,
+      items: []
+    },
+    reactjs: {
+      isFetching: false,
+      didInvalidate: false,
+      lastUpdated: 1439478405547,
+      items: [ 42, 100 ]
+    }
+  }
+}
+```
+
+在本教程中，我们不会对内容进行范式化，但是在一个复杂些的应用中你可能需要使用
+
+## 处理Action
+
+在讲 dispatch action 与网络请求结合使用细节前，我们为上面定义的 action 开发一些 reducer
+
+`Reducer 组合须知`
+
+这里，我们假设你已经学习过 combineReducers() 并理解 reducer 组合，还有基础章节中的 拆分 Reducer。如果还没有，请先学习
+
+`reducers.js`
+
+```js
+import { combineReducers } from 'redux'
+import {
+  SELECT_SUBREDDIT,
+  INVALIDATE_SUBREDDIT,
+  REQUEST_POSTS,
+  RECEIVE_POSTS
+} from '../actions'
+
+function selectedsubreddit(state = 'reactjs', action) {
+  switch (action.type) {
+    case SELECT_SUBREDDIT:
+      return action.subreddit
+    default:
+      return state
+  }
+}
+
+function posts(
+  state = {
+    isFetching: false,
+    didInvalidate: false,
+    items: []
+  },
+  action
+) {
+  switch (action.type) {
+    case INVALIDATE_SUBREDDIT:
+      return Object.assign({}, state, {
+        didInvalidate: true
+      })
+    case REQUEST_POSTS:
+      return Object.assign({}, state, {
+        isFetching: true,
+        didInvalidate: false
+      })
+    case RECEIVE_POSTS:
+      return Object.assign({}, state, {
+        isFetching: false,
+        didInvalidate: false,
+        items: action.posts,
+        lastUpdated: action.receivedAt
+      })
+    default:
+      return state
+  }
+}
+
+function postsBySubreddit(state = {}, action) {
+  switch (action.type) {
+    case INVALIDATE_SUBREDDIT:
+    case RECEIVE_POSTS:
+    case REQUEST_POSTS:
+      return Object.assign({}, state, {
+        [action.subreddit]: posts(state[action.subreddit], action)
+      })
+    default:
+      return state
+  }
+}
+
+const rootReducer = combineReducers({
+  postsBySubreddit,
+  selectedsubreddit
+})
+
+export default rootReducer
+```
