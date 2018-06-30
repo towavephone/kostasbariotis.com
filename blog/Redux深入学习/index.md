@@ -283,3 +283,98 @@ const rootReducer = combineReducers({
 
 export default rootReducer
 ```
+
+上面代码有两个有趣的点
+
+- 使用 ES6 计算属性语法，使用 Object.assign() 来简洁高效地更新 state[action.subreddit]
+
+```js
+return Object.assign({}, state, {
+  [action.subreddit]: posts(state[action.subreddit], action)
+})
+```
+
+- 我们提取出 posts(state, action) 来管理指定帖子列表的 state。这就是 reducer 组合 ！我们还可以借此机会把 reducer 分拆成更小的 reducer，这种情况下，我们把对象内列表的更新代理到了 posts reducer 上。在真实场景的案例中甚至更进一步，里面介绍了如何做一个 reducer 工厂来生成参数化的分页 reducer
+
+记住 reducer 只是函数而已，所以你可以尽情使用函数组合和高阶函数这些特性
+
+## 异步 action 创建函数
+
+最后，如何把之前定义的同步 action 创建函数和网络请求结合起来呢？标准的做法是使用 Redux Thunk 中间件。要引入 redux-thunk 这个专门的库才能使用。我们 后面 会介绍 middleware 大体上是如何工作的；目前，你只需要知道一个要点：通过使用指定的 middleware，action 创建函数除了返回 action 对象外还可以返回函数。这时，这个 action 创建函数就成为了 thunk
+
+当 action 创建函数返回函数时，这个函数会被 Redux Thunk middleware 执行。这个函数并不需要保持纯净；它还可以带有副作用，包括执行异步 API 请求。这个函数还可以 dispatch action，就像 dispatch 前面定义的同步 action 一样
+
+我们仍可以在 actions.js 里定义这些特殊的 thunk action 创建函数
+
+`action.js`
+
+```js
+import fetch from 'cross-fetch'
+
+export const REQUEST_POSTS = 'REQUEST_POSTS'
+function requestPosts(subreddit) {
+  return {
+    type: REQUEST_POSTS,
+    subreddit
+  }
+}
+
+export const RECEIVE_POSTS = 'RECEIVE_POSTS'
+function receivePosts(subreddit, json) {
+  return {
+    type: RECEIVE_POSTS,
+    subreddit,
+    posts: json.data.children.map(child => child.data),
+    receivedAt: Date.now()
+  }
+}
+
+ export const INVALIDATE_SUBREDDIT = 'INVALIDATE_SUBREDDIT'
+ export function invalidateSubreddit(subreddit) {
+   return {
+     type: INVALIDATE_SUBREDDIT,
+     subreddit
+   }
+ }
+
+// 来看一下我们写的第一个 thunk action 创建函数！
+// 虽然内部操作不同，你可以像其它 action 创建函数一样使用它：
+// store.dispatch(fetchPosts('reactjs'))
+
+export function fetchPosts(subreddit) {
+
+  // Thunk middleware 知道如何处理函数。
+  // 这里把 dispatch 方法通过参数的形式传给函数，
+  // 以此来让它自己也能 dispatch action。
+
+  return function (dispatch) {
+
+    // 首次 dispatch：更新应用的 state 来通知
+    // API 请求发起了。
+
+    dispatch(requestPosts(subreddit))
+
+    // thunk middleware 调用的函数可以有返回值，
+    // 它会被当作 dispatch 方法的返回值传递。
+
+    // 这个案例中，我们返回一个等待处理的 promise。
+    // 这并不是 redux middleware 所必须的，但这对于我们而言很方便。
+
+    return fetch(`http://www.subreddit.com/r/${subreddit}.json`)
+      .then(
+        response => response.json(),
+        // 不要使用 catch，因为会捕获
+        // 在 dispatch 和渲染中出现的任何错误，
+        // 导致 'Unexpected batch number' 错误。
+        // https://github.com/facebook/react/issues/6895
+         error => console.log('An error occurred.', error)
+      )
+      .then(json =>
+        // 可以多次 dispatch！
+        // 这里，使用 API 请求结果来更新应用的 state。
+
+        dispatch(receivePosts(subreddit, json))
+      )
+  }
+}
+```
