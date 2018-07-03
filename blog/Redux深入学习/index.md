@@ -378,3 +378,162 @@ export function fetchPosts(subreddit) {
   }
 }
 ```
+
+### fetch 使用须知
+
+本示例使用了 fetch API。它是替代 XMLHttpRequest 用来发送网络请求的非常新的 API。由于目前大多数浏览器原生还不支持它，建议你使用 cross_fetch 库：
+
+```js
+// 每次使用 `fetch` 前都这样调用一下
+import fetch from 'cross_fetch'
+```
+
+在底层，它在浏览器端使用 whatwg-fetch polyfill，在服务器端使用 node-fetch，所以如果当你把应用改成 同构 时，并不需要改变 API 请求。
+
+注意，fetch polyfill 假设你已经使用了 Promise 的 polyfill。确保你使用 Promise polyfill 的一个最简单的办法是在所有应用代码前启用 Babel 的 ES6 polyfill：
+
+```js
+// 在应用中其它任何代码执行前调用一次
+import 'babel-polyfill'
+```
+
+我们是如何在 dispatch 机制中引入 Redux Thunk middleware 的呢？我们使用了 applyMiddleware()，如下
+
+`index.js`
+
+```js
+import thunkMiddleware from 'redux-thunk'
+import { createLogger } from 'redux-logger'
+import { createStore, applyMiddleware } from 'redux'
+import { selectSubreddit, fetchPosts } from './actions'
+import rootReducer from './reducers'
+
+const loggerMiddleware = createLogger()
+
+const store = createStore(
+  rootReducer,
+  applyMiddleware(
+    thunkMiddleware, // 允许我们 dispatch() 函数
+    loggerMiddleware // 一个很便捷的 middleware，用来打印 action 日志
+  )
+)
+
+store.dispatch(selectSubreddit('reactjs'))
+store
+  .dispatch(fetchPosts('reactjs'))
+  .then(() => console.log(store.getState())
+)
+```
+
+thunk 的一个优点是它的结果可以再次被 dispatch
+
+`actions.js`
+
+```js
+import fetch from 'cross-fetch'
+
+export const REQUEST_POSTS = 'REQUEST_POSTS'
+function requestPosts(subreddit) {
+  return {
+    type: REQUEST_POSTS,
+    subreddit
+  }
+}
+
+export const RECEIVE_POSTS = 'RECEIVE_POSTS'
+function receivePosts(subreddit, json) {
+  return {
+    type: RECEIVE_POSTS,
+    subreddit,
+    posts: json.data.children.map(child => child.data),
+    receivedAt: Date.now()
+  }
+}
+
+export const INVALIDATE_SUBREDDIT = 'INVALIDATE_SUBREDDIT'
+export function invalidateSubreddit(subreddit) {
+  return {
+    type: INVALIDATE_SUBREDDIT,
+    subreddit
+  }
+}
+
+function fetchPosts(subreddit) {
+  return dispatch => {
+    dispatch(requestPosts(subreddit))
+    return fetch(`http://www.reddit.com/r/${subreddit}.json`)
+      .then(response => response.json())
+      .then(json => dispatch(receivePosts(subreddit, json)))
+  }
+}
+
+function shouldFetchPosts(state, subreddit) {
+  const posts = state.postsBySubreddit[subreddit]
+  if (!posts) {
+    return true
+  } else if (posts.isFetching) {
+    return false
+  } else {
+    return posts.didInvalidate
+  }
+}
+
+export function fetchPostsIfNeeded(subreddit) {
+
+  // 注意这个函数也接收了 getState() 方法
+  // 它让你选择接下来 dispatch 什么。
+
+  // 当缓存的值是可用时，
+  // 减少网络请求很有用。
+
+  return (dispatch, getState) => {
+    if (shouldFetchPosts(getState(), subreddit)) {
+      // 在 thunk 里 dispatch 另一个 thunk！
+      return dispatch(fetchPosts(subreddit))
+    } else {
+      // 告诉调用代码不需要再等待。
+      return Promise.resolve()
+    }
+  }
+}
+```
+
+这可以让我们逐步开发复杂的异步控制流，同时保持代码整洁如初
+
+`index.js`
+
+```js
+store
+  .dispatch(fetchPostsIfNeeded('reactjs'))
+  .then(() => console.log(store.getState())
+)
+```
+
+服务端渲染须知
+
+异步 action 创建函数对于做服务端渲染非常方便。你可以创建一个 store，dispatch 一个异步 action 创建函数，这个 action 创建函数又 dispatch 另一个异步 action 创建函数来为应用的一整块请求数据，同时在 Promise 完成和结束时才 render 界面。然后在 render 前，store 里就已经存在了需要用的 state
+
+Thunk middleware 并不是 Redux 处理异步 action 的唯一方式：
+
+- 你可以使用 redux-promise 或者 redux-promise-middleware 来 dispatch Promise 来替代函数。
+- 你可以使用 redux-observable 来 dispatch Observable。
+- 你可以使用 redux-saga 中间件来创建更加复杂的异步 action。
+- 你可以使用 redux-pack 中间件 dispatch 基于 Promise 的异步 Action。
+- 你甚至可以写一个自定义的 middleware 来描述 API 请求，就像这个真实场景的案例中的做法一样。
+
+
+你也可以先尝试一些不同做法，选择喜欢的，并使用下去，不论有没有使用到 middleware 都行
+
+## 连接到 UI
+
+Dispatch 同步 action 与异步 action 间并没有区别，所以就不展开讨论细节了
+
+# 异步数据流
+
+默认情况下，createStore() 所创建的 Redux store 没有使用 middleware，所以只支持 同步数据流
+
+你可以使用 applyMiddleware() 来增强 createStore()。虽然这不是必须的，但是它可以帮助你用简便的方式来描述异步的 action
+
+像 redux-thunk 或 redux-promise 这样支持异步的 middleware 都包装了 store 的 dispatch() 方法，以此来让你 dispatch 一些除了 action 以外的其他内容，例如：函数或者 Promise。你所使用的任何 middleware 都可以以自己的方式解析你 dispatch 的任何内容，并继续传递 actions 给下一个 middleware。比如，支持 Promise 的 middleware 能够拦截 Promise，然后为每个 Promise 异步地 dispatch 一对 begin/end actions
+
+当 middleware 链中的最后一个 middleware 开始 dispatch action 时，这个 action 必须是一个普通对象。这是 同步式的 Redux 数据流 开始的地方（译注：这里应该是指，你可以使用任意多异步的 middleware 去做你想做的事情，但是需要使用普通对象作为最后一个被 dispatch 的 action ，来将处理流程带回同步方式）

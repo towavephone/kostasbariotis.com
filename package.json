@@ -14,6 +14,7 @@
         }
     },
     "scripts": {
+        "start": "yarn dev",
         "build": "gatsby build --prefix-paths",
         "deploy": "gh-pages -d public -r git@github.com:towavephone/towavephone.github.io.git -b master",
         "dev": "gatsby develop",
