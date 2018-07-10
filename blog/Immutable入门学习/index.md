@@ -322,3 +322,274 @@ clear(): this
 Map({ key: 'value' }).clear()  //Map
 List([ 1, 2, 3, 4 ]).clear()   // List
 ```
+
+## List中的各种删除与插入
+
+1. push()：在List末尾插入一个元素
+2. pop(): 在List末尾删除一个元素
+3. unshift: 在List首部插入一个元素
+4. shift: 在List首部删除一个元素
+5. insert：在List的index处插入元素
+
+### 代码示例
+
+```js
+List([ 0, 1, 2, 3, 4 ]).insert(6, 5) 
+//List [ 0, 1, 2, 3, 4, 5 ]
+List([ 1, 2, 3, 4 ]).push(5)
+// List [ 1, 2, 3, 4, 5 ]
+List([ 1, 2, 3, 4 ]).pop()
+// List[ 1, 2, 3 ]
+List([ 2, 3, 4]).unshift(1);
+// List [ 1, 2, 3, 4 ]
+List([ 0, 1, 2, 3, 4 ]).shift();
+// List [ 1, 2, 3, 4 ]
+```
+
+### setSize()
+
+List中还有一个特有的方法用法设置List的长度
+
+```js
+List([]).setSize(2).toJS() //[undefined,undefined]
+```
+
+## 关于merge
+
+### merge
+
+作用：浅合并，新数据与旧数据对比，旧数据中不存在的属性直接添加，旧数据中已存在的属性用新数据中的覆盖
+
+### mergrWith
+
+作用：自定义浅合并，可自行设置某些属性的值
+
+### mergeIn
+
+作用：对深层数据进行浅合并
+
+### mergeDeep
+
+作用：深合并，新旧数据中同时存在的的属性为新旧数据合并之后的数据
+
+### mergeDeepIn
+
+作用：对深层数据进行深合并
+
+### mergrDeepWith
+
+作用:自定义深合并，可自行设置某些属性的值
+
+这里用一段示例彻底搞懂merge，此示例为Map结构，List与Map原理相同
+
+```js
+ const Map1 = Immutable.fromJS({a:111,b:222,c:{d:333,e:444}});
+ const Map2 = Immutable.fromJS({a:111,b:222,c:{e:444,f:555}});
+
+ const Map3 = Map1.merge(Map2);
+  //Map {a:111,b:222,c:{e:444,f:555}}
+ const Map4 = Map1.mergeDeep(Map2);
+  //Map {a:111,b:222,c:{d:333,e:444,f:555}}
+ const Map5 = Map1.mergeWith((oldData,newData,key)=>{
+      if(key === 'a'){
+        return 666;
+      }else{
+        return newData
+      }
+    },Map2);
+  //Map {a:666,b:222,c:{e:444,f:555}}
+```
+
+## 序列算法
+
+### concat()
+
+作用：对象的拼接，用法与js数组中的concat()相同，返回一个新的对象。
+
+用法：`const List = list1.concat(list2)`
+
+### map()
+
+作用：遍历整个对象，对Map/List元素进行操作，返回一个新的对象。
+
+```js
+Map({a:1,b:2}).map(val=>10*val)
+//Map{a:10,b:20}
+```
+
+### Map特有的mapKey()
+
+作用：遍历整个对象，对Map元素的key进行操作，返回一个新的对象。
+
+```js
+Map({a:1,b:2}).mapKey(val=>val+'l')
+//Map{al:10,bl:20}
+```
+
+### Map特有的mapEntries()
+
+作用：遍历整个对象，对Map元素的key和value同时进行操作，返回一个新的对象。Map的map()也可实现此功能。
+
+```js
+Map({a:1,b:2}).map((key,val)=>{
+  return [key+'l',val*10]
+})
+//Map{al:10,bl:20}
+```
+
+### 过滤 filter
+
+作用：返回一个新的对象，包括所有满足过滤条件的元素
+
+```js
+Map({a:1,b:2}).filter((key,val)=>{
+  return val == 2
+})
+//Map{b:2}
+```
+
+### 反转 reverse
+
+作用：将数据的结构进行反转
+
+```js
+Immutable.fromJS([1, 2, 3, 4, 5]).reverse();
+// List [5,4,3,2,1]
+Immutable.fromJS({a:1,b:{c:2,d:3},e:4}).reverse();
+//Map {e:4,b:{c:2,d:3},a:1}
+```
+
+### 排序 sort & sortBy
+
+作用：对数据结构进行排序
+
+```js
+///List
+Immutable.fromJS([4,3,5,2,6,1]).sort()
+// List [1,2,3,4,5,6]
+Immutable.fromJS([4,3,5,2,6,1]).sort((a,b)=>{
+  if (a < b) { return -1; }
+  if (a > b) { return 1; }
+  if (a === b) { return 0; }
+})
+// List [1,2,3,4,5,6]
+Immutable.fromJS([{a:3},{a:2},{a:4},{a:1}]).sortBy((val,index,obj)=>{
+  return val.get('a')
+},(a,b)=>{
+  if (a < b) { return -1; }
+  if (a > b) { return 1; }
+  if (a === b) { return 0; }
+})
+//List  [ {a:3}, {a:2}, {a:4}, {a:1} ]
+
+//Map
+
+Immutable.fromJS( {b:1, a: 3, c: 2, d:5} ).sort()
+//Map {b: 1, c: 2, a: 3, d: 5}
+Immutable.fromJS( {b:1, a: 3, c: 2, d:5} ).sort((a,b)=>{
+  if (a < b) { return -1; }
+  if (a > b) { return 1; }
+  if (a === b) { return 0; }
+})
+//Map {b: 1, c: 2, a: 3, d: 5}
+Immutable.fromJS( {b:1, a: 3, c: 2, d:5} ).sortBy((value, key, obj)=> {
+  return value
+})
+//Map {b: 1, c: 2, a: 3, d: 5}
+```
+
+### 分组 groupBy
+
+作用：对数据进行分组
+
+```js
+const listOfMaps = List([
+  Map({ v: 0 }),
+  Map({ v: 1 }),
+  Map({ v: 1 }),
+  Map({ v: 0 }),
+  Map({ v: 2 })
+])
+const groupsOfMaps = listOfMaps.groupBy(x => x.get('v'))
+// Map {
+//   0: List [ Map{ "v": 0 }, Map { "v": 0 } ],
+//   1: List [ Map{ "v": 1 }, Map { "v": 1 } ],
+//   2: List [ Map{ "v": 2 } ],
+// }
+```
+
+## 查找数据
+
+### indexOf() 、 lastIndexOf，Map不存在此方法
+
+作用：和js数组中的方法相同，查找第一个或者最后一个value的index值，找不到则返回-1
+
+```js
+Immutable.fromJS([1,2,3,4]).indexof(3) //2
+Immutable.fromJS([1,2,3,4]).lastIndexof(3) //2
+```
+
+### findIndex() 、 findLastIndex()，Map不存在此方法
+
+作用：查找满足要求的元素的index值
+
+```js
+Immutable.fromJS([1,2,3,4]).findIndex((value,index,array)=>{
+  return value%2 === 0;
+})   // 1
+Immutable.fromJS([1,2,3,4]).findLastIndex((value,index,array)=>{
+  return index%2 === 0;
+})  // 3
+```
+
+### find() 、 findLast()
+
+作用：查找满足条件的元素的value值
+
+```js
+Immutable.fromJS([1,2,3,4]).find((value,index,array)=>{
+  return value%2 === 0;
+})  // 2
+
+Immutable.fromJS([1,2,3,4]).findLast((value,index,array)=>{
+  return value%2 === 0;
+})  // 4
+```
+
+### findKey() 、 findLastKey()
+
+作用：查找满足条件的元素的key值
+
+```js
+Immutable.fromJS([1,2,3,4]).findKey((value,index,array)=>{
+  return value%2 === 0;
+})  // 1
+
+Immutable.fromJS([1,2,3,4]).findLastKey((value,index,array)=>{
+  return value%2 === 0;
+})  // 3
+```
+
+### findEntry() 、 findLastEntry()
+
+作用：查找满足条件的元素的键值对 key:value
+
+```js
+Immutable.fromJS([1,2,3,4]).findEntry((value,index,array)=>{
+  return value%2 === 0;
+})  // [1,2]
+
+Immutable.fromJS([1,2,3,4]).findLastEntry((value,index,array)=>{
+  return value%2 === 0;
+})  // [3,4]
+```
+
+### keyOf()、lastKeyOf()
+
+作用：查找某一个value对应的key值
+
+```js
+Immutable.fromJS([1,2,3,4]).keyOf(2) //1
+Immutable.fromJS([1,2,3,4]).lastKeyOf(2) //1
+```
+
