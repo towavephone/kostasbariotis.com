@@ -1,6 +1,6 @@
 ---
 title: CSS世界四大盒尺寸
-date: 2018-5-30 21:53:03
+date: 2018-8-1 22:49:14
 path: /CSS-world-four-kinds-of-box/
 tags: 前端, CSS, CSS世界
 ---
@@ -392,7 +392,7 @@ q:before{
 1. 纯视觉层叠，不影响外部尺寸
 2. 会影响外部尺寸
 
-box-shadow以及outline属于前者，而这里的inline-padding属于后者；区分方式很简单，如果父容器overflow:auto，层叠区域超出父容器的时候没有滚动条出现，则是纯视觉的；反之则会影响尺寸，影响布局
+box-shadow以及outline属于前者，而这里的inline元素的padding层叠属于后者；区分方式很简单，如果父容器overflow:auto，层叠区域超出父容器的时候没有滚动条出现，则是纯视觉的；反之则会影响尺寸，影响布局
 
 ### 内联元素padding的应用
 
@@ -403,4 +403,80 @@ box-shadow以及outline属于前者，而这里的inline-padding属于后者；�
 #### 实现高度可控的分隔线
 
 使用`|`高度会不可控，如果对视觉要求比较高，需要用CSS模拟
+
+<iframe src="/examples/inline-padding-realize-pipe.html" width="400" height="100"></iframe>
+
+`embed:inline-padding-realize-pipe.html`
+
+#### 锚点定位时希望标题与页面顶部有距离
+
+试试使用内联元素，块级元素设置padding-top:50px会影响布局，但是内联元素不会
+
+假设这是原来的实现：
+
+```html
+<h3 id="hash">标题</h3>
+<style>
+h3 {
+    line-height: 30px;
+    font-size: 14px;
+}
+</style>
+```
+
+可以改为：
+
+```html
+<h3><span id="hash">标题</span></h3>
+<style>
+h3 {
+    line-height: 30px;
+    font-size: 14px;
+}
+
+h3>span {
+    padding-top:58px;
+}
+</style>
+```
+
+如果h3设置了overflow:hidden，则IE浏览器会定位在h3标签位置
+
+实际上，对于非替换元素的内联元素，不仅padding不会加入到行盒高度的计算，margin和border也是如此，但实际上在内联盒周围发生了渲染
+
+## padding的百分比值
+
+1. padding属性不支持负值，margin支持
+2. 支持百分比值，无论在水平还是垂直方向都是相对于宽度计算的，与height等属性的计算规则不同
+
+>可能要按照高度计算的话大多数情况为0，还不如按相对宽度计算，因为CSS默认的是水平流，计算值会一直有效
+
+### 应用场景
+
+#### 实现不同比例的矩形效果
+
+```css
+div{padding: 50%;} 
+div{padding: 25% 50%;}
+```
+
+#### 小屏幕头图高度等比例缩小
+
+```css
+.box{
+    padding: 10% 50%;
+    position: relative;
+}
+.box>img{
+    position: absolute;
+    width: 100%;
+    left: 0;
+    top: 0;
+}
+```
+
+实现了一个宽高比为5:1的比例固定的头图效果
+
+
+
 
