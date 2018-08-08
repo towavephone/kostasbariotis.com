@@ -3,6 +3,7 @@ node_modules
 .sass-cache/
 public/
 .cache/
+.vscode/
 .DS_Store
 *.log
 npm-debug.log*

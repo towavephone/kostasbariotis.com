@@ -546,3 +546,190 @@ span {
 
 ## 标签元素内置的padding
 
+1. ol、ul列表内置padding-left单位是px不是em，导致字体比较大时项目符号可能跑到ol、ul外面，当然用content计数器模拟是更好的选择
+2. 很多表单元素都内置padding
+
+- 所有浏览器input、textarea输入框内置padding
+- 所有浏览器button按钮内置padding
+- 部分浏览器select下拉内置padding
+- 所有浏览器redio、checkbox单复选框无内置padding
+- button按钮元素的padding最难控制
+  1. 设置padding: 0不同浏览器下不同
+  2. 按钮padding与高度计算不同浏览器下千差万别，这使得很少用原生的button
+
+有一个可以保留良好的语义，同时UI效果兼容性效果好的实现小技巧，那就是label元素
+
+```html
+<button id="btn"></button> 
+<label for="btn">按钮</label> 
+<style>
+button { 
+    position: absolute; 
+    clip: rect(0 0 0 0); 
+} 
+label { 
+    display: inline-block; 
+    line-height: 20px; 
+    padding: 10px;
+} 
+</style>
+```
+
+## padding与图形绘制
+
+padding 属性和 background-clip 属性配合，可以在有限的标签下实现一些 CSS 图形
+绘制效果
+
+### 不使用伪元素，仅一层标签实现大队长的“三道杠”分类图标效果
+
+```css
+.icon-menu {
+    display: inline-block;
+    width: 140px; 
+    height: 10px;
+    padding: 35px 0;
+    border-top: 10px solid;
+    border-bottom: 10px solid;
+    background-color: currentColor;
+    background-clip: content-box;
+}
+```
+
+### 不使用伪元素，仅一层标签实现双层圆点效果
+
+```css
+.icon-dot {
+    display: inline-block;
+    width: 100px; 
+    height: 100px;
+    padding: 10px;
+    border: 10px solid;
+    border-radius: 50%;
+    background-color: currentColor;
+    background-clip: content-box;
+}
+```
+
+![](./Snipaste_2018-08-08_20-21-04.png)
+
+# 激进的 margin 属性
+
+padding 性格温和，负责内间距；而 margin 则比较激进，负责外间距。虽然都是间距，
+但是差别相当大，尤其是 margin，特异之处相当多。
+
+## margin 与元素尺寸以及相关布局
+
+### 元素尺寸的相关概念
+
+- 元素尺寸: 对应 jQuery 中的 `$().width()` 和 `$().height()` 方法，包括 padding 和 border，也就是元素的border box的尺寸。在原生的DOM API中写作 offsetWidth 和 offsetHeight，所以，有时候也成为“元素偏移尺寸”。
+- 元素内部尺寸：对应 jQuery 中的 `$().innerWidth()` 和 `$().innerHeight()` 方法，表示元素的内部区域尺寸，包括 padding 但不包括 border，也就是元素的 paddingbox 的尺寸。在原生的 DOM API 中写作 clientWidth 和 clientHeight，所以，有时候也称为“元素可视尺寸”。
+- 元素外部尺寸：对应 jQuery 中的 `$().outerWidth(true)` 和 `$().outerHeight(true)` 方法，表示元素的外部尺寸，不仅包括 padding 和 border，还包括 margin，也就是元素的 margin box 的尺寸。没有相对应的原生的 DOM API
+
+“外部尺寸”有个很不一样的特性，就是尺寸的大小有可能是负数。
+
+### margin 与元素的内部尺寸
+
+margin 同样可以改变元素的可视尺寸，但是和 padding 几乎是互补态势
+
+对于 padding，元素设定了 width 或者保持“包裹性”的时候，会改变元素可视尺寸；但是对于 margin 则相反，元素设定了 width 值或者保持“包裹性”的时候，margin 对尺寸没有影响，只有元素是“充分利用可用空间”状态的时候，margin 才可以改变元素的可视尺寸
+
+只要元素的尺寸表现符合“充分利用可用空间”，无论是垂直方向还是水平方向，都可以通过 margin 改变尺寸。
+
+CSS 世界默认的流方向是水平方向，因此，对于普通流体元素，margin 只能改变元素水
+平方向尺寸；但是，对于具有拉伸特性的绝对定位元素，则水平或垂直方向都可以，因为此时
+的尺寸表现符合“充分利用可用空间”。
+
+#### 如果图片左侧定位
+
+```html
+<style>
+.box { overflow: hidden; }
+.box > img { float: left; }
+.box > p { margin-left: 140px; }
+</style>
+<div class="box">
+    <img src="1.jpg">
+    <p>文字内容...</p>
+</div>
+```
+
+#### 如果图片右侧定位
+
+```css
+.box { overflow: hidden; }
+.box > img { float: right; }
+.box > p { margin-right: 140px; }
+```
+
+html文件标签的顺序与视觉表现上的不一致，这个可以借助margin负值实现
+
+#### 如果图片右侧定位，同时顺序一致
+
+```html
+<style>
+.box { overflow: hidden; }
+.full { width: 100%; float: left; }
+.box > img { 
+    float: left; // 必须有这个属性，否则看不到元素
+    margin-left: -128px; 
+}
+.full > p { margin-right: 140px; }
+</style>
+<div class="box">
+    <div class="full">
+        <p>文字内容...</p>
+    </div>
+    <img src="1.jpg">
+</div>
+```
+
+#### margin 改变元素尺寸的特性来实现两端对齐布局效果
+
+列表块两端对齐，一行显示 3 个，中间有 2 个 20 像素的间隙
+
+假如我们使用浮动来实现：
+
+```css
+li {
+    float: left;
+    width: 100px;
+    margin-right: 20px;
+}
+```
+
+![](./Snipaste_2018-08-08_21-33-38.png)
+
+最右侧永远有个 20 像素的间隙, 无法完美实现两端对齐
+
+解决办法：
+
+- 不考虑 IE8，我们可以使用 CSS3 的 nth-of-type 选择器：
+
+```css
+li:nth-of-type(3n) {
+    margin-right: 0;
+}
+```
+
+- 考虑IE8，给父容器添加 margin 属性，增加容器的可用宽度来实现
+
+```css
+ul {
+    margin-right: -20px;
+}
+ul > li {
+    float: left;
+    width: 100px;
+    margin-right: 20px;
+}
+```
+
+此时<ul>的宽度就相当于 100%+20px，于是，第 3n 的<li>标签的 margin-right:20px 就多了 20 像素的使用空间，正好列表的右边缘就是父级<ul>容器 100% 宽度位置，两端对齐效果就此实现了
+
+![](./Snipaste_2018-08-08_21-43-25.png)
+
+### margin 与元素的外部尺寸
+
+对于普通块状元素，在默认的水平流下，margin 只能改变左右方向的内部尺寸，垂直方
+向则无法改变。如果我们使用 writing-mode 改变流向为垂直流，则水平方向内部尺寸无法
+改变，垂直方向可以改变。这是由 margin:auto 的计算规则决定的。
