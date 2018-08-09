@@ -730,6 +730,58 @@ ul > li {
 
 ### margin 与元素的外部尺寸
 
-对于普通块状元素，在默认的水平流下，margin 只能改变左右方向的内部尺寸，垂直方
-向则无法改变。如果我们使用 writing-mode 改变流向为垂直流，则水平方向内部尺寸无法
-改变，垂直方向可以改变。这是由 margin:auto 的计算规则决定的。
+对于普通块状元素，在默认的水平流下，margin 只能改变左右方向的内部尺寸，垂直方向则无法改变。如果我们使用 writing-mode 改变流向为垂直流，则水平方向内部尺寸无法改变，垂直方向可以改变。这是由 margin:auto 的计算规则决定的。
+
+对于外部尺寸，margin 属性的影响则更为广泛，只要元素具有块状特性，无论有没有设置 width/height，无论是水平方向还是垂直方向，即使发生了 margin 合并，margin 对外部尺寸都着着实实发生了影响
+
+#### margin-bottom 外部尺寸实现滚动容器的底部留白
+
+padding也有兼容性问题，如果容器可以滚动，在 IE 和 Firefox 浏览器下是会忽略 padding-bottom 值的，Chrome 等浏览器则不会。也就是说，在 IE 和 Firefox 浏览器下：
+
+```html
+<div style="height:100px; padding:50px 0;">
+    <img src="0.jpg" height="300">
+</div>
+```
+
+本质区别在于：Chrome 浏览器是子元素超过 content box 尺寸触发滚动条显示，而 IE 和 Firefox 浏览器是超过 padding box 尺寸触发滚动条显示
+
+可以借助 margin 的外部尺寸特性来实现底部留白，只能使用子元素的 margin-bottom 来实现滚动容器的底部留白
+
+```html
+<div style="height:200px;">
+    <img height="300" style="margin:50px 0;">
+</div>
+```
+
+#### margin 外部尺寸实现等高布局
+
+使用margin负值实现：
+
+```css
+.column-box {
+    overflow: hidden;
+}
+.column-left,
+.column-right {
+    margin-bottom: -9999px;
+    padding-bottom: 9999px;
+}
+```
+
+为什么可以等高的原因:
+
+垂直方向 margin 无法改变元素的内部尺寸，但却能改变外部尺寸，这里我们设置了 margin-bottom:-9999px 意味着元素的外部尺寸在垂直方向上小了 9999px。默认情况下，垂直方向块级元素上下距离是0，一旦 margin-bottom:-9999px 就意味着后面所有元素和上面元素的空间距离变成了-9999px，也就是后面元素都往上移动了 9999px。此时，通过神来一笔padding-bottom:9999px 增加元素高度，这正负一抵消，对布局层并无影响，但却带来了我们需要的东西 — 视觉层多了 9999px 高度的可使用的背景色。但是，9999px 太大了，所以需要配合父级 overflow:hidden 把多出来的色块背景隐藏掉，于是实现了视觉上的等高布局效果。
+
+不足之处：
+
+1. 如果需要有子元素定位到容器之外，父级的 overflow:hidden 是一个棘手的限制
+2. 当触发锚点定位或者使用DOM.scrollIntoview()方法的时候，可能就会出现奇怪的定位问题
+
+使用 border 和 table-cell 实现等高布局的优缺点：
+
+前者优势在于兼容性好，没有锚点定位的隐患，不足之处在于最多 3 栏，且由于 border 不支持百分比宽度，因此只能实现至少一侧定宽的布局；table-cell 的优点是天然等高，不足在于 IE8 及以上版本浏览器才支持，所以，如果项目无须兼容 IE6、IE7，则推荐使用 table-cell 实现等高布局
+
+上述margin对尺寸的影响是针对具有块状特性的元素而言的，对于纯内联元素则不适用。和 padding 不同，内联元素垂直方向的 margin 是没有任何影响的，既不会影响外部尺寸，也不会影响内部尺寸，对于水平方向，由于内联元素宽度表现为“包裹性”，也不会影响内部尺寸。
+
+## margin 的百分比值
