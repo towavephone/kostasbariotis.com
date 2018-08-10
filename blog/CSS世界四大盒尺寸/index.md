@@ -785,3 +785,111 @@ padding也有兼容性问题，如果容器可以滚动，在 IE 和 Firefox 浏
 上述margin对尺寸的影响是针对具有块状特性的元素而言的，对于纯内联元素则不适用。和 padding 不同，内联元素垂直方向的 margin 是没有任何影响的，既不会影响外部尺寸，也不会影响内部尺寸，对于水平方向，由于内联元素宽度表现为“包裹性”，也不会影响内部尺寸。
 
 ## margin 的百分比值
+
+1. 和padding 属性一样，margin 的百分比值无论是水平方向还是垂直方向都是相对于宽度计算的
+2. 相对于padding，margin 的百分比值的应用价值就低了一截：元素设置margin 在垂直方向上无法改变元素自身的内部尺寸，往往需要父元素作为载体，由于margin 合并的存在，垂直方向往往需要双倍尺寸才能和padding 表现一致
+
+```html
+<style>
+.box {
+    background-color: olive;
+    overflow: hidden;
+}
+.box > div {
+    margin: 50%;
+}
+</style>
+<div class="box">
+    <div></div>
+</div>
+```
+
+结果.box 是一个宽高比为 2:1 的橄榄绿长方形
+
+## 正确看待 CSS 世界里的 margin 合并
+
+### 什么是 margin 合并
+
+块级元素的上外边距（margin-top）与下外边距（margin-bottom）有时会合并为单个外边距，这样的现象称为“margin 合并”
+
+1. 块级元素，但不包括浮动和绝对定位元素，尽管浮动和绝对定位可以让元素块状化
+2. 只发生在垂直方向，需要注意的是，这种说法在不考虑 writing-mode 的情况下才是正确的，严格来讲，应该是只发生在和当前文档流方向的相垂直的方向上。由于默认文档流是水平流，因此发生 margin 合并的就是垂直方向
+
+### margin 合并的 3 种场景
+
+#### 相邻兄弟元素 margin 合并
+
+这是 margin 合并中最常见、最基本的
+
+```html
+<style>
+p { margin: 1em 0; }
+</style>
+<p>第一行</p>
+<p>第二行</p>
+```
+
+则第一行和第二行之间的间距还是 1em，因为第一行的 margin-bottom 和第二行的margin-top 合并在一起了，并非上下相加
+
+#### 父级和第一个/最后一个子元素
+
+```html
+<div class="father">
+    <div class="son" style="margin-top:80px;"></div>
+</div>
+<div class="father" style="margin-top:80px;">
+    <div class="son"></div>
+</div>
+<div class="father" style="margin-top:80px;">
+    <div class="son" style="margin-top:80px;"></div>
+</div>
+```
+
+在默认状态下，以上 3 种设置是等效的
+
+![](./2018_8_10_202336.png)
+
+问题产生的原因就是这里的父子 margin 合并
+
+那该如何阻止这里 margin 合并的发生呢？对于 margin-top 合并，可以进行如下操作（满足一个条件即可）：
+
+- 父元素设置为块状格式化上下文元素；
+- 父元素设置 border-top 值；
+- 父元素设置 padding-top 值；
+- 父元素和第一个子元素之间添加内联元素进行分隔。
+
+对于 margin-bottom 合并，可以进行如下操作（满足一个条件即可）：
+
+- 父元素设置为块状格式化上下文元素；
+- 父元素设置 border-bottom 值；
+- 父元素设置 padding-bottom 值；
+- 父元素和最后一个子元素之间添加内联元素进行分隔；
+- 父元素设置 height、min-height 或 max-height。
+
+jQuery 中有个$().slideUp()/$().slideDown()方法，如果在使用这个动画效果的时候，发现这内容在动画开始或结束的时候会跳一下，那八九不离十就是布局存在 margin 合并。跳动之所以产生，就是因为jQuery 的 slideUp 和 slideDown方法在执行的时候会被对象元素添加 overflow:hidden 设置，而 overflow: hidden 会阻止 margin 合并，于是一瞬间间距变大，产生了跳动。
+
+#### 空块级元素的 margin 合并
+
+```html
+<style>
+.father { overflow: hidden; }
+.son { margin: 1em 0; }
+</style>
+<div class="father">
+    <div class="son"></div>
+</div>
+```
+
+结果，此时.father 所在的这个父级<div>元素高度仅仅是 1em，因为.son 这个空<div>元素的 margin-top 和 margin-bottom 合并在一起了。这也是上一节 margin:50%最终宽高比是 2:1 的原因，因为垂直方向的上下 margin 值合二为一了，所以垂直方向的外部尺寸只有水平方向的一半。
+
+这种空块级元素的 margin 合并特性即使自身没有设置 margin 也是会发生的
+
+### margin 合并的计算规则
+
+1. 正正取大值
+2. 正负值相加
+3. 负负最负值
+
+#### margin 合并的意义
+
+CSS 世界的 CSS 属性是为了更好地进行图文信息展示而设计的，博客文章或者新闻信息是图文信息的典型代表
