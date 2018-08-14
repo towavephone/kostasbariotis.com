@@ -892,4 +892,262 @@ jQuery 中有个$().slideUp()/$().slideDown()方法，如果在使用这个动�
 
 #### margin 合并的意义
 
-CSS 世界的 CSS 属性是为了更好地进行图文信息展示而设计的，博客文章或者新闻信息是图文信息的典型代表
+CSS 世界的 CSS 属性是为了更好地进行图文信息展示而设计的，博客文章或者新闻信息是图文信息的典型代表，基本上离不开下面这些 HTML:
+
+```html
+<h2>文章标题</h2>
+<p>文章段落 1...</p>
+<p>文章段落 2...</p>
+<ul>
+    <li>列表 1</li>
+    <li>列表 2</li>
+    <li>列表 3</li>
+</ul>
+```
+
+而这里的`<h2>`、`<p>`、`<ul>`默认全部都是有垂直方向的 margin 值的，而且单位全部都是 em。
+
+HTML 标签默认内置的 CSS 属性值完全就是为了更好地进行图文信息展示而设计的。
+
+父子 margin 合并的意义在于：在页面中任何地方嵌套或直接放入任何裸 `<div>`，都不会影响原来的块状布局。
+
+```html
+// 好像设置在外面的div元素上一样
+<div style="margin-top:20px;"></div>
+```
+
+自身 margin 合并的意义在于可以避免不小心遗落或者生成的空标签影响排版和布局。
+
+```html
+<p>第一行</p>
+<p></p>
+<p></p>
+<p></p>
+<p></p>
+<p>第二行</p>
+```
+
+等效于：
+
+```html
+<p>第一行</p>
+<p>第二行</p>
+```
+
+## 深入理解 CSS 中的 margin:auto
+
+margin:auto 的作用机制举例：
+
+- 有时候元素就算没有设置 width 或 height，也会自动填充。
+
+```html
+<div></div>
+```
+
+- 有时候元素就算没有设置 width 或 height，也会自动填充对应的方位
+
+```css
+div {
+    position: absolute;
+    left: 0; right: 0;
+}
+```
+
+此时`<div>`宽度就会自动填满包含块容器，如果设置 width 或 height，自动填充特性就会被覆盖
+
+margin:auto 的填充规则如下。
+
+1. 如果一侧定值，一侧 auto，则 auto 为剩余空间大小。
+2. 如果两侧均是 auto，则平分剩余空间。
+
+```css
+.father {
+    width: 300px;
+}
+.son {
+    width: 200px;
+    margin-right: 80px;
+    margin-left: auto;
+}
+```
+
+此时.son 的左右边距计算值是20px、80px
+
+由于 CSS 世界中 margin 的初始值大小是 0，因此，上面的例子如果 margin-right 缺失，实现的效果正好是块级元素的右对齐效果。
+
+margin 属性的 auto 计算就是为块级元素左中右对齐而设计的，和内联元素使用 text-align 控制左中右对齐
+
+居中对齐左右同时 auto 计算即可
+
+```css
+.son {
+    width: 200px;
+    margin-right: auto;
+    margin-left: auto;
+}
+```
+
+有时为什么明明容器定高、元素定高，margin:auto 却无法垂直居中？
+
+```css
+.father {
+    height: 200px;
+}
+.son {
+    height: 100px;
+    margin: auto;
+}
+```
+
+原因在于触发 margin:auto 计算有一个前提条件，就是 width 或 height 为 auto 时，元素是需要具有对应方向的自动填充特性的。比方说这里，假如说把.son 元素的 height:100px 去掉，.son 的高度会自动和父元素等高变成 200px 吗？显然不会！因此无法触发 margin:auto 计算，故而无法垂直居中。
+
+垂直方向 margin 实现居中
+
+- 使用 writing-mode 改变文档流的方向：
+
+```css
+.father {
+    height: 200px;
+    writing-mode: vertical-lr;
+}
+.son {
+    height: 100px;
+    margin: auto;
+}
+```
+
+此时.son 就是垂直居中对齐的，但是这也带来另外的问题，就是水平方向无法 auto 居中了。
+
+- 绝对定位元素的 margin:auto 居中
+
+```css
+.father {
+    width: 300px; height:150px;
+    position: relative;
+}
+.son {
+    position: absolute;
+    top: 0; right: 0; bottom: 0; left: 0;
+}
+```
+
+此时.son 这个元素的尺寸表现为“格式化宽度和格式化高度”，和`<div>`的“正常流宽度”一样，同属于外部尺寸，也就是尺寸自动填充父级元素的可用尺寸，此时我们给.son 设置尺寸。例如：
+
+```css
+.son {
+    position: absolute;
+    top: 0; right: 0; bottom: 0; left: 0;
+    width: 200px; height: 100px;
+}
+```
+
+此时宽高被限制，原本应该填充的空间就被空余了出来，这多余的空间就是 margin:auto 计算的空间，因此，如果这时候我们再设置一个 margin:auto：
+
+```css
+.son {
+    position: absolute;
+    top: 0; right: 0; bottom: 0; left: 0;
+    width: 200px; height: 100px;
+    margin: auto;
+}
+```
+
+那么我们这个.son 元素就水平方向和垂直方向同时居中了。因为 auto 正好把上下左右剩余空间全部等分了，自然就居中！
+
+## margin 无效情形解析
+
+- display 计算值 inline 的非替换元素的垂直 margin 是无效的，虽然规范提到有渲染，但浏览器表现却未寻得一点踪迹，这和 padding 是有明显区别的。对于内联替换元素，垂直 margin 有效，并且没有 margin 合并的问题，所以图片永远不会发生 margin 合并
+- 表格中的`<tr>`和`<td>`元素或者设置 display 计算值是 table-cell 或 table-row 的元素的margin 都是无效的。但是，如果计算值是 table-caption、table 或者 inline-table 则没有此问题，可以通过 margin 控制外间距，甚至 ::first-letter 伪元素也可以解析 margin
+- margin 合并的时候，更改 margin 值可能是没有效果的。以父子 margin 重叠为例，假设父元素设置有 margin-top:50px，则此时子元素设置 margin-top:30px 就没有任何效果表现，除非大小比 50px 大，或者是负值
+- 绝对定位元素非定位方位的 margin 值“无效”。什么意思呢？很多时候，我们对元素进行绝对定位的时候，只会设置 1～2 个相邻方位。例如：
+
+```css
+img { top: 10%; left: 30%;}
+```
+
+此时 right 和 bottom 值属于 auto 状态，也就是右侧和底部没有进行定位，此时，这两个方向设置 margin 值我们在页面上是看不到定位变化的。例如：
+
+```css
+img {
+    top: 10%; left: 30%;
+    margin-right: 30px;
+}
+```
+
+此时 margin-right:30px 几乎就是摆设。是 margin 没起作用吗？实际上不是的，绝对定位元素任意方位的 margin 值无论在什么场景下都一直有效。譬如这个例子，假设`<img>`宽度70%，同时父元素是具有定位属性，且 overflow 设置为 auto 的元素，则此时就会出现水平滚动条，因为 margin-right:30px 增加了图片的外部尺寸。
+
+那为什么一般情况下没有效果呢？主要是因为绝对定位元素的渲染是独立的，普通元素和兄弟元素是心连心，你动我也动，但是绝对定位元素由于独立渲染无法和兄弟元素插科打诨，因此，margin 无法影响兄弟元素定位，所以看上去就“无效”。
+
+- 定高容器的子元素的 margin-bottom 或者宽度定死的子元素的 margin-right 的定位“失效”。
+
+我们先看例子：
+
+```html
+<div class="box">
+    <div class="child"></div>
+</div>
+<style>
+.box {
+    height: 100px;
+}
+.child {
+    height: 80px;
+    margin-bottom: 100px;
+}
+</style>
+```
+
+这里，margin-bottom:100px 是不会在容器底部形成 100px 的外间距的，看上去就像是“失效”一样，同样的 HTML，CSS 代码如下：
+
+```css
+.box {
+    width: 100px;
+}
+.child {
+    width: 80px;
+    margin-right: 100px;
+}
+```
+
+此时，margin-right:100px 对元素的定位也没有任何影响，给人“无效”的感觉，实际上，这个现象的本质和上面绝对定位元素非对立方位 margin 值“无效”类似。原因在于，若想使用 margin 属性改变自身的位置，必须是和当前元素定位方向一样的 margin 属性才可以，否则，margin 只能影响后面的元素或者父元素。
+
+例如，一个普通元素，在默认流下，其定位方向是左侧以及上方，此时只有 margin-left 和 margin-top 可以影响元素的定位。但是，如果通过一些属性改变了定位方向，如 float:right 或者绝对定位元素的 right 右侧定位，则反过来 margin-right 可以影响元素的定位，margin-left 只能影响兄弟元素。
+
+在本例中，父容器只有一个子元素，因此没有影响兄弟元素的说法，加上要么定宽要么定高，右侧和底部无 margin 重叠，因此外部的元素也不会有任何布局上的影响，因此就给人“无效”的错觉，实际上是 margin 自身的特性导致，有渲染只是你看不到变化而已。
+
+- 鞭长莫及导致的 margin 无效。我们直接看下面这个例子：
+
+```html
+<div class="box">
+    <img src="mm1.jpg">
+    <p>内容</p>
+</div>
+<style>
+.box > img {
+    float: left;
+    width: 256px;
+}
+.box > p {
+    overflow: hidden;
+    margin-left: 200px;
+}
+</style>
+```
+
+其中的 margin-left:200px 是无效的，准确地讲，此时的<p>的 margin-left 从负无穷到 256px 都是没有任何效果的。要解释这里为何会无效，需要对 float 和 overflow 深入理解，而这两个属性都是后面的内容
+
+- 内联特性导致的 margin 无效。我们直接看下面这个例子：
+
+```html
+<div class="box">
+    <img src="mm1.jpg">
+</div>
+<style>
+.box > img {
+    height: 96px;
+    margin-top: -200px;
+}
+</style>
+```
+
+这里的例子也很有代表性。一个容器里面有一个图片，然后这张图片设置 margin-top负值，让图片上偏移。但是，随着我们的负值越来越负，结果达到某一个具体负值的时候，图片不再往上偏移了。比方说，本例 margin-top 设置的是-200px，如果此时把 margin-top设置成-300px，图片会再往上偏移 100px 吗？不会！它会微丝不动，margin-top 变得无效了。要解释这里为何会无效，需要对 vertical-align 和内联盒模型有深入的理解，而这vertical-align 是后面的内容
