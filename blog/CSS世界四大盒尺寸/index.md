@@ -1058,96 +1058,226 @@ margin 属性的 auto 计算就是为块级元素左中右对齐而设计的，�
 
 - display 计算值 inline 的非替换元素的垂直 margin 是无效的，虽然规范提到有渲染，但浏览器表现却未寻得一点踪迹，这和 padding 是有明显区别的。对于内联替换元素，垂直 margin 有效，并且没有 margin 合并的问题，所以图片永远不会发生 margin 合并
 - 表格中的`<tr>`和`<td>`元素或者设置 display 计算值是 table-cell 或 table-row 的元素的margin 都是无效的。但是，如果计算值是 table-caption、table 或者 inline-table 则没有此问题，可以通过 margin 控制外间距，甚至 ::first-letter 伪元素也可以解析 margin
-- margin 合并的时候，更改 margin 值可能是没有效果的。以父子 margin 重叠为例，假设父元素设置有 margin-top:50px，则此时子元素设置 margin-top:30px 就没有任何效果表现，除非大小比 50px 大，或者是负值
+- margin 合并的时候，更改 margin 值可能是没有效果的。以父子 margin 重叠为例，假设父元素设置有 margin-top:50px，则此时子元素设置 margin-top:30px 就没有任何效果表现，除非大小比 50px 大，或者是负值 
 - 绝对定位元素非定位方位的 margin 值“无效”。什么意思呢？很多时候，我们对元素进行绝对定位的时候，只会设置 1～2 个相邻方位。例如：
+  
+    ```css
+    img { top: 10%; left: 30%;}
+    ```
 
-```css
-img { top: 10%; left: 30%;}
-```
+    此时 right 和 bottom 值属于 auto 状态，也就是右侧和底部没有进行定位，此时，这两个方向设置 margin 值我们在页面上是看不到定位变化的。例如：
 
-此时 right 和 bottom 值属于 auto 状态，也就是右侧和底部没有进行定位，此时，这两个方向设置 margin 值我们在页面上是看不到定位变化的。例如：
+    ```css
+    img {
+        top: 10%; left: 30%;
+        margin-right: 30px;
+    }
+    ```
 
-```css
-img {
-    top: 10%; left: 30%;
-    margin-right: 30px;
-}
-```
+    此时 margin-right:30px 几乎就是摆设。是 margin 没起作用吗？实际上不是的，绝对定位元素任意方位的 margin 值无论在什么场景下都一直有效。譬如这个例子，假设`<img>`宽度70%，同时父元素是具有定位属性，且 overflow 设置为 auto 的元素，则此时就会出现水平滚动条，因为 margin-right:30px 增加了图片的外部尺寸。
 
-此时 margin-right:30px 几乎就是摆设。是 margin 没起作用吗？实际上不是的，绝对定位元素任意方位的 margin 值无论在什么场景下都一直有效。譬如这个例子，假设`<img>`宽度70%，同时父元素是具有定位属性，且 overflow 设置为 auto 的元素，则此时就会出现水平滚动条，因为 margin-right:30px 增加了图片的外部尺寸。
-
-那为什么一般情况下没有效果呢？主要是因为绝对定位元素的渲染是独立的，普通元素和兄弟元素是心连心，你动我也动，但是绝对定位元素由于独立渲染无法和兄弟元素插科打诨，因此，margin 无法影响兄弟元素定位，所以看上去就“无效”。
+    那为什么一般情况下没有效果呢？主要是因为绝对定位元素的渲染是独立的，普通元素和兄弟元素是心连心，你动我也动，但是绝对定位元素由于独立渲染无法和兄弟元素插科打诨，因此，margin 无法影响兄弟元素定位，所以看上去就“无效”。
 
 - 定高容器的子元素的 margin-bottom 或者宽度定死的子元素的 margin-right 的定位“失效”。
+  
+    我们先看例子：
 
-我们先看例子：
+    ```html
+    <div class="box">
+        <div class="child"></div>
+    </div>
+    <style>
+    .box {
+        height: 100px;
+    }
+    .child {
+        height: 80px;
+        margin-bottom: 100px;
+    }
+    </style>
+    ```
 
-```html
-<div class="box">
-    <div class="child"></div>
-</div>
-<style>
-.box {
-    height: 100px;
-}
-.child {
-    height: 80px;
-    margin-bottom: 100px;
-}
-</style>
-```
+    这里，margin-bottom:100px 是不会在容器底部形成 100px 的外间距的，看上去就像是“失效”一样，同样的 HTML，CSS 代码如下：
 
-这里，margin-bottom:100px 是不会在容器底部形成 100px 的外间距的，看上去就像是“失效”一样，同样的 HTML，CSS 代码如下：
+    ```css
+    .box {
+        width: 100px;
+    }
+    .child {
+        width: 80px;
+        margin-right: 100px;
+    }
+    ```
 
-```css
-.box {
-    width: 100px;
-}
-.child {
-    width: 80px;
-    margin-right: 100px;
-}
-```
+    此时，margin-right:100px 对元素的定位也没有任何影响，给人“无效”的感觉，实际上，这个现象的本质和上面绝对定位元素非对立方位 margin 值“无效”类似。原因在于，若想使用 margin 属性改变自身的位置，必须是和当前元素定位方向一样的 margin 属性才可以，否则，margin 只能影响后面的元素或者父元素。
 
-此时，margin-right:100px 对元素的定位也没有任何影响，给人“无效”的感觉，实际上，这个现象的本质和上面绝对定位元素非对立方位 margin 值“无效”类似。原因在于，若想使用 margin 属性改变自身的位置，必须是和当前元素定位方向一样的 margin 属性才可以，否则，margin 只能影响后面的元素或者父元素。
+    例如，一个普通元素，在默认流下，其定位方向是左侧以及上方，此时只有 margin-left 和 margin-top 可以影响元素的定位。但是，如果通过一些属性改变了定位方向，如 float:right 或者绝对定位元素的 right 右侧定位，则反过来 margin-right 可以影响元素的定位，margin-left 只能影响兄弟元素。
 
-例如，一个普通元素，在默认流下，其定位方向是左侧以及上方，此时只有 margin-left 和 margin-top 可以影响元素的定位。但是，如果通过一些属性改变了定位方向，如 float:right 或者绝对定位元素的 right 右侧定位，则反过来 margin-right 可以影响元素的定位，margin-left 只能影响兄弟元素。
-
-在本例中，父容器只有一个子元素，因此没有影响兄弟元素的说法，加上要么定宽要么定高，右侧和底部无 margin 重叠，因此外部的元素也不会有任何布局上的影响，因此就给人“无效”的错觉，实际上是 margin 自身的特性导致，有渲染只是你看不到变化而已。
+    在本例中，父容器只有一个子元素，因此没有影响兄弟元素的说法，加上要么定宽要么定高，右侧和底部无 margin 重叠，因此外部的元素也不会有任何布局上的影响，因此就给人“无效”的错觉，实际上是 margin 自身的特性导致，有渲染只是你看不到变化而已。
 
 - 鞭长莫及导致的 margin 无效。我们直接看下面这个例子：
 
-```html
-<div class="box">
-    <img src="mm1.jpg">
-    <p>内容</p>
-</div>
-<style>
-.box > img {
-    float: left;
-    width: 256px;
-}
-.box > p {
-    overflow: hidden;
-    margin-left: 200px;
-}
-</style>
-```
+    ```html
+    <div class="box">
+        <img src="mm1.jpg">
+        <p>内容</p>
+    </div>
+    <style>
+    .box > img {
+        float: left;
+        width: 256px;
+    }
+    .box > p {
+        overflow: hidden;
+        margin-left: 200px;
+    }
+    </style>
+    ```
 
-其中的 margin-left:200px 是无效的，准确地讲，此时的<p>的 margin-left 从负无穷到 256px 都是没有任何效果的。要解释这里为何会无效，需要对 float 和 overflow 深入理解，而这两个属性都是后面的内容
+    其中的 margin-left:200px 是无效的，准确地讲，此时的<p>的 margin-left 从负无穷到 256px 都是没有任何效果的。要解释这里为何会无效，需要对 float 和 overflow 深入理解，而这两个属性都是后面的内容
 
 - 内联特性导致的 margin 无效。我们直接看下面这个例子：
 
-```html
-<div class="box">
-    <img src="mm1.jpg">
-</div>
-<style>
-.box > img {
-    height: 96px;
-    margin-top: -200px;
-}
-</style>
+    ```html
+    <div class="box">
+        <img src="mm1.jpg">
+    </div>
+    <style>
+    .box > img {
+        height: 96px;
+        margin-top: -200px;
+    }
+    </style>
+    ```
+
+    这里的例子也很有代表性。一个容器里面有一个图片，然后这张图片设置 margin-top 负值，让图片上偏移。但是，随着我们的负值越来越负，结果达到某一个具体负值的时候，图片不再往上偏移了。比方说，本例 margin-top 设置的是-200px，如果此时把 margin-top 设置成-300px，图片会再往上偏移 100px 吗？不会！它会微丝不动，margin-top 变得无效了。要解释这里为何会无效，需要对 vertical-align 和内联盒模型有深入的理解，而这 vertical-align 是后面的内容
+
+# 功勋卓越的 border 属性
+
+## 为什么 border-width 不支持百分比值
+
+由语义和使用场景决定，语义方面在现实中边框不会随着设备的增大而增大，使用场景方面边框没有使用上的场景。还有其他的属性如 outline、box-shadow、text-shadow 等，都是不支持百分比值的，原因也与此类似
+
+为什么 border 属性的默认宽度大小是 medium，也就是 3px
+
+因为 border-style:double 至少 3px 才有效果
+
+## 了解各种 border-style 类型
+
+### border-style:none
+
+```css
+div { border: 10px; } /* 无边框出现 */
+div { border: red; } /* 无边框出现 */
 ```
 
-这里的例子也很有代表性。一个容器里面有一个图片，然后这张图片设置 margin-top负值，让图片上偏移。但是，随着我们的负值越来越负，结果达到某一个具体负值的时候，图片不再往上偏移了。比方说，本例 margin-top 设置的是-200px，如果此时把 margin-top设置成-300px，图片会再往上偏移 100px 吗？不会！它会微丝不动，margin-top 变得无效了。要解释这里为何会无效，需要对 vertical-align 和内联盒模型有深入的理解，而这vertical-align 是后面的内容
+border-style 的默认值是 none, 故以上没有出现边框，而下面的 CSS 会出现 3 像素的边框
+
+```css
+div { border: solid; } /* 有边框出现 */
+```
+
+平时我们使用 border-style:none 多出现在重置边框样式的时候，例如，实现一个没有下边框的边框效果：
+
+```css
+div {
+    border: 1px solid;
+    border-bottom: none;
+}
+```
+
+也可以通过直接设置边框宽度为 0 进行重置：
+
+```css
+div {
+    border: 1px solid;
+    border-bottom: 0;
+}
+```
+
+渲染性能高的写法：
+
+```css
+div {
+    border: 1px solid;
+    border-bottom: 0 none;
+}
+```
+
+### border-style:dashed
+
+兼容性的差异，基本上就只能当作虚框来用了
+
+### border-style:dotted
+
+虚点边框在表现上同样有兼容性差异，虽然规范上明确表示是个圆点，但是 Chrome 以及 Firefox 浏览器下虚点实际上是个小方点
+
+### border-style:double
+
+双线边框，顾名思义，即两根线且为实线。虽然平常使用少，但是其兼容性非常好。视觉表现为线框 — 透明线框
+
+![](./Snipaste_2018-08-18_14-19-07.png)
+
+当边框宽度是 1px 和 2px 的时候，其表现和 border-style:solid 是一模一样的：当边框为 3px 的时候，才开始有双线边框的表现
+
+border-style:double 的表现规则：双线宽度永远相等，中间间隔±1
+
+等比例“三道杠”图标效果如下图所示。
+
+![](./Snipaste_2018-08-18_14-22-16.png)
+
+CSS代码如下：
+
+```css
+.icon-menu {
+    width: 120px;
+    height: 20px;
+    border-top: 60px double;
+    border-bottom: 20px solid;
+}
+```
+
+## border-color 和 color
+
+border-color 有一个很重要也很实用的特性，就是“border-color 默认颜色就是 color 色值”。具体来讲，就是当没有指定 border-color 颜色值的时候，会使用当前元素的 color 计算值作为边框色。
+
+![](./Snipaste_2018-08-18_14-26-57.png)
+
+通常，正常思维下，我们都是使用 width/height 外加一个 background-color 绘制加号的，核心 CSS 代码如下：
+
+```css
+.add {
+    border: 2px dashed #ccc;
+}
+.add:before, .add:after {
+    background: #ccc;
+}
+/* hover 变色 */
+.add:hover {
+    border-color: #06C;
+}
+.add:hover:before, .add:hover:after {
+    background: #06C;
+}
+```
+
+功能没有任何问题，唯独当我们 hover 变色的时候，需要同时重置 3 处（元素本身以及两个伪元素）颜色。实际上，如果这里不是使用 background-color，而是使用 border 来绘制加号，则代码要简单得多，如下：
+
+```css
+.add {
+    color: #ccc;
+    border: 2px dashed;
+}
+.add:before {
+    border-top: 10px solid;
+}
+.add:after {
+    border-left: 10px solid;
+}
+/* hover 变色 */
+.add:hover {
+    color: #06C;
+}
+```
+
+<iframe src="/examples/code-editor.html?html=%3Ca%20href%20class%3D%22add%22%20title%3D%22%u7EE7%u7EED%u4E0A%u4F20%22%3E%0A%20%20%u6DFB%u52A0%u56FE%u7247%0A%3C/a%3E&css=.add%20%7B%0A%20%20%20%20display%3A%20inline-block%3B%0A%20%20%20%20width%3A%2076px%3B%20height%3A%2076px%3B%0A%20%20%20%20color%3A%20%23ccc%3B%0A%20%20%20%20border%3A%202px%20dashed%3B%0A%20%20%20%20text-indent%3A%20-12em%3B%0A%20%20%20%20transition%3A%20color%20.25s%3B%0A%20%20%20%20position%3A%20relative%3B%0A%20%20%20%20overflow%3A%20hidden%3B%0A%7D%0A.add%3Ahover%20%7B%0A%20%20%20%20color%3A%20%2334538b%3B%0A%7D%0A.add%3A%3Abefore%2C%20.add%3A%3Aafter%20%7B%0A%20%20%20%20content%3A%20%27%27%3B%0A%20%20%20%20position%3A%20absolute%3B%0A%20%20%20%20top%3A%2050%25%3B%0A%20%20%20%20left%3A%2050%25%3B%0A%7D%0A.add%3A%3Abefore%20%7B%0A%20%20%20%20width%3A%2020px%3B%0A%20%20%20%20border-top%3A%204px%20solid%3B%0A%20%20%20%20margin%3A%20-2px%200%200%20-10px%3B%0A%7D%0A.add%3A%3Aafter%20%7B%0A%20%20%20%20height%3A%2020px%3B%0A%20%20%20%20border-left%3A%204px%20solid%3B%0A%20%20%20%20margin%3A%20-10px%200%200%20-2px%3B%0A%7D" width="400" height="100"></iframe>

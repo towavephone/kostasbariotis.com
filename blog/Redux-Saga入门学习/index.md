@@ -302,8 +302,6 @@ function* watchFetchData() {
 
 如果我们只想得到最新那个请求的响应（例如，始终显示最新版本的数据）。我们可以使用 takeLatest 辅助函数。
 
-如果我们只想得到最新那个请求的响应（例如，始终显示最新版本的数据）。我们可以使用 takeLatest 辅助函数。
-
 ```js
 import { takeLatest } from 'redux-saga'
 

@@ -235,7 +235,7 @@ const VisibleTodoList = connect(
 export default VisibleTodoList
 ```
 
-用 createSelector 创建的 selector 只有在参数集与之前的参数集相同时才会返回缓存的值。如果我们交替的渲染 VisibleTodoList listId="1" /> 和 VisibleTodoList listId="2" />，共享的 selector 将交替的接收 listId: 1 和 listId: 2。这会导致每次调用时传入的参数不同，因此 selector 将始终重新计算而不是返回缓存的值。我们将在下一节了解如何解决这个限制。
+用 createSelector 创建的 selector 只有在参数集与之前的参数集相同时才会返回缓存的值。如果我们交替的渲染 VisibleTodoList listId="1" 和 VisibleTodoList listId="2"，共享的 selector 将交替的接收 listId: 1 和 listId: 2。这会导致每次调用时传入的参数不同，因此 selector 将始终重新计算而不是返回缓存的值。我们将在下一节了解如何解决这个限制。
 
 ## 跨多组件的共享 Selector
 

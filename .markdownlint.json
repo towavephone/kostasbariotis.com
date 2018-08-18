@@ -15,5 +15,6 @@
     "list-indent": false,
     "no-duplicate-header": false,
     "no-alt-text": false,
-    "no-bare-urls": false
+    "no-bare-urls": false,
+    "line-length": false
 }
