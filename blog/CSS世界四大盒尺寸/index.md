@@ -1263,21 +1263,47 @@ border-color 有一个很重要也很实用的特性，就是“border-color 默
 
 功能没有任何问题，唯独当我们 hover 变色的时候，需要同时重置 3 处（元素本身以及两个伪元素）颜色。实际上，如果这里不是使用 background-color，而是使用 border 来绘制加号，则代码要简单得多，如下：
 
+<iframe src="/examples/code-editor.html?html=%3Ca%20href%20class%3D%22add%22%20title%3D%22%u7EE7%u7EED%u4E0A%u4F20%22%3E%0A%20%20%u6DFB%u52A0%u56FE%u7247%0A%3C/a%3E&css=.add%20%7B%0A%20%20%20%20display%3A%20inline-block%3B%0A%20%20%20%20width%3A%2076px%3B%20height%3A%2076px%3B%0A%20%20%20%20color%3A%20%23ccc%3B%0A%20%20%20%20border%3A%202px%20dashed%3B%0A%20%20%20%20text-indent%3A%20-12em%3B%0A%20%20%20%20transition%3A%20color%20.25s%3B%0A%20%20%20%20position%3A%20relative%3B%0A%20%20%20%20overflow%3A%20hidden%3B%0A%7D%0A.add%3Ahover%20%7B%0A%20%20%20%20color%3A%20%2334538b%3B%0A%7D%0A.add%3A%3Abefore%2C%20.add%3A%3Aafter%20%7B%0A%20%20%20%20content%3A%20%27%27%3B%0A%20%20%20%20position%3A%20absolute%3B%0A%20%20%20%20top%3A%2050%25%3B%0A%20%20%20%20left%3A%2050%25%3B%0A%7D%0A.add%3A%3Abefore%20%7B%0A%20%20%20%20width%3A%2020px%3B%0A%20%20%20%20border-top%3A%204px%20solid%3B%0A%20%20%20%20margin%3A%20-2px%200%200%20-10px%3B%0A%7D%0A.add%3A%3Aafter%20%7B%0A%20%20%20%20height%3A%2020px%3B%0A%20%20%20%20border-left%3A%204px%20solid%3B%0A%20%20%20%20margin%3A%20-10px%200%200%20-2px%3B%0A%7D" width="400" height="200"></iframe>
+
+可以看到，使用 border 实现，我们 hover 变色的时候，只需要重置 1 处，也就是重置元素本身的 color 就可以了。因为整个图形都是使用border 绘制的，同时颜色缺省，所以所有图形颜色自动跟着一起变了
+
+## border 与透明边框技巧
+
+### 右下方 background 定位的技巧
+
+在 CSS3 还没到来的时候，background 定位有一个比较大的局限性，就是只能相对左上角数值定位，不能相对右下角。假设现在有一个宽度不固定的元素，我们需要在距离右边缘 50 像素的位置设置一个背景图片，此时 background 属性就不好处理了：由于宽度不固定，所以无法通过设定具体数值来实现我们想要的效果，因为 background 是相对左上角定位的，我们的需求是右侧定位。
+
+要实现上面的需求，方法挺多。其中一种方法就是使用透明边框，如下 CSS 代码：
+
 ```css
-.add {
-    color: #ccc;
-    border: 2px dashed;
-}
-.add:before {
-    border-top: 10px solid;
-}
-.add:after {
-    border-left: 10px solid;
-}
-/* hover 变色 */
-.add:hover {
-    color: #06C;
+.box {
+    border-right: 50px solid transparent;
+    background-position: 100% 50%;
 }
 ```
 
-<iframe src="/examples/code-editor.html?html=%3Ca%20href%20class%3D%22add%22%20title%3D%22%u7EE7%u7EED%u4E0A%u4F20%22%3E%0A%20%20%u6DFB%u52A0%u56FE%u7247%0A%3C/a%3E&css=.add%20%7B%0A%20%20%20%20display%3A%20inline-block%3B%0A%20%20%20%20width%3A%2076px%3B%20height%3A%2076px%3B%0A%20%20%20%20color%3A%20%23ccc%3B%0A%20%20%20%20border%3A%202px%20dashed%3B%0A%20%20%20%20text-indent%3A%20-12em%3B%0A%20%20%20%20transition%3A%20color%20.25s%3B%0A%20%20%20%20position%3A%20relative%3B%0A%20%20%20%20overflow%3A%20hidden%3B%0A%7D%0A.add%3Ahover%20%7B%0A%20%20%20%20color%3A%20%2334538b%3B%0A%7D%0A.add%3A%3Abefore%2C%20.add%3A%3Aafter%20%7B%0A%20%20%20%20content%3A%20%27%27%3B%0A%20%20%20%20position%3A%20absolute%3B%0A%20%20%20%20top%3A%2050%25%3B%0A%20%20%20%20left%3A%2050%25%3B%0A%7D%0A.add%3A%3Abefore%20%7B%0A%20%20%20%20width%3A%2020px%3B%0A%20%20%20%20border-top%3A%204px%20solid%3B%0A%20%20%20%20margin%3A%20-2px%200%200%20-10px%3B%0A%7D%0A.add%3A%3Aafter%20%7B%0A%20%20%20%20height%3A%2020px%3B%0A%20%20%20%20border-left%3A%204px%20solid%3B%0A%20%20%20%20margin%3A%20-10px%200%200%20-2px%3B%0A%7D" width="400" height="100"></iframe>
+对 50px 的间距我们使用 transparent 边框表示，这样就可以使用百分比 background-position 定位到我们想要的位置了。因为，默认 background 背景图片是相对于 padding box 定位的，也就是说，background-position:100%的位置计算默认是不会把 border-width 计算在内的
+
+### 优雅地增加点击区域大小
+
+稳妥的方法是外部再嵌套一层标签，专门控制点击区域大小。如果对代码要求较高，则可以使用 padding 或者透明 border 增加元素的点击区域大小。
+
+其中，首推透明 border 方法，原因很简单，假设我们的图标是使用工具生成的，那么background-position 就是限定死的值，若再使用 padding 撑开间距，就会遇到定位不准的问题。但是，若是使用透明 border 增加点击区域，则无此问题，只要合并时留下足够的间距就可以了。
+
+<iframe src="/examples/code-editor.html?html=%3Cinput%20id%3D%22search%22%20type%3D%22search%22%20value%3D%22%u6211%u662F%u521D%u59CB%u503C%22%20required%3E%0A%3Clabel%20for%3D%22search%22%20class%3D%22icon-clear%22%3E%3C/label%3E&css=input%5Btype%3D%22search%22%5D%20%7B%0A%20%20%20%20width%3A%20200px%3B%20height%3A%2040px%3B%0A%20%20%20%20padding%3A%2010px%2040px%2010px%2010px%3B%0A%20%20%20%20border%3A%201px%20solid%20%23ccc%3B%0A%20%20%20%20box-sizing%3A%20border-box%3B%0A%7D%0A.icon-clear%20%7B%0A%20%20%20%20width%3A%2016px%3B%20height%3A%2016px%3B%0A%20%20%20%20margin%3A%201px%200%200%20-38px%3B%0A%20%20%20%20border%3A%2011px%20solid%20transparent%3B%0A%20%20%20%20border-radius%3A%2050%25%3B%0A%20%20%20%20background%3A%20%23999%3B%0A%20%20%20%20color%3A%20white%3B%0A%20%20%20%20position%3A%20absolute%3B%0A%20%20%20%20visibility%3A%20hidden%3B%0A%7D%0A.icon-clear%3Abefore%20%7B%0A%20%20%20%20content%3A%20%22%D7%22%3B%0A%7D%0Ainput%3Avalid%20+%20.icon-clear%20%7B%20%0A%20%20%20%20visibility%3A%20visible%3B%0A%7D&js=var%20eleLabel%20%3D%20document.querySelector%28%27label%5Bfor%3D%22search%22%5D%27%29%2C%0AeleSearch%20%3D%20document.getElementById%28%27search%27%29%3B%0A%0Aif%20%28eleLabel%20%26%26%20eleSearch%29%20%7B%0A%20%20%20%20eleLabel.onclick%20%3D%20function%28%29%20%7B%0A%20%20%20%20%20%20%20%20eleSearch.value%20%3D%20%27%27%3B%0A%20%20%20%20%7D%3B%0A%7D" width="400" height="200"></iframe>
+
+### 三角等图形绘制
+
+即使在移动端，使用 CSS 的 border 属性绘制三角形等图形仍是性价比最高的方式。
+
+一个朝下的等腰直角三角形，直接用：
+
+```css
+div {
+    width: 0;
+    border: 10px solid;
+    border-color: #f30 transparent transparent;
+}
+```
+
+
