@@ -1306,4 +1306,108 @@ div {
 }
 ```
 
+## border 与图形构建
 
+border 属性可以轻松实现兼容性非常好的三角图形效果，为什么可以呢？其底层原因受
+inset/outset 等看上去没有实用价值的 border-style 属性影响
+
+```css
+div {
+    width: 10px; height: 10px;
+    border: 10px solid;
+    border-color: #f30 #00f #396 #0f0;
+}
+```
+
+![](2018-08-27-14-51-53.png)
+
+```css
+div {
+    width: 10px; height: 10px;
+    border: 10px solid;
+    border-color: #f30 transparent transparent;
+}
+```
+
+![](2018-08-27-14-55-18.png)
+
+```css
+div {
+    width: 0;
+    border: 10px solid;
+    border-color: #f30 transparent transparent;
+}
+```
+
+![](2018-08-27-14-56-40.png)
+
+```css
+div {
+    width: 0;
+    border-width: 10px 20px;
+    border-style: solid;
+    border-color: #f30 transparent transparent;
+}
+```
+
+![](2018-08-27-15-17-46.png)
+
+```css
+div {
+    width: 0;
+    border-width: 10px 20px;
+    border-style: solid;
+    border-color: #f30 #f30 transparent transparent;
+}
+```
+
+![](2018-08-27-15-18-18.png)
+
+这种三角形可以作为类似于如图 4-78 所示对话框的尖角。
+
+如果把两个不同倾斜角度的三角效果叠加，则可以实现更加刁钻的尖角效果，如图4-79 所示。
+
+![](2018-08-27-15-20-53.png)
+
+甚至我们可以借助 border 生成的梯形实现包括 IE8 浏览器在内的小圆角效果
+
+![](2018-08-27-15-23-20.png)
+
+<iframe src="/examples/code-editor.html?html=%3Ca%20href%20class%3D%22button%22%3E%u6211%u662F%u6309%u94AE%3C/a%3E&css=.button%20%7B%0A%20%20%20%20display%3A%20inline-block%3B%0A%20%20%20%20line-height%3A%2036px%3B%0A%20%20%20%20padding%3A%200%2040px%3B%0A%20%20%20%20color%3A%20%23fff%3B%0A%20%20%20%20background-color%3A%20%23cd0000%3B%0A%20%20%20%20position%3A%20relative%3B%0A%7D%0A.button%3Abefore%2C%0A.button%3Aafter%20%7B%0A%20%20%20%20content%3A%20%22%22%3B%0A%20%20%20%20position%3A%20absolute%3B%0A%20%20%20%20left%3A%200%3B%20right%3A%200%3B%0A%20%20%20%20border-style%3A%20solid%3B%0A%7D%0A.button%3Abefore%20%7B%0A%20%20%20%20top%3A%20-2px%3B%0A%20%20%20%20border-width%3A%200%202px%202px%3B%0A%20%20%20%20border-color%3A%20transparent%20transparent%20%23cd0000%3B%0A%7D%0A.button%3Aafter%20%7B%0A%20%20%20%20bottom%3A%20-2px%3B%0A%20%20%20%20border-width%3A%202px%202px%200%3B%0A%20%20%20%20border-color%3A%20%23cc0000%20transparent%20transparent%3B%0A%7D" width="400" height="200"></iframe>
+
+只要是与三角形或者梯形相关的图形，都可以使用 border 属性来模拟。
+
+## border 等高布局技术
+
+margin+padding 可以实现等高布局，同样，border 属性也可以实现等高布局。
+
+<iframe src="/examples/code-editor.html?html=%3Cdiv%20class%3D%22box%22%3E%0A%20%20%3Cnav%3E%0A%20%20%20%20%3Ch3%20class%3D%22nav%22%3E%u5BFC%u822A1%3C/h3%3E%0A%20%20%3C/nav%3E%0A%20%20%3Csection%3E%0A%20%20%20%20%3Cdiv%20class%3D%22module%22%3E%u6A21%u57571%3C/div%3E%0A%20%20%3C/section%3E%0A%3C/div%3E%0A%0A%3Cinput%20type%3D%22button%22%20id%3D%22navMore%22%20value%3D%22%u66F4%u591A%u5BFC%u822A%22%3E%0A%3Cinput%20type%3D%22button%22%20id%3D%22moduleMore%22%20value%3D%22%u66F4%u591A%u6A21%u5757%22%3E&css=/*%20%u5BFC%u822A%u80CC%u666F%u533Aborder%u521B%u5EFA%20*/%0A.box%20%7B%20%0A%20%20border-left%3A%20150px%20solid%20%23333%3B%0A%20%20background-color%3A%20%23f0f3f9%3B%0A%7D%0A/*%20%u6E05%u9664%u6D6E%u52A8%u5F71%u54CD%uFF0C%u4E0D%u80FD%u4F7F%u7528overflow%3Ahidden%20*/%0A.box%3Aafter%20%7B%0A%20%20content%3A%20%22%22%3B%0A%20%20display%3A%20block%3B%0A%20%20clear%3A%20both%3B%0A%7D%0A/*%20%u5E03%u5C40%u4E3B%u7ED3%u6784%20*/%0A.box%20%3E%20nav%20%7B%0A%20%20width%3A%20150px%3B%0A%20%20margin-left%3A%20-150px%3B%0A%20%20float%3A%20left%3B%0A%7D%0A.box%20%3E%20section%20%7B%0A%20%20%20%20overflow%3A%20hidden%3B%0A%7D%0A/*%20%u5BFC%u822A%u5217%u8868%u548C%u6A21%u5757%u5217%u8868%20*/%0A.nav%20%7B%0A%20%20%20%20line-height%3A%2040px%3B%0A%20%20%20%20color%3A%20%23fff%3B%0A%7D%0A.module%20%7B%0A%20%20%20%20line-height%3A%2040px%3B%0A%7D&js=var%20navMore%20%3D%20document.getElementById%28%27navMore%27%29%2C%0A%20%20%20%20moduleMore%20%3D%20document.getElementById%28%27moduleMore%27%29%3B%0A%0Aif%20%28navMore%20%26%26%20moduleMore%29%20%7B%0A%20%20%20%20var%20nav%20%3D%20document.querySelector%28%27nav%27%29%2C%20%0A%20%20%20%20%20%20%20%20section%20%3D%20document.querySelector%28%27section%27%29%3B%0A%20%20%20%20var%20navIndex%20%3D%201%2C%20sectionIndex%20%3D%201%3B%0A%20%20%20%20var%20rand%20%3D%20function%28%29%20%7B%0A%20%20%20%20%20%20%20%20return%20%27f%27%20+%20%28Math.random%28%29%20+%20%27%27%29%20.slice%28-1%29%3B%0A%20%20%20%20%7D%3B%0A%20%20%20%20navMore.onclick%20%3D%20function%28%29%20%7B%0A%20%20%20%20%20%20%20%20navIndex++%3B%0A%20%20%20%20%20%20%20%20nav.insertAdjacentHTML%28%27beforeEnd%27%2C%20%0A%20%20%20%20%20%20%20%20%20%20%27%3Ch3%20class%3D%22nav%22%3E%u5BFC%u822A%27+%20navIndex%20+%27%3C/h3%3E%27%29%3B%0A%20%20%20%20%7D%3B%0A%20%20%20%20moduleMore.onclick%20%3D%20function%28%29%20%7B%0A%20%20%20%20%20%20%20%20sectionIndex++%3B%0A%20%20%20%20%20%20%20%20section.insertAdjacentHTML%28%27beforeEnd%27%2C%20%0A%20%20%20%20%20%20%20%20%20%20%27%3Cdiv%20class%3D%22module%22%20style%3D%22background%3A%23%27+%20%5Brand%28%29%2C%20rand%28%29%2C%20rand%28%29%5D.join%28%27%27%29%20+%27%22%3E%u6A21%u5757%27+%20sectionIndex%20+%27%3C/div%3E%27%29%3B%0A%20%20%20%20%7D%3B%20%20%0A%7D" width="400" height="200"></iframe>
+
+核心 CSS 代码如下：
+
+```css
+.box {
+    border-left: 150px solid #333;
+    background-color: #f0f3f9;
+}
+.box > nav {
+    width: 150px;
+    margin-left: -150px;
+    float: left;
+}
+.box > section {
+    overflow: hidden;
+}
+```
+
+也就是说，左侧深色背景区域是由 border-left 属性生成的。元素边框高度总是和元素自身高度保持一致，因此可以巧妙地实现等高布局效果。
+
+此方法要想生效，有一点需要注意，父级容器不能使用 overflow:hidden 清除浮动影
+响，因为溢出隐藏是基于 padding box 的，如果设置了 overflow:hidden，则左浮动的导航
+列表元素就会被隐藏掉，这显然不是我们想要的效果。
+
+此方法与用 margin+padding 实现的等高布局相比更加稳健，不会出现锚点定位带来的问题，但同样它也是有局限性的。
+
+首先，由于 border 不支持百分比宽度，因此，适合至少一栏是定宽的布局。当然，如果不考虑 IE8 浏览器，可以试试使用 vw 单位，其可实现近似的百分比宽度效果。
+
+其次，等高布局的栏目有限制。因为一个元素的边框数目是有限的，基本上，border 等高布局只能满足 2～3 栏的情况，除非正好是等比例的，那还可以使用 border-style:double 实现最多 7 栏布局，但这只是理论上而已。所以，一旦等高布局栏目过多，则建议使用 table-cell 等高布局或者 margin 负值等高布局。
