@@ -63,3 +63,51 @@ ex 是 CSS 中的一个相对单位，指的是小写字母 x 的高度，没错
 <iframe src="/examples/code-editor.html?html=zhangxinxu%3Ci%20class%3D%22icon-arrow%22%3E%3C/i%3E%0A%0A%u5F20%u946B%u65ED%3Ci%20class%3D%22icon-arrow%22%3E%3C/i%3E&css=.icon-arrow%20%7B%0A%20%20%20%20display%3A%20inline-block%3B%0A%20%20%20%20width%3A%2020px%3B%0A%20%20%20%20height%3A%201ex%3B%0A%20%20%20%20background%3A%20url%28/images/5/arrow.png%29%20no-repeat%20center%3B%0A%7D" width="400" height="200"></iframe>
 
 # 内联元素的基石 line-height
+
+下文中所有的“行高”指的就是 line-height
+
+## 内联元素的高度之本 — line-height
+
+默认空`<div>`高度是 0，但是一旦里面写上几个文字，`<div>`高度就有了，请问这个高度由何而来，或者说是由哪个 CSS 属性决定的？
+
+本质上是由 line-height 属性全权决定的，尽管某些场景确实与font-size 大小有关。
+
+例如：
+
+```html
+<div class="test1">我的高度是？</div>
+<style>
+.test1 {
+  font-size: 16px;
+  line-height: 0;
+  border: 1px solid #ccc;
+  background: #eee;
+}
+</style>
+```
+
+和
+
+```html
+<div class="test2">我的高度是？</div>
+<style>
+.test1 {
+  font-size: 0;
+  line-height: 16px;
+  border: 1px solid #ccc;
+  background: #eee;
+}
+</style>
+```
+
+这两段代码的区别在于一个 line-height 行高为 0，一个 font-size 字号为 0。结果，第一段代码，最后元素的高度只剩下边框那么丁点儿，而后面一段代码，虽然文字小到都看不见了，但是 16px 的内部高度依然坚挺
+
+![](2018-09-15-17-42-22.png)
+
+对于非替换元素的纯内联元素，其可视高度完全由 line-height 决定，也就是什么 padding、border 属性对可视高度是没有任何影响的，这也是我们平常口中的“盒模型”约定俗成说的是块级元素的原因
+
+因此，对于文本这样的纯内联元素，line-height 就是高度计算的基石，用专业说法就是指定了用来计算行框盒子高度的基础高度。比方说，line-height 设为 16px，则一行文字高度是 16px，两行就是 32px，三行就是 48px，所有浏览器渲染解析都是这个值，1 像素都不差
+
+line-height 在替换元素，又或者是块级元素的作用：
+
+行距 = line-height - font-size
