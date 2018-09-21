@@ -1,6 +1,6 @@
 ---
 title: CSS世界内联元素与流
-date: 2018-8-27 17:13:27
+date: 2018-9-21 16:52:43
 path: /CSS-world-inline-element-flow/
 tags: 前端, CSS, CSS世界
 ---
@@ -233,3 +233,236 @@ p {
 ![](2018-09-19-11-20-20.png)
 
 不垂直居中与 line-height 无关，而是 vertical-align 导致的，具体原因我们将在 5.3 节讲解。
+
+## 深入 line-height 的各类属性值
+
+line-height 的默认值是 normal，还支持数值、百分比值以及长度值。
+
+```css
+div {
+  line-height: normal;
+  font-family: 'microsoft yahei';
+}
+div {
+  line-height: normal;
+  font-family: simsun;
+}
+```
+
+此时两段 CSS 中 line-height 的属性值 normal 的计算值是不一样的，下表给出的是我在
+几个桌面浏览器的测试数据。
+
+|字体|chrome|Firefox|IE|
+|:--:|:--:|:--:|:--:|
+|微软雅黑|1.32|1.321|1.32|
+|宋体|1.141|1.142|1.141|
+
+只要字体确定，各个浏览器下的默认 line-height 解析值基本上都是一样的，然而不同的浏览器所使用的默认中英文字体并不是一样的，并且不同操作系统的默认字体也不一样，换句话说，就是不同系统不同浏览器的默认 line-height 都是有差异的。因此，在实际开发的时候，对 line-height 的默认值进行重置是势在必行的。下面问题来了，line-height 应该重置为多大的值呢？是使用数值、百分比值还是长度值呢？
+
+要回答这个问题，我们需要先对这几种属性值有一定的了解才行
+
+- 数值，如 line-height:1.5，其最终的计算值是和当前 font-size 相乘后的值。例如，假设我们此时的 font-size 大小为 14px，则 line-height 计算值是 1.5*14px = 21px。
+- 百分比值，如 line-height:150%，其最终的计算值是和当前 font-size 相乘后的值。例如，假设我们此时的 font-size 大小为 14px，则 line-height 计算值是150%*14px=21px。
+- 长度值，也就是带单位的值，如 line-height:21px 或者 line-height:1.5em等，此处 em 是一个相对于 font-size 的相对单位，因此，line-height:1.5em 最终的计算值也是和当前font-size相乘后的值。例如，假设我们此时的font-size大小为 14px，则 line-height 计算值是 1.5*14px=21px。
+
+实际上，line-height:1.5 和另外两个有一点儿不同，那就是继承细节有所差别。如果使用数值作为 line-height 的属性值，那么所有的子元素继承的都是这个值；但是，如果使用百分比值或者长度值作为属性值，那么所有的子元素继承的是最终的计算值。什么意思呢？比方说下面 3 段 CSS 代码
+
+```css
+body {
+  font-size: 14px;
+  line-height: 1.5;
+}
+body {
+  font-size: 14px;
+  line-height: 150%;
+}
+body {
+  font-size: 14px;
+  line-height: 1.5em;
+}
+```
+
+对于`<body>`元素而言，上面 3 段 CSS 最终的行高计算值是 21px 是没有任何区别的，但是，如果同时还有子元素，例如：
+
+```css
+h3, p { margin: 0; }
+h3 { font-size: 32px; }
+p { font-size: 20px; }
+<h3>标题</h3>
+<p>内容</p>
+```
+
+结果 line-height:150% 和 line-height:1.5em 的最终表现是“标题”文字和“内容”文字重叠在了一起，如图 5-13 所示
+
+俗话讲“没有对比就没有伤害”，我们来看看 line-height:1.5 的最终表现，排版令人舒畅
+
+<iframe src="/examples/code-editor.html?html=%3Cdiv%20class%3D%22box%20box-1%22%3E%0A%20%20%20%20%3Ch3%3E%u6807%u9898%3C/h3%3E%0A%20%20%20%20%3Cp%3E%u5185%u5BB9%3C/p%3E%0A%3C/div%3E%0A%3Cdiv%20class%3D%22box%20box-2%22%3E%0A%20%20%20%20%3Ch3%3E%u6807%u9898%3C/h3%3E%0A%20%20%20%20%3Cp%3E%u5185%u5BB9%3C/p%3E%0A%3C/div%3E%0A%3Cdiv%20class%3D%22box%20box-3%22%3E%0A%20%20%20%20%3Ch3%3E%u6807%u9898%3C/h3%3E%0A%20%20%20%20%3Cp%3E%u5185%u5BB9%3C/p%3E%0A%3C/div%3E&css=.box%20%20%20%7B%20font-size%3A%2014px%3B%20%7D%0A.box-1%20%7B%20line-height%3A%201.5%3B%20%7D%0A.box-2%20%7B%20line-height%3A%20150%25%3B%20%7D%0A.box-3%20%7B%20line-height%3A%201.5em%3B%20%7D%0A%0Ah3%2C%20p%20%7B%0A%20%20%20%20margin%3A%200%3B%0A%7D%0Ah3%20%7B%20font-size%3A%2032px%3B%20%7D%0Ap%20%20%7B%20font-size%3A%2020px%3B%20%7D" width="400" height="200"></iframe>
+
+line-height:150% 和 line-height:1.5em 代码下的文字重叠的原因在于`<h3>`和`<p>`元素继承的并不是 150% 或者 1.5em，而是`<body>`元素的 line-height 计算值 21px，也就是说，`<h3>`和`<p>`元素的行高都是21px，考虑到`<h3>`的 font-size 大小为 32px，此时`<h3>`的半行间距就是-5.5px，因而“标题”文字和下面的“内容”文字发生重叠。
+
+但是 line-height:1.5 的继承则不同，`<h3>`和`<p>`元素的 line-height 继承的不是计算值，而是属性值 1.5，因此，对于`<h3>`元素，此时的行高计算值是 1.5 * 32px = 48px，`<p>`元素的行高计算值是 1.5 * 20px = 30px，于是，间距合理，排版舒适。
+
+实际上，line-height:150%、line-height:1.5em 要想有类似 line-height:1.5 的继承效果，也是可以实现的，类似下面的 CSS 代码：
+
+```css
+* {
+  line-height: 150%;
+}
+```
+
+既然 line-height 数值可以让元素天然继承相对计算特性，那这里的通配符岂不完全没必要？
+
+两者还是有差别的。HTML 中的很多替换元素，尤其表单类的替换元素，如输入框、按钮之类的，很多具有继承特性的CSS属性其自己也有一套，如font-family、font-size 以及这里的line-height。由于继承是属于最弱的权重，因此 body 中设置的line-height 是无法影响到这些替换元素的，但是 * 作为一个选择器，就不一样了，会直接重置这些替换元素默认的 line-height，这其实是我们需要的，因此从道义上讲，使用 * 通配也是合理的。但又考虑到*的性能以及明明有继承却不好好利用的羞耻感，我们可以折中使用下面的方法：
+
+```css
+body {
+  line-height: 1.5;
+}
+input, button {
+  line-height: inherit;
+}
+```
+
+## 内联元素 line-height 的“大值特性”
+
+```html
+<div class="box">
+  <span>内容...</span>
+</div>
+<style>
+  .box {
+    line-height: 96px;
+  }
+  .box span {
+    line-height: 20px;
+  }
+
+  /*或*/
+
+  .box {
+    line-height: 20px;
+  }
+  .box span {
+    line-height: 96px;
+  }
+</style>
+```
+
+一个子元素行高是 20px，一个是96px，假如文字就 1 行，.box 元素的高度分别是多少？
+
+<iframe src="/examples/code-editor.html?html=%3Cdiv%20class%3D%22box%20box1%22%3E%0A%20%20%20%20%3Cspan%3Espan%3A%20line-height%3A20px%3C/span%3E%0A%3C/div%3E%0A%3Cdiv%20class%3D%22box%20box2%22%3E%0A%20%20%20%20%3Cspan%3Espan%3A%20line-height%3A20px%3C/span%3E%0A%3C/div%3E&css=.box%20%7B%0A%20%20%20%20width%3A%20280px%3B%0A%20%20%20%20margin%3A%201em%20auto%3B%0A%20%20%20%20outline%3A%201px%20solid%20%23beceeb%3B%0A%20%20%20%20background%3A%20%23f0f3f9%3B%0A%7D%0A.box1%20%7B%0A%20%20%20%20line-height%3A%2096px%3B%0A%7D%0A.box1%20span%20%7B%0A%20%20%20%20line-height%3A%2020px%3B%0A%7D%0A.box2%20%7B%0A%20%20%20%20line-height%3A%2020px%3B%0A%7D%0A.box2%20span%20%7B%0A%20%20%20%20line-height%3A%2096px%3B%0A%7D" width="400" height="200"></iframe>
+
+全都是 96px 高，无论内联元素 line-height 如何设置，最终父级元素的高度都是由数值大的那个 line-height 决定的，称之为“内联元素 line-height 的大值特性”，幽灵空白节点的问题，“幽灵空白节点”就在`<span>`元素的前方
+
+于是，就效果而言，我们的 HTML 实际上等同于：
+
+```html
+<div class="box">
+  字符<span>内容...</span>
+</div>
+```
+
+这下就好理解了，当 .box 元素设置 line-height:96px 时，“字符”高度 96px；当设置 line-height:20px 时，`<span>`元素的高度则变成了 96px，而行框盒子的高度是由高度最高的那个“内联盒子”决定的，这就是 .box 元素高度永远都是最大的那个 line-height的原因。
+
+知道了原因也就能够对症下药，要避免“幽灵空白节点”的干扰，例如，设置`<span>`元素  display:inline-block，创建一个独立的“行框盒子”，这样`<span>`元素设置的 line-height:20px 就可以生效了，这也是多行文字垂直居中示例中这么设置的原因。
+
+# line-height 的好朋友 vertical-align
+
+```html
+<style>
+  .box { line-height: 32px; }
+  .box > span { font-size: 24px; }
+</style>
+<div class="box">
+  <span>文字</span>
+</div>
+```
+
+.box 元素的高度是多少？
+
+很多人一定认为是 32px，但是事实上，高度并不是 32px，而是要大那么几像素（受不同字体影响，增加高度也不一样），比方说 36px
+
+这里，之所以最终.box 元素的高度并不等于 line-height，就是因为行高的朋友属性 vertical-align 在背后默默地下了黑手
+
+## vertical-align 家族基本认识
+
+抛开 inherit 这类全局属性值不谈，我把 vertical-align 属性值分为以下 4 类：
+
+- 线类，如 baseline（默认值）、top、middle、bottom；
+- 文本类，如 text-top、text-bottom；
+- 上标下标类，如 sub、super；
+- 数值百分比类，如 20px、2em、20%等。
+
+实际上，“数值百分比类”应该是两类，分别是“数值类”和“百分比类”，这里之所以把它们合在一起归为一类，是因为它们有不少共性，包括“都带数字”和“行为表现一致”。
+
+行为表现一致”表示具有相同的渲染规则，具体为：根据计算值的不同，相对于基线往上或往下偏移，到底是往上还是往下取决于 vertical-align 的计算值是正值还是负值，如果是负值，往下偏移，如果是正值，往上偏移。
+
+由于 vertical-align 的默认值是 baseline，即基线对齐，而基线的定义是字母 x 的下边缘。因此，内联元素默认都是沿着字母 x 的下边缘对齐的。对于图片等替换元素，往往使用元素本身的下边缘作为基线，因此，进入上面的演示页面，看到的是图 5-18 所示的图文排列效果。
+
+![](2018-09-21-17-10-49.png)
+
+由于是相对字母 x 的下边缘对齐，而中文和部分英文字形的下边缘要低于字母 x 的下边缘，因此，会给人感觉文字是明显偏下的，一般都会进行调整。比方说，我们给文字内容设置 vertical-align:10px，则文字内容就会在当前基线位置再往上精确偏移 10px，效果如图 5-19 所示。
+
+![](2018-09-21-17-12-01.png)
+
+vertical-align 的数值属性值在实际开发的时候实用性非常强
+
+- 其兼容性非常好
+- 其可以精确控制内联元素的垂直对齐位置
+
+假设有一个 display 值为 inline-block 的尺寸为 20 像素×20 像素的小图标，默认状态下，文字是明显偏下的，类似图 5-20 中“请选择”三个字和后面三角图形的位置关系。
+
+这里，我们需要的是垂直居中对齐效果，所以很多人都使用具有强烈语义的 vertical-align:middle 控制图标的垂直位置，然而，由于 middle 并不是真正意义上的垂直居中，因此还是会有像素级别的误差，误差大小与字体和字号均有关。例如，在本例中，图标往下多偏移了 1 像素而导致容器的可视高度变成了 21 像素，如图 5-21 所示。
+
+但是，如果我们使用精确的数值，则一切尽在掌控之中。例如，设置 vertical-align:-5px，此时，图标和文字实现了真正意义上的垂直居中，此时容器的可视高度和当前行高 20 像素保持了一致
+
+在 CSS 世界中，凡是百分比值，均是需要一个相对计算的值，例如，margin 和 padding 是相对于宽度计算的，line-height 是相对于 font-size 计算的，而这里的 vertical-align 属性的百分比值则是相对于 line-height 的计算值计算的。可见，CSS 世界中的各类属性相互间有着紧密联系而非孤立的个体。
+
+但是事实上，平时开发中很少使用。原因在于，在如今的网页布局中，line-height 的计算值都是相对固定并且已知的，因此，直接使用具体的数值反而更方便
+
+## vertical-align 作用的前提
+
+为什么我设置了 vertical-align 却没任何作用
+
+只能应用于内联元素以及 display 值为 table-cell 的元素，当然 CSS 世界中，有一些 CSS 属性值会在背后默默地改变元素 display 属性的计算值，从而导致 vertical-align 不起作用。比方说，浮动和绝对定位会让元素块状化，因此，下面的代码组合 vertical-align 是没有理由出现的：
+
+```css
+.example {
+  float: left;
+  vertical-align: middle; /* 没有作用 */
+}
+.example {
+  position: absolute;
+  vertical-align: middle; /* 没有作用 */
+}
+```
+
+```html
+<style>
+  .box {
+    height: 128px;
+  }
+  .box > img {
+    height: 96px;
+    vertical-align: middle;
+  }
+</style>
+<div class="box">
+  <img src="1.jpg">
+</div>
+```
+
+此时图片顶着.box 元素的上边缘显示，根本没垂直居中，完全没起作用！
+
+这种情况看上去是 vertical-align:middle 没起作用，实际上，vertical-align 是在努力地渲染的，只是行框盒子前面的“幽灵空白节点”高度太小，如果我们通过设置一个足够大的行高让“幽灵空白节点”高度足够，就会看到 vertical-align:middle 起作用了，CSS 代码如下：
+
+```css
+.box {
+  height: 128px;
+  line-height: 128px; /* 关键 CSS 属性 */
+}
+.box > img {
+  height: 96px;
+  vertical-align: middle;
+}
+```
