@@ -466,3 +466,118 @@ vertical-align 的数值属性值在实际开发的时候实用性非常强
   vertical-align: middle;
 }
 ```
+
+为什么 display:table-cell 却可以无视行高？
+
+那是因为对 table-cell 元素而言，vertical-align 起作用的是 table-cell 元素自身
+
+```html
+<style>
+.cell {
+  height: 128px;
+  display: table-cell;
+}
+.cell > img {
+  height: 96px;
+  vertical-align: middle;
+}
+</style>
+<div class="cell">
+<img src="1.jpg">
+</div>
+```
+
+结果图片并没有要垂直居中的迹象，还是紧贴着父元素的上边缘
+
+但是，如果 vertical-align:middle 是设置在 table-cell 元素上
+
+```css
+.cell {
+  height: 128px;
+  display: table-cell;
+  vertical-align: middle;
+}
+.cell > img {
+  height: 96px;
+}
+```
+
+虽然就效果而言，table-cell 元素设置 vertical-align 垂直对齐的是子元素，但是其作用的并不是子元素，而是 table-cell 元素自身
+
+## vertical-align 和 line-height 之间的关系
+
+最明显的就是 vertical-align 的百分比值是相对于 line-height 计算的，实际是只要出现内联元素，这对好朋友一定会同时出现
+
+```html
+<style>
+  .box { line-height: 32px; }
+  .box > span { font-size: 24px; }
+<style>
+<div class="box">
+<span>文字</span>
+</div>
+```
+
+其中有一个很关键的点，那就是 24px 的 font-size 大小是设置在`<span>`元素上的，这就导致了外部`<div>`元素的字体大小和`<span>`元素有较大出入
+
+大家一定还记得图 5-16。这里也是类似的，`<span>`标签前面实际上有一个看不见的类似字符的“幽灵空白节点”。看不见的东西不利于理解，因此我们不妨使用一个看得见的字符 x 占位，同时“文字”后面也添加一个 x，便于看出基线位置，于是就有如下 HTML：
+
+```html
+<div class="box">
+  x<span>文字 x</span>
+</div>
+```
+
+我们可以明显看到两处大小完全不同的文字。一处是字母 x 构成了一个“匿名内联盒子”，另一处是“文字 x”所在的`<span>`元素，构成了一个“内联盒子”。由于都受 line-height:32px 影响，因此，这两个“内联盒子”的高度都是 32px。下面关键的来了，对字符而言，font-size 越大字符的基线位置越往下，因为文字默认全部都是基线对齐，所以当字号大小不一样的两个文字在一起的时候，彼此就会发生上下位移，如果位移距离足够大，就会超过行高的限制，而导致出现意料之外的高度，如图 5-25 所示。
+
+![](2018-09-26-19-12-22.png)
+
+图 5-25 非常直观地说明了为何最后容器的高度会是 36px，而非 line-height 设置的 32px。
+
+知道了问题发生的原因，那问题就很好解决了。我们可以让“幽灵空白节点”和后面`<span>`元素字号一样大，也就是
+
+```css
+.box {
+  line-height: 32px;
+  font-size: 24px;
+}
+.box > span { }
+```
+
+或者改变垂直对齐方式，如顶部对齐，这样就不会有参差位移了：
+
+```css
+.box { line-height: 32px; }
+.box > span {
+  font-size: 24px;
+  vertical-align: top;
+}
+```
+
+搞清楚了大小字号文字的高度问题，对更为常见的图片底部留有间隙的问题的理解就容易多了。现象是这样的：任意一个块级元素，里面若有图片，则块级元素高度基本上都要比图片的高度高
+
+```css
+.box {
+  width: 280px;
+  outline: 1px solid #aaa;
+  text-align: center;
+}
+.box > img {
+  height: 96px;
+}
+```
+
+结果.box 元素的高度可能就会像图 5-26 一样，底部平白无故多了 5 像素。
+
+![](2018-09-26-19-18-54.png)
+
+![](2018-09-26-19-19-27.png)
+
+当前 line-height 计算值是 20px，而 font-size 只有 14px，因此，字母 x 往下一定有至少 3px 的半行间距（具体大小与字体有关），而图片作为替换元素其基线是自身的下边缘。根据定义，默认和基线（也就是这里字母 x 的下边缘）对齐，字母 x 往下的行高产生的多余的间隙就嫁祸到图片下面，让人以为是图片产生的间隙，实际上，是“幽灵空白节点”、line-height 和 vertical-align 属性共同作用的结果
+
+解决方法如下：
+
+1. 图片块状化。可以一口气干掉“幽灵空白节点”、line-height 和 vertical-align。
+2. 容器 line-height 足够小。只要半行间距小到字母 x 的下边缘位置或者再往上，自然就没有了撑开底部间隙高度空间了。比方说，容器设置 line-height:0。
+3. 容器 font-size 足够小。此方法要想生效，需要容器的 line-height 属性值和当前 font-size 相关，如 line-height:1.5 或者 line-height:150% 之类；否则只会让下面的间隙变得更大，因为基线位置因字符 x 变小而往上升了。
+4. 图片设置其他 vertical-align 属性值。间隙的产生原因之一就是基线对齐，所以我们设置 vertical-align 的值为 top、middle、bottom 中的任意一个都是可以的。
