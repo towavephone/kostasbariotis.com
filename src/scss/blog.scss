@@ -247,7 +247,6 @@
         background-color: $darkblue;
         transition: left .2s ease-in-out;
         z-index: 3;
-        padding: 5px;
         overflow: auto;
         &.fixed{
             position:fixed;
@@ -262,6 +261,7 @@
         .index-list
         {
             font-size: 0.8em;
+            padding-right: 2em;
             ul{
                 list-style: none;
                 -webkit-padding-start: 20px;

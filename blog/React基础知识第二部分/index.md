@@ -107,7 +107,7 @@ path: /react-usage-part-2/
             </div>   
         }
         const element = <div>
-            <Box size="small" style={{backgroundColor: 'lightblue'}}>box-small</Box>
+            <Box size="small" style={{backgroundColor: 'title'}}>box-small</Box>
             <Box size="medium" style={{backgroundColor: 'pink'}}>box-medium</Box>
             <Box size="big" style={{backgroundColor: 'orange'}}>box-big</Box>
         </div>       
