@@ -149,7 +149,7 @@ div{
 }
 ```
 
-## 法一
+## 从 border 开始填充，伪元素设置白色背景色填充 div
 
 ```css
 div{
@@ -167,7 +167,7 @@ div::after{
 }
 ```
 
-## 法二
+## 使用伪元素背景色从 border-box 开始填充，使用 div 的背景色填充中间 padding-box区域
 
 ```css
 div{
@@ -278,7 +278,7 @@ z-index 看上去其实很简单，根据 z-index 的高低决定层叠的优先
 
 ![](2018-10-30-20-46-17.png)
 
-法一：-webkit-box-reflect
+## -webkit-box-reflect
 
 ```css
 div{
@@ -286,7 +286,7 @@ div{
 }
 ```
 
-法二：inherit，使用继承
+## inherit，使用继承
 
 ```css
 div::after {
@@ -310,6 +310,8 @@ div::after {
 ```html
 <h2><p><em>单行居中，多行居左<em></p></h2>
 ```
+
+## 普通方法
 
 我们让内层 p 居左 text-align:left，外层 h2 居中 text-align:center，并且将 p 设置为 display:inline-block ，利用 inline-block 元素可以被父级 text-align:center 居中的特性，这样就可以实现单行居中，多行居左，CSS 如下：
 
@@ -340,17 +342,145 @@ em {
 
 上述 3 条样式配合 overflow : hidden 和 text-overflow: ellipsis 即可实现 webkit 内核下的多行省略。
 
-法二: 绝对定位障眼法
+## 绝对定位障眼法
 
+```html
 <div class="container">
-    <h2>
-        <p>我是单行标题居中</p>
-        <p class="pesudo">我是单行标题居中</p>
-    </h2>
+  <h2>
+    <p>我是单行标题居中</p>
+    <p class="pesudo">我是单行标题居中</p>
+  </h2>
 </div>
+```
 
+```css
+h2{
+  position:relative;
+  line-height:30px;
+}
+p{
+  overflow : hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+.pesudo{
+  position:absolute;
+  width:100%;
+  height:30px;
+  overflow:hidden;
+  top:0;
+  background:#ddd;
+  text-align:center;
+}
+```
 
+# 全兼容的多列均匀布局问题
 
+# display:flex
 
+# 借助伪元素及 text-align:justify
 
+```html
+<div class="container">
+  <div class="justify">
+    <i>1</i>
+    <i>2</i>
+    <i>3</i>
+    <i>4</i>
+    <i>5</i>
+  </div>
+</div>  
+```
 
+```css
+.justify{
+  text-align: justify;
+  text-align-last: justify; // 新增这一行
+}
+
+.justify i{
+  width:24px;
+  line-height:24px;
+  display:inline-block;
+  text-align:center;
+  border-radius:50%;
+}
+```
+
+![](2018-11-05-15-14-46.png)
+
+由于text-align-last兼容性太低，故使用伪元素
+
+```css
+.justify{
+  text-align: justify;
+}
+
+.justify i{
+  width:24px;
+  line-height:24px;
+  display:inline-block;
+  text-align:center;
+  border-radius:50%;
+}
+
+/* 制造假的第二行 */
+.justify:after{ 
+  content: "";
+  display: inline-block;
+  position: relative;
+  width: 100%;
+}
+```
+
+# 消失的边界线问题
+
+![](2018-11-05-15-21-40.png)
+
+## 不需要兼容 IE8-
+
+```css
+/* 使用伪类选择器，选择第 3n 个元素去掉边框 */
+li:nth-child(3n){
+  border-right:none;
+}
+```
+
+## 添加反向添加边框并且增加一个负的 margin
+
+```html
+<div class="ul-container">
+  <ul>
+    <li>测试</li>
+    <li>消失</li>
+    <li>边界线</li>
+    <li>右侧</li>
+    <li>边界线</li>
+    <li>消失</li>
+    <li>测试</li>
+  </ul>
+</div>
+```
+
+```css
+.ul-container, 
+ul{
+  width:300px;
+}
+
+li{
+  float:left;
+  width:99px;
+  border-left:1px solid #999;
+}
+
+.ul-container{
+  overflow:hidden;
+}
+
+ul{
+  margin-left:-1px;
+}
+```
