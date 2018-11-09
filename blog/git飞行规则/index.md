@@ -1,6 +1,6 @@
 ---
 title: git飞行规则
-date: 2017-12-9 10:19:20
+date: 2018-11-9 10:09:28
 categories:
 - 版本控制工具
 path: /git-flight-rules/
@@ -16,12 +16,9 @@ tags: Git, git飞行规则
 
 一个 [宇航员指南](http://www.jsc.nasa.gov/news/columbia/fr_generic.pdf) (现在, 程序员们都在使用GIT) 是关于出现问题过后应该怎么操作。
 
->  -飞行规则(Flight Rules)- 是记录在手册上的来之不易的一系列知识，记录了某个事情发生的原因，以及怎样一步一步的进行处理。本质上, 它们是特定场景的非常详细的标准处理流程。 [...]
+> 飞行规则(Flight Rules)- 是记录在手册上的来之不易的一系列知识，记录了某个事情发生的原因，以及怎样一步一步的进行处理。本质上, 它们是特定场景的非常详细的标准处理流程。
 
 > 自20世纪60年代初以来，NASA一直在捕捉(capturing)我们的失误，灾难和解决方案, 当时水星时代(Mercury-era)的地面小组首先开始将“经验教训”收集到一个纲要(compendium)中，该纲现在已经有上千个问题情景，从发动机故障到破损的舱口把手到计算机故障，以及它们对应的解决方案。
-
-&mdash; Chris Hadfield, -一个宇航员的生活指南(An Astronaut's Guide to Life)-。
-
 
 ## 这篇文章的约定
 
@@ -31,7 +28,7 @@ tags: Git, git飞行规则
 
 ### 我刚才提交了什么?
 
-如果你用 `git commit -a` 提交了一次变化(changes)，而你又不确定到底这次提交了哪些内容。 你就可以用下面的命令显示当前`HEAD`上的最近一次的提交(commit):
+如果你用 `git commit -a` 提交了一次变化(changes)，而你又不确定到底这次提交了哪些内容。你就可以用下面的命令显示当前`HEAD`上的最近一次的提交(commit):
 
 ```sh
 (master)$ git show
@@ -51,7 +48,7 @@ $ git log -n1 -p
 $ git commit --amend
 ```
 
-这会打开你的默认编辑器, 在这里你可以编辑信息. 另一方面, 你也可以用一条命令一次完成:
+这会打开你的默认编辑器, 在这里你可以编辑信息。另一方面, 你也可以用一条命令一次完成：
 
 ```sh
 $ git commit --amend -m 'xxxxxxx'
@@ -69,7 +66,6 @@ $ git commit --amend --author "New Authorname <authoremail@mydomain.com>"
 
 如果你需要修改所有历史, 参考 'git filter-branch'的指南页.
 
-
 ### 我想从一个提交(commit)里移除一个文件
 
 通过下面的方法，从一个提交(commit)里移除一个文件:
@@ -82,7 +78,7 @@ $ git commit --amend
 
 这将非常有用，当你有一个开放的补丁(open patch)，你往上面提交了一个不必要的文件，你需要强推(force push)去更新这个远程补丁。
 
-### 我想删除我的的最后一次提交(commit)
+### 我想删除我的最后一次提交(commit)
 
 如果你需要删除推了的提交(pushed commits)，你可以使用下面的方法。可是，这会不可逆的改变你的历史，也会搞乱那些已经从该仓库拉取(pulled)了的人的历史。简而言之，如果你不是很确定，千万不要这么做。
 
@@ -98,7 +94,7 @@ $ git push -f [remote] [branch]
 
 ```
 
-这只能在没有推送之前有用. 如果你已经推了, 唯一安全能做的是 `git revert SHAofBadCommit`， 那会创建一个新的提交(commit)用于撤消前一个提交的所有变化(changes)； 或者, 如果你推的这个分支是rebase-safe的 (例如： 其它开发者不会从这个分支拉), 只需要使用 `git push -f`； 更多, 请参考 [the above section](#deleteremove-last-pushed-commit)。
+这只能在没有推送之前有用。如果你已经推了, 唯一安全能做的是 `git revert SHAofBadCommit`， 那会创建一个新的提交(commit)用于撤消前一个提交的所有变化(changes)；或者, 如果你推的这个分支是rebase-safe的（例如：其它开发者不会从这个分支拉）, 只需要使用 `git push -f` ；更多, 请参考 [the above section](#deleteremove-last-pushed-commit)。
 
 ### 删除任意提交(commit)
 
@@ -123,13 +119,13 @@ hint: 'git pull ...') before pushing again.
 hint: See the 'Note about fast-forwards' in 'git push --help' for details.
 ```
 
-注意, rebasing(见下面)和修正(amending)会用一个--新的提交(commit)代替旧的--, 所以如果之前你已经往远程仓库上推过一次修正前的提交(commit)，那你现在就必须强推(force push) (`-f`)。 注意 &ndash; -总是- 确保你指明一个分支!
+注意, rebasing(见下面)和修正(amending)会用一个新的提交(commit)代替旧的，所以如果之前你已经往远程仓库上推过一次修正前的提交(commit)，那你现在就必须强推(force push) (`-f`)。 注意：总是确保你指明一个分支!
 
 ```sh
 (my-branch)$ git push origin mybranch -f
 ```
 
-一般来说, --要避免强推--. 最好是创建和推(push)一个新的提交(commit)，而不是强推一个修正后的提交。后者会使那些与该分支或该分支的子分支工作的开发者，在源历史中产生冲突。
+一般来说, 要避免强推。最好是创建和推(push)一个新的提交(commit)，而不是强推一个修正后的提交。后者会使那些与该分支或该分支的子分支工作的开发者，在源历史中产生冲突。
 
 ### 我意外的做了一次硬重置(hard reset)，我想找回我的内容
 
@@ -139,7 +135,7 @@ hint: See the 'Note about fast-forwards' in 'git push --help' for details.
 (master)$ git reflog
 ```
 
-你将会看到一个你过去提交(commit)的列表, 和一个重置的提交。 选择你想要回到的提交(commit)的SHA，再重置一次:
+你将会看到一个你过去提交(commit)的列表和一个重置的提交。选择你想要回到的提交(commit)的SHA，再重置一次：
 
 ```sh
 (master)$ git reset --hard SHA1234
@@ -177,7 +173,7 @@ $ git add -N filename.x
 
 ### 我想把在一个文件里的变化(changes)加到两个提交(commit)里
 
-`git add` 会把整个文件加入到一个提交. `git add -p` 允许交互式的选择你想要提交的部分.
+`git add` 会把整个文件加入到一个提交。`git add -p` 允许交互式的选择你想要提交的部分.
 
 
 ### 我想把暂存的内容变成未暂存，把未暂存的内容暂存起来
@@ -890,9 +886,6 @@ $ git reset --hard 0254ea7
 ```
 
 然后使用git reset就可以把master改回到之前的commit，这提供了一个在历史被意外更改情况下的安全网。
-
-([摘自](https://www.atlassian.com/git/tutorials/rewriting-history/git-reflog)).
-
 
 ## 其它资源(Other Resources)
 
