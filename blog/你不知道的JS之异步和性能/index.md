@@ -1953,3 +1953,174 @@ it1.next( val2 / 2 );   // y:300
 it2.next( val1 / 4 );   // y:10
                         // 200 10 3
 ```
+
+## 生成器产生值
+
+### 生成者与迭代器
+
+假定你要产生一系列值，其中每个值都与前面一个有特定的关系。要实现这一点，需要一个有状态的生产者能够记住其生成的最后一个值。
+
+可以实现一个直接使用函数闭包的版本：
+
+```js
+var gimmeSomething = (function(){
+    var nextVal;
+    return function(){
+        if (nextVal === undefined) {
+            nextVal = 1;
+        }
+        else {
+            nextVal = (3 * nextVal) +6;
+        }
+        return nextVal;
+    };
+})();
+gimmeSomething(); // 1
+gimmeSomething(); // 9
+gimmeSomething(); // 33
+gimmeSomething(); // 105
+```
+
+可以为我们的数字序列生成器实现标准的迭代器接口：
+
+
+```js
+var something = (function(){
+    var nextVal;
+    return {
+        // for..of循环需要
+        [Symbol.iterator]: function(){ return this; },
+        // 标准迭代器接口方法
+        next: function(){
+            if (nextVal === undefined) {
+                nextVal = 1;
+            }
+            else {
+                nextVal = (3 * nextVal) + 6;
+            }
+            return { done:false, value:nextVal };
+        }
+    };
+})();
+something.next().value; // 1
+something.next().value; // 9
+something.next().value; // 33
+something.next().value; // 105
+```
+
+或这样调用：
+
+```js
+for (var v of something) {
+    console.log( v );
+    // 不要死循环！
+    if (v > 500) {
+        break;
+    }
+}
+// 1 9 33 105 321 969
+```
+
+```js
+for (var ret;(ret = something.next()) && !ret.done;) {
+    console.log( ret.value );
+    // 不要死循环！
+    if (ret.value > 500) {
+        break; //这种手工 for 方法当然要比 ES6 的 for..of 循环语法丑陋，但其优点是，这样就可以在需要时向 next() 传递值。
+    }
+}
+// 1 9 33 105 321 969
+```
+
+### 生成器中的 Promise 并发
+
+你需要从两个不同的来源获取数据，然后把响应组合在一起以形成第三个请求，最终把最后一条响应打印出来。第 3 章已经用 Promise 研究过一个类似的场景，但是让我们在生成器的环境下重新考虑一下这个问题吧。
+
+第一次考虑代码如下：
+
+```js
+function *foo() {
+    var r1 = yield request( "http://some.url.1" );
+    var r2 = yield request( "http://some.url.2" );
+    var r3 = yield request("http://some.url.3/?v=" + r1 + "," + r2);
+    console.log( r3 );
+}
+// 使用前面定义的工具run(..)
+run( foo );
+```
+
+最自然有效的答案就是让异步流程基于 Promise，特别是基于它们以时间无关的方式管理状态的能力。
+
+最简单的方法：
+
+```js
+function *foo() {
+    // 让两个请求"并行"
+    var p1 = request( "http://some.url.1" );
+    var p2 = request( "http://some.url.2" );
+    // 等待两个promise都决议
+    var r1 = yield p1;
+    var r2 = yield p2;
+    var r3 = yield request("http://some.url.3/?v=" + r1 + "," + r2);
+    console.log( r3 );
+}
+// 使用前面定义的工具run(..)
+run( foo );
+```
+
+两个 yield 语句等待并取得 promise 的决议（分别写入 r1 和 r2 ）。如果 p1 先决议，那么 yield p1 就会先恢复执行，然后等待 yield p2 恢复。如果 p2 先决议，它就会耐心保持其决议值等待请求，但是 yield p1 将会先等待，直到 p1 决议。
+
+等价于Promise.all([ .. ])工具：
+
+```js
+function *foo() {
+    // 让两个请求"并行"，并等待两个promise都决议
+    var results = yield Promise.all( [
+        request( "http://some.url.1" ),
+        request( "http://some.url.2" )
+    ] );
+    var r1 = results[0];
+    var r2 = results[1];
+    var r3 = yield request("http://some.url.3/?v=" + r1 + "," + r2);
+    console.log( r3 );
+}
+// 使用前面定义的工具run(..)
+run( foo );
+```
+
+更简洁的方案：
+
+```js
+// 注：普通函数，不是生成器
+function bar(url1,url2) {
+    return Promise.all( [
+        request( url1 ),
+        request( url2 )
+    ] );
+}
+function *foo() {
+    // 隐藏bar(..)内部基于Promise的并发细节
+    var results = yield bar("http://some.url.1", "http://some.url.2");
+    var r1 = results[0];
+    var r2 = results[1];
+    var r3 = yield request("http://some.url.3/?v=" + r1 + "," + r2);
+    console.log( r3 );
+}
+// 使用前面定义的工具run(..)
+run( foo );
+```
+
+如果想要实现一系列高级流程控制的话，那么非常有用的做法是：把你的 Promise 逻辑隐藏在一个只从生成器代码中调用的函数内部。比如：
+
+```js
+function bar() {
+    Promise.all( [
+        baz( .. )
+        .then( .. ),
+        Promise.race( [ .. ] )
+    ] )
+    .then( .. )
+}
+```
+
+有时候会需要这种逻辑，而如果把它直接放在生成器内部的话，那你就失去了几乎所有一开始使用生成器的理由。应该有意将这样的细节从生成器代码中抽象出来，以避免它把高层次的任务表达变得杂乱。

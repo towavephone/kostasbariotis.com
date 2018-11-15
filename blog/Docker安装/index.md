@@ -46,9 +46,7 @@ tags: Docker, Docker安装
     $(lsb_release -cs) \
     stable"
     ```
-
-
-
+    
 ### 安装DOCKER CE
 
 1. 更新`apt`软件包索引。
