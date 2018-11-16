@@ -4,7 +4,7 @@ categories:
   - 前端
 tags: 前端, JS, 你不知道的JS
 path: /you-dont-know-js-asynchronism-and-performance/
-date: 2018-11-7 20:03:25
+date: 2018-11-16 14:35:13
 ---
 # 异步：现在与将来
 
@@ -2032,7 +2032,7 @@ for (var ret;(ret = something.next()) && !ret.done;) {
 // 1 9 33 105 321 969
 ```
 
-### 生成器中的 Promise 并发
+## 生成器中的 Promise 并发
 
 你需要从两个不同的来源获取数据，然后把响应组合在一起以形成第三个请求，最终把最后一条响应打印出来。第 3 章已经用 Promise 研究过一个类似的场景，但是让我们在生成器的环境下重新考虑一下这个问题吧。
 
@@ -2115,12 +2115,89 @@ run( foo );
 ```js
 function bar() {
     Promise.all( [
-        baz( .. )
-        .then( .. ),
+        baz( .. ).then( .. ),
         Promise.race( [ .. ] )
-    ] )
-    .then( .. )
+    ] ).then( .. )
 }
 ```
 
 有时候会需要这种逻辑，而如果把它直接放在生成器内部的话，那你就失去了几乎所有一开始使用生成器的理由。应该有意将这样的细节从生成器代码中抽象出来，以避免它把高层次的任务表达变得杂乱。
+
+## 生成器委托
+
+从一个生成器调用另一个生成器，使用辅助函数 run(..)，就像这样
+
+```js
+function *foo() {
+    var r2 = yield request( "http://some.url.2" );
+    var r3 = yield request( "http://some.url.3/?v=" + r2 );
+    return r3;
+}
+function *bar() {
+    var r1 = yield request( "http://some.url.1" );
+    // 通过 run(..) "委托"给*foo()
+    var r3 = yield run( foo );
+    console.log( r3 );
+}
+run( bar );
+```
+
+我们再次通过 run(..) 工具从 *bar() 内部运行 *foo() 。这里我们利用了如下事实：我们前面定义的 run(..) 返回一个 promise，这个 promise 在生成器运行结束时（或出错退出时）决议。因此，如果从一个 run(..) 调用中 yield 出来一个 promise 到另一个 run(..) 实例中，它会自动暂停 *bar() ，直到 *foo() 结束。
+
+其实还有一个更好的方法可以实现从 *bar() 调用 *foo() ，称为 yield 委托。 yield 委托的具体语法是： yield * __（注意多出来的 * ）。
+
+```js
+function *foo() {
+    var r2 = yield request( "http://some.url.2" );
+    var r3 = yield request( "http://some.url.3/?v=" + r2 );
+    return r3;
+    }
+function *bar() {
+    var r1 = yield request( "http://some.url.1" );
+    // 通过 yeild* "委托"给*foo()
+    var r3 = yield *foo();
+    console.log( r3 );
+}
+run( bar );
+```
+
+yield * 暂停了迭代控制，而不是生成器控制。当你调用 *foo() 生成器时，现在 yield 委托到了它的迭代器。但实际上，你可以 yield 委托到任意 iterable ， yield `*[1,2,3]` 会消耗数组值 `[1,2,3]` 的默认迭代器。
+
+### 为什么用委托
+
+yield 委托的主要目的是代码组织，以达到与普通函数调用的对称。
+
+### 消息委托
+
+yield 委托是如何不只用于迭代器控制工作，也用于双向消息传递工作。认真跟踪下面的通过 yield 委托实现的消息流出入：
+
+```js
+function *foo() {
+    console.log( "inside *foo():", yield "B" );
+    console.log( "inside *foo():", yield "C" );
+    return "D";
+}
+function *bar() {
+    console.log( "inside *bar():", yield "A" );
+    // yield委托！
+    console.log( "inside *bar():", yield *foo() );
+    console.log( "inside *bar():", yield "E" );
+    return "F";
+}
+var it = bar();
+console.log( "outside:", it.next().value );
+// outside: A
+console.log( "outside:", it.next( 1 ).value );
+// inside *bar(): 1
+// outside: B
+console.log( "outside:", it.next( 2 ).value );
+// inside *foo(): 2
+// outside: C
+console.log( "outside:", it.next( 3 ).value );
+// inside *foo(): 3
+// inside *bar(): D
+// outside: E
+console.log( "outside:", it.next( 4 ).value );
+// inside *bar(): 4
+// outside: F
+```
