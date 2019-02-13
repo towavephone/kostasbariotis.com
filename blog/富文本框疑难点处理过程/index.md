@@ -1,6 +1,6 @@
 ---
 title: 富文本框疑难点处理过程
-date: 2018-11-26 08:55:56
+date: 2019-2-13 20:13:58
 categories:
 - 前端
 tags: 富文本框, contenteditable
@@ -150,7 +150,7 @@ this.setState(innerHTML, () => {
 });
 ```
 
-## 删除遇到 span 时跳到文本开头
+## 删除遇到 span 时光标跳到文本开头
 
 接着又遇到一个坑，因为想实现的是整体删除 span，所以设置了 contenteditable 属性为 false，在删除光标遇到带有 span 标签的字符时，光标也会跳到不正确的位置
 
@@ -220,3 +220,292 @@ if (selection.focusNode.id === this.id) { // 焦点在 span 内部，即光标�
 ```
 
 暂时遇到这么多问题，以后遇到 bug 再更新
+
+以上更新于`2018-11-26 08:55:56`
+
+---
+
+以上方法有很多未知的 bug，比较明显的问题就是光标会到处乱跑，自己解决起来有太多的坑，故采用业界比较成熟的 
+[draft-js-plugins](https://github.com/draft-js-plugins/draft-js-plugins)，底层采用 facebook 的开源库 [draft-js](https://github.com/facebook/draft-js)，期间也遇到不少问题，详见代码注释
+
+```jsx{12-13,23-29}
+import React from 'react';
+import PropTypes from 'prop-types';
+import { EditorState } from 'draft-js';
+import { convertFromHTML, convertToHTML } from 'draft-convert';
+import classnames from 'classnames';
+import Editor from 'draft-js-plugins-editor';
+import createMentionPlugin, { defaultSuggestionsFilter, defaultTheme } from 'draft-js-mention-plugin';
+import 'draft-js-mention-plugin/lib/plugin.css';
+import utils from 'utils';
+
+import styles from './styles.css';
+// 为了解决ie9下parseFromString('', 'text/html')的报错
+import './DomParserPloyfill';
+
+class GraphHintTextArea extends React.PureComponent { // eslint-disable-line react/prefer-stateless-function
+  constructor(props) {
+    super(props);
+    let theme = {
+      ...defaultTheme,
+      mention: styles.mention,
+    };
+    const browser = utils.getBrowserInfo();
+    if (browser.name === 'msie' && browser.version === '9') {
+      theme = {
+        ...defaultTheme,
+        mention: styles.mention,
+        mentionSuggestions: styles.mentionSuggestions,
+      };
+    }
+    // 设置mention标签的可变性、触发字符、样式
+    this.mentionPlugin = createMentionPlugin({
+      entityMutability: 'IMMUTABLE',
+      mentionTrigger: '$',
+      theme,
+    });
+
+    const { value } = this.props;
+    const contentState = convertFromHTML({
+      // 遇到class带有mention的标签进行实体的不可变转化，此时mention即话术变量标签是一体的
+      // 删除只能整个删除，添加也将转化为普通字符
+      // eslint-disable-next-line consistent-return
+      htmlToEntity: (nodeName, node, createEntity) => {
+        if (nodeName === 'span' && node.className === 'mention') {
+          const name = node.innerText || '';
+          return createEntity('$mention', 'IMMUTABLE', {
+            mention: {
+              name,
+              _id: node.id,
+            },
+          });
+        }
+      },
+    })(value);
+
+    this.state = {
+      editorState: EditorState.createWithContent(contentState),
+      suggestions: [],
+    };
+  }
+
+  // componentDidMount = () => {
+  //   this.focus();
+  // }
+
+  // https://github.com/facebook/draft-js/issues/1198
+  // 因为此处最开始打算使用componentWillReceiveProps，但在和onChange一起作用时，
+  // 导致多次执行，光标跳到行首，只能采用非受控组件的方式手动调用
+  setEditorContent(text) {
+    const contentState = convertFromHTML({
+      // eslint-disable-next-line consistent-return
+      htmlToEntity: (nodeName, node, createEntity) => {
+        if (nodeName === 'span' && node.className === 'mention') {
+          const name = node.innerText || '';
+          return createEntity('$mention', 'IMMUTABLE', {
+            mention: {
+              name,
+              _id: node.id,
+            },
+          });
+        }
+      },
+    })(text);
+    const { editorState } = this.state;
+    // 这里必须用push方法，不然会导致编辑器提示框不能弹出
+    // https://github.com/draft-js-plugins/draft-js-plugins/issues/210
+    const newEditorState = EditorState.push(editorState, contentState);
+    this.setState({
+      editorState: newEditorState,
+    });
+  }
+
+  // https://github.com/draft-js-plugins/draft-js-plugins/issues/800
+  // 不能直接调用focus，否则会造成draft-js-mention-plugin的失效
+  // focus = () => {
+  //   setTimeout(() => {
+  //     this.editor.focus();
+  //   }, 0);
+  // }
+
+  handleChange = (editorState) => {
+    const contentState = editorState.getCurrentContent();
+    const pureText = this.convertToPureText(contentState);
+    // 暂时不能阻挡非受控组件的输入
+    // const { maxLength } = this.props;
+    // if (pureText.length > maxLength) {
+    //   return;
+    // }
+    this.setState({
+      editorState,
+    }, () => {
+      this.triggerChange(contentState, pureText);
+    });
+  };
+
+  handleSearchChange = ({ value }) => {
+    const { hints } = this.props;
+    this.setState({
+      suggestions: defaultSuggestionsFilter(value, hints),
+    });
+  };
+
+  // 这里是转成看到标签的效果，目的是得到实际字符
+  convertToPureText = (contentState) => {
+    let htmlToPureText = convertToHTML({
+      // eslint-disable-next-line consistent-return
+      blockToHTML: (data) => {
+        const { type } = data;
+        if (type === 'unstyled') {
+          return {
+            start: '',
+            end: '',
+            empty: '',
+          };
+        }
+      },
+    })(contentState);
+    htmlToPureText = htmlToPureText.replace(/<\/?.+?\/?>|\s+/g, '');
+    return htmlToPureText;
+  }
+
+  // 这里是转成要传给后端的效果
+  triggerChange = (contentState, pureText) => {
+    const { onChange } = this.props;
+    let html = convertToHTML({
+      // 将遇到的实体标签转化为${id}，以便后端进行处理
+      entityToHTML: (entity, originalText) => {
+        if (entity.type === '$mention') {
+          return `$\{${entity.data.mention._id}}`;
+        }
+        return originalText;
+      },
+      // 语音合成需求要求，去除所有换行，即所有无用标签p，否则会读出标签p
+      // https://github.com/HubSpot/draft-convert/issues/59
+      // eslint-disable-next-line consistent-return
+      blockToHTML: (data) => {
+        const { type } = data;
+        if (type === 'unstyled') {
+          return {
+            start: '',
+            end: '',
+            // empty属性代表所有换行都去掉，而不是转为空格
+            empty: '',
+          };
+        }
+      },
+    })(contentState);
+    // 语音合成需求要求，去掉所有空白字符（包含空格、制表符、换页符）和html标签（包含<div class="test"></div>、<img />、<My-Tag></My-Tag>这几种）
+    html = html.replace(/<\/?.+?\/?>|\s+/g, '');
+    if (typeof onChange === 'function') {
+      onChange(html, pureText);
+    }
+    return html;
+  }
+
+  handleFocus = () => {
+    const { onFocus } = this.props;
+    if (typeof onFocus === 'function') {
+      onFocus();
+    }
+  }
+
+  handleBlur = () => {
+    const { onBlur } = this.props;
+    if (typeof onBlur === 'function') {
+      onBlur();
+    }
+  }
+
+  render() {
+    const { placeholder, className } = this.props;
+    const { MentionSuggestions } = this.mentionPlugin;
+    const plugins = [this.mentionPlugin];
+    return (<div className={classnames(styles.editor, className)}>
+      <Editor
+        editorState={this.state.editorState}
+        onChange={this.handleChange}
+        plugins={plugins}
+        placeholder={placeholder}
+        onFocus={this.handleFocus}
+        onBlur={this.handleBlur}
+        ref={(r) => { this.editor = r; }}
+      />
+      <MentionSuggestions
+        onSearchChange={this.handleSearchChange}
+        suggestions={this.state.suggestions}
+      />
+    </div>);
+  }
+}
+
+GraphHintTextArea.propTypes = {
+  placeholder: PropTypes.string,
+  onChange: PropTypes.func,
+  value: PropTypes.string,
+  hints: PropTypes.array,
+  className: PropTypes.string,
+  onFocus: PropTypes.func,
+  onBlur: PropTypes.func,
+};
+
+export default GraphHintTextArea;
+```
+
+效果如下：
+
+![](2019-02-13-20-25-26.png)
+
+这里遇到两个兼容性问题，如以上代码高亮部分
+
+- 在 IE9 下 draft-js 源码里面的 `parseFromString('', 'text/html')` 会报错，引入一段兼容代码如下
+
+```js
+/*
+ * DOMParser HTML extension
+ * 2012-09-04
+ *
+ * By Eli Grey, http://eligrey.com
+ * Public domain.
+ * NO WARRANTY EXPRESSED OR IMPLIED. USE AT YOUR OWN RISK.
+ */
+
+/*! @source https://gist.github.com/1129031 */
+/* global document, DOMParser*/
+
+// eslint-disable-next-line func-names
+(function (DOMParser) {
+  // eslint-disable-next-line
+  const DOMParser_proto = DOMParser.prototype, real_parseFromString = DOMParser_proto.parseFromString;
+  // Firefox/Opera/IE throw errors on unsupported types
+  try {
+    // WebKit returns null on unsupported types
+    if ((new DOMParser()).parseFromString('', 'text/html')) {
+      // text/html parsing is natively supported
+      return;
+    }
+  // eslint-disable-next-line no-empty
+  } catch (ex) {
+
+  }
+
+  // eslint-disable-next-line func-names
+  DOMParser_proto.parseFromString = function (markup, type) {
+    if (/^\s*text\/html\s*(?:;|$)/i.test(type)) {
+      const doc = document.implementation.createHTMLDocument('');
+      if (markup.toLowerCase().indexOf('<!doctype') > -1) {
+        doc.documentElement.innerHTML = markup;
+      } else {
+        doc.body.innerHTML = markup;
+      }
+      return doc;
+    // eslint-disable-next-line no-else-return
+    } else {
+      // eslint-disable-next-line prefer-rest-params
+      return real_parseFromString.apply(this, arguments);
+    }
+  };
+}(DOMParser));
+```
+
+- IE9 下不能弹出下拉框，这里笔者查看了源码发现了是 IE9 不支持动画CSS属性，即 transfrom 属性，故在 IE9下单独处理，去掉 tranfrom 变换 
