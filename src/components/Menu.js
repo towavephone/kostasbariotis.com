@@ -46,7 +46,7 @@ class Menu extends React.Component {
                   <GatsbyLink
                     exact
                     activeStyle={{
-                      color: '#e52f45',
+                      color: '#d23669',
                     }}
                     to="/"
                   >
@@ -57,7 +57,7 @@ class Menu extends React.Component {
                   <GatsbyLink
                     exact
                     activeStyle={{
-                      color: '#e52f45',
+                      color: '#d23669',
                     }}
                     to="/tags"
                   >
@@ -68,7 +68,7 @@ class Menu extends React.Component {
                   <GatsbyLink
                     exact
                     activeStyle={{
-                      color: '#e52f45',
+                      color: '#d23669',
                     }}
                     to="/about"
                   >
@@ -79,7 +79,7 @@ class Menu extends React.Component {
                   <GatsbyLink
                     exact
                     activeStyle={{
-                      color: '#e52f45',
+                      color: '#d23669',
                     }}
                     to="/search"
                   >
@@ -91,7 +91,7 @@ class Menu extends React.Component {
                         <GatsbyLink
                             exact
                             activeStyle={{
-                            color: '#e52f45',
+                            color: '#d23669',
                             }}
                             to="/drafts"
                         >

@@ -1,7 +1,6 @@
 /* global graphql */
 import React from 'react';
 import PropTypes from 'prop-types';
-import Img from 'gatsby-image';
 
 import Separator from './../components/Separator';
 import MetaTags from './../components/MetaTags';
@@ -47,7 +46,6 @@ export default function Tags({ data }) {
         <div className="medium-8 medium-offset-2 large-10 large-offset-1 post-meta">
           <header className="header">
             <div className="row text-center">
-              <Img sizes={data.file.childImageSharp.sizes} className="header-avatar" />
               <h1>文章标签</h1>
             </div>
           </header>

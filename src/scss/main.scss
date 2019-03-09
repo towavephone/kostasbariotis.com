@@ -3,84 +3,27 @@ html {
 }
 
 body {
-    background-color: $background;
-    color: #fff;
-    // font-weight: 300;
-    font-family: sans-serif;
+    color: $text-color;
+    font-family: Chinese Quote,-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,PingFang SC,Hiragino Sans GB,Microsoft YaHei,Helvetica Neue,Helvetica,Arial,sans-serif;
     line-height: 1.5em;
     font-size: 1em;
-
-    .subset-fonts-enabled & {
-      font-family: 'Roboto Subset', sans-serif;
-    }
-
-    .fonts-enabled &{
-      font-family: 'Roboto', sans-serif;
-    }
-
-    @media(max-width: 768px) {
-      font-size: 0.99em;
-    }
-
     background: $background;
-    background-image: url('./../../static/images/header_index.jpg');
-    background-size: 100% 300px;
-    /* http://colorzilla.com/gradient-editor/#7db9e8+0,221931+99&0+0,1+100 */
-    background-image: -moz-linear-gradient(top, rgba(125, 185, 232, 0) 0%, rgba(34, 25, 49, 1) 100%), url('./../../static/images/header_index.jpg');
-    background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0%, rgba(125, 185, 232, 0)), color-stop(100%, rgba(34, 25, 49, 1))), url('./../../static/images/header_index.jpg');
-    background-image: -webkit-linear-gradient(top, rgba(125, 185, 232, 0) 0%, rgba(34, 25, 49, 1) 100%), url('./../../static/images/header_index.jpg');
-    background-image: -o-linear-gradient(top, rgba(125, 185, 232, 0) 0%, rgba(34, 25, 49, 1) 100%), url('./../../static/images/header_index.jpg');
-    background-image: -ms-linear-gradient(top, rgba(125, 185, 232, 0) 0%, rgba(34, 25, 49, 1) 100%), url('./../../static/images/header_index.jpg');
-    background-image: linear-gradient(to bottom, rgba(125, 185, 232, 0) 0%, rgba(34, 25, 49, 1) 100%), url('./../../static/images/header_index.jpg');
-    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#007db9e8', endColorstr='#221931', GradientType=0);
-    background-repeat: no-repeat;
-
     -webkit-font-smoothing: antialiased;
     font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
     word-wrap: break-word;
     hyphens: auto;
 
-    @include mobile {
-      background-size: 100% 6.25em;
-    }
-    @include tablet {
-      background-size: 100% 10em;
-    }
-}
-
-h1,
-h2,
-h3,
-h4,
-h5,
-h6,
-.h1,
-.h2,
-.h3,
-.h4,
-.h5,
-.h6 {
-    font-weight: 700;
-    font-family: serif;
-    line-height: 1.5em;
-
-    @at-root {
-      .subset-fonts-enabled & {
-        font-family: 'Roboto Slab Subset', serif;
-      }
-
-      .fonts-enabled & {
-        font-family: 'Roboto Slab', serif;
-      }
+    @media(max-width: 768px) {
+      font-size: 0.99em;
     }
 }
 
 a {
-    color: $lightblue;
+    color: $link-color;
     &:active,
     &:hover {
-        color: $red;
+        color: $link-color;
     }
 }
 
@@ -89,17 +32,13 @@ a {
     padding-left: 0 !important;
 }
 
-.main-content {
-    margin: 0 0 5em 0;
-}
-
 .not-found-section {
     text-align: center;
     margin-top: 2.50em;
 }
 
 .header {
-    color: $red;
+    color: $link-color;
     font-size: 1.5em;
     font-weight: 700;
 }
@@ -146,7 +85,7 @@ a {
         z-index:2;
     }
     .progress{
-        color:#fff;
+        color:black;
         flex-basis:26px;
         text-align:right;
         z-index:2;
@@ -158,7 +97,7 @@ a {
         right:0;
         bottom:0;
         height:100%;
-        background-color: $red;
+        background-color: $link-color;
         transition:all .2s ease-in-out;
         z-index: -1;
     }
@@ -180,6 +119,8 @@ a {
     visibility: hidden;
     transform: translateY(-100%);
     transition: transform .3s;
+    box-shadow: 0px 3px 4px #b7afc4;
+
     p{
         position: absolute;
         top: 50%;
@@ -219,7 +160,6 @@ html.disabled{
     overflow:hidden;
 }
   
-
 .header-menu{
     position:fixed;
     top:50%;
@@ -259,12 +199,6 @@ html.disabled{
         border:2px solid transparent;
         transition:all .2s ease-in-out;
         text-decoration: none;
-        &:hover{
-            color:$red;
-            border:2px solid $red;
-            
-        }
-          
     }
 }   
 
@@ -272,13 +206,13 @@ html.disabled{
 ::-webkit-scrollbar{
     width: 10px;
     height: 10px;
-    background-color: $darkblue;
+    // background-color: $darkblue;
 }
 /*定义滚动条的轨道，内阴影及圆角*/
 ::-webkit-scrollbar-track{
     -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.6);
     border-radius: 10px;
-    background-color: $darkblue;
+    // background-color: $darkblue;
 }
 /*定义滑块，内阴影及圆角*/
 ::-webkit-scrollbar-thumb{
@@ -286,7 +220,7 @@ html.disabled{
     height: 10px;
     border-radius: 10px;
     -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.6);
-    background-color: $lightpurple;
+    // background-color: $lightpurple;
 }
    
    

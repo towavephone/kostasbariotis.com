@@ -1,11 +1,6 @@
 .blog {
-    margin-top: 4em;
     .home-template & {
         margin-top: 5em;
-    }
-    
-    @media(max-width: 768px) {
-        margin-top: 2.5em;
     }
     .page-number{
         @media(max-width: 768px) {
@@ -30,14 +25,13 @@
         margin-bottom: 0.5em;
         margin-top: 0.5em;
         display: block;
-        background: linear-gradient(to right, #e52f45 0%, #e52f45 25%, #b42b3e 25%, #b42b3e 50%, #8ab2ff 50%, #8ab2ff 75%, #4d71b7 75%, #4d71b7 100%);
+        background: linear-gradient(to right, #d23669 0%, #d23669 25%, #b42b3e 25%, #b42b3e 50%, #8ab2ff 50%, #8ab2ff 75%, #4d71b7 75%, #4d71b7 100%);
     }
 
     .post {
         .post-title {
-            color: $red;
-            font-size: 2.6em;
-            font-weight: 700;
+            color: $link-color;
+            font-size: 2em;
             margin-bottom: 2 * $vpadding;
             @media(max-width: 768px) {
                 text-align: left;
@@ -45,62 +39,44 @@
         }
     }
     .posts {
+        margin-top: 2em;
         .post-title {
             font-size: 1.5em;
             font-weight: 700;
-            margin-bottom: 2 * $vpadding;
-            color: $lightblue;
-            margin-bottom: 5px;
+            margin-bottom: 0.3em;
             @media(max-width: 768px) {
                 text-align: left;
             }
         }
         .post {
             margin-bottom: 2em;
-            // color: rgba(255, 255, 255, 0.8);
         }
         time {
-            color: rgba(255, 255, 255, 0.5);
+            margin-top: 0.5em;
+            font-size: 0.9em;
         }
         .post-excerpt {
-            margin-top: 1em;
-        }
-        .post-meta .tags {
-            color: rgba(255, 255, 255, 0.5);
+            margin-top: 0.5em;
         }
     }
     article.main-post {
-        margin-top: 2.5em;
-        // color: rgba(255, 255, 255, 0.8);
+        .post-content {
+            margin: 2em 0;
+        }
         img {
             max-width: 100%;
         }
-        h1,
-        h2,
-        h3,
-        h4,
-        h5,
-        h6 {
-            color: $lightblue;
-            margin-bottom: 1em;
+        iframe {
+            border: none;
         }
         blockquote {
-            color: rgba(255, 255, 255, 0.5);
-            border-left-color: $purple;
-        }
-        p {
-            margin-bottom: 1em;
-        }
-        ul, ol{
-            p {
-                margin-bottom: 0;
-            }
+            border-left-color: $link-color;
         }
         table{
             margin-bottom: 1em;
             display: block;
             overflow: auto;
-            max-height: 20em;
+            max-height: 500px;
             thead, tbody{
                 display:table;
                 width:100%;
@@ -108,7 +84,7 @@
             }
             th,td {
                 padding: 10px;
-                border: solid $lightblue 1px;
+                border: solid $text-color 1px;
             }
             tr:nth-child(2n) {
                 background: rgba(158,188,226,.12);
@@ -116,7 +92,7 @@
         }
         
         pre{
-            max-height: 20em;
+            max-height: 500px;
             overflow: auto;
         }
         .post-footer {
@@ -202,7 +178,7 @@
         .tags li {
             font-size: 0.8em;
             margin: 5px 5px;
-            border: 2px solid $lightblue;
+            border: 2px solid $lightblue;;
             text-align: center;
             border-radius: 100px / 100px;
             a {
@@ -220,16 +196,16 @@
             &:hover {
                 background: $lightblue;
                 a {
-                    color: $darkpurple;
+                    color: white;
                 }
             }
             &.draft-tag {
-                border-color: $red;
+                border-color: $link-color;
                 a {
-                    color: $red;
+                    color: $link-color;
                 }
                 &:hover {
-                    background: $red;
+                    background: $link-color;
                     a {
                         color: white;
                     }
@@ -248,14 +224,13 @@
         transition: left .2s ease-in-out;
         z-index: 3;
         overflow: auto;
+        box-shadow: 3px 0px 4px #b7afc4;
         &.fixed{
             position:fixed;
             top:48px;
         }
         .index-title{
             margin: 10px 0;
-            color: $red;
-            font-weight: bolder;
             text-align: center;
         }
         .index-list
@@ -278,12 +253,12 @@
                 }
                 &::before{
                     content:'# ';
-                    color: $red;
+                    color: $link-color;
                 }
             }
             a{
                 &.active{
-                    color: #fff;
+                    color: $text-color;
                     font-weight: 900;
                 }
             }
@@ -295,7 +270,7 @@
             li::before{
                 content:'# ' counters(catalog, '.') ' '; 
                 counter-increment: catalog;
-                // color: $red;
+                // color: $link-color;
             }
         }
     }
@@ -339,7 +314,7 @@
 
 .tags-collection {
     .tag-title {
-        color: $red;
+        color: $link-color;
     }
     .tag-meta {
         margin-bottom: 2.5em;
@@ -404,10 +379,7 @@ code[class*="language-"]{
 .navigate-link:active,
 .navigate-link:focus,
 .navigate-link {
-    font-size: 1.11em;
     font-weight: bold;
-    color: #8ab2ff;
-    margin-bottom: 5px;
 }
 
 .navigate-desc {
@@ -420,7 +392,7 @@ code[class*="language-"]{
 
 .blog-header {
     display: block;
-    margin-bottom: $vpadding * 4;
+    margin-bottom: $vpadding * 2.5;
 }
 
 .blog-header__link {
@@ -428,6 +400,7 @@ code[class*="language-"]{
     height: auto;
     padding: 10px 15px;
     float: left;
+    margin-top: -8px;
 
     @media(max-width: 1200px) {
         height: 7.5em;
@@ -438,9 +411,7 @@ code[class*="language-"]{
 }
 
 .blog-header__img {
-    width: 100px;
-    // border-radius: 50%;
-    // border: 4px solid #fff;
+    width: 70px;
     margin-right: 25px;
     @media(max-width: 768px) {
         margin: 0 auto;

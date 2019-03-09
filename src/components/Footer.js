@@ -3,23 +3,6 @@ import GatsbyLink from 'gatsby-link';
 
 const Footer = () => (
   <div>
-    <footer className="footer">
-      <div className="container">
-        <div className="row">
-          <div className="medium-8 medium-offset-2 large-10 large-offset-1 text-center">
-            我是{' '}
-            <GatsbyLink className="footer-link" to="/" title="towavephone.com Home">
-              女王控
-            </GatsbyLink>，一个前端开发者，黑猫女王控，五更琉璃粉。我的使命是编写干净高效的代码，解决前端上的问题，并学习一些东西。更多请阅读{' '}
-            <GatsbyLink className="footer-link" to="/about" title="关于我">
-              关于我
-            </GatsbyLink>{' '}
-            。
-          </div>
-        </div>
-      </div>
-    </footer>
-
     <footer className="footer-social">
       <ul className="social">
         <li>

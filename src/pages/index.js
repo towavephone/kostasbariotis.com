@@ -42,7 +42,7 @@ export default function Index({ data }) {
                 sizes={data.file.childImageSharp.sizes}
               />
             </GatsbyLink>
-            <h1>{author}</h1>
+            <h2>{author}</h2>
             <p className="header-description" dangerouslySetInnerHTML={{ __html: description }} />
           </div>
           <header className="header">最近文章</header>

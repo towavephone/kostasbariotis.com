@@ -137,12 +137,6 @@ module.exports = {
     'gatsby-transformer-sharp',
     'gatsby-plugin-sharp',
     {
-      resolve: `gatsby-plugin-google-analytics`,
-      options: {
-        trackingId: 'UA-98114394-3',
-      },
-    },
-    {
       resolve: `gatsby-plugin-manifest`,
       options: {
         name: '黑猫女王控',

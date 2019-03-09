@@ -297,7 +297,7 @@ export default class Template extends Component {
                     >
                         <Icon
                             type={collapse ? 'cross' : 'text-document'}
-                            style={{ color: '#fff', fontSize: '24px' }}
+                            style={{ fontSize: '24px' }}
                         />
                     </div>
                 </main>
