@@ -19,8 +19,6 @@ date: 2018-04-14 17:25:42
 * <https://davidwalsh.name/event-delegate>
 * <https://stackoverflow.com/questions/1687296/what-is-dom-event-delegation>
 
-
-
 ## 请简述JavaScript中的this
 
 JS 中的`this`是一个相对复杂的概念，不是简单几句能解释清楚的。粗略地讲，函数的调用方式决定了`this`的值。我阅读了网上很多关于`this`的文章，[Arnav Aggrawal](https://medium.com/@arnav_aggarwal) 写的比较清楚。`this`取值符合以下规则：

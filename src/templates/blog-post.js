@@ -190,13 +190,13 @@ export default class Template extends Component {
                     noIndex={post.frontmatter.draft}
                 />
                 <main className={cx({ 'blog container': true, 'collapse-catalog':collapse })}  role="main">
-                    <div className="medium-8 medium-offset-2 large-10 large-offset-1 post">
+                    <div className="medium-10 medium-offset-1 large-10 large-offset-1 post">
                         <header className="post-head">
                             <h1 className="post-title">{post.frontmatter.title}</h1>
                         </header>
                         <section className="post-meta">
                             <div className="row">
-                                <div className="medium-4">
+                                <div className="medium-6 large-6 small-6 xsmall-6">
                                     <ul className="list-inline">
                                         <li>
                                             <GatsbyLink to="/" className="author-avatar" itemProp="name">
@@ -211,7 +211,7 @@ export default class Template extends Component {
                                         </li>
                                     </ul>
                                 </div>
-                                <div className="medium-offset-3 medium-5" style={{ textAlign: 'right' }}>
+                                <div className="medium-6 large-6 small-6 xsmall-6" style={{ float: 'right', textAlign: 'right' }}>
                                     <BulletListTags tags={post.frontmatter.tags} draft={post.frontmatter.draft} />
                                     <div className="timeSize">
                                         阅读时间：{post.timeToRead}分钟 文章字数：{post.wordCount.words}字

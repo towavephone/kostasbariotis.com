@@ -78,7 +78,7 @@ module.exports = {
             resolve: 'gatsby-remark-images',
             options: {
               maxWidth: 800,
-              backgroundColor: 'white',
+              backgroundColor: '#fafafa',
             },
           },
           `gatsby-remark-autolink-headers`,

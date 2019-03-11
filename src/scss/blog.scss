@@ -71,6 +71,7 @@
         }
         blockquote {
             border-left-color: $link-color;
+            background: #dadada;
         }
         table{
             margin-bottom: 1em;
@@ -87,10 +88,12 @@
                 border: solid $text-color 1px;
             }
             tr:nth-child(2n) {
-                background: rgba(158,188,226,.12);
+                background: #dadada;
             }
         }
-        
+        hr {
+            border-top: 1px dashed #dadada;           
+        }
         pre{
             max-height: 500px;
             overflow: auto;
@@ -155,25 +158,10 @@
         }
         .author-avatar div {
             display: inline-block;
-            width: 3em;
-            height: 3em;
-
-            img {
-                border-radius: 50%;
-                border: 3px solid white;
-            }
+            width: 1.5em;
         }
         .timeSize{
             margin-top: -10px;
-            @media (max-width: 768px) {
-                text-align: center;
-                font-size: 0.9em;
-            }
-        }
-        .tags {
-            @media (max-width: 991px) {
-                text-align: left;
-            }
         }
         .tags li {
             font-size: 0.8em;
@@ -320,18 +308,8 @@
         margin-bottom: 2.5em;
     }
 }
-
-code {
-    background: #2d2d2d;
-    color: #FF9619;
-    border-radius: 4px;
-}
-code[class*="language-"]{
-    word-wrap: break-word;
-    word-break: break-all;
-}
 .gatsby-highlight-code-line {
-    background-color: #555;
+    background-color: #ccc;
     display: block;
     margin-right: -1em;
     margin-left: -1em;
@@ -339,7 +317,16 @@ code[class*="language-"]{
     padding-left: 0.75em;
     border-left: 0.25em solid #f99;
 }
-  
+
+code[class*="language-"]{
+    word-wrap: break-word;
+    word-break: break-all;
+}
+
+:not(pre) > code[class*="language-"] {
+    color: $link-color;
+}
+
 .gatsby-highlight {
     margin-bottom: 1em;
     overflow: auto;
