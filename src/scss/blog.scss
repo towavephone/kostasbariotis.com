@@ -4,10 +4,12 @@
     }
     .page-number{
         @media(max-width: 768px) {
-            // font-size: 0.8em;
+            font-size: 0.8em;
             position: absolute;
-            top: 3.5em;
-            left: 0.4em;            
+            top: 4em;
+            left: 50%;
+            transform: translateX(-50%);
+            white-space: nowrap;
         }
     }
     .newer-posts {

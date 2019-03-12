@@ -142,7 +142,7 @@ module.exports = {
         name: '黑猫女王控',
         short_name: '女王控',
         start_url: '/',
-        theme_color: '#676d9c',
+        theme_color: '#fafafa',
         display: 'minimal-ui',
         icons: [
           {
