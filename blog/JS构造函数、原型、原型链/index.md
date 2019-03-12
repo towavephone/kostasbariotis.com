@@ -145,7 +145,7 @@ JavaScript 是一种基于原型的语言 (prototype-based language)，这个和
 
 构造函数 Parent 有一个指向原型的指针，原型 Parent.prototype 有一个指向构造函数的指针 Parent.prototype.constructor，如上图所示，其实就是一个循环引用。
 
-## `__proto__`
+## proto
 
 下图可以看到 Parent 原型（ Parent.prototype ）上有 `__proto__` 属性，这是一个访问器属性（即 getter 函数和 setter 函数），通过它可以访问到对象的内部 [[Prototype]] (一个对象或 null )。
 
