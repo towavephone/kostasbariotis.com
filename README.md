@@ -17,8 +17,6 @@
 
 ## 使用
 
-### yarn
-
 ```bash
 yarn
 yarn start // 启动本地开发服务器
