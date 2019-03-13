@@ -2,7 +2,7 @@
 title: 前端面试题HTML部分
 categories:
   - 面试
-tags: 面试, HTML
+tags: 面试, HTML, 前端
 path: /front-end-interview-html/
 date: 2018-04-05 18:24:54
 ---

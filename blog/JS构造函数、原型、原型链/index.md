@@ -2,7 +2,7 @@
 title: JS构造函数、原型、原型链
 date: 2019-3-11 20:03:54
 path: /js-constructor-prototype-proto/
-tags: JS, 原型链
+tags: 前端, JS, 原型链
 ---
 
 # 构造函数

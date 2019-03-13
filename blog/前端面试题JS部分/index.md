@@ -2,7 +2,7 @@
 title: 前端面试题JS部分
 categories:
   - 面试
-tags: 面试, JS
+tags: 面试, JS, 前端
 path: /front-end-interview-js/
 date: 2018-04-14 17:25:42
 ---

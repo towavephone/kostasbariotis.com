@@ -3,7 +3,7 @@ title: 基于wavesurfer.js声音波形图的研究
 date: 2019-2-13 20:39:46
 categories:
 - 前端
-tags: wavesurfer, 声音波形图
+tags: wavesurfer, 声音波形图, 前端
 path: /wavesurfer-voice-wave-research/
 ---
 

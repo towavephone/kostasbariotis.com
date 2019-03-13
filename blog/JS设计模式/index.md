@@ -5,7 +5,7 @@ date: 2017-11-16 17:51:52
 categories:
 - 前端
 path: /js-design-pattern/
-tags: 设计模式, JS
+tags: 前端, 设计模式, JS
 ---
 ## 单例模式 
 

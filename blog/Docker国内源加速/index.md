@@ -4,7 +4,7 @@ date: 2017-12-11 23:37:24
 categories:
 - 运维
 path: /docker-origin-guonei/
-tags: Docker, Docker源
+tags: 后端, Docker, Docker源
 ---
 
 - 安装／升级你的Docker客户端

@@ -2,7 +2,7 @@
 title: 前端面试题CSS部分
 categories:
   - 面试
-tags: 面试, CSS
+tags: 面试, CSS, 前端
 path: /front-end-interview-css/
 date: 2018-4-12 17:44:07
 ---

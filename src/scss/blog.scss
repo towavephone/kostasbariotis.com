@@ -162,6 +162,15 @@
             display: inline-block;
             width: 1.5em;
         }
+        .desc {
+            float: left;
+            text-align: left;
+
+            @media (min-width: 990px) {
+                float: right;
+                text-align: right;
+            }
+        }
         .timeSize{
             margin-top: -10px;
         }
@@ -391,9 +400,6 @@ code[class*="language-"]{
     float: left;
     margin-top: -8px;
 
-    @media(max-width: 1200px) {
-        height: 7.5em;
-    }
     @media(max-width: 768px) {
         float: none;
     }

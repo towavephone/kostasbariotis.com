@@ -196,7 +196,7 @@ export default class Template extends Component {
                         </header>
                         <section className="post-meta">
                             <div className="row">
-                                <div className="medium-6 large-6 small-6 xsmall-6">
+                                <div className="medium-6 small-12">
                                     <ul className="list-inline">
                                         <li>
                                             <GatsbyLink to="/" className="author-avatar" itemProp="name">
@@ -211,7 +211,7 @@ export default class Template extends Component {
                                         </li>
                                     </ul>
                                 </div>
-                                <div className="medium-6 large-6 small-6 xsmall-6" style={{ float: 'right', textAlign: 'right' }}>
+                                <div className="medium-6 small-12 desc">
                                     <BulletListTags tags={post.frontmatter.tags} draft={post.frontmatter.draft} />
                                     <div className="timeSize">
                                         阅读时间：{post.timeToRead}分钟 文章字数：{post.wordCount.words}字

@@ -4,7 +4,7 @@ categories:
   - 面试
 date: 2018-04-03 15:24:28
 path: /mysql-introduce/
-tags: 面试, 数据库
+tags: 面试, 数据库, 后端
 ---
 # 一、存储引擎
 

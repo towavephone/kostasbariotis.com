@@ -3,7 +3,7 @@ title: 前端面试题
 date: 2018-1-5 23:08:08
 categories:
 - 面试
-tags: 面试
+tags: 面试, 前端
 path: /front-end-interview/
 ---
 

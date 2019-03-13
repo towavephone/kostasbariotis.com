@@ -2,7 +2,7 @@
 title: Docker初步了解
 date: 2017-12-11 23:32:56
 path: /docker-know/
-tags: Docker, Docker初级入门
+tags: 后端, Docker, Docker初级入门
 categories:
 - 运维
 ---

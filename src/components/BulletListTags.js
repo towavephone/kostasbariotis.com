@@ -3,7 +3,7 @@ import GatsbyLink from 'gatsby-link';
 import PropTypes from 'prop-types';
 
 const BulletListTags = ({ tags, draft }) => (
-  <ul className="tags list-inline text-right">
+  <ul className="tags list-inline">
     {tags &&
       tags.split(', ').map((tag, index) => (
         <li key={index}>
