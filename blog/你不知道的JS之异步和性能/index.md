@@ -2,7 +2,7 @@
 title: 你不知道的 JS 之异步与性能
 categories:
   - 前端
-tags: 前端, JS, 你不知道的 JS
+tags: 前端, JS, 你不知道的JS
 path: /you-dont-know-js-asynchronism-and-performance/
 date: 2018-11-16 14:35:13
 ---
