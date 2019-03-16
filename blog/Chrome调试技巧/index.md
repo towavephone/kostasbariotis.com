@@ -158,3 +158,72 @@ DevTools 中的前4个主要的面板，每一个都支持 `[ctrl] + [f]` 快捷
 - 打印一个从这个对象复制出来的对象。
 - 使用资源面中的断点来调试
 - 使用 JSON.stringify() 方法处理打印的结果
+
+## 异步的 console
+
+> console 默认就被 async 包裹
+
+![](2019-03-16-15-44-35.png)
+
+### Storage 系统的占用数和空闲数
+
+```js
+await navigator.storage.estimate()
+```
+
+![](2019-03-16-15-46-14.png)
+
+
+### 设备的 电池信息
+
+```js
+console.table(await navigator.getBattery())
+```
+
+![](2019-03-16-15-49-02.png)
+
+### 媒体能力
+
+![](2019-03-16-15-51-07.png)
+
+### Cache storage keys
+
+![](2019-03-16-15-55-04.png)
+
+## 对象 &amp; 方法
+
+### queryObjects （对象查询）方法
+
+![](2019-03-16-16-32-32.png)
+
+DevTools 里的 queryObjects 函数可以展示这些信息
+
+>请注意，列表中创建的最后一个对象是不可用的 : 在代码执行后，对于它的引用并没有留存下来，也就是说，我们只有 3 个 person 对象：
+
+![](2019-03-16-16-33-42.png)
+
+### monitor （镜像）方法
+
+monitor 是 DevTools 的一个方法， 它能够让你 “潜入” 到任何 _function calls(方法的调用) 中：每当一个被潜入的方法运行的时候，console 控制台 会把它的实例打印出来，包含函数名以及调用它的参数
+
+我们把前面例子里面的 Person 类拿过来，并且给它扩展两个方法：
+
+```js
+class Person {
+  constructor(name, role) {
+    this.name = name;
+    this.role = role;
+  }
+
+  greet() {
+    return this.getMessage('greeting');
+  }
+  getMessage(type) {
+    if (type === 'greeting') {
+      return `Hello, I'm ${this.name}!`;
+    }
+  }
+}
+```
+
+如你所见，greet 方法通过一个特殊的参数来执行 getMessage 方法，让我们看看对 getMessage 方法进行追踪会产生什么结果：
