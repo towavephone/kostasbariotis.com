@@ -120,7 +120,6 @@ export default class Template extends Component {
             const { hash } = anchor;
             const hashValue = hash[0] === '#' ? hash : `#${hash}`;
             const id = decodeURIComponent(hashValue.slice(1));
-            debugger
             const rect = document.getElementById(id).getBoundingClientRect();
 
             events.on(anchor, 'click', e => {

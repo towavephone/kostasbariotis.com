@@ -595,7 +595,6 @@ if(!Function.prototype.softBind){
         var curried=[].slice.call(arguments,1);
         console.log(curried);
         var bound=function(){
-            debugger
             return fn.apply(
                 (!this||this===(window||global))?obj:this,//软绑定关键步骤
                 curried.concat.apply(curried,arguments)//柯里化相关
