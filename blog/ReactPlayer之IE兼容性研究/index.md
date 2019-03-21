@@ -194,13 +194,13 @@ export class IEReactPlayer extends React.PureComponent {
     }
     return (<div>
       {
-          url && <embed
-            ref={(r) => { this.embed = r; }}
-            src={url}
-            autostart={autostart}
-            hidden
-          />
-        }
+        url && <embed
+          ref={(r) => { this.embed = r; }}
+          src={url}
+          autostart={autostart}
+          hidden
+        />
+      }
     </div>);
   }
 }
