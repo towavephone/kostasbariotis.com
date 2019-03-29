@@ -1770,7 +1770,7 @@ React 团队致力于将所有的与 DOM 相关的特性抽取到一个名为 Re
 在 React 中，你可以使用扩展运算符:
 
 ```jsx 
-  <button style={{...styles.panel.button, ...styles.panel.submitButton}}>{'Submit'}</button>
+<button style={{...styles.panel.button, ...styles.panel.submitButton}}>{'Submit'}</button>
 ```
 
 如果你使用的是 React Native，则可以使用数组表示法：
@@ -1925,31 +1925,29 @@ ReactDOM.render(<App />, document.getElementById('app'))
 ### 更新状态中的对象有哪些可能的方法?
 
 1. 用一个对象调用 `setState()` 来与状态合并：
+    * 使用 `Object.assign()` 创建对象的副本：
 
-  * 使用 `Object.assign()` 创建对象的副本：
+        ```javascript
+        const user = Object.assign({}, this.state.user, { age: 42 })
+        this.setState({ user })
+        ```
 
-      ```javascript
-      const user = Object.assign({}, this.state.user, { age: 42 })
-      this.setState({ user })
-      ```
+    * 使用扩展运算符：
 
-  * 使用扩展运算符：
-
-      ```javascript
-      const user = { ...this.state.user, age: 42 }
-      this.setState({ user })
-      ```
+        ```javascript
+        const user = { ...this.state.user, age: 42 }
+        this.setState({ user })
+        ```
 
 2. 使用一个函数调用 `setState()`：
-
-  ```javascript
-  this.setState(prevState => ({
-    user: {
-      ...prevState.user,
-      age: 42
-    }
-  }))
-  ```
+    ```javascript
+    this.setState(prevState => ({
+      user: {
+        ...prevState.user,
+        age: 42
+      }
+    }))
+    ```
 
 ### 为什么函数比对象更适合于 setState()?
 
@@ -2136,50 +2134,50 @@ React 项目文件结构有两种常见的实践。
 
 1. **按功能或路由分组:**
 
-  构建项目的一种常见方法是将 CSS，JS 和测试用例放在一起，按功能或路由分组。
+    构建项目的一种常见方法是将 CSS，JS 和测试用例放在一起，按功能或路由分组。
 
-  ```
-  common/
-  ├─ Avatar.js
-  ├─ Avatar.css
-  ├─ APIUtils.js
-  └─ APIUtils.test.js
-  feed/
-  ├─ index.js
-  ├─ Feed.js
-  ├─ Feed.css
-  ├─ FeedStory.js
-  ├─ FeedStory.test.js
-  └─ FeedAPI.js
-  profile/
-  ├─ index.js
-  ├─ Profile.js
-  ├─ ProfileHeader.js
-  ├─ ProfileHeader.css
-  └─ ProfileAPI.js
-  ```
+    ```
+    common/
+    ├─ Avatar.js
+    ├─ Avatar.css
+    ├─ APIUtils.js
+    └─ APIUtils.test.js
+    feed/
+    ├─ index.js
+    ├─ Feed.js
+    ├─ Feed.css
+    ├─ FeedStory.js
+    ├─ FeedStory.test.js
+    └─ FeedAPI.js
+    profile/
+    ├─ index.js
+    ├─ Profile.js
+    ├─ ProfileHeader.js
+    ├─ ProfileHeader.css
+    └─ ProfileAPI.js
+    ```
 
 2. **按文件类型分组:**
 
-  另一种流行的项目结构组织方法是将类似的文件组合在一起。
+    另一种流行的项目结构组织方法是将类似的文件组合在一起。
 
-  ```
-  api/
-  ├─ APIUtils.js
-  ├─ APIUtils.test.js
-  ├─ ProfileAPI.js
-  └─ UserAPI.js
-  components/
-  ├─ Avatar.js
-  ├─ Avatar.css
-  ├─ Feed.js
-  ├─ Feed.css
-  ├─ FeedStory.js
-  ├─ FeedStory.test.js
-  ├─ Profile.js
-  ├─ ProfileHeader.js
-  └─ ProfileHeader.css
-  ```
+    ```
+    api/
+    ├─ APIUtils.js
+    ├─ APIUtils.test.js
+    ├─ ProfileAPI.js
+    └─ UserAPI.js
+    components/
+    ├─ Avatar.js
+    ├─ Avatar.css
+    ├─ Feed.js
+    ├─ Feed.css
+    ├─ FeedStory.js
+    ├─ FeedStory.test.js
+    ├─ Profile.js
+    ├─ ProfileHeader.js
+    └─ ProfileHeader.css
+    ```
 
 ### 最流行的动画软件包是什么?
 
@@ -2822,22 +2820,22 @@ export default connect(mapStateToProps, mapDispatchToProps)(App)
 1. **使用`mapStateToProps()`：** 它将 Store 中的状态变量映射到您指定的属性。
 2. **将上述属性连接到容器：** `mapStateToProps`函数返回的对象连接到容器。你可以从`react-redux`导入`connect()`。
 
-```jsx 
-import React from 'react'
-import { connect } from 'react-redux'
+    ```jsx 
+    import React from 'react'
+    import { connect } from 'react-redux'
 
-class App extends React.Component {
-  render() {
-    return <div>{this.props.containerData}</div>
-  }
-}
+    class App extends React.Component {
+      render() {
+        return <div>{this.props.containerData}</div>
+      }
+    }
 
-function mapStateToProps(state) {
-  return { containerData: state.data }
-}
+    function mapStateToProps(state) {
+      return { containerData: state.data }
+    }
 
-export default connect(mapStateToProps)(App)
-```
+    export default connect(mapStateToProps)(App)
+    ```
 
 ### 如何在 Redux 中重置状态?
 
@@ -3279,23 +3277,23 @@ Flow 是一个静态分析工具（静态检查器），它使用该语言的超
 
 1. 安装 `font-awesome`:
 
-```shell
-$ npm install --save font-awesome
-```
+    ```shell
+    $ npm install --save font-awesome
+    ```
 
 2. 在 `index.js` 文件中导入 `font-awesome`:
 
-```javascript
-import 'font-awesome/css/font-awesome.min.css'
-```
+    ```javascript
+    import 'font-awesome/css/font-awesome.min.css'
+    ```
 
 3. 在 `className` 中添加 Font Awesome 类:
 
-```javascript
-render() {
-  return <div><i className={'fa fa-spinner'} /></div>
-}
-```
+    ```javascript
+    render() {
+      return <div><i className={'fa fa-spinner'} /></div>
+    }
+    ```
 
 ### 什么 是 React 开发者工具?
 
@@ -3629,6 +3627,7 @@ class UserForm extends Component {
 ### 什么是 HOC 工厂实现?
 
 在 React 中实现 HOC 有两种主要方式。 1.属性代理（PP）和 2.继承倒置（II）。他们遵循不同的方法来操纵*WrappedComponent*。
+
 **属性代理**
 
 在这种方法中，HOC 的 render 方法返回 WrappedComponent 类型的 React 元素。我们通过 HOC 收到 props，因此定义为**属性代理**。
@@ -3645,6 +3644,7 @@ function ppHOC(WrappedComponent) {
 ```
 
 **继承倒置**
+
 在这种方法中，返回的 HOC 类（Enhancer）扩展了 WrappedComponent 。它被称为继承反转，因为它不是扩展一些 Enhancer 类的 WrappedComponent，而是由 Enhancer 被动扩展。 通过这种方式，它们之间的关系似乎是**逆的**。
 
 ```jsx
@@ -4691,45 +4691,47 @@ const MyContext = React.createContext(defaultTheme);
 
 ContextType 用于消费 context 对象。ContextType 属性可以通过两种方式使用：
 
-1. **contextType as property of class:**
-可以为类的 contextType 属性分配通过 React.createContext() 创建的 context 对象。之后，你可以在任何生命周期方法和 render 函数中使用 `this.context` 引用该上下文类型最近的当前值。
+1. **contextType as property of class**
 
-让我们在 MyClass 上按如下方式设置 contextType 属性：
+    可以为类的 contextType 属性分配通过 React.createContext() 创建的 context 对象。之后，你可以在任何生命周期方法和 render 函数中使用 `this.context` 引用该上下文类型最近的当前值。
 
-```javascript
-class MyClass extends React.Component {
-  componentDidMount() {
-    let value = this.context;
-    /* perform a side-effect at mount using the value of MyContext */
-  }
-  componentDidUpdate() {
-    let value = this.context;
-    /* ... */
-  }
-  componentWillUnmount() {
-    let value = this.context;
-    /* ... */
-  }
-  render() {
-    let value = this.context;
-    /* render something based on the value of MyContext */
-  }
-}
-MyClass.contextType = MyContext;
-```
+    让我们在 MyClass 上按如下方式设置 contextType 属性：
+
+    ```javascript
+    class MyClass extends React.Component {
+      componentDidMount() {
+        let value = this.context;
+        /* perform a side-effect at mount using the value of MyContext */
+      }
+      componentDidUpdate() {
+        let value = this.context;
+        /* ... */
+      }
+      componentWillUnmount() {
+        let value = this.context;
+        /* ... */
+      }
+      render() {
+        let value = this.context;
+        /* render something based on the value of MyContext */
+      }
+    }
+    MyClass.contextType = MyContext;
+    ```
 
 2. **Static field**
-你可以使用静态类属性来初始化 contextType 属性：
 
-```javascript
-class MyClass extends React.Component {
-  static contextType = MyContext;
-  render() {
-    let value = this.context;
-    /* render something based on the value */
-  }
-}
-```
+    你可以使用静态类属性来初始化 contextType 属性：
+
+    ```javascript
+    class MyClass extends React.Component {
+      static contextType = MyContext;
+      render() {
+        let value = this.context;
+        /* render something based on the value */
+      }
+    }
+    ```
 
 ### 什么是 consumer?
 
@@ -4911,53 +4913,57 @@ React 需要使用算法来了解如何有效地更新 UI 以匹配最新的树�
 在区分两棵树时，React 首先比较两个根元素。根据根元素的类型，行为会有所不同。它在重构算法中涵盖了以下规则：
 
 1. **不同类型的元素：**
-  每当根元素具有不同的类型时，React 将移除旧树并从头开始构建新树。例如，元素 `<a>` 到 `<img>`，或从 `<Article>` 到 `<Comment>` 的不同类型的元素引导完全重建。
+
+    每当根元素具有不同的类型时，React 将移除旧树并从头开始构建新树。例如，元素 `<a>` 到 `<img>`，或从 `<Article>` 到 `<Comment>` 的不同类型的元素引导完全重建。
 
 2. **相同类型的 DOM 元素：**
-  当比较两个相同类型的 React DOM 元素时，React 查看两者的属性，保持相同的底层 DOM 节点，并仅更新已更改的属性。让我们以相同的 DOM 元素为例，除了 className 属性，
 
-  ```javascript
-  <div className="show" title="ReactJS" />
+    当比较两个相同类型的 React DOM 元素时，React 查看两者的属性，保持相同的底层 DOM 节点，并仅更新已更改的属性。让我们以相同的 DOM 元素为例，除了 className 属性，
 
-  <div className="hide" title="ReactJS" />
-  ```
+    ```javascript
+    <div className="show" title="ReactJS" />
+
+    <div className="hide" title="ReactJS" />
+    ```
 
 3. **相同类型的组件元素：**
 
-  当组件更新时，实例保持不变，以便在渲染之间保持状态。React 更新底层组件实例的 props 以匹配新元素，并在底层实例上调用 componentWillReceiveProps() 和 componentWillUpdate()。之后，调用 render() 方法，diff 算法对前一个结果和新结果进行递归。
+    当组件更新时，实例保持不变，以便在渲染之间保持状态。React 更新底层组件实例的 props 以匹配新元素，并在底层实例上调用 componentWillReceiveProps() 和 componentWillUpdate()。之后，调用 render() 方法，diff 算法对前一个结果和新结果进行递归。
 
 4. **递归子节点：**
-  当对 DOM 节点的子节点进行递归时，React 会同时迭代两个子节点列表，并在出现差异时生成变异。例如，在子节点末尾添加元素时，在这两个树之间进行转换效果很好。
 
-  ```javascript
-  <ul>
-    <li>first</li>
-    <li>second</li>
-  </ul>
+    当对 DOM 节点的子节点进行递归时，React 会同时迭代两个子节点列表，并在出现差异时生成变异。例如，在子节点末尾添加元素时，在这两个树之间进行转换效果很好。
 
-  <ul>
-    <li>first</li>
-    <li>second</li>
-    <li>third</li>
-  </ul>
+    ```javascript
+    <ul>
+      <li>first</li>
+      <li>second</li>
+    </ul>
 
-  ```
+    <ul>
+      <li>first</li>
+      <li>second</li>
+      <li>third</li>
+    </ul>
+
+    ```
+
 5. **处理 Key：**
 
-React 支持 key 属性。当子节点有 key 时，React 使用 key 将原始树中的子节点与后续树中的子节点相匹配。例如，添加 key 可以使树有效地转换，
+    React 支持 key 属性。当子节点有 key 时，React 使用 key 将原始树中的子节点与后续树中的子节点相匹配。例如，添加 key 可以使树有效地转换，
 
-```javascript
-<ul>
-  <li key="2015">Duke</li>
-  <li key="2016">Villanova</li>
-</ul>
+    ```javascript
+    <ul>
+      <li key="2015">Duke</li>
+      <li key="2016">Villanova</li>
+    </ul>
 
-<ul>
-  <li key="2014">Connecticut</li>
-  <li key="2015">Duke</li>
-  <li key="2016">Villanova</li>
-</ul>
-```
+    <ul>
+      <li key="2014">Connecticut</li>
+      <li key="2015">Duke</li>
+      <li key="2016">Villanova</li>
+    </ul>
+    ```
 
 ### 你什么时候需要使用 refs?
 
@@ -5085,13 +5091,14 @@ Bootstrap 可以通过三种可能的方式添加到 React 应用程序中：
 2. 把 Bootstrap 作为依赖项：
   如果你使用的是构建工具或模块绑定器（如 Webpack），那么这是向 React 应用程序添加 bootstrap 的首选选项。
 
-  ```shell
-  npm install bootstrap
-  ```
+    ```shell
+    npm install bootstrap
+    ```
+
 3. 使用 React Bootstrap 包:
   在这种情况下，你可以将 Bootstrap 添加到我们的 React 应用程序中，方法是使用一个以 React 组件形式对 Bootstrap 组件进行包装后包。下面的包在此类别中很流行：
-  1. react-bootstrap
-  2. reactstrap
+    1. react-bootstrap
+    2. reactstrap
 
 ### 你能否列出使用 React 作为前端框架的顶级网站或应用程序?
 
