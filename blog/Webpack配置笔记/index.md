@@ -1,19 +1,19 @@
 ---
-title: Webpack4 配置笔记
-date: 2019-2-13 19:47:27
+title: webpack 配置笔记
+date: 2019-4-16 09:59:08
 categories:
 - 前端
 tags: 前端构建工具, Webpack4
-path: /webpack4-config-note/
+path: /webpack-config-note/
 ---
 
-Webpack4 最新配置表
+# webpack4 配置一览
 
 - 基于[react-boilerplate](https://github.com/react-boilerplate/react-boilerplate)
 - 技术栈 antd + react + less
 - 不断更新
 
-# webpack.base.babel.js 
+## webpack.base.babel.js 
 
 ```js 
 /**
@@ -365,7 +365,7 @@ module.exports = (options) => ({
 });
 ```
 
-# webpack.dev.babel.js
+## webpack.dev.babel.js
 
 ```js
 /**
@@ -537,7 +537,7 @@ function templateContent() {
 }
 ```
 
-# webpack.dll.babel.js
+## webpack.dll.babel.js
 
 ```js
 /**
@@ -587,7 +587,7 @@ module.exports = require('./webpack.base.babel')({
 });
 ```
 
-# webpack.prod.babel.js
+## webpack.prod.babel.js
 
 ```js
 // Important modules this config uses
@@ -750,3 +750,51 @@ module.exports = require('./webpack.base.babel')({
   },
 });
 ```
+
+---
+
+以上更新于 2019-2-13 19:47:27
+
+# webpack 配置全局变量
+
+## 项目背景
+
+个性化项目标题、图标，可以对编译后的文件改动，以达到无需编译即可改变标题或图标的效果
+
+## 解决思路
+
+主要是在 `index.html` 文件中注入全局变量
+
+## 解决步骤
+
+1. 在 `index.html` 中注入全局变量
+
+```html
+<script>
+  document.write("<s"+"cript type='text/javascript' src='/config.js?"+Math.random().toString(36).substr(2)+"'></scr"+"ipt>");
+</script>
+```
+
+2. 在 `app.js` 中注入此文件，编译时 `webpack` 会拷贝文件到 `build` 目录下
+
+```js
+import '!file-loader?name=[name].[ext]!./config.js';
+```
+
+或在 `webpack.base.config.js` 中添加如下代码达到相同效果
+
+```js
+new CopyWebpackPlugin([
+  'app/config.js',
+].map((src) => ({ from: src, to: path.resolve(process.cwd(), 'build') }))),
+```
+
+3. 在 `config.js` 中添加全局变量
+
+```js
+window.RUNTIME_CONSTANTS = {
+  title: '百度',
+};
+```
+
+4. 愉快使用全局变量
