@@ -21,9 +21,9 @@ path: /webpack-config-note/
 
 ### 挂载到变量
 
-jQuery 库把它的API都放在了 window.$ 下，在加载完 jQuery 后其他模块再通过 window.$ 去使用 jQuery
+jQuery 库把它的API都放在了 `window.$` 下，在加载完 jQuery 后其他模块再通过 `window.$` 去使用 jQuery
 
-- 命名空间冲突，两个库可能会使用同一个名称，例如 Zepto 也被放在 window.$ 下；
+- 命名空间冲突，两个库可能会使用同一个名称，例如 Zepto 也被放在 `window.$` 下；
 - 无法合理地管理项目的依赖和版本；
 - 无法方便地控制依赖的加载顺序。
 
