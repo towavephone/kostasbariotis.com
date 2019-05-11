@@ -23,7 +23,7 @@ date: 2019-5-11 14:47:57
 
 ### webpack.base.babel.js
 
-```js[16-18]
+```js{16-18}
 // const CopyWebpackPlugin = require('copy-webpack-plugin'); 去掉copy-webpack-plugin
 
 {

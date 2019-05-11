@@ -18,14 +18,17 @@ ReactPlayer 底层调用了 audio 标签来播放音频，video 标签来播放�
 ## 功能
 
 > 播放: MediaPlayer.Play()  
-暂停: MediaPlayer.Pause()  
-定位: MediaPlayer.SetCurrentEntry(lWhichEntry)  
-      MediaPlayer.Next()  
-      MediaPlayer.Previous()  
-循环: MediaPlayer.PlayCount = 0  
-      0: the clip plays repeatedly  
-      1: once  
-停止: MediaPlayer.Stop()   
+> 暂停: MediaPlayer.Pause()  
+> 定位:  
+>  - MediaPlayer.SetCurrentEntry(lWhichEntry)  
+>  - MediaPlayer.Next()  
+>  - MediaPlayer.Previous()  
+>
+>循环: MediaPlayer.PlayCount = 0  
+>  - 0: the clip plays repeatedly  
+>  - 1: once  
+>
+>停止: MediaPlayer.Stop()   
 
 ## 属性
 
