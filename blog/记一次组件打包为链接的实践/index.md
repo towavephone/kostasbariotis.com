@@ -23,7 +23,7 @@ date: 2019-5-11 14:47:57
 
 ### webpack.base.babel.js
 
-```js[16-18]
+```js{16-18}
 // const CopyWebpackPlugin = require('copy-webpack-plugin'); 去掉copy-webpack-plugin
 
 {
@@ -197,6 +197,59 @@ export function createDebugUserInfo(data) {
 ```
 
 以上更新于`2019-5-11 17:52:48`
+
+---
+
+## 光标位置的读取写入
+
+由于要实现中间插入标签或者换行符的效果，光标位置的读取与写入还是非常重要的，否则光标会“乱飘”
+
+### 读取光标位置
+
+```js
+function getCursorPosition(textDom) {
+  let cursorPos = 0;
+  if (document.selection) {
+      // IE Support
+    textDom.focus();
+    const selectRange = document.selection.createRange();
+    selectRange.moveStart('character', -textDom.value.length);
+    cursorPos = selectRange.text.length;
+  } else if (textDom.selectionStart || textDom.selectionStart === 0) {
+      // Firefox support
+    cursorPos = textDom.selectionStart;
+  }
+  return cursorPos;
+}
+```
+
+### 写入光标位置
+
+```js
+function setCursorPosition(elem, index) {
+  const val = elem.value;
+  const len = val.length;
+
+  // 超过文本长度直接返回
+  if (len < index) return;
+  // 注意这里的 setTimeout 延迟写入，否则不生效
+  setTimeout(() => {
+    elem.focus();
+    if (elem.setSelectionRange) { // 标准浏览器
+      elem.setSelectionRange(index, index);
+    } else { // IE9-
+      const range = elem.createTextRange();
+      range.moveStart('character', -len);
+      range.moveEnd('character', -len);
+      range.moveStart('character', index);
+      range.moveEnd('character', 0);
+      range.select();
+    }
+  }, 0);
+}
+```
+
+以上更新于`2019-5-22 10:01:50`
 
 ---
 
