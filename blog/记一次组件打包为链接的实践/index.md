@@ -150,6 +150,41 @@ export default ErrorBoundary;
 
 由于顾客端是未知域名，所以涉及到跨域设置 cookie 的问题，需要前后端同时设置才能做到跨域设置 cookie
 
+### 背景知识
+
+CORS 把 HTTP 请求分成两类，不同类别按不同的策略进行跨域资源共享协商。
+
+1. 简单跨域请求
+
+当 HTTP 请求出现以下两种情况时，浏览器认为是简单跨域请求：
+
+  1. 请求方法是 GET、HEAD 或者 POST，并且当请求方法是 POST 时，Content-Type 必须是 application/x-www-form-urlencoded, multipart/form-data 或着 text/plain 中的一个值。
+  2. 请求中没有自定义HTTP头部。
+
+对于简单跨域请求，浏览器要做的就是在 HTTP 请求中添加 Origin Header，将 JavaScript 脚本所在域填充进去，向其他域的服务器请求资源。服务器端收到一个简单跨域请求后，根据资源权限配置，在响应头中添加 Access-Control-Allow-Origin Header。浏览器收到响应后，查看 Access-Control-Allow-Origin Header，如果当前域已经得到授权，则将结果返回给 JavaScript，否则浏览器忽略此次响应。
+
+2. 带预检 (Preflighted) 的跨域请求
+
+当 HTTP 请求出现以下两种情况时，浏览器认为是带预检 (Preflighted) 的跨域请求：
+
+  1. 除 GET、HEAD 和 POST(only with application/x-www-form-urlencoded, multipart/form-data, text/plain Content-Type) 以外的其他 HTTP 方法。
+  2. 请求中出现自定义 HTTP 头部。
+
+带预检 (Preflighted) 的跨域请求需要浏览器在发送真实 HTTP 请求之前先发送一个 OPTIONS 的预检请求，检测服务器端是否支持真实请求进行跨域资源访问，真实请求的信息在 OPTIONS 请求中通过 Access-Control-Request-Method Header 和 Access-Control-Request-Headers Header 描述，此外与简单跨域请求一样，浏览器也会添加 Origin Header。服务器端接到预检请求后，根据资源权限配置，在响应头中放入 Access-Control-Allow-Origin Header、Access-Control-Allow-Methods 和 Access-Control-Allow-Headers Header，分别表示允许跨域资源请求的域、请求方法和请求头。此外，服务器端还可以加入 Access-Control-Max-Age Header，允许浏览器在指定时间内，无需再发送预检请求进行协商，直接用本次协商结果即可。浏览器根据 OPTIONS 请求返回的结果来决定是否继续发送真实的请求进行跨域资源访问，这个过程对真实请求的调用者来说是透明的。
+
+XMLHttpRequest 支持通过 withCredentials 属性实现在跨域请求携带身份信息 (Credential，例如 Cookie 或者 HTTP 认证信息)。浏览器将携带 Cookie Header 的请求发送到服务器端后，如果服务器没有响应 Access-Control-Allow-Credentials Header，那么浏览器会忽略掉这次响应。
+
+这里讨论的 HTTP 请求是指由 Ajax XMLHttpRequest 对象发起的，所有的 CORS HTTP 请求头都可由浏览器填充，无需在 XMLHttpRequest 对象中设置。以下是 CORS 协议规定的 HTTP 头，用来进行浏览器发起跨域资源请求时进行协商：
+
+1. Origin。HTTP 请求头，任何涉及 CORS 的请求都必需携带。
+2. Access-Control-Request-Method。HTTP 请求头，在带预检 (Preflighted) 的跨域请求中用来表示真实请求的方法。
+3. Access-Control-Request-Headers。HTTP 请求头，在带预检 (Preflighted) 的跨域请求中用来表示真实请求的自定义 Header 列表。
+4. Access-Control-Allow-Origin。HTTP 响应头，指定服务器端允许进行跨域资源访问的来源域。可以用通配符 * 表示允许任何域的 JavaScript 访问资源，但是在响应一个携带身份信息 (Credential) 的 HTTP 请求时，Access-Control-Allow-Origin 必需指定具体的域，不能用通配符。
+5. Access-Control-Allow-Methods。HTTP 响应头，指定服务器允许进行跨域资源访问的请求方法列表，一般用在响应预检请求上。
+6. Access-Control-Allow-Headers。HTTP 响应头，指定服务器允许进行跨域资源访问的请求头列表，一般用在响应预检请求上。
+7. Access-Control-Max-Age。HTTP 响应头，用在响应预检请求上，表示本次预检响应的有效时间。在此时间内，浏览器都可以根据此次协商结果决定是否有必要直接发送真实请求，而无需再次发送预检请求。
+8. Access-Control-Allow-Credentials。HTTP 响应头，凡是浏览器请求中携带了身份信息，而响应头中没有返回 Access-Control-Allow-Credentials:true 的，浏览器都会忽略此次响应。
+
 #### 后端
 
 ```bash
@@ -164,11 +199,12 @@ location = /bundle.js {
 # 反代设置跨域并允许设置 cookie
 location /service-tp-api/ {
   add_header Access-Control-Allow-Credentials true;  # 是否允许发送Cookie
-  add_header Access-Control-Allow-Origin $http_origin; # 这里 $http_origin 代表引用 bundle.js 的网站域名，不能设置为 * ，否则不能成功设置 cookie
+  add_header Access-Control-Allow-Origin $http_origin; # 这里 $http_origin 代表引用 bundle.js 的网站域名（真实域名），不能设置为 * ，否则不能成功设置 cookie
   add_header Access-Control-Allow-Methods 'GET, POST, OPTIONS'; # 用到哪些 HTTP 方法
   add_header Access-Control-Allow-Headers 'DNT,X-Mx-ReqToken,Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Authorization,Cookie,Set-Cookie,x-requested-with,content-type,pragma'; # 允许使用的 header 字段，可以查看自己的 request 来进行添加
 
   if ($request_method = 'OPTIONS') {
+    # 跨域预检
     return 204;
   }
 

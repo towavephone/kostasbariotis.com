@@ -2,7 +2,7 @@
 title: Chrome调试技巧
 date: 2019-3-19 15:43:42
 path: /chrome-debug-practice/
-tags: 前端, Chrome, 调试工具
+tags: 前端, 调试
 ---
 
 # 通用篇
