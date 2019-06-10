@@ -518,4 +518,4 @@ export default GraphHintTextArea;
 }(DOMParser));
 ```
 
-- IE9 下不能弹出下拉框，这里笔者查看了源码发现了是 IE9 不支持动画CSS属性，即 transfrom 属性，故在 IE9下单独处理，去掉 tranfrom 变换 
+- IE9 下不能弹出下拉框，这里笔者查看了源码发现了是 IE9 不支持动画 CSS 属性，即 transfrom 属性，故在 IE9 下单独处理，去掉 tranfrom 变换
