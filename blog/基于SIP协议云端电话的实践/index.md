@@ -4,7 +4,7 @@ date: 2019-6-10 11:44:03
 categories:
 - 前端
 tags: SIP, 前端, webrtc
-path: /practice-of-cloud-telephone-based-on-SIP-protocol/
+path: /practice-of-SIP-protocol/
 ---
 
 # 需求背景
