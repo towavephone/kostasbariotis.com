@@ -54,7 +54,7 @@ server {
 
 基于 ip 的虚拟主机：需要你的服务器上有多个地址，每个站点对应不同的地址，这种方式使用的比较少
 
-基于端口的虚拟主机：每个站点对应不同的端口，访问的时候使用 ip:port 的方式访问，可以修改  listen 的端口来使用
+基于端口的虚拟主机：每个站点对应不同的端口，访问的时候使用 ip:port 的方式访问，可以修改 listen 的端口来使用
 
 基于域名的虚拟主机：使用最广的方式，上边例子中就是用了基于域名的虚拟主机，前提条件是你有多个域名分别对应每个站点，server_name 填写不同的域名即可
 
@@ -181,32 +181,31 @@ http {
 }
 ```
 
-稍不注意可能会落入一个 proxy_pass 加杠不加杠的陷阱，这里详细说下 proxy_pass http://tomcats与proxy_pass http://tomcats/的区别：
+稍不注意可能会落入一个 proxy_pass 加杠不加杠的陷阱，这里详细说下 proxy_pass `http://tomcats` 与 proxy_pass `http://tomcats/` 的区别：
 
 虽然只是一个 / 的区别但结果确千差万别。分为以下两种情况：
 
-1. 目标地址中不带 uri(proxy_pass http://tomcats)。此时新的目标 url 中，匹配的 uri 部分不做修改，原来是什么就是什么。
+1. 目标地址中不带 uri(proxy_pass `http://tomcats`)。此时新的目标 url 中，匹配的 uri 部分不做修改，原来是什么就是什么。
 
-```bash
-location /ops-coffee/ {
-    proxy_pass  http://192.168.106.135:8181;
-}
+      ```bash
+      location /ops-coffee/ {
+          proxy_pass  http://192.168.106.135:8181;
+      }
 
+      http://domain/ops-coffee/   -->     http://192.168.106.135:8181/ops-coffee/
+      http://domain/ops-coffee/action/abc   -->     http://192.168.106.135:8181/ops-coffee/action/abc
+      ```
 
-http://domain/ops-coffee/   -->     http://192.168.106.135:8181/ops-coffee/
-http://domain/ops-coffee/action/abc   -->     http://192.168.106.135:8181/ops-coffee/action/abc
-```
+2. 目标地址中带 uri (proxy_pass `http://tomcats/`，/也是uri) ,此时新的目标 url 中，匹配的 uri 部分将会被修改为该参数中的 uri。
 
-2. 目标地址中带uri (proxy_pass http://tomcats/，/也是uri) ,此时新的目标 url 中，匹配的 uri 部分将会被修改为该参数中的 uri。
+      ```bash
+      location /ops-coffee/ {
+          proxy_pass  http://192.168.106.135:8181/;
+      }
 
-```bash
-location /ops-coffee/ {
-    proxy_pass  http://192.168.106.135:8181/;
-}
-
-http://domain/ops-coffee/   -->     http://192.168.106.135:8181
-http://domain/ops-coffee/action/abc   -->     http://192.168.106.135:8181/action/abc
-```
+      http://domain/ops-coffee/   -->     http://192.168.106.135:8181
+      http://domain/ops-coffee/action/abc   -->     http://192.168.106.135:8181/action/abc
+      ```
 
 # nginx upstream 开启 keepalive
 
@@ -228,11 +227,11 @@ server {
 
 nginx 在项目中大多数情况下会作为反向代理使用，例如 nginx 后接 tomcat，nginx 后接 php等，这时我们开启 nginx 和后端服务之间的 keepalive 能够减少频繁创建 TCP 连接造成的资源消耗，配置如上
 
-keepalive: 指定每个nginxworker可以保持的最大连接数量为 1024，默认不设置，即 nginx 作为 client 时 keepalive 未生效
+keepalive: 指定每个 nginxworker 可以保持的最大连接数量为 1024，默认不设置，即 nginx 作为 client 时 keepalive 未生效
 
-proxy_http_version 1.1: 开启 keepalive 要求 HTTP 协议版本为 HTTP 1.1
+`proxy_http_version 1.1`: 开启 keepalive 要求 HTTP 协议版本为 HTTP 1.1
 
-proxy_set_header Connection "": 为了兼容老的协议以及防止 http 头中有 Connection close 导致的 keepalive 失效，这里需要及时清掉 HTTP 头部的 Connection
+`proxy_set_header Connection ""`: 为了兼容老的协议以及防止 http 头中有 Connection close 导致的 keepalive 失效，这里需要及时清掉 HTTP 头部的 Connection
 
 # 404自动跳转到首页
 
