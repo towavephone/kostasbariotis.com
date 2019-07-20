@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+        body {
+            background-color: white;
+        }
+
+        .list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .item {
+            display: table;
+            width: 100%;
+            line-height: 40px;
+        }
+
+        .title-container {
+            display: table-cell;
+            width: 9999px;
+        }
+
+        .table-fixed {
+            /* 打点效果只有在 table-layout: fixed 才有效果 */
+            table-layout: fixed;
+            display: table;
+            width: 100%;
+        }
+
+        .title {
+            display: table-cell;
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+            color: rgb(182, 185, 190);
+            font-size: 18px;
+        }
+
+        .tag-list {
+            margin-left: 10px;
+            display: table-cell;
+            white-space: nowrap;
+        }
+
+        .tag-list > span {
+            border: 1px solid;
+            padding: 2px;
+            font-size: 14px;
+        }
+
+        .tag-list > span:nth-child(1) {
+            border-color: rgb(182, 185, 190);
+            color: rgb(182, 185, 190);
+        }
+
+        .tag-list > span:nth-child(2) {
+            border-color: rgb(223, 98, 97);
+            color: rgb(223, 98, 97);
+        }
+
+        .tag-list > span:nth-child(3) {
+            border-color: rgb(116, 162, 234);
+            color: rgb(116, 162, 234);
+        }
+    </style>
+</head>
+
+<body>
+  <ul class="list">
+    <li class="item">
+        <div class="title-container">
+            <div class="table-fixed">
+                <span class="title">
+                    这是一个长度不确定的标题标题这是一个长度不确定的标题标题这是一个长度不确定的标题标题这是一个长度不确定的标题标题这是一个长度不确定的标题标题这是一个长度不确定的标题标题
+                </span>
+            </div>
+        </div>
+        <div class="tag-list">
+            <span class="tag">标签1</span>
+            <span class="tag">标签2</span>
+            <span class="tag">标签3</span>
+        </div>
+    </li>
+    <li class="item">
+        <div class="title-container">
+            <div class="table-fixed">
+                <span class="title">
+                    这是一个长度不确定的标题标题这是一个长度不确定的标题标题这是一个长度不确定的标题标题这是一个长度不确定的标题标题这是一个长度不确定的标题标题这是一个长度不确定的标题标题
+                </span>
+            </div>
+        </div>
+        <div class="tag-list">
+            <span class="tag">标签1</span>
+            <span class="tag">标签2</span>
+            <span class="tag">标签3</span>
+        </div>
+    </li>
+    <li class="item">
+        <div class="title-container">
+            <div class="table-fixed">
+                <span class="title">
+                    这是一个长度不确定的标题标题长度不确定的标题标题这是一个长度不确定长度不确定的标题标题这是一个长度不确定
+                </span>
+            </div>
+        </div>
+        <div class="tag-list">
+            <span class="tag">标签1</span>
+            <span class="tag">标签2</span>
+            <span class="tag">标签3</span>
+        </div>
+    </li>
+  </ul>
+</body>
+
+</html>

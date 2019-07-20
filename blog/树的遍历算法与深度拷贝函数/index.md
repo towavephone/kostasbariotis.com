@@ -3,8 +3,8 @@ title: 树的遍历算法与深度拷贝函数
 date: 2019-7-19 11:47:41
 categories:
 - 前端
-tags: 前端, 深度拷贝，树的遍历
-path: /tree-traversal-algorithms-and-depth-copy-functions/
+tags: 前端, 深度拷贝, 树的遍历
+path: /tree-traversal-depth-copy/
 ---
 
 # 广度优先搜索
