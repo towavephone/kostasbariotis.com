@@ -11,9 +11,9 @@ path: /js-practice-test/
 
 ![](2019-07-22-17-18-49.png)
 
-# 具体实现
+## 具体实现
 
-## 我的解答
+### 我的解答
 
 ```js
 //第一题
@@ -34,7 +34,7 @@ for (var j = 0;j < arr2.length; j++) {
 [...new Set(arr3)]
 ```
 
-## 最佳解答
+### 最佳解答
 
 ```js
 //第一题
@@ -50,7 +50,7 @@ arr.concat(arr2)
 [...new Set(arr3)]
 ```
 
-# 实现要点
+## 实现要点
 
 1. 空数组项也会作为length的一部分；空数组项和空字符串项是有区别的。
 2. 第2题，本题只是过滤空数组项，不包括null, undefined这类。
@@ -61,3 +61,61 @@ arr.concat(arr2)
 4. 第3题标准答案应该是[1, NaN, NaN]，map里面Function支持参数(value, index, arr)，参见wingmeng的释义。
 5. 第4题就是concat，可以数组合并。我自己用“连接猫”记忆这个API。可以分别连接子项，也可以直接连接数组。如果不考虑兼容，可以[...arr, ...arr2]。其他参考方法：Array.prototype.push.apply(arr3, arr2)，也可以[].push.apply(arr3, arr2)，此时arr3是合并后的数组。
 6. 数组去重。使用new Set(arr3)，然后把Set对象转换成数组。转数组两个常用方法，一个是Array.from，还有一个是`[...]`。
+
+# JS测试二
+
+![](2019-07-23-19-34-27.png)
+
+## 具体实现
+
+### 我的解答
+
+```js
+//第一题
+"1"
+//第二题
+"2"
+//第三题
+"0.04"
+//第四题
+"0.04"
+//第五题
+//不会
+```
+
+### 最佳解答
+
+```js
+//第一题
+"1"
+//第二题
+"2"
+//第三题
+"0.04"
+//第四题
+"0.04"
+//第五题
+var oldtoFixed = Number.prototype.toFixed
+Number.prototype.toFixed = function(digits){
+   var length = (parseFloat(this) + '').replace(/^\d+\.?/, '').length;
+   var len = length > digits ? length : digits;
+   var number = Number(this) + Math.pow(10, -len-1);
+   return oldtoFixed.call(number, digits);
+}
+```
+
+## 实现要点
+
+1. toFixed有两个问题，一是兼容性，二是四舍五入不符合正常的四舍五入认知。金钱计算的时候容易出问题，必须两位小数。
+2. 应该返回字符串；补全末尾的0。
+3. 机智是实现：方式一：替换小数点保留精度后面一位5为6，方式二：给小数点保留精度后面补一位小数。其中方式2是最简单的，XboxYan 和 frankyeyq 实现都有bug，下面是调整后的实现。
+
+```js
+var oldtoFixed = Number.prototype.toFixed
+Number.prototype.toFixed = function(digits){
+   var length = (parseFloat(this) + '').replace(/^\d+\.?/, '').length;
+   var len = length > digits ? length : digits;
+   var number = Number(this) + Math.pow(10, -len-1);
+   return oldtoFixed.call(number, digits);
+}
+```

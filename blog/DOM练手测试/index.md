@@ -73,3 +73,48 @@ document.querySelectorAll(':link')
 5. 链接地址和当前地址栏地址host匹配，eleLink.host == location.host。链接元素天然自带：host（包括端口）, hostname, hash等属性，和location对象一样。不要使用hostname有bug，端口不一也会匹配，例如：`<a href="//www.xxxx.com:80">`和URL //www.xxxx.com:90 会认为是一个域下，实际上不是的。
 6. rel属性值包含。就是不覆盖原来设置的rel属性值。需要用到relList，需要注意的是多个rel属性值赋值需要使用relList的add方法，而不是直接等于。直接等于不是赋值多个，而是一个，例如：element.relList = ['external', 'nofollow', 'noopener']，最后结果是`<a href rel="external,nofollow,noopener">`是不合法的，应该空格分隔。正确用法（出题本意）：link.relList.add('external', 'nofollow', 'noopener')。relList和classList API细节都是一样的，只不过一个针对class属性，一个是rel属性。
 7. link.href.indexOf('#') > -1有bug，例如 href="//otherdomain.com#xxxx"，还有一种/^#/.test(link.href)也是有bug的，因为href属性通过DOM对象直接获取是带有域名的，需要匹配getAttribute获取的href属性值，也就是这里可以/^#/.test(link.getAttribute('href'))
+
+# DOM测试二
+
+![](2019-07-23-09-42-56.png)
+
+## 具体实现
+
+### 我的解答
+
+```js
+//第一题
+const div = document.createElement('div');
+div.style.width = '300px';
+div.style.height = '150px';
+document.body.appendChild(div);
+//第二题
+div.style.background = 'linear-gradient(to bottom right, red, blue);';
+//第三题
+let start = null;
+requestAnimationFrame((timestamp) => {
+  if (!start) {
+    start = timestamp;
+  }
+  let progress = timestamp - start;
+  if (progress > 1000) {
+    return;
+  }
+  div.style.background = 'linear-gradient(to bottom right, red, blue);';
+  div.style.background = 'linear-gradient(to bottom right, blue, red);';
+})
+```
+
+### 最佳解答
+
+<iframe src="/examples/dom-practice/2-1.html" width="400" height="100"></iframe>
+
+`embed:dom-practice/2-1.html`
+
+## 本期要点
+
+1. 通常我们使用JS给DOM元素设置style样式的时候，不通过改变style属性值，因为容器覆盖以前的样式，然后.style.xxx这样的方式不会有性能问题，即使有很多行，因为浏览器它会自动合并成一次解析。
+2. to bottom right，这样无论宽高比例是多少都没有问题。没有to就是从右下方开始。
+3. CSS渐变本质上是backgroundImage，是无法transition或者animation的，但可以使用JS。seasonley的方法就是大多数人实现的合集，非常感谢。但是非常遗憾，虽然花了很多功夫，但是对于复杂色值，其颜色变化可能并不是最舒服的那种，可能就像早期的Safari色值变化，而且如果有Alpha透明度变化，就很困难了。
+4. XboxYan的方法比较接近：我们可以借助animation或者transition本身的颜色变化来赋值，实现更简单，更准确，更接近原生的backgroundImage色值变化效果。我写的小demo：https://output.jsbin.com/hojesabawe
+5. 颜色转换的技巧。任意颜色转换为RGB(A)色值，给DOM元素赋值，然后使用getComputedStyle()获取。举个例子，请把色值skyblue转换成RGB色值，div.style.color = 'skyblue'; getComputedStyle(div).color -> RGB色值，所有浏览器都是这样的，包括IE。
