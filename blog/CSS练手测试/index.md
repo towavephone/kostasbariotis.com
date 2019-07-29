@@ -194,4 +194,21 @@ path: /css-practice-test/
 
 `embed:css-practice/6-5.html`
 
+# CSS测试七
+
+![](2019-07-29-16-00-26.png)
+
+## 具体实现
+
+<iframe src="/examples/css-practice/7-1.html" width="400" height="100"></iframe>
+
+`embed:css-practice/7-1.html`
+
+## 实现要点
+
+1. 考虑各种字号场景，使用bottom定位，calc()或者margin-bottom微调位置；
+2. transform增加-ms-前缀，兼容IE9；
+3. 考虑边界场景，例如在浏览器上边缘，或者侧面时候；
+4. 考虑增加延迟显示，使用visibility+transition，或者pointer-events: none（渐进增强）；
+5. 考虑键盘访问，增加:focus伪类显示。
 
