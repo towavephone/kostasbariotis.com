@@ -212,3 +212,40 @@ path: /css-practice-test/
 4. 考虑增加延迟显示，使用visibility+transition，或者pointer-events: none（渐进增强）；
 5. 考虑键盘访问，增加:focus伪类显示。
 
+# CSS测试八
+
+![](2019-07-30-10-15-24.png)
+
+## 具体实现
+
+### 我的解答
+
+<iframe src="/examples/css-practice/8-1.html" width="400" height="100"></iframe>
+
+`embed:css-practice/8-1.html`
+
+有几个缺点，宽度较小时会换行，消息气泡不够还原
+
+### relative + absolute + box-shadow
+
+<iframe src="/examples/css-practice/8-2.html" width="400" height="100"></iframe>
+
+`embed:css-practice/8-2.html`
+
+### flex + flex: 1 + border-radius + direction: rtl
+
+<iframe src="/examples/css-practice/8-3.html" width="400" height="100"></iframe>
+
+`embed:css-practice/8-3.html`
+
+## 实现要点
+
+1. 基准字号使用16px，不用其它像素值。也不用使用100px。
+2. media查询和vw技巧实现html基础尺寸动态化（无需JS）。
+3. 要有统一的类名命名空间，类似chat-。
+4. 遇到不同性质的命名，通常两种方式。1. 类名，但是命名上明显区分，例如chat-item__left。2. 使用属性选择器。
+5. 避免没必要的嵌套，百害无一益。
+6. 小尾巴的实现。边框+圆角，box-shadow+圆角，径向渐变
+7. 左右对称布局的实现：direction: rtl配合CSS逻辑属性
+8. 不推荐使用dl标签，可以给每个列表增加tabindex=0
+

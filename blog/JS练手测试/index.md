@@ -241,3 +241,66 @@ function destoryRewriteLocalStorage() {
 6. localStorage.setItem('userid', 1)或者简写：localStorage.userid = 1;
 7. localStorage过期时间，JSON.stringify和JSON.parse是可读性很不错，也容易维护的实现。
 8. 可以看下liyongleihf2006的localStorage重写，隐藏时间过期的细节，非常适合作为小工具，小组件。
+
+# JS测试四
+
+![](2019-07-30-16-01-42.png)
+
+## 具体实现
+
+### 我的解答
+
+```js
+// 第一题
+content.length <= 140
+// 第二题
+content.trim().replace(/\s+/g,' ')
+// 第三题
+Math.ceil([...content.trim().replace(/\s+/g,' ')].map((item) => item.charCodeAt()).join('').length / 2)
+// 第四题
+// 正则实现
+```
+
+### 最佳解答
+
+```js
+// 第一题
+function testLength(str) {
+   return str.length > 140;
+}
+
+// 第二题
+function testLengthNoSpace(str) {
+   return testLength(str.trim().replace(/\s+/g,' '));
+}
+
+// 第三题
+function testLengthNoASCII(str){
+  str = str.trim().replace(/\s+/g,' ');
+  let ascLen = 0;
+  for (let i = 0; i < str.length; i++) {
+    // 小于 128 的是可见字符
+    str.charCodeAt(i) < 128 && ascLen++;
+  }
+  return str.length - Math.floor(ascLen / 2) > 140;
+}
+
+// 第四题
+function testLengthNoURL(str){
+   let placeHolder = Array(21).join(',');
+   str = str.trim()
+      .replace(/\s+/g,' ')
+      // \x21-\x7e 匹配不可见字符
+      .replace(/http:\/\/[\x21-\x7e]{13,}?(?=[^\x21-\x7e]|$)/g, placeHolder)
+      .replace(/https:\/\/[\x21-\x7e]{12,}?(?=[^\x21-\x7e]|$)/g, placeHolder);
+   return testLengthNoASCII(str);
+}
+```
+
+## 实现要点
+
+1. 空格替换直接trim()方法，以及/\s+/g正则即可；
+2. ASCII字符非连续也算半个字符，可以使用`str.match(/[\x00-\xff]/g).length`；
+3. 网址优先判断；
+4. 替换的字符务必是非ASCII字符（否则会认为是5个字符长度）；
+5. 20个ASCII字符长度，可以Array(20).join()或者','.repeat(20)；
