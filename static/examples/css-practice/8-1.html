@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+  <style>
+    body {
+      background-color: white;
+    }
+
+    .chat-list {
+      padding: 4px;
+    }
+
+    .chat-item {
+      position: relative;
+      margin-bottom: 32px;
+    }
+
+    .chat-avatar {
+      display: inline-block;
+      vertical-align: top;
+      margin-right: 12px;
+    }
+
+    .chat-avatar img {
+      border-radius: 50%;
+      width: 64px;
+      height: 64px;
+    }
+
+    .chat-content {
+      vertical-align: top;
+      display: inline-block;
+    }
+
+    .chat-header {
+      color: rgb(164, 173, 187);
+      font-size: 18px;
+      margin-bottom: 6px;
+    }
+
+    .chat-bubble {
+      border-radius: 4px;
+      padding: 12px 18px;
+      background: rgb(245, 247, 250);
+      position: relative;
+      word-break: break-all;
+    }
+
+    .friend .chat-bubble::before {
+      content: '';
+      position: absolute;
+      border: solid transparent;
+      border-width: 6px 10px;
+      border-right-color: rgb(245, 247, 250);
+      left: -20px;
+      top: 4px;
+    }
+
+    .self {
+      text-align: right;
+    }
+
+    .self .chat-content {
+      margin-right: 76px;
+    }
+
+    .self .chat-avatar{
+      position: absolute;
+      right: 0;
+      margin: 0;
+      margin-left: 12px;
+    }
+
+    .self .chat-bubble {
+      background: rgb(0, 190, 255);
+      color: #fff;
+    }
+
+    .self .chat-bubble::before {
+      content: '';
+      position: absolute;
+      border: solid transparent;
+      border-width: 6px 10px;
+      border-left-color: rgb(0, 190, 255);
+      right: -20px;
+      top: 4px;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="chat-list">
+    <div class="chat-item friend">
+      <div class="chat-avatar">
+        <img src="https://tva4.sinaimg.cn/crop.0.0.750.750.180/75f2b996jw8f6zkdm7qp7j20ku0kudgr.jpg" />
+      </div>
+      <div class="chat-content">
+        <div class="chat-header">
+          提案笙 9月30日 21:47
+        </div>
+        <div class="chat-bubble">
+          什么秘密，我觉得你现在跟我说什么都没有意义。333333333333333333333333333333333333333333333333333333333333333333333333333333
+        </div>
+      </div>
+    </div>
+    <div class="chat-item friend">
+      <div class="chat-avatar">
+        <img src="https://tvax4.sinaimg.cn/crop.0.0.512.512.180/6cd7bd09ly8fsnom1e5wtj20e80e8gm7.jpg" />
+      </div>
+      <div class="chat-content">
+        <div class="chat-header">
+          淮南王铃 10月8日 10:30
+        </div>
+        <div class="chat-bubble">
+          @蝴蝶蓝 优秀
+        </div>
+      </div>
+    </div>
+    <div class="chat-item friend">
+      <div class="chat-avatar">
+        <img src="https://tvax4.sinaimg.cn/crop.0.0.512.512.180/6cd7bd09ly8fsnom1e5wtj20e80e8gm7.jpg" />
+      </div>
+      <div class="chat-content">
+        <div class="chat-header">
+          蝴蝶蓝 昨天 22::13
+        </div>
+        <div class="chat-bubble">
+          值得一听~~
+        </div>
+      </div>
+    </div>
+    <div class="chat-item self">
+      <div class="chat-avatar">
+        <img src="https://tvax4.sinaimg.cn/crop.0.0.512.512.180/6cd7bd09ly8fsnom1e5wtj20e80e8gm7.jpg" />
+      </div>
+      <div class="chat-content">
+        <div class="chat-header">
+          刚刚 Y优秀X
+        </div>
+        <div class="chat-bubble">
+          围观戏精现场
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+
+</html>
