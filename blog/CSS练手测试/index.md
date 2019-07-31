@@ -200,9 +200,17 @@ path: /css-practice-test/
 
 ## 具体实现
 
+### 我的解答
+
 <iframe src="/examples/css-practice/7-1.html" width="400" height="100"></iframe>
 
 `embed:css-practice/7-1.html`
+
+### 最佳解答
+
+<iframe src="/examples/css-practice/7-2.html" width="400" height="100"></iframe>
+
+`embed:css-practice/7-2.html`
 
 ## 实现要点
 
@@ -248,4 +256,28 @@ path: /css-practice-test/
 6. 小尾巴的实现。边框+圆角，box-shadow+圆角，径向渐变
 7. 左右对称布局的实现：direction: rtl配合CSS逻辑属性
 8. 不推荐使用dl标签，可以给每个列表增加tabindex=0
+
+# CSS测试九
+
+![](2019-07-31-14-12-51.png)
+
+## 具体实现
+
+### 最佳解答
+
+<iframe src="/examples/css-practice/9-1.html" width="400" height="100"></iframe>
+
+`embed:css-practice/9-1.html`
+
+## 实现要点
+
+1. `<form>` + submit
+2. `<fieldset>` + `<legend>`
+3. placeholder
+4. name
+5. required验证
+6. autocomplete="off"
+7. tabindex/autofocus
+8. type="text"可以缺省
+9. 忘记密码，立即注册最好使用`<a>`
 

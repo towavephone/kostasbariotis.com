@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+  <style>
+    body {
+      background-color: white;
+    }
+
+    .con {
+      display: inline-block;
+      margin: 50px 80px;
+    }
+
+    .css-tips {
+      vertical-align: middle;
+      cursor: pointer;
+    }
+
+    [data-title] {
+      position: relative;
+      overflow: visible;
+    }
+
+    .css-tips[data-title]:before,
+    .css-tips[data-title]:after {
+      display: block;
+      position: absolute;
+      z-index: 1;
+      left: 50%;
+      bottom: 100%;
+      transform: translate(-50%, -20px);
+      opacity: 0;
+      transition: .15s .15s;
+      color: #373c42;
+      visibility: hidden;
+    }
+
+    .css-tips[data-title]:before {
+      content: attr(data-title);
+      border-radius: 3px;
+      padding: 6px 10px;
+      line-height: 18px;
+      text-align: left;
+      background-color: #373c42;
+      color: #fff;
+      font-size: 12px;
+      font-style: normal;
+      white-space: nowrap;
+    }
+
+    .css-tips[data-title]:after {
+      content: '';
+      width: 0;
+      height: 0;
+      margin-bottom: -12px;
+      overflow: hidden;
+      border: 6px solid transparent;
+      border-top-color: currentColor;
+    }
+
+    .css-tips[data-title]:hover:before,
+    .css-tips[data-title]:hover:after {
+      visibility: visible;
+      transform: translate(-50%, -10px);
+      opacity: 1;
+    }
+
+    /* right */
+    .css-tips[data-title][data-title-dir="right"]:before,
+    .css-tips[data-title][data-title-dir="right"]:after{
+      left: 100%;
+      top: 50%;
+      bottom: auto;
+      transform: translate(20px, -50%);
+    }
+    .css-tips[data-title][data-title-dir="right"]:after {
+      margin: 0;
+      margin-left: -12px;
+      border-color: transparent;
+      border-right-color: currentColor;
+    }
+    .css-tips[data-title][data-title-dir="right"]:hover:before,
+    .css-tips[data-title][data-title-dir="right"]:hover:after {
+      visibility: visible;
+      transform: translate(10px, -50%);
+      opacity: 1;
+    }
+
+    /* bottom */
+    .css-tips[data-title][data-title-dir="bottom"]:before,
+    .css-tips[data-title][data-title-dir="bottom"]:after{
+      left: 50%;
+      top: 100%;
+      bottom: auto;
+      transform: translate(-50%, 20px);
+    }
+    .css-tips[data-title][data-title-dir="bottom"]:after {
+      margin: 0;
+      margin-top: -12px;
+      border-color: transparent;
+      border-bottom-color: currentColor;
+    }
+    .css-tips[data-title][data-title-dir="bottom"]:hover:before,
+    .css-tips[data-title][data-title-dir="bottom"]:hover:after {
+      visibility: visible;
+      transform: translate(-50%, 10px);
+      opacity: 1;
+    }
+
+    /* left */
+    .css-tips[data-title][data-title-dir="left"]:before,
+    .css-tips[data-title][data-title-dir="left"]:after{
+      left: auto;
+      right: 100%;
+      top: 50%;
+      bottom: auto;
+      transform: translate(-20px, -50%);
+    }
+    .css-tips[data-title][data-title-dir="left"]:after {
+      margin: 0;
+      margin-right: -12px;
+      border-color: transparent;
+      border-left-color: currentColor;
+    }
+    .css-tips[data-title][data-title-dir="left"]:hover:before,
+    .css-tips[data-title][data-title-dir="left"]:hover:after {
+      visibility: visible;
+      transform: translate(-10px, -50%);
+      opacity: 1;
+    }
+
+    /* muti */
+    .css-tips[data-title][data-title-muti]:before {
+      width: 150px;
+      white-space: normal;
+    }
+
+    /* success */
+    .css-tips[data-title][data-title-type="success"]:before {
+      background-color: #52c41a;
+    }
+    .css-tips[data-title][data-title-type="success"]:after {
+      color:#52c41a;
+    }
+    /* error */
+    .css-tips[data-title][data-title-type="error"]:before {
+      background-color: #f5222d;
+    }
+    .css-tips[data-title][data-title-type="error"]:after {
+      color:#f5222d;
+    }
+    /* warn */
+    .css-tips[data-title][data-title-type="warn"]:before {
+      background-color: #faad14;
+    }
+    .css-tips[data-title][data-title-type="warn"]:after {
+      color:#faad14;
+    }
+
+  </style>
+</head>
+
+<body>
+  <div class="con">
+    <span class="css-tips" data-title="删除删除删除" data-title-dir="up">提示上</span>
+  </div>
+  <div class="con">
+    <span class="css-tips" data-title="删除删除删除" data-title-dir="right">提示右</span>
+  </div>
+  <div class="con">
+    <span class="css-tips" data-title="删除删除删除" data-title-dir="bottom">提示下</span>
+  </div>
+  <div class="con">
+    <span class="css-tips" data-title="删除删除删除" data-title-dir="left">提示左</span>
+  </div>
+  <br>
+  <div class="con">
+    <span class="css-tips" data-title="删除删除删除删除删除删除删除删除删除" data-title-dir="right" data-title-muti>多行提示</span>
+  </div>
+  <br>
+  <div class="con">
+    <span class="css-tips" data-title="删除删除删除删除" data-title-type="success">温馨提示</span>
+  </div>
+  <div class="con">
+    <span class="css-tips" data-title="删除删除删除" data-title-type="error">危险提示</span>
+  </div>
+  <div class="con">
+    <span class="css-tips" data-title="删除删除删除删除" data-title-type="warn">警告提示</span>
+  </div>
+</body>
+
+</html>
