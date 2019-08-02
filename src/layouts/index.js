@@ -2,15 +2,17 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import Helmet from 'react-helmet';
-import '../scss/boot.scss';
-import Footer from '../components/Footer';
-import { events, query as domQuery } from 'dom-helpers';
+import GatsbyLink from 'gatsby-link';
+import events from 'dom-helpers/events';
+import domQuery from 'dom-helpers/query';
 import { throttle } from 'lodash';
+import cx from "classnames";
+
 import { scrollTop, isEmptyObject } from '../utils/common';
 import Icon from '../components/Icon';
-import cx from "classnames";
 import Menu from '../components/Menu';
-import GatsbyLink from 'gatsby-link';
+import '../scss/boot.scss';
+import Footer from '../components/Footer';
 // layouts/index.js
 export default class IndexLayout extends Component {
     constructor(props) {

@@ -43,10 +43,10 @@
     "dependencies": {
         "bootstrap-sass": "^3.3.7",
         "classnames": "^2.2.5",
-        "dom-helpers": "^3.3.1",
+        "dom-helpers": "^3.4.0",
         "dotenv": "^5.0.1",
         "fontfaceobserver": "^2.0.13",
-        "gatsby": "^1.9.261",
+        "gatsby": "^1.9.279",
         "gatsby-image": "^1.0.51",
         "gatsby-link": "^1.6.44",
         "gatsby-plugin-algolia": "^0.0.3",
