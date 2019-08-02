@@ -155,6 +155,19 @@ requestAnimationFrame((timestamp) => {
 
 ### 我的解答
 
+```js
+//第一题
+document.querySelector('#loginForm');
+//第二题
+e.preventDefault();
+//第三题
+[].slice.call(document.querySelectorAll('#loginForm input')).map((item) => item.value)
+//第四题
+//通过登录按钮disabled实现
+//第五题
+[].slice.call(document.querySelectorAll('#loginForm input')).concat(document.querySelector('input[name=from]')).map((item) => item.value)
+```
+
 ### 最佳解答
 
 ## 实现要点
