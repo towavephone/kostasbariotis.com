@@ -168,6 +168,23 @@ e.preventDefault();
 [].slice.call(document.querySelectorAll('#loginForm input')).concat(document.querySelector('input[name=from]')).map((item) => item.value)
 ```
 
-### 最佳解答
-
 ## 实现要点
+
+```js
+//第一题
+document.getElementById('loginForm'); // 方法1：经典的 id 选择器
+document.querySelector('#loginForm'); // 方法2：万能的 querySelector
+document.forms.loginForm; // 方法3：表单原生方法，还可以写作：document.forms['loginForm']
+loginForm; // 方法4：标签的 id 可以直接当变量来用
+//第二题
+loginForm.addEventListener('submit', function(event) {
+  event.preventDefault();
+  // 其他操作...
+});
+//第三题
+new FormData(loginForm) // IE10+
+//第四题
+setAttribute('disabled', '')或者loginForm.querySelector('[type="submit"]').disabled = true;
+//第五题
+<input name="from" type="hidden" form="loginForm"> // IE10+
+```
