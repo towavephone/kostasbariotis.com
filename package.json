@@ -16,8 +16,10 @@
     "scripts": {
         "start": "yarn dev",
         "build": "gatsby build --prefix-paths",
-        "deploy:github": "yarn build && gh-pages -d public -r git@github.com:towavephone/towavephone.github.io.git -b master",
-        "deploy:coding": "yarn build && gh-pages -d public -r git@git.coding.net:towavephone/towavephone.coding.me.git -b master",
+        "deploy:github": "gh-pages -d public -r git@github.com:towavephone/towavephone.github.io.git -b master",
+        "deploy:coding": "gh-pages -d public -r git@git.coding.net:towavephone/towavephone.coding.me.git -b master",
+        "bdg": "yarn cleanup && yarn build && yarn deploy:github",
+        "bdc": "yarn cleanup && yarn build && yarn deploy:coding",
         "dev": "gatsby develop",
         "serve": "gatsby serve",
         "lint": "yarn lint:markdown",
@@ -25,7 +27,7 @@
         "test": "echo \"Should probably write some tests!\"",
         "lint:markdown": "markdownlint --config ./.markdownlint.json ./blog/**/*.md",
         "precommit": "yarn lint:markdown",
-        "cleanup": "rm -rf node_modules/gh-pages/.cache"
+        "cleanup": "rimraf -rf node_modules/gh-pages/.cache"
     },
     "devDependencies": {
         "eslint": "^4.19.1",
