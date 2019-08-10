@@ -149,6 +149,26 @@ path: /css-practice-test/
 
 ![](2019-07-22-12-00-45.png)
 
+## 具体实现
+
+### grid
+
+<iframe src="/examples/css-practice/5-1.html" width="400" height="100"></iframe>
+
+`embed:css-practice/5-1.html`
+
+### flex
+
+<iframe src="/examples/css-practice/5-2.html" width="400" height="100"></iframe>
+
+`embed:css-practice/5-2.html`
+
+### inline-block
+
+<iframe src="/examples/css-practice/5-3.html" width="400" height="100"></iframe>
+
+`embed:css-practice/5-3.html`
+
 ## 实现要点
 
 1. 在grid布局中，每个子项所相对计算的宽度已经划分好了，并不是父元素的宽度；
@@ -280,4 +300,3 @@ path: /css-practice-test/
 7. tabindex/autofocus
 8. type="text"可以缺省
 9. 忘记密码，立即注册最好使用`<a>`
-
