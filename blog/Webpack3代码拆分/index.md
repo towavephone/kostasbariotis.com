@@ -12,8 +12,6 @@ path: /webpack-code-split/
 <div align="center"><iframe src="https://giphy.com/embed/xUOxeX2W00FmKjNsUo" width="480" height="222" frameBorder="0" class="giphy-embed" allowFullScreen></iframe><p><a href="https://giphy.com/gifs/code-splitting-dynamic-imports-webpack-3-xUOxeX2W00FmKjNsUo">via GIPHY</a></p></div>
 演示一个简单的应用程序动态加载多个路线。请注意编辑“页面2”后的200响应，而未更改的文件则为304。
 
-
-
 TL：DR 示例应用程序回购
 
 ```js
