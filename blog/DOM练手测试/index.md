@@ -1,6 +1,6 @@
 ---
 title: DOM练手测试
-date: 2019-7-22 12:09:03
+date: 2019-8-29 20:06:28
 categories:
 - 前端
 tags: 前端, DOM
@@ -188,3 +188,65 @@ setAttribute('disabled', '')或者loginForm.querySelector('[type="submit"]').dis
 //第五题
 <input name="from" type="hidden" form="loginForm"> // IE10+
 ```
+
+# DOM测试五
+
+![](2019-08-23-16-22-21.png)
+
+## 具体实现
+
+### 我的解答
+
+```js
+//第一题
+const element = document.querySelector('textarea')
+//第二题
+element.rows = 5;
+//第三题
+element.clientHeight
+//第四题
+//第五题
+```
+
+### 最佳解答
+
+```js
+//第一题
+const element = document.querySelector('textarea')
+//第二题
+element.rows = 5;
+//第三题
+// 用 clientHeight  获取会包含 padding，所以用下面方法获取计算样式来得到高度
+const { height } = window.getComputedStyle(myTextarea);
+console.log(height);  // Chrome: 75px, FF: 112px
+//第四题
+// textarea 默认的 lineHeight 值为 normal，此时是无法计算的，而且每个浏览器解析出的 normal 数值存在差异，另外它的值还和字体有关。详情
+// 所以想要实现题目中的要求的话，有个大前提就是必须通过 CSS Reset 的方式对 textarea 的行高进行预定义，我这里采用了 Normalize.css 中的相关样式：
+// textarea {line-height: 1.15;}
+// 然后就可以正常获取行高进行后续计算了：
+const { lineHeight } = window.getComputedStyle(myTextarea);
+myTextarea.style.height = parseFloat(lineHeight) * myTextarea.rows + 'px';
+//第五题
+document.addEventListener('DOMNodeInserted', function(event) {
+  var elm = event.target;
+  if (elm.nodeName.toLowerCase() === 'textarea') {
+    var lineHt = window.getComputedStyle(elm).lineHeight;
+    elm.style.height = parseFloat(lineHt) * elm.rows + 'px';
+  }
+});
+```
+
+## 实现要点
+
+1. document.querySelector;
+2. myTextarea.rows = 5;
+3. window.getComputedStyle(myTextarea).height
+4. IE下textarea的高度不是行高决定的，而是font-size和font-family。
+5. DOMNodeInserted(DOM level 3, IE9+)以及MutationObserver(DOM level 4 IE11+)。前者不是异步的，所以如果有大量的DOM变化和事件处理，性能影响会很明显，MutationObserver则是异步的，先观察，然后一次性处理。
+   ```js
+   document.addEventListener('DOMNodeInserted', function(event) {
+   if (event.target.nodeName.toLowerCase() === 'textarea') {
+      //...
+   }
+   });
+   ```

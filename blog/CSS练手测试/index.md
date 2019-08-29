@@ -1,6 +1,6 @@
 ---
 title: CSS练手测试
-date: 2019-07-20 14:19:31
+date: 2019-8-23 16:22:40
 categories:
 - 前端
 tags: 前端, CSS
@@ -300,3 +300,43 @@ path: /css-practice-test/
 7. tabindex/autofocus
 8. type="text"可以缺省
 9. 忘记密码，立即注册最好使用`<a>`
+
+# CSS测试十
+
+![](2019-08-23-14-24-28.png)
+
+## 具体实现
+
+### details > summary
+
+<iframe src="/examples/css-practice/10-1.html" width="400" height="100"></iframe>
+
+`embed:css-practice/10-1.html`
+
+### checkbox
+
+<iframe src="/examples/css-practice/10-2.html" width="400" height="100"></iframe>
+
+`embed:css-practice/10-2.html`
+
+### target
+
+<iframe src="/examples/css-practice/10-3.html" width="400" height="100"></iframe>
+
+`embed:css-practice/10-3.html`
+
+### focus-within
+
+<iframe src="/examples/css-practice/10-4.html" width="400" height="100"></iframe>
+
+`embed:css-practice/10-4.html`
+
+## 实现要点
+
+1. 视觉还原才是重点。
+2. details > summary 是最好的实现。可以进一步注意语义化。这个方法IE/Edge是不支持。所以可以用来判断是否是IE内核浏览器，var isIE = !('open' in document.createElement('details'))。所以如果要兼容IE，可以写个polyfill。
+3. :checked方法交互也可以实现，但语义欠佳，不是这种交互的最佳实践。注意优化选择器。
+4. :target方法有触发锚点定位的问题，可以使用一个隐藏的空div元素曲线救国。
+5. :focus-within只要子元素有focus，就能匹配。是目前最先支持的具有“父选择器”特性的伪类。最佳实践是下拉菜单。类似的选择器还有 :target-within。
+6. 元素聚焦，同时聚焦轮廓浏览器认为应该显示。:focus:not(:focus-visible) { outline: 0; }
+7. 注意不要过度无障碍设置
