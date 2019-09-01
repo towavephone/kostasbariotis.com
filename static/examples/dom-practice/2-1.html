@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+  <style>
+    .color {
+      color: red;
+      background: blue;
+      animation: color 1s linear forwards;
+    }
+
+    @keyframes color{
+      to {
+        color: blue;
+        background: red;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div id="color" class="color"/>
+  <script>
+    var div = document.createElement('div');
+    var color = document.getElementById('color');
+    div.style.width = '150px';
+    div.style.height = '300px';
+    document.body.appendChild(div);
+    div.style.background = 'linear-gradient(to right bottom, red, blue)';
+    var animationState = true;
+    color.addEventListener("animationstart",function(){
+      animationState = true;
+    })
+    color.addEventListener("animationend",function(){
+      animationState = false;
+    })
+    var draw = function () {
+      if (animationState) {
+        var style = window.getComputedStyle(color);
+        div.style.background = 'linear-gradient(to right bottom, '+ style.color + ', ' + style.backgroundColor + ')';
+      }
+      requestAnimationFrame(draw);
+    };
+    draw();
+  </script>
+</body>
+</html>

@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+  <style>
+    body {
+      background-color: white;
+    }
+
+    .icon-delete {
+      position: relative;
+      display: inline-block;
+      cursor: default;
+      margin-top: 30px;
+      margin-left: 30px;
+      color: #000;
+    }
+
+    .css-tips::before {
+      visibility: hidden;
+      opacity: 0;
+      transition: all 0.5s;
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      content: attr(data-title);
+      font-size: 14px;
+      background: #000;
+      width: max-content;
+      /* white-space: nowrap; */
+      color: #fff;
+      top: -32px;
+      border-radius: 4px;
+      padding: 4px 8px;
+    }
+
+    .css-tips::after {
+      visibility: hidden;
+      opacity: 0;
+      transition: all 0.5s;
+      position: absolute;
+      left: 50%;
+      top: -5px;
+      transform: translateX(-50%);
+      content: '';
+      border: 8px solid transparent;
+      border-top-color: #000;
+    }
+
+    .css-tips:hover::before,
+    .css-tips:hover::after {
+      visibility: visible;
+      opacity: 1;
+    }
+  </style>
+</head>
+
+<body>
+  <a
+    href="javascript:"
+    class="icon-delete css-tips"
+    data-title="删除按钮"
+    role="button"
+  >
+    删除
+  </a>
+</body>
+
+</html>

@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+        body {
+            background-color: white;
+        }
+        
+        dl {
+            border: 1px solid #000;
+        }
+
+        dt {
+            position: absolute;
+        }
+
+        dd {
+            text-align: right;
+            margin-left: 5em;
+            word-break: break-all;
+        }
+
+        dd:empty::before {
+            content: '--';
+            color: #999;
+        }
+        /* 
+            此方法兼容性非常好，低版本IE浏览器也支持，
+            但position:absolute元素的层叠顺便比较高，如果页面布局复杂，
+            出现了元素层叠的场景，则此方法需要斟酌下，因为很可能会增加布局的复杂度（额外的z-index进行层级控制）。
+        */
+    </style>
+</head>
+
+<body>
+    <dl>
+        <dt>手机系统</dt>
+        <dd>Android</dd>
+        <dt>登录方式</dt>
+        <dd>QQ互联登录</dd>
+        <dt>绑定时间</dt>
+        <dd></dd><!-- 内容为空的情况 -->
+        <dt>绑定状态</dt>
+        <dd>有效有效有效有效有效有效有效有效有效有效有效有效有效有效有效有效有效有效有效有效有效有效有效有效有效有效有效有效有效有效有效有效有效有效有效有效有效有效有效有效有效有效有效有效有效有效有效有效有效有效有效有效有效有效有效有效有效有效有效有效有效有效有效有效有效有效有效有效有效有效有效有效有效有效有效有效有效有效有效有效有效有效有效有效有效有效有效有效有效有效</dd><!-- 内容溢出的情况 -->        
+    </dl>
+</body>
+
+</html>

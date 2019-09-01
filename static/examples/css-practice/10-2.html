@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+  <style>
+    html,
+    body {
+      background-color: white;
+      margin: 0;
+      height: 100%;
+    }
+
+    .ui-menu-wrap {
+      width: 200px;
+    }
+
+    .ui-btn {
+      line-height: 40px;
+      padding: 0 25px;
+      font-size: 14px;
+      color: #666;
+      transition: .3s;
+      cursor: pointer;
+    }
+
+    .ui-btn:hover {
+      background: #edf9ff;
+      color: #33b2ee;
+    }
+
+    .ui-menu-list .ui-btn {
+      display: block;
+    }
+
+    .ui-menu-summary {
+      display: block;
+      position: relative;
+      line-height: 40px;
+      padding: 0 10px;
+      color: #333;
+      font-size: 14px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: .3s;
+      user-select: none;
+    }
+
+    .ui-menu-summary:focus {
+      background: #edf9ff;
+    }
+
+    .ui-menu-summary::after {
+      content: '';
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      margin-top: 3px;
+      width: 6px;
+      height: 6px;
+      border: 2px solid;
+      border-width: 2px 2px 0 0;
+      transform: translateY(-10px) rotate(135deg);
+      transition: .3s;
+    }
+
+    .ui-menu-list {
+      display: none;
+    }
+
+    .ui-menu > input[type="checkbox"]:checked + .ui-menu-summary::after {
+      transform: translateY(-8px) rotate(-45deg);
+    }
+
+    .ui-menu > input[type="checkbox"] {
+      /* 满足视觉上的隐藏，屏幕阅读设备等辅助设备也支持得很好。*/
+      position: absolute;
+      clip: rect(0, 0, 0, 0);
+    }
+
+    .ui-menu > input[type="checkbox"]:checked + .ui-menu-summary + .ui-menu-list {
+      display: block;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="ui-menu-wrap">
+    <div class="ui-menu">
+      <input type="checkbox" id="menu01" checked>
+      <label class="ui-menu-summary" for="menu01">布局1</label>
+      <div class="ui-menu-list">
+        <a class="ui-btn">Flex 布局</a>
+        <a class="ui-btn">Grid 布局</a>
+        <a class="ui-btn">Shapes 布局</a>
+        <a class="ui-btn">Flex 布局</a>
+        <a class="ui-btn">Flex 布局</a>
+      </div>
+    </div>
+    <div class="ui-menu">
+      <input type="checkbox" id="menu02" checked>
+      <label class="ui-menu-summary" for="menu02">布局2</label>
+      <div class="ui-menu-list">
+        <a class="ui-btn">Flex 布局</a>
+        <a class="ui-btn">Grid 布局</a>
+        <a class="ui-btn">Shapes 布局</a>
+        <a class="ui-btn">Flex 布局</a>
+        <a class="ui-btn">Flex 布局</a>
+      </div>
+    </div>
+  </div>
+</body>
+
+</html>

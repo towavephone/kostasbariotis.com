@@ -8,16 +8,18 @@ import {
     RedditShareButton,
 } from 'react-share';
 import Img from 'gatsby-image';
+import Gitalk from 'gitalk';
+import ArticleSchema from '../components/schemas/ArticleSchema';
+import events from 'dom-helpers/events';
+import domQuery from 'dom-helpers/query';
+import { throttle } from 'lodash';
+import cx from 'classnames';
+
 import BulletListTags from '../components/BulletListTags';
 import NavigateLink from '../components/NavigateLink';
 import Separator from '../components/Separator';
 import MetaTags from '../components/MetaTags';
-import Gitalk from 'gitalk';
-import ArticleSchema from '../components/schemas/ArticleSchema';
-import { events, query as domQuery } from 'dom-helpers';
-import { throttle } from 'lodash';
 import Icon from '../components/Icon';
-import cx from 'classnames';
 
 export default class Template extends Component {
     constructor(props) {

@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+        body {
+            background-color: white;
+        }
+        
+        /********** 主容器 **********/
+        .audio-controls {   
+            text-align: left;
+        }
+
+        /********** 样式容器 **********/
+        .audio-controls-inner {
+            font-size: 16px;      /* 控件尺寸 */
+            color: #000;          /* 控件主题色 */
+            background: #f1f3f4;  /* 控件背景色 */
+
+            display: flex;
+            align-items: center;
+            min-width: 2.125em;
+            height: 3.375em;
+            padding: 0 .625em;
+            border-radius: 2.125em;
+        }
+
+        /********** 组件按钮公用样式 **********/
+        .audio-controls-button {
+            flex: 0 0 2em;
+            height: 2em;
+            padding: 0;
+            overflow: hidden;
+            font-size: 100%;
+            color: inherit;
+            background: transparent;
+            border: 0;
+            border-radius: 2.25em;
+            cursor: pointer;
+            transition: background ease-in-out .2s;
+        }
+
+        .audio-controls-button:hover { 
+            background: rgba(0, 0, 0, .06);
+        }
+
+        .audio-controls-button::before {
+            display: inline-block;
+            content: "";
+        }
+
+        /********** 播放按钮 **********/
+        .audio-controls-button[aria-label="play"]::before {
+            transform: translate(30%, .16em);
+            border: solid transparent;
+            border-width: .55em .85em;
+            border-left-color: currentColor;
+        }
+
+        /********** 暂停按钮 **********/
+        .audio-controls-button[aria-label="pause"]::before {
+            width: .375em;
+            height: 48%;
+            transform: translateY(.16em);
+            text-align: center;
+            border: solid currentColor;
+            border-width: 0 .25em;
+        }
+
+        /********** 声音按钮 **********/
+        .audio-controls-button[aria-label="volume"] {
+            margin-left: 1em;
+            margin-right: .25em;
+        }
+
+        .audio-controls-button[aria-label="volume"]::before { 
+            display: none;
+        }
+
+        /* 声音按钮图标 */
+        .audio-controls-button-volume-icon {
+            display: inline-block;
+            padding: .3em .15em;
+            margin-left: -.3em;
+            transform: translate(-50%, .15em);
+            border: .3em solid transparent;
+            border-right-color: currentColor;
+            box-shadow: inset 1em 0 0;
+        }
+
+        .audio-controls-button-volume-icon > i {
+            position: relative;
+            left: calc(.3125em * 2);
+        }
+
+        .audio-controls-button-volume-icon > i::before {
+            content: "";
+            position: absolute;
+            width: .7em;
+            height: 1.4em;
+            transform: translateY(-50%);
+            box-sizing: border-box;
+            border: .16em solid;
+            border-left: 0;
+            border-radius: 0 .7em .7em 0;
+        }
+
+        .audio-controls-button-volume-icon > i::after {
+            content: "";
+            position: absolute;
+            width: .3em;
+            height: .6em;
+            transform: translateY(-50%);
+            background: currentColor;
+            border-radius: 0 .3em .3em 0;
+        }
+
+        /********** 选项菜单 **********/
+        .audio-controls-button[aria-label="menu"]::before  {
+            width: .3125em;
+            height: .3125em;
+            transform: translateY(-50%);
+            background: currentColor;
+            border-radius: 50%;
+            box-shadow: 0 .5em 0, 0 -.5em 0;
+        }
+
+        /********** 播放时间文本 **********/
+        .audio-controls-time {
+            font-size: .875em;
+            line-height: 1;
+            opacity: .85;
+        }
+
+        .audio-controls-time[aria-label="current"] {
+            margin-left: .375em;
+        }
+
+        .audio-controls-time[aria-label="remaining"]::before {
+            content: "/";
+            margin: 0 .25em;
+        }
+
+        /********** 时间轴 **********/
+        .audio-controls-timeline {
+            -webkit-appearance: none;
+            flex: 1;
+            height: .25em;
+            margin-left: 1em;
+            font-size: 100%;
+            color: inherit;
+            background: currentColor;
+            border-radius: .25em;
+            mix-blend-mode: darken;
+        }
+
+        .audio-controls-timeline::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 0;
+            height: 0;
+            border: .375em solid;
+            border-radius: 50%;
+            box-shadow: 50vw 0 0 50vw rgba(255,255,255,.5);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="audio-controls">
+        <div class="audio-controls-inner">
+            <button class="audio-controls-button" aria-label="play">
+            </button>
+            <span class="audio-controls-time" aria-label="current">0:05</span>
+            <span class="audio-controls-time" aria-label="remaining">0:05</span>
+            <input class="audio-controls-timeline" type="range" max="5000" value="2000" />
+            <button class="audio-controls-button" aria-label="volume">
+                <span class="audio-controls-button-volume-icon">
+                    <i></i>
+                </span>
+            </button>
+            <button class="audio-controls-button" aria-label="menu">
+            </button>
+        </div>
+    </div>
+</body>
+
+</html>

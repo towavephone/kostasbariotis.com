@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+  <style>
+    .box {
+      display: inline-block;
+      width: 100px;
+      height: 100px;
+      margin: 10px;
+      background: gray;
+    }
+
+    .box.active {
+      background: skyblue;
+    }
+
+    /* 按住时抖动身姿（仅PC） */
+    .box:active {
+      animation: shake linear 1s infinite;
+    }
+
+    /* 范围选框 */
+    .range-frame {
+      position: fixed;
+      z-index: 10;
+      border: 1px dashed rgba(0, 0, 0, .5);
+    }
+
+    @keyframes shake {
+      0%, 100% {transform: translateX(0) rotate(0deg) translateY(0);}
+      15%, 35%, 55%, 75%, 95% {transform: translateX(-1px) rotate(-1deg);}
+      25%, 45%, 5%, 65%, 85% {transform: translateX(1px) rotate(1deg);}
+      10%, 30%, 50%, 70%, 90% {transform: translateY(1px);}
+      20%, 40%, 60%, 80% {transform: translateY(-1px);}
+    }
+  </style>
+</head>
+<body>
+  <script>
+    class Box {
+      constructor(nums = 0) {
+        this.nums = isNaN(nums) ? 0 : Math.floor(nums);  // 数量
+        this.boxes = [];  // 当前实例的 .box 元素集合
+        this.rangeFrame = {  // 范围选框
+          el: null,
+          x: 0,
+          y: 0
+        };
+
+        if (nums > 0) {
+          this.build();
+        }
+      }
+
+      // 在 body 元素里创建 .box 盒子
+      build() {
+        // 使用文档片段，减少性能损耗
+        let fragment = document.createDocumentFragment();
+
+        for (let i = 0; i < this.nums; i++) {
+          let box = document.createElement('div');
+
+          box.className = 'box';
+
+          // 阻止移动端长按时弹出系统默认菜单
+          box.addEventListener('touchstart', e => e.preventDefault());
+
+          this.boxes.push(box);
+          fragment.appendChild(box);
+        }
+
+        document.body.appendChild(fragment);
+        this.bindEvt();
+      }
+
+      // 绑定操作事件
+      bindEvt() {
+        let timer = null;
+        let isReady = false;
+
+        // 按下时
+        const startHandle = e => {
+          e.stopPropagation();
+
+          let elm = e.target;
+
+          // “按压”对象为当前实例中创建的 .box 盒子之一
+          if (!!~this.boxes.indexOf(e.target)) {
+            timer = setTimeout(() => {
+              let { clientX, clientY } = e;
+
+              if (e.touches) {  // 移动端
+                clientX = e.touches[0].clientX;
+                clientY = e.touches[0].clientY;
+              }
+
+              isReady = true;
+              elm.classList.add('active');
+              this.buildRangeFrame(clientX, clientY);
+            }, 350);
+          } else {  // 点击空白处
+            this.boxes.map(box => box.classList.remove('active'));
+          }
+        };
+
+        // 拖动中
+        const moveHandle = e => {
+          if (isReady) {
+            let { clientX, clientY } = e;
+
+            if (e.touches) {  // 兼容移动端
+              clientX = e.touches[0].clientX;
+              clientY = e.touches[0].clientY;
+            }
+
+            this.updateRangeFrame(clientX, clientY);
+          }
+        };
+
+        // 松起时，清空定时器（中断高亮操作）
+        const endHandle = (e) => {
+          e.preventDefault();
+          isReady = false;
+          clearTimeout(timer);
+          this.removeRangeFrame();
+        };
+
+        // 按下
+        window.addEventListener('touchstart', startHandle);
+        window.addEventListener('mousedown', startHandle);
+
+        // 拖动
+        window.addEventListener('touchmove', moveHandle);
+        window.addEventListener('mousemove', moveHandle);
+
+        // 松起
+        window.addEventListener('touchend', endHandle);
+        window.addEventListener('mouseup', endHandle);
+      }
+
+      // 创建范围选框
+      buildRangeFrame(posX, posY) {
+        let elm = document.createElement('i');
+
+        elm.className = 'range-frame';
+        elm.style.left = `${posX}px`;
+        elm.style.top = `${posY}px`;
+        document.body.appendChild(elm);
+
+        this.rangeFrame.el = elm;
+        this.rangeFrame.x = posX;
+        this.rangeFrame.y = posY;
+      }
+
+      // 更新范围选框
+      updateRangeFrame(posX, posY) {
+        let { el, x, y } = this.rangeFrame;
+
+        if (posX < x) {  // 向左反方向
+          el.style.left = 'auto';
+          el.style.right = `${window.innerWidth - x}px`;
+        } else {
+          el.style.left = `${x}px`;
+          el.style.right = 'auto';
+        }
+
+        if (posY < y) {  // 向上反方向
+          el.style.top = 'auto';
+          el.style.bottom = `${window.innerHeight - y}px`;
+        } else {
+          el.style.top = `${y}px`;
+          el.style.bottom = 'auto';
+        }
+
+        // 矩形选框尺寸
+        el.style.width = `${Math.abs(posX - x)}px`;
+        el.style.height = `${Math.abs(posY - y)}px`;
+
+        // 获取矩形区域左上、右下坐标
+        // this.computeContains({
+        // 	x1: Math.min(posX, x), y1: Math.min(posY, y),
+        // 	x2: Math.max(posX, x), y2: Math.max(posY, y)
+        // });
+
+        this.computeContains(el.getBoundingClientRect());
+      }
+
+      // 移除范围选框
+      removeRangeFrame() {
+        if (this.rangeFrame.el) {
+          document.body.removeChild(this.rangeFrame.el);
+          this.rangeFrame.el = null;
+        }
+      }
+
+      // 计算 box 是否包含在选框区域
+      computeContains(area) {
+        this.boxes.map(box => {
+          let { left, top, width, height } = box.getBoundingClientRect();
+
+          // 矩形碰撞检测
+          if (
+            area.left + area.width > left && left + width > area.left  // 横向
+            &&
+            area.top + area.height > top && top + height > area.top  // 纵向
+          ) {
+            box.classList.add('active');
+          }
+        });
+      }
+    }
+    let boxNums = 20;
+    new Box(boxNums);  // 调用
+  </script>
+</body>
+</html>

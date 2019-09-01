@@ -18,6 +18,8 @@
         "build": "gatsby build --prefix-paths",
         "deploy:github": "gh-pages -d public -r git@github.com:towavephone/towavephone.github.io.git -b master",
         "deploy:coding": "gh-pages -d public -r git@git.coding.net:towavephone/towavephone.coding.me.git -b master",
+        "bdg": "yarn build && yarn deploy:github",
+        "bdc": "yarn build && yarn deploy:coding",
         "dev": "gatsby develop",
         "serve": "gatsby serve",
         "lint": "yarn lint:markdown",
@@ -25,7 +27,7 @@
         "test": "echo \"Should probably write some tests!\"",
         "lint:markdown": "markdownlint --config ./.markdownlint.json ./blog/**/*.md",
         "precommit": "yarn lint:markdown",
-        "cleanup": "rm -rf node_modules/gh-pages/.cache"
+        "cleanup": "rimraf -rf node_modules/gh-pages/.cache"
     },
     "devDependencies": {
         "eslint": "^4.19.1",
@@ -43,10 +45,10 @@
     "dependencies": {
         "bootstrap-sass": "^3.3.7",
         "classnames": "^2.2.5",
-        "dom-helpers": "^3.3.1",
+        "dom-helpers": "^3.4.0",
         "dotenv": "^5.0.1",
         "fontfaceobserver": "^2.0.13",
-        "gatsby": "^1.9.261",
+        "gatsby": "^1.9.279",
         "gatsby-image": "^1.0.51",
         "gatsby-link": "^1.6.44",
         "gatsby-plugin-algolia": "^0.0.3",

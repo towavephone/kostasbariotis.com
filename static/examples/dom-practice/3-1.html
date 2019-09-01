@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+  <style>
+    .box {
+      display: inline-block;
+      width: 100px;
+      height: 100px;
+      margin: 10px;
+      background: gray;
+    }
+
+    .box.active {
+      background: skyblue;
+    }
+  </style>
+</head>
+<body>
+  <script>
+    const fragment = document.createDocumentFragment();
+    for (let i = 0; i < 20; i++) {
+      const element = document.createElement('div');
+      element.className = 'box';
+      fragment.append(element);
+    }
+    document.body.appendChild(fragment);
+    [].slice.call(document.querySelectorAll('.box')).forEach((item) => {
+      this.timer = null;
+      item.addEventListener('mousedown', (e) => {
+        this.timer = setTimeout(() => {
+          e.target.classList.add('active');
+        }, 350);
+      });
+
+      item.addEventListener('mouseup', () => {
+        this.timer && clearTimeout(this.timer);
+      });
+
+      item.addEventListener('touchstart', (e) => {
+        this.timer = setTimeout(() => {
+          e.target.classList.add('active');
+        }, 350);
+      });
+
+      item.addEventListener('touchmove', (e) => {
+        this.timer && clearTimeout(this.timer);
+      });
+
+      item.addEventListener('touchend', () => {
+        this.timer && clearTimeout(this.timer);
+      });
+    })
+
+    document.body.addEventListener('click', (e) => {
+      if (!e.target.className) {
+        document.querySelectorAll('.box').forEach((item) => {
+          item.classList.remove('active');
+        })
+      }
+    })
+  </script>
+</body>
+</html>

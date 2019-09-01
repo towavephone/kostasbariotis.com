@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+  <style>
+    body {
+      background-color: white;
+    }
+
+    .layout {
+      padding: 4%;
+      border: 1px solid #e8e8e8;
+    }
+
+    .layout-inner {
+      display: flex;
+      flex-wrap: wrap;
+      flex-grow: 0;
+    }
+
+    .layout-item {
+      flex-basis: 20%;
+    }
+
+    .layout-item-inner {
+      position: relative;
+      padding: 50%;
+    }
+
+    .layout-item-content {
+      position: absolute;
+      top: 10%;
+      bottom: 10%;
+      right: 10%;
+      left: 10%;
+      margin: auto;
+    }
+
+    .layout-item--active .layout-item-content {
+      outline: #272423 4px solid;
+    }
+
+    .layout-item:nth-child(7n+1) .layout-item-content {
+      background: #424242;
+    }
+
+    .layout-item:nth-child(7n+2) .layout-item-content {
+      background: #8c8c8c;
+    }
+
+    .layout-item:nth-child(7n+3) .layout-item-content {
+      background: #d38b69;
+    }
+
+    .layout-item:nth-child(7n+4) .layout-item-content {
+      background: #fecb66;
+    }
+
+    .layout-item:nth-child(7n+5) .layout-item-content {
+      background: #c54941;
+    }
+
+    .layout-item:nth-child(7n+6) .layout-item-content {
+      background: #581c93;
+    }
+
+    .layout-item:nth-child(7n) .layout-item-content {
+      background: #e6e6e6;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="layout">
+    <div class="layout-inner">
+      <div class="layout-item">
+        <div class="layout-item-inner">
+          <div class="layout-item-content">
+          </div>
+        </div>
+      </div>
+      <div class="layout-item">
+        <div class="layout-item-inner">
+          <div class="layout-item-content">
+          </div>
+        </div>
+      </div>
+      <div class="layout-item layout-item--active">
+        <div class="layout-item-inner">
+          <div class="layout-item-content">
+          </div>
+        </div>
+      </div>
+      <div class="layout-item">
+        <div class="layout-item-inner">
+          <div class="layout-item-content">
+          </div>
+        </div>
+      </div>
+      <div class="layout-item">
+        <div class="layout-item-inner">
+            <div class="layout-item-content">
+            </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
