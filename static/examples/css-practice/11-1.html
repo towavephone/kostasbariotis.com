@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+  <style>
+    html,
+    body {
+      background-color: white;
+      margin: 0;
+      height: 100%;
+    }
+
+    .article {
+      background: rgb(255, 248, 220);
+      border: 1px solid #eee;
+      border-radius: 5px;
+      width: 300px;
+    }
+
+    .title {
+      padding: 14px;
+      font-size: 14px;
+      background: rgb(247, 241, 213);
+      border-bottom: 1px solid #eee;
+    }
+
+    .item {
+      padding: 12px 18px;
+      overflow: hidden;
+    }
+
+    .item:not(:last-child) {
+      border-bottom: 1px solid #eee;
+    }
+
+    .item .content {
+      overflow: hidden;
+      display: -webkit-box;
+      -webkit-box-orient: vertical;
+      -webkit-line-clamp: 2;
+    }
+
+    .item a {
+      text-decoration: none;
+    }
+
+    .icon {
+      float: left;
+      width: 16px;
+      margin-right: 6px;
+    }
+
+    .icon::before {
+      content: '';
+      display: inline-block;
+      width: 16px;
+      height: 16px;
+      position: relative;
+      top: 3px;
+    }
+
+    .icon-book::before {
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 576 512'%3E %3Cpath fill='%23828380' d='M567.403 235.642L462.323 84.589A48 48 0 0 0 422.919 64H153.081a48 48 0 0 0-39.404 20.589L8.597 235.642A48.001 48.001 0 0 0 0 263.054V400c0 26.51 21.49 48 48 48h480c26.51 0 48-21.49 48-48V263.054c0-9.801-3-19.366-8.597-27.412zM153.081 112h269.838l77.913 112H75.168l77.913-112zM528 400H48V272h480v128zm-32-64c0 17.673-14.327 32-32 32s-32-14.327-32-32 14.327-32 32-32 32 14.327 32 32zm-96 0c0 17.673-14.327 32-32 32s-32-14.327-32-32 14.327-32 32-32 32 14.327 32 32z'%3E%3C/path%3E %3C/svg%3E");
+    }
+
+    .icon-discuss::before {
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E %3Cpath fill='%232d82ce' d='M448 0H64C28.7 0 0 28.7 0 64v288c0 35.3 28.7 64 64 64h96v84c0 7.1 5.8 12 12 12 2.4 0 4.9-.7 7.1-2.4L304 416h144c35.3 0 64-28.7 64-64V64c0-35.3-28.7-64-64-64zm16 352c0 8.8-7.2 16-16 16H288l-12.8 9.6L208 428v-60H64c-8.8 0-16-7.2-16-16V64c0-8.8 7.2-16 16-16h384c8.8 0 16 7.2 16 16v288z'%3E%3C/path%3E %3C/svg%3E");
+    }
+  </style>
+</head>
+
+<body>
+  <div class="article">
+    <div class="title">
+      标题
+    </div>
+    <div class="body">
+      <div class="item">
+        <div class="icon icon-discuss"></div>
+        <div class="content">
+          <a href="#">
+            恭喜我们29个最老的测试版网站-他们现在不再是测试版了！
+          </a>
+        </div>
+      </div>
+      <div class="item">
+        <div class="icon icon-discuss"></div>
+        <div class="content">
+          <a href="#">
+            《独角兽动物园》35；7:Nicolas访谈
+          </a>
+        </div>
+      </div>
+      <div class="item">
+        <div class="icon icon-book"></div>
+        <div class="content">
+          <a href="#">
+            减少需要重新审查的封闭问题数量的建议
+          </a>
+        </div>
+      </div>
+      <div class="item">
+        <div class="icon icon-book"></div>
+        <div class="content">
+          <a href="#">
+            实验：在接下来的30天内（直到2019-09-07），以3票为基准关闭和重新打开提出的问题
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+
+</html>
