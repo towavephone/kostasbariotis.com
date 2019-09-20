@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+  <style>
+    html,
+    body {
+      background-color: white;
+      margin: 0;
+      height: 100%;
+    }
+
+    .ui-content {
+      width: 300px;
+      font-size: 12px;
+      border: 1px solid #e6dfc6;
+    }
+
+    .ui-title {
+      font-size: inherit;
+      color: #737063;
+      margin: 0;
+      padding: 1em 1.2em;
+      background: #f7f1d5;
+    }
+
+    .ui-list {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      background: #fff8dc;
+    }
+
+    .ui-item {
+      border-top: 1px solid #ede7cd;
+      padding: 1em 1.2em;
+      line-height: 1.4;
+    }
+
+    .ui-link {
+      display: block;
+      display: -webkit-box;
+      text-decoration: none;
+      color: #0077cc;
+      overflow: hidden;
+      -webkit-box-orient: vertical;
+      -webkit-line-clamp: 2;
+      max-height: 2.8em;
+    }
+
+    .ui-item[type] {
+      padding-left: 2.7em;
+      background-position: 1em 1em;
+      background-repeat: no-repeat;
+      background-size: 1.2em 1.2em;
+    }
+
+    .ui-item[type="msg"] {
+      background-image: url("data:image/svg+xml,%3Csvg class='icon' viewBox='0 0 1024 1024' xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cpath d='M892.3 925.3c-15.5 0-30.5-6.5-41.4-18.6L759.7 805l-.6-.8c-2.7-3.3-6.6-5.2-10.9-5.2H232.1C146.6 799 77 729.5 77 643.9V233.6c0-85.5 69.6-155.1 155.1-155.1h559c85.5 0 155.1 69.6 155.1 155.1v453.8c0 27.7 1.4 125.3 2.2 181.1.3 23.5-13.6 44.3-35.5 52.9-6.7 2.6-13.7 3.9-20.6 3.9zm-15.9-55.8s0 .1 0 0c0 .1 0 0 0 0zm-61.9-111.2l61.3 68.3c-.8-58-1.6-117.8-1.6-139.1V233.6c0-22.1-8.7-42.9-24.4-58.7-15.8-15.8-36.6-24.4-58.7-24.4h-559c-22.1 0-42.9 8.7-58.7 24.4-15.8 15.8-24.4 36.6-24.4 58.7v410.3c0 22.1 8.7 42.9 24.4 58.7 15.8 15.8 36.6 24.4 58.7 24.4h516.1c25.8 0 49.9 11.4 66.3 31.3z' fill='%2346a2d9'/%3E%3Cpath d='M763.5 373.6H274c-19.9 0-36-16.1-36-36s16.1-36 36-36h489.4c19.9 0 36 16.1 36 36s-16.1 36-35.9 36zM590.1 550.2H274c-19.9 0-36-16.1-36-36s16.1-36 36-36h316c19.9 0 36 16.1 36 36 .1 19.8-16 36-35.9 36z' fill='%2346a2d9'/%3E%3C/svg%3E")
+    }
+    .ui-item[type="exp"] {
+      background-image: url("data:image/svg+xml,%3Csvg class='icon' viewBox='0 0 1024 1024' xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cpath d='M810.07 932.907V659.669h91.05V1024H78.677V659.67h90.88v273.237H810.07zm-549.334-91.051h458.197v-91.179H260.736v91.179zm11.05-207.019l447.147 93.398 19.243-88.32-447.061-93.312-19.328 88.234zm57.985-215.722l414.08 193.28 38.528-83.2-414.123-193.28-38.485 82.602v.598zm115.84-204.16l350.592 292.48 57.984-69.12-350.55-292.395-57.6 68.992-.426.043zM672.043 0l-74.496 55.21 273.28 367.105 74.496-55.211L671.957 0h.086z' fill='%2352575c'/%3E%3C/svg%3E")
+    }
+  </style>
+</head>
+
+<body>
+  <section class="ui-content">
+    <h2 class="ui-title">标题</h2>
+    <ul class="ui-list">
+      <li class="ui-item" type="msg">
+        <a class="ui-link" href="#">恭喜我们29个最老的测试版网站-他们现在不再是测试版了！</a>
+      </li>
+      <li class="ui-item" type="msg">
+        <a class="ui-link" href="#">《独角兽动物园》35；7:Nicolas访谈</a>
+      </li>
+      <li class="ui-item" type="exp">
+        <a class="ui-link" href="#">减少需要重新审查的封闭问题数量的建议</a>
+      </li>
+      <li class="ui-item" type="exp">
+        <a class="ui-link" href="#">实验：在接下来的30天内（直到2019-09-07），以3票为基准关闭和重新打开提出的问题</a>
+      </li>
+    </ul>
+  </section>
+</body>
+
+</html>

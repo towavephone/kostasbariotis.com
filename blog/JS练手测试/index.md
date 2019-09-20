@@ -1,6 +1,6 @@
 ---
 title: JS练手测试
-date: 2019-7-22 12:09:53
+date: 2019-9-9 10:18:31
 categories:
 - 前端
 tags: 前端, JS
@@ -108,17 +108,7 @@ Number.prototype.toFixed = function(digits){
 
 1. toFixed有两个问题，一是兼容性，二是四舍五入不符合正常的四舍五入认知。金钱计算的时候容易出问题，必须两位小数。
 2. 应该返回字符串；补全末尾的0。
-3. 机智是实现：方式一：替换小数点保留精度后面一位5为6，方式二：给小数点保留精度后面补一位小数。其中方式2是最简单的，XboxYan 和 frankyeyq 实现都有bug，下面是调整后的实现。
-
-```js
-var oldtoFixed = Number.prototype.toFixed
-Number.prototype.toFixed = function(digits){
-   var length = (parseFloat(this) + '').replace(/^\d+\.?/, '').length;
-   var len = length > digits ? length : digits;
-   var number = Number(this) + Math.pow(10, -len-1);
-   return oldtoFixed.call(number, digits);
-}
-```
+3. 机智是实现：方式一：替换小数点保留精度后面一位5为6，方式二：给小数点保留精度后面补一位小数。其中方式2是最简单的
 
 # JS测试三
 
@@ -240,7 +230,7 @@ function destoryRewriteLocalStorage() {
 5. 删除cookie可以设置过期时间为之前。
 6. localStorage.setItem('userid', 1)或者简写：localStorage.userid = 1;
 7. localStorage过期时间，JSON.stringify和JSON.parse是可读性很不错，也容易维护的实现。
-8. 可以看下liyongleihf2006的localStorage重写，隐藏时间过期的细节，非常适合作为小工具，小组件。
+8. 可以以上localStorage重写，隐藏时间过期的细节，非常适合作为小工具，小组件。
 
 # JS测试四
 
@@ -311,9 +301,236 @@ function testLengthNoURL(str){
 
 ## 具体实现
 
+### 最佳解答
+
+```js
+var testSpecs = [
+    '在LeanCloud上，数据存储是围绕AVObject进行的。',
+    '今天出去买菜花了 5000元。',
+    '我家的光纤入户宽带有 10Gbps，SSD 一共有 10TB。显示器分辨率宽度是1920px。',
+    '今天是 233 ° 的高温。新 MacBook Pro 有 15 % 的 CPU 性能提升。',
+    '刚刚买了一部 iPhone ，好开心 ！',
+    '她竟然对你说「喵」？！？！？？！！喵？？！！Meow...',
+    '你好，我是破折号——一个不苟言笑的符号。',
+    '核磁共振成像 (NMRI) 是什么原理都不知道? JFGI!',
+    '这件蛋糕只卖 １０００ 元。',
+    '乔布斯那句话是怎么说的？「Stay hungry，stay foolish。」',
+    '推荐你阅读《Hackers＆Painters：Big Ideas from the Computer Age》，非常的有趣。'
+];
+
+charCheck(testSpecs.join(''));
+
+function charCheck(str) {
+    // 枚举类型的符号
+    var symbols = {
+        full: '！（）【】『』「」《》“”‘’；：，。？、',
+        half: '!-_()[]{}<>"\';:,./?`',
+        getRegStr: function(key) {
+            var symbols = typeof key === 'string' ? this[key] : (function(that) {
+                if (key instanceof Array) {
+                    return key.reduce(function(total, cur) {
+                        return total += that[cur];
+                    }, '');
+                }
+
+                return '';
+            })(this);
+
+            // 返回符合 regexp 语法的字符串
+            return symbols.split('').map(function(s) {
+                return '\\' + s;
+            }).join('|');
+        },
+        getRegRule: function(key, usedAs) {
+            var strs = this.getRegStr.call(this, 'full');
+            var regArr = ['(\\S+)', '([' + strs + '])'];
+            var temp = [].concat(regArr);
+            temp.reverse();
+
+            if (usedAs === 'rule') {
+                return new RegExp(
+                    '(:?' + regArr.join('\\s+') + ')|' +
+                    '(:?' + temp.join('\\s+') + ')', 'g');
+            } else if (usedAs === 'format') {
+                return [
+                    new RegExp(regArr.join('\\s+'), 'g'),
+                    new RegExp(temp.join('\\s+'), 'g')
+                ];
+            }
+        }
+    };
+
+    var regExps = [
+        {
+            rule: /([\u4e00-\u9fa5]+[a-zA-Z]+)|([a-zA-Z]+[\u4e00-\u9fa5]+)/g,
+            format: [
+                /([\u4e00-\u9fa5]+)([a-zA-Z]+)/g,
+                /([a-zA-Z]+)([\u4e00-\u9fa5]+)/g
+            ],
+            matches: '$1 $2',
+            msg: '中英文之间需要增加空格'
+        }, {
+            rule: /([\u4e00-\u9fa5]+\d+)|(\d+[\u4e00-\u9fa5]+)/g,
+            format: [
+                /([\u4e00-\u9fa5]+)(\d+)/g,
+                /(\d+)([\u4e00-\u9fa5]+)/g
+            ],
+            matches: '$1 $2',
+            msg: '中文与数字之间需要增加空格'
+        }, {
+            rule: /(\d)([A-Z]+)/g,
+            matches: '$1 $2',
+            msg: '数字与大写英文单位之间需要增加空格'
+        }, {
+            rule: /(\d+)\s+(°|%)/g,
+            matches: '$1$2',
+            msg: '° 或 % 与数字之间不需要空格'
+        }, {
+            rule: symbols.getRegRule('full', 'rule'),
+            format: symbols.getRegRule('full', 'format'),
+            matches: '$1$2',
+            msg: '全角标点与其他字符之间不加空格'
+        }, {
+            // rule: new RegExp('(' + symbols.getRegStr(['full', 'half']) + ')\\1+', 'g'),
+            rule: new RegExp('(' + symbols.getRegStr('full') + ')\\1+', 'g'),
+            matches: '$1',
+            msg: '不重复使用中文标点符号'
+        }, {
+            rule: /(\S)(——)(\S)/g,
+            matches: '$1 $2 $3',
+            msg: '破折号前后需要增加一个空格'
+        }, {
+            // 这条必须位于“遇到完整的英文整句、特殊名词，其內容使用半角标点”之前
+            rule: new RegExp('\\s*(' + symbols.getRegStr('half') + ')\\s*', 'g'),
+            matches: function(s) {
+                s = s.replace(/(^\s*)|(\s*$)/g, '');
+                return String.fromCharCode(s.charCodeAt() + 65248);
+            },
+            msg: '使用全角中文标点'
+        }, {
+            rule: /[\uFF10-\uFF19]/g,
+            matches: function(s) {
+                // 半角字符与全角字符的 charCode 相差 65248 
+                return String.fromCharCode(s.charCodeAt() - 65248);
+            },
+            msg: '数字使用半角字符'
+        }, {
+            // 中文的句号“。”不是全角字符，需要特殊处理
+            rule: /[《|「](:?\s*[a-zA-Z]+\s*(。|[\uff00-\uffff])*\s*[a-zA-Z]*)+[\.|」|》]/g,
+            matches: function(s) {
+                return s.replace(/。|[\uff00-\uffff]/g, function($1) {
+                    var half = String.fromCharCode($1.charCodeAt() - 65248);
+
+                    if (!!~['&', '-', '+'].indexOf(half)) {  // 需要前后加空格的字符
+                        half = ' ' + half + ' ';
+                    } else if (!!~[':', ',', ';'].indexOf(half)) {  // 需要后面加空格的字符
+                        half += ' ';
+                    } else if (half === 'ㄢ') {
+                        half = '.';
+                    }
+
+                    return half;
+                });
+            },
+            msg: '遇到完整的英文整句、特殊名词，其內容使用半角标点'
+        }
+    ];
+
+    var result = str;
+
+    regExps.forEach(function(reg, idx) {
+        var format = reg.format;
+        var matches = reg.matches;
+        var tip = str.match(reg.rule);
+
+        if (tip) {
+            console.group('%c' + reg.msg + ' (X)', 'color: red');
+            console.log(tip.join('\n'));
+            console.groupEnd();
+
+            if (!format) {
+                result = result.replace(reg.rule, matches);
+            } else if (format instanceof Array) {
+                format.forEach(function(fmtReg) {
+                    result = result.replace(fmtReg, matches);
+                });
+            } else if (Object.prototype.toString.call(format) === '[object RegExp]') {
+                result = result.replace(format, matches);
+            }
+        }
+    });
+
+    if (result === str) {
+        console.log('%c当前文本符合规范 (√)', 'color: green');
+        return;
+    }
+
+    console.group('按规范格式化后的文本：');
+    console.log('%c' + result, 'color: green');
+    console.groupEnd();
+}
+```
+
+# JS测试六
+
+![](2019-09-09-10-49-16.png)
+
+## 具体实现
+
 ### 我的解答
+
+```js
+// 第一题
+var bankCode = '6222081812002934027';
+bankCode.replace(/(\d{4})(?=\d)/g,"$1 ")
+// 第二题
+var numberCode = '57023754';
+numberCode.replace(/(\d)(?=(\d{3})+$)/g,'$1,')
+// 第三题
+function roundNumber(number, n = 2) {
+  return Math.round(number * Math.pow(10, n)) / (Math.pow(10, n));
+}
+function formatterFilesize(size, n){
+  var K = 1024;
+  var M = 1024 ** 2;
+  var G = 1024 ** 3;
+ 
+  if (size < M) {
+    return roundNumber(size / K, n) + 'K';
+  } else if (size < G) {
+    return roundNumber(size / M, n) + 'M';
+  }
+  return roundNumber(size / G, n) + 'G';
+}
+formatterFilesize(2837475)
+```
 
 ### 最佳解答
 
+```js
+// 第一题
+var bankCode = '6222081812002934027';
+bankCode.replace(/(\d{4})/g,'$1 ');
+// 第二题
+var numberCode = '5702375';
+Number(numberCode).toLocaleString('en-US');
+// 第三题
+var filesize = 2837475;
+function format(size) {
+ return size>1024**3&&(size/1024**3).toFixed(2)+'G' || 
+        size>1024**2&&(size/1024**2).toFixed(2)+'M' || 
+        (size/1024).toFixed(2)+'K';
+}
+
+format(2837475555) //2.64G
+format(2837475) //2.71M
+format(28374) //27.71K
+```
+
 ## 实现要点
+
+1. 这个匹配值得大家关注：bankCode.match(/\d{3,4}/g).join(' ')。然后“$&是最后匹配的字符”。
+2. 数字千位分隔符表示语义会更好。`<meta name="format-detection" content="telephone=no">` 这个其实不推荐的。Number(numberCode).toLocaleString()是最佳实现了。toLocaleString保留三位小数（细节可以关注下）。
+3. Intl.NumberFormat： https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/NumberFormat
+4. 最后一题要点：注意取几位小数，最好向上取，然后注意下文件大小的单位是比特。
 
