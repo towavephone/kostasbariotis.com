@@ -1,6 +1,6 @@
 ---
 title: CSS练手测试
-date: 2019-8-23 16:22:40
+date: 2019-9-27 01:52:34
 categories:
 - 前端
 tags: 前端, CSS
@@ -369,3 +369,39 @@ path: /css-practice-test/
 4. 两栏自适应布局，之前有小测，这里就不重复展开，但是，要介绍一个比较有意思的实现：liyongleihf2006，使用text-indent负值，这个场景是相当合适的。
 5. 多行打点：display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; 多行打点 overflow:hidden不是必需的，和单行ellipsis不一样。然后可能有些小伙伴不知道的是：Firefox目前也支持了-webkit-box打点。
 6. 关于固有宽度，固有比例。这个《CSS世界》有介绍，在content内容生成那里url(xxx.png)。list-style-image: url(icon.svg)也是一样的，CSS的width/height是无法控制图片的尺寸的。
+
+# CSS测试十二
+
+![](2019-09-26-19-34-12.png)
+
+## 具体实现
+
+### 我的实现
+
+<iframe src="/examples/css-practice/12-1.html" width="400" height="100"></iframe>
+
+`embed:css-practice/12-1.html`
+
+### 最佳实现一
+
+<iframe src="/examples/css-practice/12-2.html" width="400" height="100"></iframe>
+
+`embed:css-practice/12-2.html`
+
+### 最佳实现二
+
+<iframe src="/examples/css-practice/12-3.html" width="400" height="100"></iframe>
+
+`embed:css-practice/12-3.html`
+
+
+## 实现要点
+
+1. border三角（IE8+），渐变（IE10+），clip-path裁剪（非IE），border-radius圆角（IE9+）。
+2. 左上角定位时候，不需要父元素relative，也不需要top, left指定。
+3. clip-path: polygon配合百分比定位以及calc非常强，很多图形（图标，字母，文字）都可以使用这样的方式实现，尺寸任意适配。唯一需要注意的就是兼容性。1/4圆裁剪：clip-path: ellipse(100% 100% at 0% 0%);
+4. 其他实现：border三角，问题，虽然兼容性好，但是不支持百分比宽度，这就导致无法自动适配尺寸（要么无法适应内容，要么无法使用其他图形-例如文字的色块背景）。
+5. skewX模拟三角是很棒的实现，因为可以高度自适应。
+6. 渐变是万能图形绘制方法，理论上，任意的图形都可以使用渐变见绘制，因为background-size和多背景。例如彩色照片，每一个像素点（例如红色 ）可以background-size：1px 1px; background-image: liner-gradient(red, red)，本题实现的优点：1. CSS简介，不需要伪元素；2. 兼容性足够，IE10+；3. 方便灵活。可以参考wingmeng的实现。包括圆弧也是可以使用渐变的，径向渐变。
+7. border-radius实现1/4圆：border-bottom-right-radius: 100%;
+

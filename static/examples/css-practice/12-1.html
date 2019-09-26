@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+  <style>
+    html,
+    body {
+      background-color: white;
+      margin: 0;
+      height: 100%;
+    }
+
+    .img {
+      width: 120px;
+    }
+
+    .item {
+      margin-bottom: 36px;
+    }
+
+    .tag {
+      position: absolute;
+      color: white;
+    }
+
+    .block {
+      padding: 2px;
+      font-size: 12px;
+      background: red;
+    }
+
+    .triangle {
+      width: 28px;
+      height: 28px;
+      font-size: 12px;
+      padding: 2px 4px;
+      /* 0deg对应着垂直方向即to top，默认值为to bottom即180deg，顺时针增加； */
+      background: linear-gradient(135deg, red 50%, transparent 0);
+    }
+
+    .block-triangle {
+      width: 60px;
+      height: 18px;
+      padding: 2px 4px;
+      font-size: 12px;
+      /* 0deg对应着垂直方向即to top，默认值为to bottom即180deg，顺时针增加； */
+      background: linear-gradient(110deg, red calc(100% - 12px), transparent 0);
+    }
+
+    .circle {
+      width: 20px;
+      height: 20px;
+      border-bottom-right-radius: 20px;
+      padding-left: 4px;
+      padding-top: 4px;
+      font-size: 12px;
+      background: red;
+    }
+
+    .ellipse {
+      width: 25px;
+      height: 20px;
+      border-bottom-right-radius: 15px;
+      font-size: 12px;
+      background: red;
+    }
+  </style>
+</head>
+<body>
+  <div class="item">
+    <span class="tag block">No.1</span>
+    <img
+      src="../../images/2019-09-26-19-49-51.png"
+      alt="头像"
+      class="img"
+    />
+  </div>
+
+  <div class="item">
+    <span class="tag triangle">1</span>
+    <img
+      src="../../images/2019-09-26-19-49-51.png"
+      alt="头像"
+      class="img"
+    />
+  </div>
+
+  <div class="item">
+    <span class="tag block-triangle">火热连载</span>
+    <img
+      src="../../images/2019-09-26-19-49-51.png"
+      alt="头像"
+      class="img"
+    />
+  </div>
+
+  <div class="item">
+    <span class="tag circle">1</span>
+    <img
+      src="../../images/2019-09-26-19-49-51.png"
+      alt="头像"
+      class="img"
+    />
+  </div>
+
+  <div class="item">
+    <span class="tag ellipse">100</span>
+    <img
+      src="../../images/2019-09-26-19-49-51.png"
+      alt="头像"
+      class="img"
+    />
+  </div>
+</body>
+
+</html>
