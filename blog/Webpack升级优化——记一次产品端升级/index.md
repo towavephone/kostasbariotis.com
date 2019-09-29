@@ -7,6 +7,8 @@ tags: 前端构建工具, Webpack
 path: /webpack-upgrade-about-product/
 ---
 
+接上文[Webpack配置笔记](/webpack-config-note/)
+
 # 分包策略
 
 在分支 `feature/optimize_webpack` 上启动 `yarn analyze` 脚本，得到分包策略如下：

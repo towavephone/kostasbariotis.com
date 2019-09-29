@@ -1,11 +1,13 @@
 ---
 title: Webpack脚手架搭建笔记——记一次新项目搭建
-date: 2019-9-17 20:43:04
+date: 2019-9-29 10:26:46
 categories:
 - 前端
 tags: 前端构建工具, Webpack
 path: /webpack-template-new-project/
 ---
+
+接上文[Webpack升级优化——记一次产品端升级](/webpack-upgrade-about-product/)
 
 最近需要开发一个新产品，此时需要一个新框架来承载新产品的开发，根据前端主管的建议，建议我在他已经开发出的新框架上进行改造，这里记录一下改造的关键点
 
@@ -147,11 +149,67 @@ new LodashModuleReplacementPlugin({
 }),
 ```
 
-# react-loadable 报错
+以上更新于`2019-9-17 20:43:04`
+
+---
+
+# react-loadable优化
+
+## withRef方法报错
 
 当 react-loadable 应用到组件为 function 类型，此时 withRef 方法会报错，因为 function 组件是没有 ref 的，此时要做下兼容处理
 
 ```js{22-28,30}
+import React from 'react';
+import Loadable from 'react-loadable';
+
+const LoaderCache = new Map();
+export default function loadComponent(loader, options) {
+ let component = LoaderCache.get(loader);
+ if (!component) {
+   component = Loadable({
+     loader,
+     loading: (props) => {
+       if (props.error) {// eslint-disable-line
+         if (window.location.host.indexOf('-dev') >= 0 && window.TURKEY && window.TURKEY.getProperty('serverUpdate')) {
+           window.TURKEY.run('serverUpdate');
+         }
+         console.error('[chunk loader]', props.error); // eslint-disable-line
+       }
+       return <div />;
+     },
+     render: (loaded, props) => {
+       const Component = loaded.default;
+       const { withRef, ...rest } = props; // eslint-disable-line
+       const { isPureReactComponent, isReactComponent } = Component.prototype;
+       let refProps = null;
+       if (isPureReactComponent || isReactComponent) {
+         refProps = {
+           ref: (r) => { withRef && withRef(r); },
+         };
+       }
+       return (<Component
+         {...refProps}
+         {...rest}
+       />);
+     },
+     ...options,
+   });
+   LoaderCache.set(loader, component);
+   // component.preload();
+ }
+ return component;
+}
+```
+
+## 阻止setState
+
+因为组件卸载时继续网络请求会导致setState报错，因为采用的是promise方法，不能取消请求，所以需要在卸载时将setState置空，以下分别针对页面、组件级别将其置空
+
+### 页面级别
+
+```js{29-39}
+/* eslint-disable no-param-reassign */
 import React from 'react';
 import Loadable from 'react-loadable';
 
@@ -177,7 +235,20 @@ export default function loadComponent(loader, options) {
         let refProps = null;
         if (isPureReactComponent || isReactComponent) {
           refProps = {
-            ref: (r) => { withRef && withRef(r); },
+            ref: (r) => {
+              withRef && withRef(r);
+              if (!r) {
+                return;
+              }
+              const cb = r.componentWillUnmount;
+              r.componentWillUnmount = () => {
+                r.setState = () => {
+                  // eslint-disable-next-line no-useless-return
+                  return;
+                };
+                cb && cb.call(r);
+              };
+            },
           };
         }
         return (<Component
@@ -194,4 +265,105 @@ export default function loadComponent(loader, options) {
 }
 ```
 
+### 组件级别
+
+src\runtime\preventSetState.js
+
+```js
+import React from 'react';
+
+export default function preventSetState(WrappedComponent) {
+  return class Hoc extends React.PureComponent {
+    componentWillUnmount = () => {
+      this.wrappedComponent.setState = () => {
+        // eslint-disable-next-line no-useless-return
+        return;
+      };
+    }
+
+    render() {
+      return (<WrappedComponent
+        ref={(r) => { this.wrappedComponent = r; }}
+        {...this.props}
+      />);
+    }
+  };
+}
+```
+
+调用时
+
+```js
+import preventSetState from 'runtime/preventSetState';
+
+@preventSetState
+export default class Component extends React.PureComponent {
+}
+```
+
+或者
+
+```js
+import preventSetState from 'runtime/preventSetState';
+
+class Component extends React.PureComponent {
+}
+
+export default preventSetState(Component);
+```
+
 待拓展的功能：react-hook 替换 mobx、HTML 内实现 Loading 态或者骨架屏、动态 polyfill、编译到 ES2015+（提高运行效率）、LazyLoad、三方库 external 化
+
+# 重置报错状态
+
+单个组件报错时不影响其他页面的加载
+
+```js{11-16}
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
+
+import styles from './styles.css';
+
+class ErrorBoundary extends Component {
+  state = {
+    hasError: false,
+  }
+
+  componentWillReceiveProps() {
+    // 重置未报错状态
+    this.setState({
+      hasError: false,
+    });
+  }
+
+  componentDidCatch(error) {
+    this.setState({
+      hasError: true,
+    });
+    // TODO: upload error message
+    console.error(error);
+    if (window.__bl) {
+      window.__bl.error(error);
+    }
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div className={styles.error}>
+          <div className={styles.title}>
+          抱歉，页面出错了！
+          </div>
+        </div>
+      );
+    }
+    return this.props.children;
+  }
+}
+
+ErrorBoundary.propTypes = {
+  children: PropTypes.node,
+};
+
+export default ErrorBoundary;
+```
