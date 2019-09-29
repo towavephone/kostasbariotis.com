@@ -1,6 +1,6 @@
 ---
 title: JS练手测试
-date: 2019-9-9 10:18:31
+date: 2019-9-29 20:03:37
 categories:
 - 前端
 tags: 前端, JS
@@ -534,3 +534,38 @@ format(28374) //27.71K
 3. Intl.NumberFormat： https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/NumberFormat
 4. 最后一题要点：注意取几位小数，最好向上取，然后注意下文件大小的单位是比特。
 
+# JS测试七
+
+![](2019-09-29-17-43-37.png)
+
+## 具体实现
+
+### 我的解答
+
+```js
+var str = '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M2 2a1 1 0 0 1 1-1h13a1 1 0 0 1 1 1v16a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V2z" fill="#0067E6"/><path fill-rule="evenodd" clip-rule="evenodd" d="M7 6a1 1 0 0 1 1-1h9l5 5v12a1 1 0 0 1-1 1H8a1 1 0 0 1-1-1V6z" fill="#FEAEA5"/><path fill-rule="evenodd" clip-rule="evenodd" d="M17 5l5 5h-4a1 1 0 0 1-1-1V5z" fill="#0067E6"/></svg>';
+// 第一题，?! 负先行断言-排除
+str.replace(/fill="(?!none")[^"]+"/gi, '');
+// 第二题
+btoa(str.replace(/fill="(?!none")[^"]+"/gi, ''));
+// 第三题
+encodeURIComponent(str.replace(/fill="(?!none")[^"]+"/gi, ''));
+```
+
+### 最佳解答
+
+```js
+var str = '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M2 2a1 1 0 0 1 1-1h13a1 1 0 0 1 1 1v16a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V2z" fill="#0067E6"/><path fill-rule="evenodd" clip-rule="evenodd" d="M7 6a1 1 0 0 1 1-1h9l5 5v12a1 1 0 0 1-1 1H8a1 1 0 0 1-1-1V6z" fill="#FEAEA5"/><path fill-rule="evenodd" clip-rule="evenodd" d="M17 5l5 5h-4a1 1 0 0 1-1-1V5z" fill="#0067E6"/></svg>';
+// 第一题，可用作背景色自定义
+var str1 = str.replace(/fill="(?!none")[^"]+"/gi, '');
+// 第二题，unescape返回未被转义的字符串，decodeURIComponent(escape(atob(str)))解码
+btoa(unescape(encodeURIComponent(str1)));
+// 第三题，兼容IE
+str1.replace(/["%#{}<>]/g, encodeURI);
+```
+
+## 实现要点
+
+1. 老老实实用一个简单正则，然后callback中处理，虽然代码不是很简单，但是看得懂也不出错。简洁用法：`/fill="(?!none")[^"]+"/gi`。
+2. window.btoa(str)可以转base64。但是如果有中文是会报错的。可以先encodeURI下，或者encodeURIComponent也可以。可以试试这个：btoa(unescape(encodeURIComponent(str)))。base64到常规格式 window.atob(str);
+3. data:image/svg+xml;utf8, 加原始SVG代码是可以作为CSS background图片的，但是Chrome支持，IE浏览器不支持。我们可以部分转义，"，%，#，{，}，<，>。IE浏览器也支持，包括IE9。`str.replace(/[%#{}<>]/g, encodeURI)`。
