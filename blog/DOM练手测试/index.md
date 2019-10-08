@@ -250,3 +250,95 @@ document.addEventListener('DOMNodeInserted', function(event) {
    }
    });
    ```
+
+# DOM测试五
+
+![](2019-09-30-17-36-11.png)
+
+## 具体实现
+
+### 我的解答
+
+```js
+// 第一题
+const dialog = document.createElement('dialog');
+document.body.appendChild(dialog);
+// 第二题
+dialog.open = "fff";
+// 第三题
+const button = document.createElement('button');
+button.onclick = function() {
+  dialog.close();
+}
+dialog.appendChild(button);
+// 第四题
+// 第五题
+```
+
+### 最佳解答
+
+```js
+// 第一题
+const dialog = document.createElement('dialog');
+document.body.appendChild(dialog);
+// 第二题
+// 方法1：
+dialog.open = true;  // 或其他为“真值”的基本类型，如 1，"abc" 等
+// 方法2：
+dialog.show();
+// 方法3：
+dialog.showModal();
+// 第三题
+const btn = document.createElement('button');
+btn.innerText = 'close';
+btn.addEventListener('click', () => {
+  // 方法1：
+  dialog.open = false;  // 或其他“非真”的基本类型，如 0、null 等
+  // 方法2：
+  dialog.close();
+});
+dialog.appendChild(btn);
+// 第四题
+// 用 showModal 方法即可让打开的 dialog 自带遮罩，在 CSS 里可通过 ::backdrop 设置遮罩层样式
+dialog.showModal();
+// 第五题
+// 思路：如果是 showModal() 方法打开的 dialog，则其覆盖层级默认是置顶的；而通过 show() 方法或 open 属性打开的 dialog，其覆盖层级遵循“后来居上”原则，所以需要手动调整其 z-index 值来使其覆盖层级置顶。
+(function(dialogElm) {
+  if (!dialogElm) return;
+
+  const proto = dialogElm.prototype;
+  const oldShow = proto.show;
+  const dialogBaseLevel = 100;  // 对话框弹层的基准层级（根据项目zIndex规范合理设置）
+  const getMaxZIndex = () => {
+    const dialogs = document.querySelectorAll('dialog[open]');
+    const maxZIndex = Math.max.apply(null, [...dialogs].map(it =>
+      it.style.zIndex || Number(window.getComputedStyle(it).zIndex) || dialogBaseLevel
+    ));
+
+    return maxZIndex;
+  };
+  const setMaxZIndex = el => el.style.zIndex = getMaxZIndex() + 1;
+
+  // 重写 show 方法
+  proto.show = function() {
+    setMaxZIndex(this);
+    oldShow.call(this);
+  };
+
+  // "劫持" open 属性
+  Object.defineProperty(proto, 'open', {
+    set: function(value) {
+      const isOpen = Boolean(isNaN(value) ? value : Number(value));
+      this[isOpen ? 'show' : 'close']();
+    }
+  });
+})(window.HTMLDialogElement);
+```
+
+## 实现要点
+
+1. createElement的时候，里面的标签名称是不区分大小写的。appendChild这里也可以使用append这个API，新API，IE不支持，如果是HTML字符串，会自动转义为安全的纯本文。
+2. 如果直接.open，则根据值是否 == true/false判断是否弹框显示；如果是setAttribute方法，则任意字符串和值。
+3. `<dialog>`关闭使用.close()方法。
+4. dialog.showModal()自带本透明蒙层。如果我们想要修改透明度，可以使用::backdrop伪元素进行设置。
+5. showModal 时后弹框层级就是最高，其他元素设置再高的z-index值都无效。但是show()显示的就不一样了，我们需要动态计算处理，原理：遍历所有dialog再把最大的zindex加1。
