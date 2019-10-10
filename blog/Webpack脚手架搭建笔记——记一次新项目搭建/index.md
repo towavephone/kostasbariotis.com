@@ -1,6 +1,6 @@
 ---
 title: Webpack脚手架搭建笔记——记一次新项目搭建
-date: 2019-9-29 10:26:46
+date: 2019-10-10 21:46:40
 categories:
 - 前端
 tags: 前端构建工具, Webpack
@@ -366,4 +366,20 @@ ErrorBoundary.propTypes = {
 };
 
 export default ErrorBoundary;
+```
+
+# stylelint无效
+
+package.json
+
+```bash
+"lint:css": "stylelint src/**/*.css"
+```
+
+当在苹果电脑上运行以上命令时，没有任何效果，即使css格式错误也直接通过，同时提交代码前的报错信息也没有颜色，需要做下特殊处理
+
+```bash
+"lint:css": "stylelint \"src/**/*.css\" --color" # src/**/*.css 双引号转义为了兼容苹果，--color 是为了执行 pre-commit 钩子即提交代码前也能让错误的信息有颜色
+"lint": "npm run lint:js && npm run lint:css",
+"pre-commit": "lint",
 ```
