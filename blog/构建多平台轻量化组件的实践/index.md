@@ -19,7 +19,7 @@ path: /building-platform-lightweight-components/
 
 ## 移动端适配
 
-根据产品要求，此客服组件还需要兼容到移动端
+根据产品要求，此客服组件还需要兼容到移动端，微信端（微信网页、小程序）
 
 # 方案调研
 
@@ -28,6 +28,7 @@ path: /building-platform-lightweight-components/
 3. 所有用到的组件最好都由自己编写，有利于定制化功能、减小组件大小
 4. 移动端可以和桌面端项目写在一起分开打包
 5. 代码的分层尤其是 IM 层要分离出来，便于切换不同的 IM 提供商
+6. 小程序端用 webview 加载的网页，需要注意在第三方小程序上配置 nginx
 
 # 具体实施
 
@@ -490,6 +491,21 @@ class TitleMessage {
 }
 
 export default TitleMessage;
+```
+
+## 小程序部署代理配置
+
+小程序用到 webview 限制了接口调用必须是第三方的域名，需要更改第三方域名指向的服务器配置
+
+这里以 nginx 为例：
+
+```bash
+location ^~ /im {
+  # 反代到组件所在的域名，并把参数传递过去
+  proxy_pass 组件所在的域名/im/$1;
+  # 传递 http_user_agent 参数，否则不能判断移动端
+  proxy_set_header User-Agent $http_user_agent;
+}
 ```
 
 # 优化效果
