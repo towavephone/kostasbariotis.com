@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+  <style>
+    html,
+    body {
+      background-color: white;
+      margin: 0;
+      height: 100%;
+    }
+
+    /* zxx: 视觉还原OK，布局也很稳健，就算低头皇冠也不会掉 */
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+    }
+
+    /** 主容器 **/
+    .btn-group-container {
+      display: flex;
+    }
+
+    /** 按钮组 **/
+    .btn-group {
+      display: flex;
+      align-items: center;
+    }
+
+    .btn-group + .btn-group {
+      margin-left: 10px;
+    }
+
+    .btn-group .btn {
+      border-radius: 0;
+    }
+
+    .btn-group > .btn:not(:first-child),
+    .btn-group > .details-menu:not(:first-child) {
+      margin-left: -1px;
+    }
+
+    .btn-group > .btn:first-child,
+    .btn-group > .details-menu:first-child > .btn {
+      border-top-left-radius: .25em;
+      border-bottom-left-radius: .25em;
+    }
+
+    .btn-group > .btn:last-child,
+    .btn-group > .details-menu:last-child > .btn {
+      border-top-right-radius: .25em;
+      border-bottom-right-radius: .25em;
+    }
+
+    /** 按钮 **/
+    .btn {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      padding: 3px 9px;
+      font-size: 12px;
+      font-weight: 600;
+      line-height: 20px;
+      white-space: nowrap;
+      vertical-align: middle;
+      cursor: pointer;
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+      user-select: none;
+      font-family: inherit;
+      background-repeat: repeat-x;
+      background-position: -1px -1px;
+      background-size: 110% 110%;
+      border: 1px solid #ccced0;
+      border-radius: .25em;
+      text-decoration: none;
+      -webkit-appearance: none;
+      -moz-appearance: none;
+      appearance: none;
+    }
+
+    .btn:hover {
+      z-index: 1;
+    }
+
+    .btn > .svg-icon {
+      width: 20px;
+      height: 20px;
+      margin-right: 2px;
+      fill: currentColor;
+      speak: none;
+    }
+
+    /** 按钮主题定义 **/
+    .btn-default {
+      color: #24292e;
+      background-color: #eff3f6;
+      background-image: linear-gradient(-180deg, #fafbfc, #eff3f6 90%);
+    }
+
+    .btn-default:hover {
+      background-color: #e6ebf1;
+      background-image: linear-gradient(-180deg, #f0f3f6, #e6ebf1 90%);
+      background-position: -.5em;
+      border-color: #a5a8ac;
+    }
+
+    .btn-link {
+      color: #24292e;
+      background-color: #fff;
+    }
+
+    .btn-link:hover {
+      color: #0366d6;
+    }
+
+    /** 按钮下拉菜单 **/
+    .details-menu {
+      position: relative;
+      display: block;
+    }
+
+    .details-menu-btn::-webkit-details-marker {
+      display: none;
+    }
+
+    .details-menu-btn::after {
+      content: "";
+      display: inline-block;
+      width: 0;
+      height: 0;
+      margin-left: 3px;
+      transform: translateY(25%);
+      border: 4px solid transparent;
+      border-top-color: currentColor;
+    }
+
+    .details-menu-modal {
+      position: absolute;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="btn-group-container">
+    <div class="btn-group">
+      <details class="details-menu">
+        <summary class="details-menu-btn btn btn-default" role="button" aria-label="watch">
+          <svg class="svg-icon">
+            <use xlink:href="#icon-watch"></use>
+          </svg>
+          Unwatch
+        </summary>
+        <div class="details-menu-modal">
+          菜单（略）
+        </div>
+      </details>
+      <a class="btn btn-link" href="#" aria-label="63 users are watching this repository">
+        63
+      </a>
+    </div>
+    <div class="btn-group">
+      <button class="btn btn-default" aria-label="star">
+        <svg class="svg-icon">
+          <use xlink:href="#icon-star"></use>
+        </svg>
+        Star
+      </button>
+      <a class="btn btn-link" href="#" aria-label="445 users starred this repository">
+        445
+      </a>
+    </div>
+    <div class="btn-group">
+      <button class="btn btn-default" aria-label="fork">
+        <svg class="svg-icon">
+          <use xlink:href="#icon-fork"></use>
+        </svg>
+        Fork
+      </button>
+      <a class="btn btn-link" href="#" aria-label="25 users forked this repository">
+        25
+      </a>
+    </div>
+  </div>
+
+  <!-- svg sprite -->
+  <svg style="display:none">
+    <symbol id="icon-star" viewBox="0 0 1024 1024">
+      <path
+        d="M897.02475785 421.36072708q0 10.18094348-12.0320238 22.21296648l-167.98556122 163.82063007 39.7982321 231.38507126q0.46277048 3.23939099 0.46277049 9.25540249 0 9.71817297-4.8590865 16.42833981t-14.11448899 6.71016683q-8.79263282 0-18.51080579-5.55324181l-207.78379414-109.21375365-207.78379414 109.21375365q-10.18094348 5.55324181-18.51080579 5.55324181-9.71817297 0-14.57725948-6.71016683t-4.8590865-16.42833981q0-2.77662051 0.92554019-9.25540249l39.79823209-231.38507126-168.44833171-163.82063007q-11.56925333-12.49479349-11.56925333-22.21296648 0-17.12249514 25.91512796-21.2874263l232.31061143-33.7822206 104.12328232-210.56041464q8.79263282-18.97357548 22.67573696-18.97357548t22.67573696 18.97357548l104.12328232 210.56041464 232.31061143 33.7822206q25.91512795 4.16493117 25.91512797 21.2874263z">
+      </path>
+    </symbol>
+    <symbol id="icon-fork" viewBox="0 0 1024 1024">
+      <path
+        d="M689.1875 94.2366333a117.7115625 117.7115625 0 0 0-59.06250001 219.7125V389.54913331L512 507.6741333 393.87500001 389.54913331V313.9491333A117.7115625 117.7115625 0 0 0 334.8125 94.2366333a117.7115625 117.7115625 0 0 0-59.0625 219.7125V419.0803833l177.1875 177.18750001v105.13124999A117.7115625 117.7115625 0 0 0 512 921.11163331a117.7115625 117.7115625 0 0 0 59.0625-219.71250001V596.26788331l177.1875-177.18750001V313.9491333A117.7115625 117.7115625 0 0 0 689.1875 94.2366333zM334.8125 283.23663331C295.83124999 283.23663331 263.9375 250.75225831 263.9375 212.3616333c0-38.39062499 32.484375-70.875 70.875-70.87499999 38.39062499 0 70.875 32.484375 70.875 70.87499999 0 38.39062499-32.484375 70.875-70.875 70.87500001z m177.1875 590.62499999c-38.98125001 0-70.875-32.484375-70.875-70.875 0-38.39062499 32.484375-70.875 70.875-70.875 38.39062499 0 70.875 32.484375 70.875 70.875 0 38.39062499-32.484375 70.875-70.875 70.875z m177.1875-590.62499999c-38.98125001 0-70.875-32.484375-70.875-70.87500001 0-38.39062499 32.484375-70.875 70.875-70.87499999 38.39062499 0 70.875 32.484375 70.875 70.87499999 0 38.39062499-32.484375 70.875-70.875 70.87500001z">
+      </path>
+    </symbol>
+    <symbol id="icon-watch" viewBox="0 0 1024 1024">
+      <path
+        d="M512 209.408c-201.728 0-374.016 125.44-443.8016 302.592C137.984 689.152 310.272 814.592 512 814.592c201.9328 0 374.016-125.44 443.8016-302.592C886.016 334.848 713.9328 209.408 512 209.408z m0 504.32A201.8304 201.8304 0 0 1 310.272 512 201.7792 201.7792 0 0 1 512 310.272 201.7792 201.7792 0 0 1 713.728 512 201.8304 201.8304 0 0 1 512 713.728z m0-322.7648A121.1392 121.1392 0 0 0 390.9632 512 121.1392 121.1392 0 0 0 512 633.0368 121.1392 121.1392 0 0 0 633.0368 512 121.1392 121.1392 0 0 0 512 390.9632z">
+      </path>
+    </symbol>
+  </svg>
+</body>
+
+</html>

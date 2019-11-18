@@ -397,11 +397,75 @@ path: /css-practice-test/
 
 ## 实现要点
 
-1. border三角（IE8+），渐变（IE10+），clip-path裁剪（非IE），border-radius圆角（IE9+）。
-2. 左上角定位时候，不需要父元素relative，也不需要top, left指定。
-3. clip-path: polygon配合百分比定位以及calc非常强，很多图形（图标，字母，文字）都可以使用这样的方式实现，尺寸任意适配。唯一需要注意的就是兼容性。1/4圆裁剪：clip-path: ellipse(100% 100% at 0% 0%);
-4. 其他实现：border三角，问题，虽然兼容性好，但是不支持百分比宽度，这就导致无法自动适配尺寸（要么无法适应内容，要么无法使用其他图形-例如文字的色块背景）。
-5. skewX模拟三角是很棒的实现，因为可以高度自适应。
-6. 渐变是万能图形绘制方法，理论上，任意的图形都可以使用渐变见绘制，因为background-size和多背景。例如彩色照片，每一个像素点（例如红色 ）可以background-size：1px 1px; background-image: liner-gradient(red, red)，本题实现的优点：1. CSS简介，不需要伪元素；2. 兼容性足够，IE10+；3. 方便灵活。可以参考wingmeng的实现。包括圆弧也是可以使用渐变的，径向渐变。
-7. border-radius实现1/4圆：border-bottom-right-radius: 100%;
+1. border三角（IE8+），渐变（IE10+），clip-path 裁剪（非 IE），border-radius 圆角（IE9+）。
+2. 左上角定位时候，不需要父元素 relative，也不需要 top, left 指定。
+3. clip-path: polygon 配合百分比定位以及 calc 非常强，很多图形（图标，字母，文字）都可以使用这样的方式实现，尺寸任意适配。唯一需要注意的就是兼容性。1/4 圆裁剪：clip-path: ellipse(100% 100% at 0% 0%);
+4. 其他实现：border 三角，问题，虽然兼容性好，但是不支持百分比宽度，这就导致无法自动适配尺寸（要么无法适应内容，要么无法使用其他图形-例如文字的色块背景）。
+5. skewX 模拟三角是很棒的实现，因为可以高度自适应。
+6. 渐变是万能图形绘制方法，理论上，任意的图形都可以使用渐变见绘制，因为 background-size 和多背景。例如彩色照片，每一个像素点（例如红色）可以background-size：1px 1px; background-image: liner-gradient(red, red)，本题实现的优点：
+   1. CSS简介，不需要伪元素；
+   2. 兼容性足够，IE10+；
+   3. 方便灵活，包括圆弧也是可以使用渐变的，径向渐变。
+7. border-radius 实现1/4圆：border-bottom-right-radius: 100%;
 
+# CSS测试十三
+
+![](2019-11-18-17-55-16.png)
+
+## 具体实现
+
+### 我的实现
+
+<iframe src="/examples/css-practice/13-1.html" width="400" height="100"></iframe>
+
+`embed:css-practice/13-1.html`
+
+### 最佳实现一
+
+<iframe src="/examples/css-practice/13-2.html" width="400" height="100"></iframe>
+
+`embed:css-practice/13-2.html`
+
+### 最佳实现二
+
+<iframe src="/examples/css-practice/13-3.html" width="400" height="100"></iframe>
+
+`embed:css-practice/13-3.html`
+
+## 实现要点
+
+1. 按钮我们没有任何理由使用 `<a>` 标签，除非你要兼容 IE7，所以标签使用应该是 button + a。
+2. 可以考虑多按钮，多链接时候的样式表现，会更健壮，扩展性更强。
+3. 每个按钮组是不能换行的，按钮组可以使用 flex 布局，如果考虑兼容，可以里面内联 + white-space: nowrap;
+4. 按钮组的实现方法，大家实现有 3 种（inline-block，float，inline-flex），如果考虑要点 3，float 布局是不推荐的，因为当下是无法阻止 float 内容不换行的。table 布局其实是上上之选，天然一行显示，兼容到IE8。
+5. 每个按钮控制不要使用标签选择器，而是树结构伪类，例如 :first-child，:last-child，例如圆角：:first-child{border-radius: 3px 0 0 3px;}:last-child{border-radius: 0 3px 3px 0;}。此时就非常强，不要使用标签以及类名进行判断。
+6. 同样的，中间的线要走合并，每一个元素都要有完整的边框（如margin负值合并），而不是根据标签类型进行缺省。
+
+# CSS测试十四
+
+![](2019-11-18-21-06-48.png)
+
+## 具体实现
+
+### 我的实现
+
+<iframe src="/examples/css-practice/14-1.html" width="400" height="100"></iframe>
+
+`embed:css-practice/14-1.html`
+
+### 最佳实现一
+
+<iframe src="/examples/css-practice/14-2.html" width="400" height="100"></iframe>
+
+`embed:css-practice/14-2.html`
+
+## 实现要点
+
+1. 就本题实际开发而言，反序是没有必要的。因为会常驻选中类名，DOM 顺序是 1-5 也是可以实现样式控制的。所有列表淡蓝, .active 高亮深天空蓝，~ 后面的灰色。给前面的状态添加一个独立的类名是会增加实际开发的复杂度，是不推荐的，应该活用选择器的一些技术降低我们的维护成本。
+2. 应该是 1/2 尺寸图，考虑下不要掉下来。
+3. 三角的实现，三类方法：
+   1. clip-path：最容易理解，比较符合现实认知，推荐百分比控制（无论尺寸大小形状都OK），最大的问题：兼容性，IE全军覆没，移动端可以使用。
+   2. border: 切图前端必备技能。https://www.zhangxinxu.com/wordpress/?p=794  问题：定位比较啰嗦（占据尺寸，需要具体定位），border 不支持百分比（据说新的规范在考虑支持），尺寸变化有额外成本。优点：兼容性非常好，IE7+ 支持。border-color: transparent; IE7+支持，IE6需要使用 dashed 实现。background: transparent; IE6+ 支持。 color: transparent;  IE9+ 支持，原生 IE8 不支持。
+   3. transform: skewX()。最佳实现，兼顾尺寸控制，定位与兼容性，理解也非常好理解。兼容性 IE9+ 都支持，-ms-。现在 2019 年了，对于 transform 属性，-webkit-, -moz- 私有前缀没有必要再写了。
+4. 前面的数值显示。使用计数器，前面的 1-, 2-, 3-, ... 没有必要写在 HTML 中，以后调整（增减），HTML还需要同时维护。counter 计数器优化我们的实现。https://www.zhangxinxu.com/wordpress/?p=4303 IE8+支持。
+5. 语义，更接近 ol > li。还有一点nav的语义。
