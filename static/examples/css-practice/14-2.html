@@ -19,7 +19,6 @@
       display: flex;
       list-style: none;
       counter-reset: listCounter;
-      justify-content: flex-start;
       font-size: 16px;
       line-height: 1;
     }
@@ -57,6 +56,7 @@
       border-left: 1.3em solid transparent;
       border-right: none;
       position: absolute;
+      /* 父容器的左边界之外 */
       right: 100%;
       top: 0;
       content: '';
@@ -66,8 +66,8 @@
       border: 1.5em solid transparent;
       border-left: 1.3em solid;
       border-left-color: inherit;
-      border-right: none;
       position: absolute;
+      /* 父容器的右边界之外 */
       left: 100%;
       top: 0;
       content: '';
