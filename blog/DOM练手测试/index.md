@@ -342,3 +342,63 @@ dialog.showModal();
 3. `<dialog>`关闭使用.close()方法。
 4. dialog.showModal()自带本透明蒙层。如果我们想要修改透明度，可以使用::backdrop伪元素进行设置。
 5. showModal 时后弹框层级就是最高，其他元素设置再高的z-index值都无效。但是show()显示的就不一样了，我们需要动态计算处理，原理：遍历所有dialog再把最大的zindex加1。
+
+# DOM测试五
+
+![](2019-11-26-19-54-57.png)
+
+## 具体实现
+
+### 我的解答
+
+```js
+// 第一题
+document.querySelector('#list').addEventListener('click', function(e) {
+  if (e.target.tagName === 'LI') {
+    [].slice.apply(document.querySelectorAll('#list li')).forEach(function(item) {
+      item.classList.remove('selected');
+    })
+    document.querySelector('#input').value = e.target.innerText;
+    e.target.classList.add('selected');
+  }
+});
+// 第二题
+document.addEventListener('keydown', function(e) {
+   var li = [].slice.apply(document.querySelectorAll('#list li'));
+   var selectedIndex = 0;
+   li.forEach(function(item, index) {
+     if ([].slice.apply(item.classList).indexOf('selected') !== -1) {
+       item.classList.remove('selected');
+       selectedIndex = index + 1;
+     }
+   })
+   if (e && e.keyCode === 38) {
+     const index = (selectedIndex - 1) % (li.length + 1);
+     let realIndex = index;
+     if (index === -1 || index === 0) {
+       realIndex = li.length;
+     }
+     document.querySelector('#list li:nth-child('+ realIndex + ')').click();
+   }
+   if (e && e.keyCode === 40) {
+     console.log(selectedIndex);
+     const index = (selectedIndex + 1) % (li.length + 1);
+     const realIndex = index === 0 ? 1 : index;
+     document.querySelector('#list li:nth-child('+ realIndex + ')').click();
+}
+});
+```
+
+### 最佳解答
+
+```js
+// 第一题
+
+// 第二题
+
+```
+
+## 实现要点
+
+1. 
+
