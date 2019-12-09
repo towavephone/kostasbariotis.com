@@ -543,7 +543,6 @@ path模块提供的其余方法也不多，稍微看一下官方文档就能全�
 function travel(dir, callback) {
     fs.readdirSync(dir).forEach(function (file) {
         var pathname = path.join(dir, file);
-
         if (fs.statSync(pathname).isDirectory()) {
             travel(pathname, callback);
         } else {
@@ -563,3 +562,748 @@ function travel(dir, callback) {
         y.js
     z.css
 ```
+
+使用以下代码遍历该目录时，得到的输入如下。
+
+```js
+travel('/home/user', function (pathname) {
+    console.log(pathname);
+});
+
+------------------------
+/home/user/foo/x.js
+/home/user/bar/y.js
+/home/user/z.css
+```
+
+### 异步遍历
+
+如果读取目录或读取文件状态时使用的是异步API，目录遍历函数实现起来会有些复杂，但原理完全相同。travel函数的异步版本如下。
+
+```js
+function travel(dir, callback, finish) {
+    fs.readdir(dir, function (err, files) {
+        (function next(i) {
+            if (i < files.length) {
+                var pathname = path.join(dir, files[i]);
+                fs.stat(pathname, function (err, stats) {
+                    if (stats.isDirectory()) {
+                        travel(pathname, callback, function () {
+                            next(i + 1);
+                        });
+                    } else {
+                        callback(pathname, function () {
+                            next(i + 1);
+                        });
+                    }
+                });
+            } else {
+                finish && finish();
+            }
+        }(0));
+    });
+}
+```
+
+## 文本编码
+
+使用NodeJS编写前端工具时，操作得最多的是文本文件，因此也就涉及到了文件编码的处理问题。我们常用的文本编码有UTF8和GBK两种，并且UTF8文件还可能带有BOM。在读取不同编码的文本文件时，需要将文件内容转换为JS使用的UTF8编码字符串后才能正常处理。
+
+### BOM的移除
+
+BOM用于标记一个文本文件使用Unicode编码，其本身是一个Unicode字符（"\uFEFF"），位于文本文件头部。在不同的Unicode编码下，BOM字符对应的二进制字节如下：
+
+```bash
+    Bytes      Encoding
+----------------------------
+    FE FF       UTF16BE
+    FF FE       UTF16LE
+    EF BB BF    UTF8
+```
+
+因此，我们可以根据文本文件头几个字节等于啥来判断文件是否包含BOM，以及使用哪种Unicode编码。但是，BOM字符虽然起到了标记文件编码的作用，其本身却不属于文件内容的一部分，如果读取文本文件时不去掉BOM，在某些使用场景下就会有问题。例如我们把几个JS文件合并成一个文件后，如果文件中间含有BOM字符，就会导致浏览器JS语法错误。因此，使用NodeJS读取文本文件时，一般需要去掉BOM。例如，以下代码实现了识别和去除UTF8 BOM的功能。
+
+```js
+function readText(pathname) {
+    var bin = fs.readFileSync(pathname);
+    if (bin[0] === 0xEF && bin[1] === 0xBB && bin[2] === 0xBF) {
+        bin = bin.slice(3);
+    }
+    return bin.toString('utf-8');
+}
+```
+
+### GBK转UTF8
+
+NodeJS支持在读取文本文件时，或者在Buffer转换为字符串时指定文本编码，但遗憾的是，GBK编码不在NodeJS自身支持范围内。因此，一般我们借助iconv-lite这个三方包来转换编码。使用NPM下载该包后，我们可以按下边方式编写一个读取GBK文本文件的函数。
+
+```js
+var iconv = require('iconv-lite');
+function readGBKText(pathname) {
+    var bin = fs.readFileSync(pathname);
+    return iconv.decode(bin, 'gbk');
+}
+```
+
+### 单字节编码
+
+有时候，我们无法预知需要读取的文件采用哪种编码，因此也就无法指定正确的编码。比如我们要处理的某些CSS文件中，有的用GBK编码，有的用UTF8编码。虽然可以一定程度可以根据文件的字节内容猜测出文本编码，但这里要介绍的是有些局限，但是要简单得多的一种技术。
+
+首先我们知道，如果一个文本文件只包含英文字符，比如Hello World，那无论用GBK编码或是UTF8编码读取这个文件都是没问题的。这是因为在这些编码下，ASCII0~128范围内字符都使用相同的单字节编码。
+
+反过来讲，即使一个文本文件中有中文等字符，如果我们需要处理的字符仅在ASCII0~128范围内，比如除了注释和字符串以外的JS代码，我们就可以统一使用单字节编码来读取文件，不用关心文件的实际编码是GBK还是UTF8。以下示例说明了这种方法。
+
+1. GBK编码源文件内容：  
+    var foo = '中文';
+2. 对应字节：  
+    76 61 72 20 66 6F 6F 20 3D 20 27 D6 D0 CE C4 27 3B
+3. 使用单字节编码读取后得到的内容：  
+    var foo = '{乱码}{乱码}{乱码}{乱码}';
+4. 替换内容：  
+    var bar = '{乱码}{乱码}{乱码}{乱码}';
+5. 使用单字节编码保存后对应字节：  
+    76 61 72 20 62 61 72 20 3D 20 27 D6 D0 CE C4 27 3B
+6. 使用GBK编码读取后得到内容：  
+    var bar = '中文';
+
+这里的诀窍在于，不管大于0xEF的单个字节在单字节编码下被解析成什么乱码字符，使用同样的单字节编码保存这些乱码字符时，背后对应的字节保持不变。
+
+NodeJS中自带了一种binary编码可以用来实现这个方法，因此在下例中，我们使用这种编码来演示上例对应的代码该怎么写。
+
+```js
+function replace(pathname) {
+    var str = fs.readFileSync(pathname, 'binary');
+    str = str.replace('foo', 'bar');
+    fs.writeFileSync(pathname, str, 'binary');
+}
+```
+
+## 小结
+
+本章介绍了使用NodeJS操作文件时需要的API以及一些技巧，总结起来有以下几点：
+
+1. 学好文件操作，编写各种程序都不怕。
+2. 如果不是很在意性能，fs模块的同步API能让生活更加美好。
+3. 需要对文件读写做到字节级别的精细控制时，请使用fs模块的文件底层操作API。
+4. 不要使用拼接字符串的方式来处理路径，使用path模块。
+5. 掌握好目录遍历和文件编码处理技巧，很实用。
+
+# 网络操作
+
+不了解网络编程的程序员不是好前端，而NodeJS恰好提供了一扇了解网络编程的窗口。通过NodeJS，除了可以编写一些服务端程序来协助前端开发和测试外，还能够学习一些HTTP协议与Socket协议的相关知识，这些知识在优化前端性能和排查前端故障时说不定能派上用场。本章将介绍与之相关的NodeJS内置模块。
+
+## 介绍
+
+NodeJS本来的用途是编写高性能Web服务器。我们首先在这里重复一下官方文档里的例子，使用NodeJS内置的http模块简单实现一个HTTP服务器。
+
+```js
+var http = require('http');
+
+http.createServer(function (request, response) {
+    response.writeHead(200, { 'Content-Type': 'text-plain' });
+    response.end('Hello World\n');
+}).listen(8124);
+```
+
+以上程序创建了一个HTTP服务器并监听8124端口，打开浏览器访问该端口http://127.0.0.1:8124/就能够看到效果。
+
+>在Linux系统下，监听1024以下端口需要root权限。因此，如果想监听80或443端口的话，需要使用sudo命令启动程序。
+
+## API概览
+
+我们先大致看看NodeJS提供了哪些和网络操作有关的API。这里并不逐一介绍每个API的使用方法，官方文档已经做得很好了。
+
+### HTTP
+
+http模块提供两种使用方式：
+1. 作为服务端使用时，创建一个HTTP服务器，监听HTTP客户端请求并返回响应。
+2. 作为客户端使用时，发起一个HTTP客户端请求，获取服务端响应。
+
+首先我们来看看服务端模式下如何工作。首先需要使用.createServer方法创建一个服务器，然后调用.listen方法监听端口。之后，每当来了一个客户端请求，创建服务器时传入的回调函数就被调用一次。可以看出，这是一种事件机制。
+
+HTTP请求本质上是一个数据流，由请求头（headers）和请求体（body）组成。例如以下是一个完整的HTTP请求数据内容。
+
+```bash
+POST / HTTP/1.1
+User-Agent: curl/7.26.0
+Host: localhost
+Accept: */*
+Content-Length: 11
+Content-Type: application/x-www-form-urlencoded
+
+Hello World
+```
+
+可以看到，空行之上是请求头，之下是请求体。HTTP请求在发送给服务器时，可以认为是按照从头到尾的顺序一个字节一个字节地以数据流方式发送的。而http模块创建的HTTP服务器在接收到完整的请求头后，就会调用回调函数。在回调函数中，除了可以使用request对象访问请求头数据外，还能把request对象当作一个只读数据流来访问请求体数据。以下是一个例子。
+
+```js
+http.createServer(function (request, response) {
+    var body = [];
+
+    console.log(request.method);
+    console.log(request.headers);
+
+    request.on('data', function (chunk) {
+        body.push(chunk);
+    });
+
+    request.on('end', function () {
+        body = Buffer.concat(body);
+        console.log(body.toString());
+    });
+}).listen(80);
+
+------------------------------------
+POST
+{ 'user-agent': 'curl/7.26.0',
+  host: 'localhost',
+  accept: '*/*',
+  'content-length': '11',
+  'content-type': 'application/x-www-form-urlencoded' }
+Hello World
+```
+
+HTTP响应本质上也是一个数据流，同样由响应头（headers）和响应体（body）组成。例如以下是一个完整的HTTP请求数据内容。
+
+```bash
+HTTP/1.1 200 OK
+Content-Type: text/plain
+Content-Length: 11
+Date: Tue, 05 Nov 2013 05:31:38 GMT
+Connection: keep-alive
+
+Hello World
+```
+
+在回调函数中，除了可以使用response对象来写入响应头数据外，还能把response对象当作一个只写数据流来写入响应体数据。例如在以下例子中，服务端原样将客户端请求的请求体数据返回给客户端。
+
+```js
+http.createServer(function (request, response) {
+    response.writeHead(200, { 'Content-Type': 'text/plain' });
+
+    request.on('data', function (chunk) {
+        response.write(chunk);
+    });
+
+    request.on('end', function () {
+        response.end();
+    });
+}).listen(80);
+```
+
+接下来我们看看客户端模式下如何工作。为了发起一个客户端HTTP请求，我们需要指定目标服务器的位置并发送请求头和请求体，以下示例演示了具体做法。
+
+```js
+var options = {
+        hostname: 'www.example.com',
+        port: 80,
+        path: '/upload',
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+        }
+    };
+
+var request = http.request(options, function (response) {});
+
+request.write('Hello World');
+request.end();
+```
+
+可以看到，.request方法创建了一个客户端，并指定请求目标和请求头数据。之后，就可以把request对象当作一个只写数据流来写入请求体数据和结束请求。另外，由于HTTP请求中GET请求是最常见的一种，并且不需要请求体，因此http模块也提供了以下便捷API。
+
+```js
+http.get('http://www.example.com/', function (response) {});
+```
+
+当客户端发送请求并接收到完整的服务端响应头时，就会调用回调函数。在回调函数中，除了可以使用response对象访问响应头数据外，还能把response对象当作一个只读数据流来访问响应体数据。以下是一个例子。
+
+```js
+http.get('http://www.example.com/', function (response) {
+    var body = [];
+
+    console.log(response.statusCode);
+    console.log(response.headers);
+
+    response.on('data', function (chunk) {
+        body.push(chunk);
+    });
+
+    response.on('end', function () {
+        body = Buffer.concat(body);
+        console.log(body.toString());
+    });
+});
+
+------------------------------------
+200
+{ 'content-type': 'text/html',
+  server: 'Apache',
+  'content-length': '801',
+  date: 'Tue, 05 Nov 2013 06:08:41 GMT',
+  connection: 'keep-alive' }
+<!DOCTYPE html>
+```
+
+### HTTPS
+
+https模块与http模块极为类似，区别在于https模块需要额外处理SSL证书。
+
+在服务端模式下，创建一个HTTPS服务器的示例如下。
+
+```js
+var options = {
+   key: fs.readFileSync('./ssl/default.key'),
+   cert: fs.readFileSync('./ssl/default.cer')
+};
+
+var server = https.createServer(options, function (request, response) {
+  // ...
+});
+```
+
+可以看到，与创建HTTP服务器相比，多了一个options对象，通过key和cert字段指定了HTTPS服务器使用的私钥和公钥。
+
+另外，NodeJS支持SNI技术，可以根据HTTPS客户端请求使用的域名动态使用不同的证书，因此同一个HTTPS服务器可以使用多个域名提供服务。接着上例，可以使用以下方法为HTTPS服务器添加多组证书。
+
+```js
+server.addContext('foo.com', {
+    key: fs.readFileSync('./ssl/foo.com.key'),
+    cert: fs.readFileSync('./ssl/foo.com.cer')
+});
+
+server.addContext('bar.com', {
+    key: fs.readFileSync('./ssl/bar.com.key'),
+    cert: fs.readFileSync('./ssl/bar.com.cer')
+});
+```
+
+在客户端模式下，发起一个HTTPS客户端请求与http模块几乎相同，示例如下。
+
+```js
+var options = {
+   hostname: 'www.example.com',
+   port: 443,
+   path: '/',
+   method: 'GET'
+};
+
+var request = https.request(options, function (response) {});
+
+request.end();
+```
+
+但如果目标服务器使用的SSL证书是自制的，不是从颁发机构购买的，默认情况下https模块会拒绝连接，提示说有证书安全问题。在options里加入rejectUnauthorized: false字段可以禁用对证书有效性的检查，从而允许https模块请求开发环境下使用自制证书的HTTPS服务器。
+
+### URL
+
+处理HTTP请求时url模块使用率超高，因为该模块允许解析URL、生成URL，以及拼接URL。首先我们来看看一个完整的URL的各组成部分。
+
+```bash
+                           href
+ -----------------------------------------------------------------
+                            host              path
+                      --------------- ----------------------------
+ http: // user:pass @ host.com : 8080 /p/a/t/h ?query=string #hash
+ -----    ---------   --------   ---- -------- ------------- -----
+protocol     auth     hostname   port pathname     search     hash
+                                                ------------
+                                                   query
+```
+
+我们可以使用.parse方法来将一个URL字符串转换为URL对象，示例如下。
+
+```js
+url.parse('http://user:pass@host.com:8080/p/a/t/h?query=string#hash');
+/* =>
+{ protocol: 'http:',
+  auth: 'user:pass',
+  host: 'host.com:8080',
+  port: '8080',
+  hostname: 'host.com',
+  hash: '#hash',
+  search: '?query=string',
+  query: 'query=string',
+  pathname: '/p/a/t/h',
+  path: '/p/a/t/h?query=string',
+  href: 'http://user:pass@host.com:8080/p/a/t/h?query=string#hash' }
+*/
+```
+
+传给.parse方法的不一定要是一个完整的URL，例如在HTTP服务器回调函数中，request.url不包含协议头和域名，但同样可以用.parse方法解析。
+
+```js
+http.createServer(function (request, response) {
+    var tmp = request.url; // => "/foo/bar?a=b"
+    url.parse(tmp);
+    /* =>
+    { protocol: null,
+      slashes: null,
+      auth: null,
+      host: null,
+      port: null,
+      hostname: null,
+      hash: null,
+      search: '?a=b',
+      query: 'a=b',
+      pathname: '/foo/bar',
+      path: '/foo/bar?a=b',
+      href: '/foo/bar?a=b' }
+    */
+}).listen(80);
+```
+
+.parse方法还支持第二个和第三个布尔类型可选参数。第二个参数等于true时，该方法返回的URL对象中，query字段不再是一个字符串，而是一个经过querystring模块转换后的参数对象。第三个参数等于true时，该方法可以正确解析不带协议头的URL，例如//www.example.com/foo/bar。
+
+反过来，format方法允许将一个URL对象转换为URL字符串，示例如下。
+
+```js
+url.format({
+    protocol: 'http:',
+    host: 'www.example.com',
+    pathname: '/p/a/t/h',
+    search: 'query=string'
+});
+/* =>
+'http://www.example.com/p/a/t/h?query=string'
+*/
+```
+
+另外，.resolve方法可以用于拼接URL，示例如下。
+
+```js
+url.resolve('http://www.example.com/foo/bar', '../baz');
+/* =>
+http://www.example.com/baz
+*/
+```
+
+### Query String
+
+querystring模块用于实现URL参数字符串与参数对象的互相转换，示例如下。
+
+```js
+querystring.parse('foo=bar&baz=qux&baz=quux&corge');
+/* =>
+{ foo: 'bar', baz: ['qux', 'quux'], corge: '' }
+*/
+
+querystring.stringify({ foo: 'bar', baz: ['qux', 'quux'], corge: '' });
+/* =>
+'foo=bar&baz=qux&baz=quux&corge='
+*/
+```
+
+### Zlib
+
+zlib模块提供了数据压缩和解压的功能。当我们处理HTTP请求和响应时，可能需要用到这个模块。
+
+首先我们看一个使用zlib模块压缩HTTP响应体数据的例子。这个例子中，判断了客户端是否支持gzip，并在支持的情况下使用zlib模块返回gzip之后的响应体数据。
+
+```js
+http.createServer(function (request, response) {
+    var i = 1024,
+        data = '';
+
+    while (i--) {
+        data += '.';
+    }
+
+    if ((request.headers['accept-encoding'] || '').indexOf('gzip') !== -1) {
+        zlib.gzip(data, function (err, data) {
+            response.writeHead(200, {
+                'Content-Type': 'text/plain',
+                'Content-Encoding': 'gzip'
+            });
+            response.end(data);
+        });
+    } else {
+        response.writeHead(200, {
+            'Content-Type': 'text/plain'
+        });
+        response.end(data);
+    }
+}).listen(80);
+```
+
+接着我们看一个使用zlib模块解压HTTP响应体数据的例子。这个例子中，判断了服务端响应是否使用gzip压缩，并在压缩的情况下使用zlib模块解压响应体数据。
+
+```js
+var options = {
+        hostname: 'www.example.com',
+        port: 80,
+        path: '/',
+        method: 'GET',
+        headers: {
+            'Accept-Encoding': 'gzip, deflate'
+        }
+    };
+
+http.request(options, function (response) {
+    var body = [];
+
+    response.on('data', function (chunk) {
+        body.push(chunk);
+    });
+
+    response.on('end', function () {
+        body = Buffer.concat(body);
+
+        if (response.headers['content-encoding'] === 'gzip') {
+            zlib.gunzip(body, function (err, data) {
+                console.log(data.toString());
+            });
+        } else {
+            console.log(data.toString());
+        }
+    });
+}).end();
+```
+
+### Net
+
+net模块可用于创建Socket服务器或Socket客户端。由于Socket在前端领域的使用范围还不是很广，这里先不涉及到WebSocket的介绍，仅仅简单演示一下如何从Socket层面来实现HTTP请求和响应。
+
+首先我们来看一个使用Socket搭建一个很不严谨的HTTP服务器的例子。这个HTTP服务器不管收到啥请求，都固定返回相同的响应。
+
+```js
+net.createServer(function (conn) {
+    conn.on('data', function (data) {
+        conn.write([
+            'HTTP/1.1 200 OK',
+            'Content-Type: text/plain',
+            'Content-Length: 11',
+            '',
+            'Hello World'
+        ].join('\n'));
+    });
+}).listen(80);
+```
+
+接着我们来看一个使用Socket发起HTTP客户端请求的例子。这个例子中，Socket客户端在建立连接后发送了一个HTTP GET请求，并通过data事件监听函数来获取服务器响应。
+
+```js
+var options = {
+        port: 80,
+        host: 'www.example.com'
+    };
+
+var client = net.connect(options, function () {
+        client.write([
+            'GET / HTTP/1.1',
+            'User-Agent: curl/7.26.0',
+            'Host: www.baidu.com',
+            'Accept: */*',
+            '',
+            ''
+        ].join('\n'));
+    });
+
+client.on('data', function (data) {
+    console.log(data.toString());
+    client.end();
+});
+```
+
+## 小结
+
+本章介绍了使用NodeJS操作网络时需要的API以及一些坑回避技巧，总结起来有以下几点：
+1. http和https模块支持服务端模式和客户端模式两种使用方式。
+2. request和response对象除了用于读写头数据外，都可以当作数据流来操作。
+3. url.parse方法加上request.url属性是处理HTTP请求时的固定搭配。
+4. 使用zlib模块可以减少使用HTTP协议时的数据传输量。
+5. 通过net模块的Socket服务器与客户端可对HTTP协议做底层操作。
+
+# 进程管理
+
+NodeJS可以感知和控制自身进程的运行环境和状态，也可以创建子进程并与其协同工作，这使得NodeJS可以把多个程序组合在一起共同完成某项工作，并在其中充当胶水和调度器的作用。本章除了介绍与之相关的NodeJS内置模块外，还会重点介绍典型的使用场景。
+
+## 介绍
+
+我们已经知道了NodeJS自带的fs模块比较基础，把一个目录里的所有文件和子目录都拷贝到另一个目录里需要写不少代码。另外我们也知道，终端下的cp命令比较好用，一条cp -r source/* target命令就能搞定目录拷贝。那我们首先看看如何使用NodeJS调用终端命令来简化目录拷贝，示例代码如下：
+
+```js
+var child_process = require('child_process');
+var util = require('util');
+
+function copy(source, target, callback) {
+    child_process.exec(
+        util.format('cp -r %s/* %s', source, target), callback);
+}
+
+copy('a', 'b', function (err) {
+    // ...
+});
+```
+
+从以上代码中可以看到，子进程是异步运行的，通过回调函数返回执行结果。
+
+## API概览
+
+我们先大致看看NodeJS提供了哪些和进程管理有关的API。这里并不逐一介绍每个API的使用方法，官方文档已经做得很好了。
+
+### Process
+
+任何一个进程都有启动进程时使用的命令行参数，有标准输入标准输出，有运行权限，有运行环境和运行状态。在NodeJS中，可以通过process对象感知和控制NodeJS自身进程的方方面面。另外需要注意的是，process不是内置模块，而是一个全局对象，因此在任何地方都可以直接使用。
+
+### Child Process
+
+使用child_process模块可以创建和控制子进程。该模块提供的API中最核心的是.spawn，其余API都是针对特定使用场景对它的进一步封装，算是一种语法糖。
+
+### Cluster
+
+cluster模块是对child_process模块的进一步封装，专用于解决单进程NodeJS Web服务器无法充分利用多核CPU的问题。使用该模块可以简化多进程服务器程序的开发，让每个核上运行一个工作进程，并统一通过主进程监听端口和分发请求。
+
+## 应用场景
+
+和进程管理相关的API单独介绍起来比较枯燥，因此这里从一些典型的应用场景出发，分别介绍一些重要API的使用方法。
+
+### 如何获取命令行参数
+
+在NodeJS中可以通过process.argv获取命令行参数。但是比较意外的是，node执行程序路径和主模块文件路径固定占据了`argv[0]`和`argv[1]`两个位置，而第一个命令行参数从`argv[2]`开始。为了让argv使用起来更加自然，可以按照以下方式处理。
+
+```js
+function main(argv) {
+    // ...
+}
+
+main(process.argv.slice(2));
+```
+
+### 如何退出程序
+
+通常一个程序做完所有事情后就正常退出了，这时程序的退出状态码为0。或者一个程序运行时发生了异常后就挂了，这时程序的退出状态码不等于0。如果我们在代码中捕获了某个异常，但是觉得程序不应该继续运行下去，需要立即退出，并且需要把退出状态码设置为指定数字，比如1，就可以按照以下方式：
+
+```js
+try {
+    // ...
+} catch (err) {
+    // ...
+    process.exit(1);
+}
+```
+
+### 如何控制输入输出
+
+NodeJS程序的标准输入流（stdin）、一个标准输出流（stdout）、一个标准错误流（stderr）分别对应process.stdin、process.stdout和process.stderr，第一个是只读数据流，后边两个是只写数据流，对它们的操作按照对数据流的操作方式即可。例如，console.log可以按照以下方式实现。
+
+```js
+function log() {
+    process.stdout.write(
+        util.format.apply(util, arguments) + '\n');
+}
+```
+
+### 如何降权
+
+在Linux系统下，我们知道需要使用root权限才能监听1024以下端口。但是一旦完成端口监听后，继续让程序运行在root权限下存在安全隐患，因此最好能把权限降下来。以下是这样一个例子。
+
+```js
+http.createServer(callback).listen(80, function () {
+    var env = process.env,
+        uid = parseInt(env['SUDO_UID'] || process.getuid(), 10),
+        gid = parseInt(env['SUDO_GID'] || process.getgid(), 10);
+
+    process.setgid(gid); // 组ID
+    process.setuid(uid); // 用户ID
+});
+```
+
+上例中有几点需要注意：
+1. 如果是通过sudo获取root权限的，运行程序的用户的UID和GID保存在环境变量SUDO_UID和SUDO_GID里边。如果是通过chmod +s方式获取root权限的，运行程序的用户的UID和GID可直接通过process.getuid和process.getgid方法获取。
+2. process.setuid和process.setgid方法只接受number类型的参数。
+3. 降权时必须先降GID再降UID，否则顺序反过来的话就没权限更改程序的GID了。
+
+### 如何创建子进程
+
+以下是一个创建NodeJS子进程的例子。
+
+```js
+var child = child_process.spawn('node', [ 'xxx.js' ]);
+
+child.stdout.on('data', function (data) {
+    console.log('stdout: ' + data);
+});
+
+child.stderr.on('data', function (data) {
+    console.log('stderr: ' + data);
+});
+
+child.on('close', function (code) {
+    console.log('child process exited with code ' + code);
+});
+```
+
+上例中使用了.spawn(exec, args, options)方法，该方法支持三个参数。第一个参数是执行文件路径，可以是执行文件的相对或绝对路径，也可以是根据PATH环境变量能找到的执行文件名。第二个参数中，数组中的每个成员都按顺序对应一个命令行参数。第三个参数可选，用于配置子进程的执行环境与行为。
+
+另外，上例中虽然通过子进程对象的.stdout和.stderr访问子进程的输出，但通过options.stdio字段的不同配置，可以将子进程的输入输出重定向到任何数据流上，或者让子进程共享父进程的标准输入输出流，或者直接忽略子进程的输入输出。
+
+### 进程间如何通讯
+
+在Linux系统下，进程之间可以通过信号互相通信。以下是一个例子。
+
+```js
+/* parent.js */
+var child = child_process.spawn('node', [ 'child.js' ]);
+
+child.kill('SIGTERM');
+
+/* child.js */
+process.on('SIGTERM', function () {
+    cleanUp();
+    process.exit(0);
+});
+```
+
+在上例中，父进程通过.kill方法向子进程发送SIGTERM信号，子进程监听process对象的SIGTERM事件响应信号。不要被.kill方法的名称迷惑了，该方法本质上是用来给进程发送信号的，进程收到信号后具体要做啥，完全取决于信号的种类和进程自身的代码。
+
+另外，如果父子进程都是NodeJS进程，就可以通过IPC（进程间通讯）双向传递数据。以下是一个例子。
+
+```js
+/* parent.js */
+var child = child_process.spawn('node', [ 'child.js' ], {
+   stdio: [ 0, 1, 2, 'ipc' ]
+});
+
+child.on('message', function (msg) {
+    console.log(msg);
+});
+
+child.send({ hello: 'hello' });
+
+/* child.js */
+process.on('message', function (msg) {
+    msg.hello = msg.hello.toUpperCase();
+    process.send(msg);
+});
+```
+
+可以看到，父进程在创建子进程时，在options.stdio字段中通过ipc开启了一条IPC通道，之后就可以监听子进程对象的message事件接收来自子进程的消息，并通过.send方法给子进程发送消息。在子进程这边，可以在process对象上监听message事件接收来自父进程的消息，并通过.send方法向父进程发送消息。数据在传递过程中，会先在发送端使用JSON.stringify方法序列化，再在接收端使用JSON.parse方法反序列化。
+
+### 如何守护子进程
+
+守护进程一般用于监控工作进程的运行状态，在工作进程不正常退出时重启工作进程，保障工作进程不间断运行。以下是一种实现方式。
+
+```js
+/* daemon.js */
+function spawn(mainModule) {
+    var worker = child_process.spawn('node', [ mainModule ]);
+
+    worker.on('exit', function (code) {
+        if (code !== 0) {
+            spawn(mainModule);
+        }
+    });
+}
+
+spawn('worker.js');
+```
+
+可以看到，工作进程非正常退出时，守护进程立即重启工作进程。
+
+## 小结
+
+本章介绍了使用NodeJS管理进程时需要的API以及主要的应用场景，总结起来有以下几点：
+1. 使用process对象管理自身。
+2. 使用child_process模块创建和管理子进程。
+
