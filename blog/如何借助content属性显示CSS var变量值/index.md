@@ -36,31 +36,6 @@ CSS var变量（CSS自定义属性）很好用，然后，有时候，需要这�
 
 此时，CSS var变量非常适合使用。
 
-```html
-<label>图片1：</label>
-<div class="bar" style="--percent: 60;"></div>
-<label>图片2：</label>
-<div class="bar" style="--percent: 40;"></div>
-<label>图片3：</label>
-<div class="bar" style="--percent: 20;"></div>
-```
+<iframe src="/examples/content-css-var/percent.html" width="400" height="100"></iframe>
 
-关键是CSS，这里就应用了这里的CSS变量值呈现技巧，见下面代码红色高亮部分：
-
-```css
-.bar {
-    height: 20px; width: 300px;
-    background-color: #f5f5f5;
-}
-.bar::before {
-    display: block;
-    counter-reset: progress var(--percent);
-    content: counter(progress) '%\2002';
-    width: calc(1% * var(--percent));
-    color: #fff;
-    background-color: #2486ff;
-    text-align: right;
-    white-space: nowrap;
-    overflow: hidden;
-}
-```
+`embed:content-css-var/percent.html`
