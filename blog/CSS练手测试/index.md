@@ -1,6 +1,6 @@
 ---
 title: CSS练手测试
-date: 2019-11-21 20:31:15
+date: 2019-12-20 01:04:12
 categories:
 - 前端
 tags: 前端, CSS
@@ -469,3 +469,36 @@ path: /css-practice-test/
    3. transform: skewX()。最佳实现，兼顾尺寸控制，定位与兼容性，理解也非常好理解。兼容性 IE9+ 都支持，-ms-。现在 2019 年了，对于 transform 属性，-webkit-, -moz- 私有前缀没有必要再写了。
 4. 前面的数值显示。使用计数器，前面的 1-, 2-, 3-, ... 没有必要写在 HTML 中，以后调整（增减），HTML还需要同时维护。counter 计数器优化我们的实现。https://www.zhangxinxu.com/wordpress/?p=4303 IE8+支持。
 5. 语义，更接近 ol > li。还有一点nav的语义。
+
+# CSS测试十五
+
+![](2019-12-19-21-50-45.png)
+
+## 具体实现
+
+### 最佳实现一
+
+<iframe src="/examples/css-practice/15-1.html" width="400" height="100"></iframe>
+
+`embed:css-practice/15-1.html`
+
+### 最佳实现二
+
+<iframe src="/examples/css-practice/15-2.html" width="400" height="100"></iframe>
+
+`embed:css-practice/15-2.html`
+
+### 最佳实现三
+
+<iframe src="/examples/css-practice/15-3.html" width="400" height="100"></iframe>
+
+`embed:css-practice/15-3.html`
+
+## 实现要点
+
+1. grid-template-columns: repeat(auto-fill, minmax(150px, 1fr))。auto-fill：自动填充（列表个数动态），minmax()是一个只用在grid布局中的函数，尺寸范围，最小150px，最大1整个格子填满整行。
+2. flex实现了类似的效果，子项：flex: 1 1 33%; min-width: 140px; 可以添加的额外的占位，这样最后的比例都是一致的。
+3. 使用查询语句@media screen and (min-width: 600px) {} 没有任何问题，兼容IE9+，更普世的实现，PC移动通用。也可以和flex布局结合（IE10+）。
+4. 线的隐藏。流派1：宽高个数固定的实现使用树结构伪类匹配，准确匹配需要绘制分隔线的元素。流派2：隐藏，overflow隐藏，还有一种是实色覆盖（适合容易不能overflow:hidden的场景）。
+5. 线的绘制。4种。1. 伪元素宽高1像素填色，或者1px边框。2. border+clip-path；3. border-radius > border；4. box-shadow负值，box-shadow: 16px 0 0 -15px;
+6. inset: 1px ==> left: 1px; top: 1px; right: 1px; bottom: 1px;

@@ -278,7 +278,7 @@ export default class Template extends Component {
                             <section className="blog-section">
                                 {next ? (
                                     <header className="header">
-                                        <h2>阅读下一章</h2>
+                                        <h2>阅读下一篇</h2>
                                     </header>
                                 ) : null}
                                 <NavigateLink post={next} />

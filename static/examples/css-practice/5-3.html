@@ -8,6 +8,7 @@
   <style>
     body {
       background-color: white;
+      margin: 0;
     }
 
     ul {
@@ -15,7 +16,6 @@
     }
 
     .box {
-      --itemNumber: 5;
       --margin: 1%;
       font-size: 0;
     }
@@ -23,7 +23,7 @@
     li {
       width: 0;
       height: 0;
-      padding: calc( (100% / var(--itemNumber)) / 2 - var(--margin));
+      padding: calc((100% / var(--itemNumber)) / 2 - var(--margin));
       display: inline-block;
       position: relative;
       margin: var(--margin);
@@ -83,7 +83,7 @@
 </head>
 
 <body>
-  <ul class="box" style="--itemNumber: 7">
+  <ul class="box" style="--itemNumber: 3">
     <li>
       <input type="radio" name="radio">
       <div class="item"></div>
