@@ -27,7 +27,7 @@ path: /html5-canvas-video-barrage/
 
 # canvas实现的静态循环滚动播放弹幕
 
-<iframe src="/examples/html5-canvas-video-barrage/static-barrage.html" width="400" height="100"></iframe>
+<iframe src="/examples/html5-canvas-video-barrage/static-barrage.html" width="400" height="200"></iframe>
 
 `embed:html5-canvas-video-barrage/static-barrage.html`
 
@@ -69,6 +69,10 @@ canvasBarrage(canvas, data);
 跟真实的弹幕效果有所不同，这里的弹幕出现的速度和时机不是基于特定时间，而是随机产生。所以看到有些文字好像开飞机，而有些文字好像坐着拖拉机。因为是死数据，这样设计会看上去更真实写。
 
 # canvas实现的video真实交互的弹幕
+
+<iframe src="/examples/html5-canvas-video-barrage/interactive-barrage.html" width="400" height="300"></iframe>
+
+`embed:html5-canvas-video-barrage/interactive-barrage.html`
 
 这个原型就有点厉害了，市面上估计很难找到这么负责任的原型页面了。实现的动机完全兴趣使然，上面实现了个简单的，就想着要不实现一个真实的，万一以后用得到呢？
 
