@@ -1,6 +1,6 @@
 ---
 title: CSS练手测试
-date: 2019-12-20 01:04:12
+date: 2019-12-26 01:24:40
 categories:
 - 前端
 tags: 前端, CSS
@@ -502,3 +502,86 @@ path: /css-practice-test/
 4. 线的隐藏。流派1：宽高个数固定的实现使用树结构伪类匹配，准确匹配需要绘制分隔线的元素。流派2：隐藏，overflow隐藏，还有一种是实色覆盖（适合容易不能overflow:hidden的场景）。
 5. 线的绘制。4种。1. 伪元素宽高1像素填色，或者1px边框。2. border+clip-path；3. border-radius > border；4. box-shadow负值，box-shadow: 16px 0 0 -15px;
 6. inset: 1px ==> left: 1px; top: 1px; right: 1px; bottom: 1px;
+
+# CSS测试十五
+
+![](2019-12-26-02-44-46.png)
+
+![](2019-12-26-02-49-44.png)
+
+## 具体实现
+
+### 我的实现
+
+方法一：
+```css
+.quiz {
+  display: table;
+}
+
+.quiz-h {
+  vertical-align: middle;
+  text-align: center;
+  padding: 0 26px;
+}
+
+.quiz-p {
+ 
+}
+```
+
+方法二：
+```css
+.quiz {
+  align-items: center;
+}
+
+.quiz-h {
+  padding: 0 26px;
+}
+
+.quiz-p {
+  flex: 1;
+}
+```
+
+方法三：
+```css
+.quiz {
+  word-spacing: -1em;
+}
+
+.quiz-h {
+  vertical-align: middle;
+  text-align: center;
+  width: 120px;
+}
+
+.quiz-p {
+  vertical-align: middle;
+  width: calc(100% - 120px);
+}
+```
+
+方法四：
+```css
+.quiz {
+  position: relative;
+}
+
+.quiz-h {
+  text-align: center;
+  display: inline-block;
+  width: 120px;
+  top: 50%;
+  transform: translateY(-50%);
+  margin: 0;
+}
+
+.quiz-p {
+  width: calc(100% - 120px);
+  margin-left: 120px;
+}
+```
+
+## 实现要点
