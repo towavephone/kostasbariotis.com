@@ -1,6 +1,6 @@
 ---
 title: DOM练手测试
-date: 2019-11-26 21:13:43
+date: 2019-12-26 12:10:17
 categories:
 - 前端
 tags: 前端, DOM
@@ -251,7 +251,7 @@ document.addEventListener('DOMNodeInserted', function(event) {
    });
    ```
 
-# DOM测试五
+# DOM测试六
 
 ![](2019-09-30-17-36-11.png)
 
@@ -343,7 +343,7 @@ dialog.showModal();
 4. dialog.showModal()自带本透明蒙层。如果我们想要修改透明度，可以使用::backdrop伪元素进行设置。
 5. showModal 时后弹框层级就是最高，其他元素设置再高的z-index值都无效。但是show()显示的就不一样了，我们需要动态计算处理，原理：遍历所有dialog再把最大的zindex加1。
 
-# DOM测试五
+# DOM测试七
 
 ![](2019-11-26-19-54-57.png)
 
@@ -389,15 +389,6 @@ document.addEventListener('keydown', function(e) {
 });
 ```
 
-### 最佳解答
-
-```js
-// 第一题
-
-// 第二题
-
-```
-
 ## 实现要点
 
 1. 点击事件绑定在 #list 列表容器上是更合适的，两点原因：
@@ -408,3 +399,120 @@ document.addEventListener('keydown', function(e) {
 4. 事件建议绑定在 `<input>` 元素上，全局上下键绑定是会有问题，会和浏览器上下键微调页面滚动高度冲突。
 5. input.setAttribute('autocomplete', 'off'); 然后设置 event.preventDefault();
 6. event.key 对比 event.keyCode，如果不考虑兼容 IE8 这样的老 IE 浏览器，推荐使用 event.key，键盘是千奇百怪的，操作系统也是多样的，event.keyCode 值会有较大出入（常规键都是一样的），使用 event.key 更保险一点（虽然也不是完全 100% 兼容），也更好记忆。
+
+# DOM测试八
+
+![](2019-12-26-09-59-00.png)
+
+## 具体实现
+
+### 我的解答
+
+```js
+// 第一题
+function telTrim(strTel) {
+    return strTel.match(/[0-9]/g).length === 11 && strTel.replace(/[-\s]/g, '') || strTel;
+}
+telTrim('132-0803-3621');
+telTrim('132-0803-3621@qq.com');
+// 第二题
+document.querySelector('#form')
+document.querySelector('#input')
+// 第三题
+// 第四题
+// 第五题
+document.querySelector('#form').addEventListener('submit', function (e) {
+  e && e.preventDefault();
+  var input = document.querySelector('#input');
+  var value = input.value;
+  input.value = telTrim(value);
+})
+```
+
+### 最佳解答
+
+```js
+// 第一题
+function telTrim(strTel) {
+    return strTel.match(/[0-9]/g).length === 11 && strTel.replace(/[-\s]/g, '') || strTel;
+}
+telTrim('132-0803-3621');
+telTrim('132-0803-3621@qq.com');
+// 第二题
+document.querySelector('#form');
+document.querySelector('#input');
+// 第三题
+// 方法一
+document.querySelector('#input').addEventListener('input', function(e) {
+  if (e.inputType === "insertFromDrop") {
+    e.target.value = telTrim(e.target.value);
+  }
+});
+// 方法二
+document.querySelector('#input').addEventListener('drop', function(e) {
+  if (e.target.value.length !== 0) {
+    return;
+  }
+  e.preventDefault();
+  var text = e.dataTransfer.getData('text');
+  e.target.value = telTrim(text);
+});
+// 方法三
+var dragText = '';
+window.addEventListener("dragstart", function (event) {
+  //copy from https://www.zhangxinxu.com/study/201104/get-selection-text.html
+  var userSelection, text;
+  if (window.getSelection) {
+    //现代浏览器
+    userSelection = window.getSelection();
+  } else if (document.selection) {
+    //IE浏览器 考虑到Opera，应该放在后面
+    userSelection = document.selection.createRange();
+  }
+  if (!(text = userSelection.text)) {
+    text = userSelection;
+  }
+  dragText = text.toString();
+});
+input.addEventListener("drop", function (e) {
+  e.preventDefault();
+  this.value = telTrim(dragText);
+});
+// 第四题
+// 方法一
+document.querySelector('#input').addEventListener('input', function(e){
+  if (e.inputType === 'insertFromPaste') {
+    e.target.value = telTrim(e.target.value);
+  }
+});
+// 方法二
+// 获取剪贴板数据方法
+function getClipboardText(event) {
+  var clipboardData = event.clipboardData || window.clipboardData;
+  return clipboardData.getData("text");
+}
+document.querySelector('#input').addEventListener('paste', function(e) {
+  e.preventDefault();
+  // 默认原始输入框为空
+  var txt = getClipboardText(e);
+  // console.log(txt);
+  var newTxt = telTrim(txt);
+  document.execCommand('insertText', false, newTxt);
+});
+// 第五题
+document.querySelector('#form').addEventListener('submit', (e) => {
+  e && e.preventDefault();
+  var input = document.querySelector('#input');
+  var value = input.value;
+  input.value = telTrim(value);
+})
+```
+
+## 实现要点
+
+1. dataTransfer.getData替换是没问题的，但是需要判断，字符为空，有值的时候不应该直接替换（例如livetune的实现）。
+2. 插值的处理，拖进来的东西，直接就是替换好的，同时又不会替换之前的值。1. 有人通过获取框选位置，进行替换拼接。2. 是使用document.execCommand插入（ylfeng250粘贴那里）。3. 我认为比较好的实现，直接改变拖拽数据或者粘贴数据，在'dragstart'事件中（dataTransfer.setData以及clipboardData.setData）。
+3. 有人使用了定时器，但是体验并不好，会闪一下。
+4. 还有一种更容易理解的简单方法，也是看了大家的回答才知道一个新特性，InputEvent.inputType，值包括insertText, deleteContentBackward, insertFromPaste, insertFromDrop以及 formatBold。但是IE并不支持，慎用。可参考ziven27实现。
+5. 最后一题，先preventDefault，再过滤，再提交。在表单提交中，写在最后的return true是没有意义的。
+6. event.clipboardData || window.clipboardData是比较好的书写，可以兼容IE浏览器。

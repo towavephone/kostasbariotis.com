@@ -1,6 +1,6 @@
 ---
 title: JS练手测试
-date: 2019-9-29 20:03:37
+date: 2019-12-26 12:10:05
 categories:
 - 前端
 tags: 前端, JS
@@ -569,3 +569,111 @@ str1.replace(/["%#{}<>]/g, encodeURI);
 1. 老老实实用一个简单正则，然后callback中处理，虽然代码不是很简单，但是看得懂也不出错。简洁用法：`/fill="(?!none")[^"]+"/gi`。
 2. window.btoa(str)可以转base64。但是如果有中文是会报错的。可以先encodeURI下，或者encodeURIComponent也可以。可以试试这个：btoa(unescape(encodeURIComponent(str)))。base64到常规格式 window.atob(str);
 3. data:image/svg+xml;utf8, 加原始SVG代码是可以作为CSS background图片的，但是Chrome支持，IE浏览器不支持。我们可以部分转义，"，%，#，{，}，<，>。IE浏览器也支持，包括IE9。`str.replace(/[%#{}<>]/g, encodeURI)`。
+
+# JS测试八
+
+![](2019-12-26-10-23-22.png)
+
+## 具体实现
+
+### 我的解答
+
+```js
+// 第一题
+var phone = '13208033621 ';
+phone.trim();
+// 第二题
+var phone = '１３２０８０３３６２１';
+function toSBC(str) {
+  var result = "";
+  var len = str.length;
+  for (var i = 0; i < len; i++) {
+    var cCode = str.charCodeAt(i);
+    //全角与半角相差（除空格外）：65248（十进制）
+    cCode = cCode >= 0xFF01 && cCode <= 0xFF5E ? cCode - 65248 : cCode;
+    //处理空格
+    cCode = cCode === 0x03000 ? 0x0020 : cCode;
+    result += String.fromCharCode(cCode);
+  }
+  return result;
+}
+toSBC(phone);
+// 第三题
+var phone = '+8613208033621';
+phone.replace(/^\+86/g, '');
+// 第四题
+var phone = '1320-8033-621';
+var phone2 = '1320 8033 621';
+var trimPhone = phone2.replace(/[-\s]/g, '');
+if (trimPhone.length === 11) {
+  phone = trimPhone;
+}
+console.log(phone);
+// 第五题
+var phone = '13208033621'
+var pattern = /1\d{10}/;
+pattern.test(phone);
+```
+
+### 最佳解答
+
+```js
+// 第一题
+var phone = '13208033621 ';
+// IE9+
+phone.trim();
+// IE8+，分别去除前导空格和后导空格
+phone.replace(/^\s*|\s*$/g, "");
+// 第二题
+// 方法一
+var phone = '１３２０８０３３６２１';
+function toSBC(str) {
+  var result = "";
+  var len = str.length;
+  for (var i = 0; i < len; i++) {
+    var cCode = str.charCodeAt(i);
+    //全角与半角相差（除空格外）：65248（十进制）
+    cCode = cCode >= 0xFF01 && cCode <= 0xFF5E ? cCode - 65248 : cCode;
+    //处理空格
+    cCode = cCode === 0x03000 ? 0x0020 : cCode;
+    result += String.fromCharCode(cCode);
+  }
+  return result;
+}
+toSBC(phone);
+// 方法二
+[..."０１２３４５６７８９"].reduce(
+  (acc, cur, idx) => acc.replace(new RegExp(cur, "g"), idx),
+  phone
+);
+// 方法三
+var doubleByteNums = '０１２３４５６７８９';
+phone.replace(/[０-９]/g, matched => doubleByteNums.indexOf(matched));
+// 方法四
+var dict = { "０": 0,"１": 1, "２": 2,"３": 3,"４": 4, "５": 5,  "６": 6,  "７": 7, "８": 8, "９": 9, };
+[...phone].map((item) => dict[item]).join('');
+// 第三题
+var phone = '+8613208033621';
+phone.replace(/^\+86/g, '');
+// 第四题
+var phone = '1320-8033-621';
+var phone2 = '1320 8033  621';
+function formatSpace(strTel) {
+  return strTel.match(/[0-9]/g).length === 11 && strTel.replace(/[-\s]/g, '') || strTel;
+}
+var result = formatSpace(phone);
+var result2 = formatSpace(phone2);
+// 第五题
+var phone = '13208033621'
+var pattern = /^1\d{10}$/;
+pattern.test(phone);
+```
+
+## 实现要点
+
+1. 去除前后空格：xxx.trim()，trim()不止过滤普通空格（Space键敲出来的空格），IE9+，如果想要兼容IE8，xxxx.replace(/^\s*|\s*$/g, "")。
+2. 全角转半角String.fromCharCode(str.charCodeAt(i)-65248)是常规方法，适用于任何全角字符。本期可以只考虑数值的全角转半角，reduce()是一种方法（参考Seasonley的回答），还有const doubleByteNums = '０１２３４５６７８９';strTel.replace( new RegExp('[０-９]', 'g'), matched => doubleByteNums.indexOf(matched))或者使用映射dict = { "０": 0,"１": 1, "２": 2,"３": 3,"４": 4, "５": 5,  "６": 6,  "７": 7, "８": 8, "９": 9, }进行替换。注意：只有全角才需要code减值。
+3. /^+86/
+4. 需要数字个数匹配。因为输入框可能既支持输入手机号，又支持邮箱。
+5. /^1\d{10}$/
+6. 本小测的初衷：一个普通的手机账号输入框体验做好是不容易的事情。大部分的开发，都只是完成字符串前后空格的过滤就结束了，测试同学测试呢，也是可以通过的。啊，但实际上这并不是一个非常好的体验实现，正如我公众号文章（ https://mp.weixin.qq.com/s/3iYaxKJLjLo_gWgb8lvabw ）所讲的那样，做前端要想交互体验做到非常好，需要扎实的技术和经验积累作为前提的。例如输入框粘贴的时候自动在剪切板层把字符过滤，这个是需要技术积累的，需要对剪切板对象比较了解。 又例如全角半角的转化，以及+86的过滤这都需要足够多的经验的。讲这个的目的是想让大家知道做前端开发要想做的东西非常好，关键是把技术给好好积累，充分扎实，这个是做小测的目的，也是你竞争力所在。

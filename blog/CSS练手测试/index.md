@@ -503,7 +503,7 @@ path: /css-practice-test/
 5. 线的绘制。4种。1. 伪元素宽高1像素填色，或者1px边框。2. border+clip-path；3. border-radius > border；4. box-shadow负值，box-shadow: 16px 0 0 -15px;
 6. inset: 1px ==> left: 1px; top: 1px; right: 1px; bottom: 1px;
 
-# CSS测试十五
+# CSS测试十六
 
 ![](2019-12-26-02-44-46.png)
 
