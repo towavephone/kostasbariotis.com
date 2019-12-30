@@ -513,7 +513,7 @@ path: /css-practice-test/
 
 ### 我的实现
 
-方法一：
+方法一：（实现过于啰嗦）
 ```css
 .quiz {
   display: table;
@@ -530,7 +530,7 @@ path: /css-practice-test/
 }
 ```
 
-方法二：
+方法二：（flex: 1是多余的）
 ```css
 .quiz {
   align-items: center;
@@ -545,7 +545,7 @@ path: /css-practice-test/
 }
 ```
 
-方法三：
+方法三：(这里的定宽用的不是很好)
 ```css
 .quiz {
   word-spacing: -1em;
@@ -584,4 +584,69 @@ path: /css-practice-test/
 }
 ```
 
+### 最佳实现
+
+```css
+/* 方法1（IE8+） */
+.quiz-h {
+  vertical-align: middle;
+}
+
+.quiz-p {
+  display: table-cell;
+}
+
+/* 方法2（IE10+） */
+.quiz {
+  align-items: center;
+}
+
+/* 或以下代码 */
+/* 
+.quiz-h {
+  margin: auto 0;
+}
+*/
+/* 方法3（IE8+） */
+.quiz {
+  white-space: nowrap;
+}
+
+.quiz-h {
+  margin: 0;
+  padding: 0 10px;
+  vertical-align: middle;
+}
+
+.quiz-p {
+  margin: 0;
+  margin-right: 90px;  /* .quiz-h 的宽度(79.2px)+ 间距(10px) */
+  vertical-align: middle;
+  white-space: normal;
+}
+
+/* 方法4（IE8+） */
+.quiz {
+  position: relative;
+}
+
+.quiz-h {
+  top: 0;
+  bottom: 0;
+  /* 垂直方向上的流体布局，注意让文字垂直居中 */
+  height: 1.5em;
+  margin: auto 10px;
+}
+
+.quiz-p {
+  margin: 0 5px 0 80px;
+}
+```
+
 ## 实现要点
+
+1. 第一题只有1个人回答完全OK。display: table需要设置宽度100%，以及第一个单元格的尺寸，这个实现啰嗦。这一题的答案比大家想的要简单，.quiz-p {display: table-cell;} 就结束了。（匿名表格特性）
+2. flex实现。align-items: center方法之一，还可以直接控制子项的margin，.quiz-h { margin: auto 0; }
+3. inlinle-block实现，大家基本上都是white-space: nowrap实现的，有位小伙伴稍微有点区别，就是.quiz-h宽度0. 还可以使用margin负值实现（参考录播视频）。
+4. absolute定位实现，top: 50% - 1/2 自身高度（IE6+支持），还有定高+top:0; bottom: 0; margin:auto（IE8+）。
+5. calc()计算还是transform定位，这些IE8都不支持，IE9+支持。

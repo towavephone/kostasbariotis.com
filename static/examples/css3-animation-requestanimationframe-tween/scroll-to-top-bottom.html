@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+  <style>
+    html,
+    body {
+      background-color: white;
+      margin: 0;
+    }
+
+    #scrollButton {
+      margin-top: 1000px;
+    }
+  </style>
+</head>
+<body>
+  <button id="scrollButton">
+    点击我，看见我没有……………………………………
+  </button>
+  <script>
+    document.getElementById("scrollButton").onclick = function() {
+      var nowScroll = document.body.scrollTop || document.documentElement.scrollTop, flag = "up";
+      var funScroll = function() {
+        var top = document.body.scrollTop || document.documentElement.scrollTop;
+        if (flag === "up") {
+          top -= 20;
+          if (top <= 0) {
+            top = 0;
+            flag = "down";
+          }
+        } else if (flag === "down") {
+          top += 20;
+          if (top >= nowScroll) {
+            top = nowScroll;
+            flag = "stop";
+          }
+        } else {
+          return;
+        }
+        document.body.scrollTop = top;
+        document.documentElement.scrollTop = top;
+        requestAnimationFrame(funScroll);
+      };
+      if (nowScroll) {
+        funScroll()
+      };
+    };
+  </script>
+</body>
+</html>
