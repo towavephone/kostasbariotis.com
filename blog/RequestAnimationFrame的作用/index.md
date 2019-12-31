@@ -289,7 +289,7 @@ var Tween = {
 Math.tween = Tween;
 ```
 
-<iframe src="/examples/css3-animation-requestanimationframe-tween/animation-function.html" width="400" height="400"></iframe>
+<iframe src="/examples/css3-animation-requestanimationframe-tween/animation-function.html" width="400" height="300"></iframe>
 
 `embed:css3-animation-requestanimationframe-tween/animation-function.html`
 
