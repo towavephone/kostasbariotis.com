@@ -56,26 +56,24 @@ tags: 前端, CSS, CSS世界
 ```html
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>clearfix</title>
     <style>
-        img{
+        img {
             visibility:hidden;
         }
-        img[src]{
+
+        img[src] {
             visibility:visible;
         }
     </style>
 </head>
-
 <body>
     <img>
 </body>
-
 </html>
 ```
 
@@ -140,8 +138,8 @@ content属性生成的对象称为"匿名替换元素"，也就是生成的替�
 
 ```css
 /* 动态生成值 */
-.total::after{
-    content:counter(icecream);
+.total::after {
+    content: counter(icecream);
 }
 ```
 
@@ -154,10 +152,10 @@ IE浏览器仅支持单冒号的伪元素，为了兼容性，下面内容全部
 #### 清除浮动带来的影响
 
 ```css
-.clear:after{
-    content:'';
-    display:table;/*或者是block*/
-    clear:both;
+.clear:after {
+    content: '';
+    display: table; /*或者是block*/
+    clear: both;
 }
 ```
 
@@ -180,10 +178,10 @@ IE浏览器仅支持单冒号的伪元素，为了兼容性，下面内容全部
 #### 插入换行实现某些布局或效果
 
 ```css
-:after{
+:after {
     /* LF字符，指代换行，还有CR指代回车 */
-    content:'\A';
-    white-space:pre;
+    content: '\A';
+    white-space: pre;
 }
 ```
 
@@ -207,9 +205,9 @@ IE浏览器仅支持单冒号的伪元素，为了兼容性，下面内容全部
 直接用url功能符生成图片，虽然支持png、jpg、ico、svg以及base64，但生成的图片的宽高无法改变图片的固有尺寸，此时更多的是用background-image模拟，类似这样
 
 ```css
-div:before{
-    content:'';
-    background:url(1.jpg);
+div:before {
+    content: '';
+    background: url(1.jpg);
 }
 ```
 
@@ -222,31 +220,39 @@ content生成图片的意义在于base64位图片，由于它内联在CSS文件�
 ### content 开启闭合符号生成
 
 ```css
-.ask:before{
-    content:'提问："';
+.ask:before {
+    content: '提问："';
 }
-.answer:before{
-    content:'回答："';
+
+.answer:before {
+    content: '回答："';
 }
-.ask:after,.answer:after{
-    content:'"';
+
+.ask:after,
+.answer:after {
+    content: '"';
 }
 ```
 
 相当于
 
 ```css
-.ask{
-    quotes:'提问："' '"';
+.ask {
+    quotes: '提问："' '"';
 }
-.answer{
-    quotes:'回答: "' '"';
+
+.answer {
+    quotes: '回答: "' '"';
 }
-.ask:before,.answer:before{
-    content:open-quote;
+
+.ask:before,
+.answer:before {
+    content: open-quote;
 }
-.ask:after,.answer:after{
-    content:close-quote;
+
+.ask:after,
+.answer:after {
+    content: close-quote;
 }
 ```
 
@@ -255,8 +261,8 @@ content生成图片的意义在于base64位图片，由于它内联在CSS文件�
 前面alt属性显示图片描述信息的例子，还有可以生成自定义的HTML属性
 
 ```css
-.icon:before{
-    content:attr(data-title);
+.icon:before {
+    content: attr(data-title);
 }
 ```
 
@@ -268,9 +274,9 @@ content生成图片的意义在于base64位图片，由于它内联在CSS文件�
 
 ```css
 /* 显示23 */
-.xxx{
-    有两个计数器分别是wangxiaoer初始值为2，wangxiaosan初始值为3
-    counter-reset:wangxiaoer 2 wangxiaosan 3;
+.xxx {
+    /* 有两个计数器分别是wangxiaoer初始值为2，wangxiaosan初始值为3 */
+    counter-reset: wangxiaoer 2 wangxiaosan 3;
 }
 ```
 
@@ -282,49 +288,55 @@ content生成图片的意义在于base64位图片，由于它内联在CSS文件�
 
 ```css
 /*显示3，不是2，counter-increment默认值起作用，父类普照一次*/
-.counter{
-    counter-reset:wangxiaoer 2;
-    counter-increment:wangxiaoer;
+.counter {
+    counter-reset: wangxiaoer 2;
+    counter-increment: wangxiaoer;
 }
-.counter:before{
-    content:counter(wangxiaoer);
+
+.counter:before {
+    content: counter(wangxiaoer);
 }
 ```
 
 ```css
 /* 显示4，父类普照1，子类普照1次 */
-.counter{
-    counter-reset:wangxiaoer 2;
-    counter-increment:wangxiaoer;
+.counter {
+    counter-reset: wangxiaoer 2;
+    counter-increment: wangxiaoer;
 }
-.counter:before{
-    content:counter(wangxiaoer);
-    counter-increment:wangxiaoer;
+
+.counter:before {
+    content: counter(wangxiaoer);
+    counter-increment: wangxiaoer;
 }
 ```
 
 ```css
 /* 显示34，子类分别普照一次，累加 */
-.counter{
-    counter-reset:wangxiaoer 2;
+.counter {
+    counter-reset: wangxiaoer 2;
 }
-.counter:before,.counter:after{
-    content:counter(wangxiaoer);
-    counter-increment:wangxiaoer;
+
+.counter:before,
+.counter:after {
+    content: counter(wangxiaoer);
+    counter-increment: wangxiaoer;
 }
 ```
 
 ```css
 /* 显示31 */
-.counter{
-    counter-reset:wangxiaoer 2 wangxiaosan 3;
+.counter {
+    counter-reset: wangxiaoer 2 wangxiaosan 3;
     counter-increment: wangxiaoer wangxiaosan -2;
 }
-.counter:before{
-    content:counter(wangxiaoer);
+
+.counter:before {
+    content: counter(wangxiaoer);
 }
-.counter:after{
-    content:counter(wangxiaosan);
+
+.counter:after {
+    content: counter(wangxiaosan);
 }
 ```
 
@@ -344,13 +356,15 @@ content生成图片的意义在于base64位图片，由于它内联在CSS文件�
 各种content内容生成可以混合在一起使用
 
 ```css
-a:after{
-    content:"(" attr(href) ")";
+a:after {
+    content: "(" attr(href) ")";
 }
-q:before{
-    content:open-quote url(1.jpg);
+
+q:before {
+    content: open-quote url(1.jpg);
 }
-.counter:before{
+
+.counter:before {
     content: counters(wangxiaoer, '-') '. '; 
 }
 ```
@@ -366,10 +380,10 @@ q:before{
 如果设置了box-sizing:border-box，元素尺寸还是可能会变化，如果padding足够大，那么width也无能为力
 
 ```css
-.box{
-    width:80px;
-    padding:20 60px;
-    box-sizing:border-box;
+.box {
+    width: 80px;
+    padding: 20 60px;
+    box-sizing: border-box;
 }
 ```
 
@@ -434,8 +448,8 @@ h3 {
     font-size: 14px;
 }
 
-h3>span {
-    padding-top:58px;
+h3 > span {
+    padding-top: 58px;
 }
 </style>
 ```
@@ -456,18 +470,24 @@ h3>span {
 #### 实现不同比例的矩形效果
 
 ```css
-div{padding: 50%;} 
-div{padding: 25% 50%;}
+div {
+  padding: 50%;
+}
+
+div {
+  padding: 25% 50%;
+}
 ```
 
 #### 小屏幕头图高度等比例缩小
 
 ```css
-.box{
+.box {
     padding: 10% 50%;
     position: relative;
 }
-.box>img{
+
+.box > img {
     position: absolute;
     width: 100%;
     left: 0;
@@ -491,7 +511,7 @@ div{padding: 25% 50%;}
     border: 2px dashed #cd0000;
 }
 span {
-    padding:50%;
+    padding: 50%;
     background-color: gray;
 }
 </style>
@@ -520,8 +540,9 @@ span {
 .box {
     border: 2px dashed #cd0000;
 }
+
 span {
-    padding:50%;
+    padding: 50%;
     background-color: gray;
 }
 </style>
@@ -566,7 +587,8 @@ span {
 button { 
     position: absolute; 
     clip: rect(0 0 0 0); 
-} 
+}
+
 label { 
     display: inline-block; 
     line-height: 20px; 
@@ -643,9 +665,17 @@ CSS 世界默认的流方向是水平方向，因此，对于普通流体元素�
 
 ```html
 <style>
-.box { overflow: hidden; }
-.box > img { float: left; }
-.box > p { margin-left: 140px; }
+.box { 
+  overflow: hidden; 
+}
+
+.box > img {
+  float: left;
+}
+
+.box > p {
+  margin-left: 140px;
+}
 </style>
 <div class="box">
     <img src="1.jpg">
@@ -656,9 +686,17 @@ CSS 世界默认的流方向是水平方向，因此，对于普通流体元素�
 #### 如果图片右侧定位
 
 ```css
-.box { overflow: hidden; }
-.box > img { float: right; }
-.box > p { margin-right: 140px; }
+.box {
+  overflow: hidden;
+}
+
+.box > img {
+  float: right;
+}
+
+.box > p {
+  margin-right: 140px;
+}
 ```
 
 html文件标签的顺序与视觉表现上的不一致，这个可以借助margin负值实现
@@ -667,13 +705,24 @@ html文件标签的顺序与视觉表现上的不一致，这个可以借助marg
 
 ```html
 <style>
-.box { overflow: hidden; }
-.full { width: 100%; float: left; }
-.box > img { 
-    float: left; // 必须有这个属性，否则看不到元素
-    margin-left: -128px; 
+.box {
+  overflow: hidden;
 }
-.full > p { margin-right: 140px; }
+
+.full {
+  width: 100%;
+  float: left;
+}
+
+.box > img {
+  /* 必须有这个属性，否则看不到元素 */
+  float: left; 
+  margin-left: -128px; 
+}
+
+.full > p {
+  margin-right: 140px;
+}
 </style>
 <div class="box">
     <div class="full">
@@ -762,6 +811,7 @@ padding也有兼容性问题，如果容器可以滚动，在 IE 和 Firefox 浏
 .column-box {
     overflow: hidden;
 }
+
 .column-left,
 .column-right {
     margin-bottom: -9999px;
@@ -791,13 +841,14 @@ padding也有兼容性问题，如果容器可以滚动，在 IE 和 Firefox 浏
 
 ```html
 <style>
-.box {
-    background-color: olive;
-    overflow: hidden;
-}
-.box > div {
-    margin: 50%;
-}
+   .box {
+       background-color: olive;
+       overflow: hidden;
+   }
+
+   .box > div {
+       margin: 50%;
+   }
 </style>
 <div class="box">
     <div></div>
@@ -823,7 +874,9 @@ padding也有兼容性问题，如果容器可以滚动，在 IE 和 Firefox 浏
 
 ```html
 <style>
-p { margin: 1em 0; }
+p { 
+  margin: 1em 0;
+}
 </style>
 <p>第一行</p>
 <p>第二行</p>
@@ -866,21 +919,26 @@ p { margin: 1em 0; }
 - 父元素和最后一个子元素之间添加内联元素进行分隔；
 - 父元素设置 height、min-height 或 max-height。
 
-jQuery 中有个$().slideUp()/$().slideDown()方法，如果在使用这个动画效果的时候，发现这内容在动画开始或结束的时候会跳一下，那八九不离十就是布局存在 margin 合并。跳动之所以产生，就是因为jQuery 的 slideUp 和 slideDown方法在执行的时候会被对象元素添加 overflow:hidden 设置，而 overflow: hidden 会阻止 margin 合并，于是一瞬间间距变大，产生了跳动。
+jQuery 中有个 `$().slideUp()` / `$().slideDown()` 方法，如果在使用这个动画效果的时候，发现这内容在动画开始或结束的时候会跳一下，那八九不离十就是布局存在 margin 合并。跳动之所以产生，就是因为jQuery 的 slideUp 和 slideDown方法在执行的时候会被对象元素添加 overflow:hidden 设置，而 overflow: hidden 会阻止 margin 合并，于是一瞬间间距变大，产生了跳动。
 
 #### 空块级元素的 margin 合并
 
 ```html
 <style>
-.father { overflow: hidden; }
-.son { margin: 1em 0; }
+  .father {
+    overflow: hidden;
+  }
+
+  .son { 
+    margin: 1em 0;
+  }
 </style>
 <div class="father">
     <div class="son"></div>
 </div>
 ```
 
-结果，此时.father 所在的这个父级<div>元素高度仅仅是 1em，因为.son 这个空<div>元素的 margin-top 和 margin-bottom 合并在一起了。这也是上一节 margin:50%最终宽高比是 2:1 的原因，因为垂直方向的上下 margin 值合二为一了，所以垂直方向的外部尺寸只有水平方向的一半。
+结果，此时.father 所在的这个父级`<div>`元素高度仅仅是 1em，因为.son 这个空`<div>`元素的 margin-top 和 margin-bottom 合并在一起了。这也是上一节 margin:50% 最终宽高比是 2:1 的原因，因为垂直方向的上下 margin 值合二为一了，所以垂直方向的外部尺寸只有水平方向的一半。
 
 这种空块级元素的 margin 合并特性即使自身没有设置 margin 也是会发生的
 
@@ -912,7 +970,7 @@ HTML 标签默认内置的 CSS 属性值完全就是为了更好地进行图文�
 父子 margin 合并的意义在于：在页面中任何地方嵌套或直接放入任何裸 `<div>`，都不会影响原来的块状布局。
 
 ```html
-// 好像设置在外面的div元素上一样
+<!-- 好像设置在外面的div元素上一样 -->
 <div style="margin-top:20px;"></div>
 ```
 
@@ -940,18 +998,19 @@ margin:auto 的作用机制举例：
 
 - 有时候元素就算没有设置 width 或 height，也会自动填充。
 
-```html
-<div></div>
-```
+  ```html
+  <div></div>
+  ```
 
 - 有时候元素就算没有设置 width 或 height，也会自动填充对应的方位
 
-```css
-div {
-    position: absolute;
-    left: 0; right: 0;
-}
-```
+  ```css
+  div {
+      position: absolute;
+      left: 0;
+      right: 0;
+  }
+  ```
 
 此时`<div>`宽度就会自动填满包含块容器，如果设置 width 或 height，自动填充特性就会被覆盖
 
@@ -964,6 +1023,7 @@ margin:auto 的填充规则如下。
 .father {
     width: 300px;
 }
+
 .son {
     width: 200px;
     margin-right: 80px;
@@ -993,6 +1053,7 @@ margin 属性的 auto 计算就是为块级元素左中右对齐而设计的，�
 .father {
     height: 200px;
 }
+
 .son {
     height: 100px;
     margin: auto;
@@ -1005,39 +1066,49 @@ margin 属性的 auto 计算就是为块级元素左中右对齐而设计的，�
 
 - 使用 writing-mode 改变文档流的方向：
 
-```css
-.father {
-    height: 200px;
-    writing-mode: vertical-lr;
-}
-.son {
-    height: 100px;
-    margin: auto;
-}
-```
+  ```css
+  .father {
+      height: 200px;
+      writing-mode: vertical-lr;
+  }
+
+  .son {
+      height: 100px;
+      margin: auto;
+  }
+  ```
 
 此时.son 就是垂直居中对齐的，但是这也带来另外的问题，就是水平方向无法 auto 居中了。
 
 - 绝对定位元素的 margin:auto 居中
 
-```css
-.father {
-    width: 300px; height:150px;
-    position: relative;
-}
-.son {
-    position: absolute;
-    top: 0; right: 0; bottom: 0; left: 0;
-}
-```
+  ```css
+  .father {
+      width: 300px;
+      height: 150px;
+      position: relative;
+  }
+
+  .son {
+      position: absolute;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      left: 0;
+  }
+  ```
 
 此时.son 这个元素的尺寸表现为“格式化宽度和格式化高度”，和`<div>`的“正常流宽度”一样，同属于外部尺寸，也就是尺寸自动填充父级元素的可用尺寸，此时我们给.son 设置尺寸。例如：
 
 ```css
 .son {
     position: absolute;
-    top: 0; right: 0; bottom: 0; left: 0;
-    width: 200px; height: 100px;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    width: 200px;
+    height: 100px;
 }
 ```
 
@@ -1046,8 +1117,12 @@ margin 属性的 auto 计算就是为块级元素左中右对齐而设计的，�
 ```css
 .son {
     position: absolute;
-    top: 0; right: 0; bottom: 0; left: 0;
-    width: 200px; height: 100px;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    width: 200px;
+    height: 100px;
     margin: auto;
 }
 ```
@@ -1062,14 +1137,18 @@ margin 属性的 auto 计算就是为块级元素左中右对齐而设计的，�
 - 绝对定位元素非定位方位的 margin 值“无效”。什么意思呢？很多时候，我们对元素进行绝对定位的时候，只会设置 1～2 个相邻方位。例如：
   
     ```css
-    img { top: 10%; left: 30%;}
+    img { 
+      top: 10%;
+      left: 30%;
+    }
     ```
 
     此时 right 和 bottom 值属于 auto 状态，也就是右侧和底部没有进行定位，此时，这两个方向设置 margin 值我们在页面上是看不到定位变化的。例如：
 
     ```css
     img {
-        top: 10%; left: 30%;
+        top: 10%;
+        left: 30%;
         margin-right: 30px;
     }
     ```
@@ -1087,13 +1166,14 @@ margin 属性的 auto 计算就是为块级元素左中右对齐而设计的，�
         <div class="child"></div>
     </div>
     <style>
-    .box {
-        height: 100px;
-    }
-    .child {
-        height: 80px;
-        margin-bottom: 100px;
-    }
+      .box {
+          height: 100px;
+      }
+      
+      .child {
+          height: 80px;
+          margin-bottom: 100px;
+      }
     </style>
     ```
 
@@ -1103,6 +1183,7 @@ margin 属性的 auto 计算就是为块级元素左中右对齐而设计的，�
     .box {
         width: 100px;
     }
+
     .child {
         width: 80px;
         margin-right: 100px;
@@ -1123,18 +1204,19 @@ margin 属性的 auto 计算就是为块级元素左中右对齐而设计的，�
         <p>内容</p>
     </div>
     <style>
-    .box > img {
-        float: left;
-        width: 256px;
-    }
-    .box > p {
-        overflow: hidden;
-        margin-left: 200px;
-    }
+      .box > img {
+          float: left;
+          width: 256px;
+      }
+
+      .box > p {
+          overflow: hidden;
+          margin-left: 200px;
+      }
     </style>
     ```
 
-    其中的 margin-left:200px 是无效的，准确地讲，此时的<p>的 margin-left 从负无穷到 256px 都是没有任何效果的。要解释这里为何会无效，需要对 float 和 overflow 深入理解，而这两个属性都是后面的内容
+    其中的 margin-left:200px 是无效的，准确地讲，此时的`<p>`的 margin-left 从负无穷到 256px 都是没有任何效果的。要解释这里为何会无效，需要对 float 和 overflow 深入理解，而这两个属性都是后面的内容
 
 - 内联特性导致的 margin 无效。我们直接看下面这个例子：
 
@@ -1143,14 +1225,14 @@ margin 属性的 auto 计算就是为块级元素左中右对齐而设计的，�
         <img src="mm1.jpg">
     </div>
     <style>
-    .box > img {
-        height: 96px;
-        margin-top: -200px;
-    }
+      .box > img {
+          height: 96px;
+          margin-top: -200px;
+      }
     </style>
     ```
 
-    这里的例子也很有代表性。一个容器里面有一个图片，然后这张图片设置 margin-top 负值，让图片上偏移。但是，随着我们的负值越来越负，结果达到某一个具体负值的时候，图片不再往上偏移了。比方说，本例 margin-top 设置的是-200px，如果此时把 margin-top 设置成-300px，图片会再往上偏移 100px 吗？不会！它会微丝不动，margin-top 变得无效了。要解释这里为何会无效，需要对 vertical-align 和内联盒模型有深入的理解，而这 vertical-align 是后面的内容
+    这里的例子也很有代表性。一个容器里面有一个图片，然后这张图片设置 margin-top 负值，让图片上偏移。但是，随着我们的负值越来越负，结果达到某一个具体负值的时候，图片不再往上偏移了。比方说，本例 margin-top 设置的是-200px，如果此时把 margin-top 设置成-300px，图片会再往上偏移 100px 吗？不会！它会微丝不动，margin-top 变得无效了。要解释这里为何会无效，需要对 vertical-align 和内联盒模型有深入的理解，而 vertical-align 是后面的内容
 
 # 功勋卓越的 border 属性
 
@@ -1249,14 +1331,19 @@ border-color 有一个很重要也很实用的特性，就是“border-color 默
 .add {
     border: 2px dashed #ccc;
 }
-.add:before, .add:after {
+
+.add:before,
+.add:after {
     background: #ccc;
 }
+
 /* hover 变色 */
 .add:hover {
     border-color: #06C;
 }
-.add:hover:before, .add:hover:after {
+
+.add:hover:before,
+.add:hover:after {
     background: #06C;
 }
 ```
