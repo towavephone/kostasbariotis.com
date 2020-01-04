@@ -2,7 +2,7 @@
 title: nginx常用配置和技巧
 date: 2019-6-6 15:03:49
 path: /nginx-common-configurations-techniques/
-tags: 后端, nginx, 转载
+tags: 后端, nginx
 ---
 
 # 一个站点配置多个域名

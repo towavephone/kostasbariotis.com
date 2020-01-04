@@ -3,7 +3,7 @@ title: DOM练手测试
 date: 2019-12-26 12:10:17
 categories:
 - 前端
-tags: 前端, DOM
+tags: 前端, DOM, 练手测试
 path: /dom-practice-test/
 ---
 

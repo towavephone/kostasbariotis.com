@@ -5,7 +5,7 @@ date: 2017-11-20 00:15:59
 categories:
 - 版本控制工具
 path: /gitignore-invalid/
-tags: Git, githook
+tags: Git, gitignore
 ---
 ## 案例
 

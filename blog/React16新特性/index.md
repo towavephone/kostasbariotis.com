@@ -3,7 +3,7 @@ title: React16新特性
 date: 2019-6-4 20:43:46
 categories:
 - 前端
-tags: 前端, React, 转载
+tags: 前端, React
 path: /react16-new-feature/
 ---
 

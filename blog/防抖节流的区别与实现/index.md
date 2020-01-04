@@ -3,7 +3,7 @@ title: 防抖节流的区别与实现
 date: 2019-7-19 11:31:28
 categories:
 - 前端
-tags: 前端, 防抖, 节流
+tags: 前端, JS, 防抖, 节流
 path: /debounce-throttle-difference-realize/
 ---
 

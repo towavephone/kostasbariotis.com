@@ -3,7 +3,7 @@ title: JS练手测试
 date: 2019-12-26 12:10:05
 categories:
 - 前端
-tags: 前端, JS
+tags: 前端, JS, 练手测试
 path: /js-practice-test/
 ---
 

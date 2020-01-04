@@ -2,7 +2,7 @@
 title: React设计模式与最佳实践
 date: 2019-3-19 20:18:18
 path: /react-design-pattern/
-tags: 前端, React设计模式, React
+tags: 前端, 设计模式, React
 ---
 
 # 组件实践

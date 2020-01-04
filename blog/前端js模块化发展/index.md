@@ -3,7 +3,7 @@ title: 前端js模块化发展
 date: 2019-6-4 12:03:01
 categories:
 - 前端
-tags: 前端, 前端模块化, 转载
+tags: 前端, 前端模块化
 path: /frontend-module-development/
 ---
 

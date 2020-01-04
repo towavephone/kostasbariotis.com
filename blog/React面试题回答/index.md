@@ -2,7 +2,7 @@
 title: React 面试题 & 回答
 path: /react-interview-question/
 date: 2019-3-28 11:46:17
-tags: 面试, 前端, React, 转载
+tags: 面试, 前端, React
 ---
 
 > 本项目的面试题来源于 [sudheerj/reactjs-interview-questions](https://github.com/sudheerj/reactjs-interview-questions) 这个项目。一时兴起就动起了翻译的念头，由于本人的 React 功力尚浅，翻译的内容难免有误或不妥的地方，望请各位见谅。如果你喜欢这个项目，请 Star，更感谢你的 Pull Request。

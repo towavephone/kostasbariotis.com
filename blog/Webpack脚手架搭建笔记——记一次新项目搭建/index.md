@@ -3,7 +3,7 @@ title: Webpack脚手架搭建笔记——记一次新项目搭建
 date: 2019-10-10 21:46:40
 categories:
 - 前端
-tags: 前端构建工具, Webpack
+tags: 前端, 前端构建工具, Webpack
 path: /webpack-template-new-project/
 ---
 

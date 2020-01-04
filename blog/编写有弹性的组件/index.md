@@ -2,7 +2,7 @@
 title: 编写有弹性的组件
 date: 2019-6-6 14:35:51
 path: /write-resilient-components/
-tags: 前端, 组件, 转载
+tags: 前端, 组件
 ---
 
 # 概述

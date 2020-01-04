@@ -3,7 +3,7 @@ title: 记一次组件打包为链接的实践
 categories:
   - 构建工具
 path: /components-pack-as-library/
-tags: 前端构建工具, Webpack
+tags: 前端, 前端构建工具, Webpack
 date: 2019-5-11 14:47:57
 ---
 

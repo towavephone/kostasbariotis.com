@@ -2,7 +2,7 @@
 title: 复选框单选框与文字对齐问题
 path: /checkbox-radio-text-align/
 date: 2019-12-31 10:05:52
-tags: 前端, CSS知识点
+tags: 前端, CSS, CSS知识点
 ---
 
 # 产生的条件
