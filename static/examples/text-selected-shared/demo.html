@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+  <style>
+    html,
+    body {
+      background-color: white;
+      margin: 0;
+    }
+
+    .img_sina_share {
+      display: none;
+      position: absolute;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <div class="demo">
+    <div id="testContent" class="f14">
+          <p>&nbsp;<wbr>&nbsp;<wbr>&nbsp;<wbr>
+          最近迷恋上了【宫锁心玉】这部电视剧，真的是特别好看，让我每晚都要睡到12点以后了，不过有个小小的发现，就是宫和流星花园好像，呵呵，完全可以说是古装版【流星花园】</p>
+          <p>&nbsp;<wbr>&nbsp;<wbr>&nbsp;<wbr>
+          1.先不说具体事情，人物上，一直与晴川作对欺负晴川的八阿哥就是古版道明寺，和九阿哥十阿哥是F3，四阿哥就扮演了那个花泽类的角色。还有一般小像的素VS那个杉菜的好朋友（忘了叫什么以下用L代替），小春VS清河，老欺负晴川的心莲和那个不知道叫什么的功宫女VS那两个拜金女、、、、</p>
+          <p>&nbsp;<wbr>&nbsp;<wbr>&nbsp;<wbr> 具体事件：</p>
+          <p>&nbsp;<wbr>&nbsp;<wbr>&nbsp;<wbr>
+          1.得罪了八阿哥的宫女被赶出宫VS得罪了F4的同学被赶出学校</p>
+          <p>&nbsp;<wbr>&nbsp;<wbr>&nbsp;<wbr>
+          2.晴川为素言得罪八阿哥VS杉菜为了她的朋友L得罪F4</p>
+          <p>&nbsp;<wbr>&nbsp;<wbr>&nbsp;<wbr>
+          3.得罪八阿哥后大家不敢同情晴川，晴川跪铁链素言也不敢上前，但是偷偷给晴川留馒头VS杉菜得罪了F4
+          L也不敢靠近他但是偷偷留言安慰</p>
+          <p>&nbsp;<wbr>&nbsp;<wbr>&nbsp;<wbr>
+          4.魔头们安排的强暴戏码，一个被四阿哥解救一个被花泽类解救，接着又都上演了怎么让眼泪不流出的戏码</p>
+          <p>&nbsp;<wbr>&nbsp;<wbr>&nbsp;<wbr>
+          5.四阿哥的琴声VS花泽类的琴声</p>
+          <p>&nbsp;<wbr>&nbsp;<wbr>&nbsp;<wbr>
+          6.在宫里晴川和小春被众太监追被四阿哥解救，四阿哥和八阿哥呛声，四福晋带晴川去梳洗VS杉菜和清河被追花泽类解救，类还跟道明寺呛了一下，藤堂静带杉菜去梳洗</p>
+          <p>&nbsp;<wbr>&nbsp;<wbr>&nbsp;<wbr>
+          7.听到晴川和四阿哥的谣言八阿哥生气找晴川并强吻了她见晴川哭了又反过来安慰她VS道明寺强吻杉菜</p>
+          <p>&nbsp;<wbr>&nbsp;<wbr>&nbsp;<wbr>
+          8.晴川为和八阿哥斗争训练自己的体力猛吃饭+跑步VS杉菜猛吃饭+跑步。并都出现"我不会屈服的"台词</p>
+          <p>&nbsp;<wbr>&nbsp;<wbr>&nbsp;<wbr>
+          9.四阿哥和道明寺都说过"一个好消息一个坏消息""耐力赢得了尊重""加倍对付你"</p>
+          <p>&nbsp;<wbr>&nbsp;<wbr>&nbsp;<wbr>
+          10.斗着斗着八阿哥爱上了晴川道明寺爱上了杉菜，而女主角还都不屑一顾，爱上的是别人；当然还都是在接触中爱上了对方</p>
+          <p>&nbsp;<wbr>&nbsp;<wbr>&nbsp;<wbr>
+          11.晴川在太子所过夜并换了衣服被误会VS杉菜和老外在酒店遭遇。时候均差点被伤害而又出现了"只要你说我就相信"的感人台词</p>
+          <p>&nbsp;<wbr>&nbsp;<wbr>&nbsp;<wbr>
+          呵呵，还有很多相似之处，太晚了脑子开始犯迷糊就不多说了，这当然不是诟病，因为本人确实很喜欢宫这布电视剧，只是无聊随便罗列一下，娱乐而已。</p>
+      </div>
+      <img id="imgSinaShare" class="img_sina_share" title="将选中内容分享到新浪微博" src="http://simg.sinajs.cn/blog7style/images/common/share.gif" />
+  </div>
+  <script>
+    var eleImgShare = document.getElementById("imgSinaShare");
+
+    var $sinaMiniBlogShare = function(eleShare, eleContainer) {
+      var eleTitle = document.getElementsByTagName("title")[0];
+      eleContainer = eleContainer || document;
+      var funGetSelectTxt = function() {
+        var txt = "";
+        if(document.selection) {
+          txt = document.selection.createRange().text; // IE
+        } else {
+          txt = document.getSelection();
+        }
+        return txt.toString();
+      };
+      eleContainer.onmouseup = function(e) {
+        e = e || window.event;
+        var txt = funGetSelectTxt(), sh = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop || 0;
+        var left = (e.clientX - 40 < 0) ? e.clientX + 20 : e.clientX - 40, top = (e.clientY - 40 < 0) ? e.clientY + sh + 20 : e.clientY + sh - 40;
+        if (txt) {
+          eleShare.style.display = "inline";
+          eleShare.style.left = left + "px";
+          eleShare.style.top = top + "px";
+        } else {
+          eleShare.style.display = "none";
+        }
+      };
+      eleShare.onclick = function() {
+        var txt = funGetSelectTxt(), title = (eleTitle && eleTitle.innerHTML)? eleTitle.innerHTML : "未命名页面";
+        if (txt) {
+          window.open('http://v.t.sina.com.cn/share/share.php?title=' + txt + '→来自页面"' + title + '"的文字片段&url=' + window.location.href);
+        }
+      };
+    }(eleImgShare);
+  </script>
+</body>
+</html>
+
