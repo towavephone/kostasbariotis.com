@@ -11,8 +11,7 @@ tags: 前端, CSS, CSS世界
 
 ## 字母 x 与 CSS 世界的基线
 
-在各种内联相关模型中，凡是涉及垂直方向的排版或者对齐的，都离不开最基本的基线 （baseline）。例如，line-height 行高的定义就是两基线的间距，vertical-align 的默认值就是基线，其他中线顶线一类的定义也离不开基线，基线甚至衍生出了很多其他基线概念（如
-图 5-1 所示）。
+在各种内联相关模型中，凡是涉及垂直方向的排版或者对齐的，都离不开最基本的基线 （baseline）。例如，line-height 行高的定义就是两基线的间距，vertical-align 的默认值就是基线，其他中线顶线一类的定义也离不开基线，基线甚至衍生出了很多其他基线概念（如图 5-1 所示）。
 
 ![](2018-08-27-17-19-48.png)
 
@@ -49,15 +48,6 @@ ex 是 CSS 中的一个相对单位，指的是小写字母 x 的高度，没错
 
 比如以下的文字后面跟着一个小三角形图标的效果
 
-```css
-.icon-arrow {
-  display: inline-block;
-  width: 20px;
-  height: 1ex;
-  background: url(arrow.png) no-repeat center;
-}
-```
-
 <iframe src="/examples/code-editor.html?html=zhangxinxu%3Ci%20class%3D%22icon-arrow%22%3E%3C/i%3E%0A%0A%u5F20%u946B%u65ED%3Ci%20class%3D%22icon-arrow%22%3E%3C/i%3E&css=.icon-arrow%20%7B%0A%20%20%20%20display%3A%20inline-block%3B%0A%20%20%20%20width%3A%2020px%3B%0A%20%20%20%20height%3A%201ex%3B%0A%20%20%20%20background%3A%20url%28/images/5/arrow.png%29%20no-repeat%20center%3B%0A%7D" width="400" height="200"></iframe>
 
 # 内联元素的基石 line-height
@@ -75,12 +65,12 @@ ex 是 CSS 中的一个相对单位，指的是小写字母 x 的高度，没错
 ```html
 <div class="test1">我的高度是？</div>
 <style>
-.test1 {
-  font-size: 16px;
-  line-height: 0;
-  border: 1px solid #ccc;
-  background: #eee;
-}
+  .test1 {
+    font-size: 16px;
+    line-height: 0;
+    border: 1px solid #ccc;
+    background: #eee;
+  }
 </style>
 ```
 
@@ -89,12 +79,12 @@ ex 是 CSS 中的一个相对单位，指的是小写字母 x 的高度，没错
 ```html
 <div class="test2">我的高度是？</div>
 <style>
-.test1 {
-  font-size: 0;
-  line-height: 16px;
-  border: 1px solid #ccc;
-  background: #eee;
-}
+  .test1 {
+    font-size: 0;
+    line-height: 16px;
+    border: 1px solid #ccc;
+    background: #eee;
+  }
 </style>
 ```
 
@@ -106,24 +96,29 @@ ex 是 CSS 中的一个相对单位，指的是小写字母 x 的高度，没错
 
 因此，对于文本这样的纯内联元素，line-height 就是高度计算的基石，用专业说法就是指定了用来计算行框盒子高度的基础高度。比方说，line-height 设为 16px，则一行文字高度是 16px，两行就是 32px，三行就是 48px，所有浏览器渲染解析都是这个值，1 像素都不差
 
-line-height 在替换元素，又或者是块级元素的作用：
+### line-height 在替换元素、块级元素的作用
 
 行距 = line-height - font-size
 
 半行距的显示：(当我们的字体是宋体的时候，内容区域和 em-box 是等同的)
 
-```css
-.test {
-  font-family: simsun;
-  font-size: 24px;
-  line-height: 36px;
-  background-color: yellow;
-}
-.test > span {
-  background-color: white;
-}
+```html
+<style>
+  .test {
+    font-family: simsun;
+    font-size: 24px;
+    line-height: 36px;
+    background-color: yellow;
+  }
+
+  .test > span {
+    background-color: white;
+  }
+</style>
 <div class="test">
-  <span>sphinx</span>
+  <span>
+    sphinx
+  </span>
 </div>
 ```
 
@@ -133,24 +128,24 @@ line-height 在替换元素，又或者是块级元素的作用：
 
 所有与文字相关的间距都是从文字的上边缘和下边缘开始标注的，假设 line-height 是 1.5，font-size 大小是 14px，那么我们的半行距大小就是（套用上面的行距公式再除以 2）：(14px * 1.5 - 14px) / 2 = 14px * 0.25 = 3.5px。border 以及 line-height 等传统 CSS 属性并没有小数像素的概念（从 CSS3 动画的细腻程度可以看出），因此，这里的 3.5px 需要取整处理，如果标注的是文字上边距，则向下取整；如果是文字下边距，则向上取整，因为绝大多数的字体在内容区域中都是偏下的。所以，假设设计师标注了文字字形上边缘到图片下边缘间距 20px，则我们实际的 margin-top 值应该是 17px，因为 3.5px 向下取整是 3px。
 
-line-height如何通过改变行距实现文字排版？
+### line-height如何通过改变行距实现文字排版
 
 当line-height设为 2 的时候，半行距是一半的文字大小，两行文字中间的间隙差不多一个文字尺寸大小；如果 line-height 大小是 1 倍文字大小，则根据计算，半行距是 0，也就是两行文字会紧密依偎在一起；如果 line-height 值是 0.5，则此时的行距就是负值，虽然 line-height 不支持负值，但是行距可以为负值，此时，两行文字就是重叠纠缠在一起
 
 ![](2018-09-19-10-13-58.png)
 
-替换元素和块级元素中line-height的影响？
+### 替换元素和块级元素中line-height的影响
 
 line-height 可以影响替换元素（如图片的高度）？
 
 ```html
 <style>
-.box {
-  line-height: 256px;
-}
+  .box {
+    line-height: 256px;
+  }
 </style>
 <div class="box">
-  <img src="1.jpg" height="128">
+  <img src="1.jpg" height="128" />
 </div>
 ```
 
@@ -166,15 +161,15 @@ line-height 可以影响替换元素（如图片的高度）？
 
 ## 为什么 line-height 可以让内联元素“垂直居中”
 
-要想让单行文字垂直居中，只要设置 line-height 大小和 height 高度一样就可以了，误区：
+要想让单行文字垂直居中，只要设置 line-height 大小和 height 高度一样就可以了，这是个误区，正确的做法如下：
 
 - 要让单行文字垂直居中，只需要 line-height 这一个属性就可以，与 height 一点儿关系都没有。也就是说，我们直接：
 
-```css
-.title {
-  line-height: 24px;
-}
-```
+  ```css
+  .title {
+    line-height: 24px;
+  }
+  ```
 
 - 行高控制文字垂直居中，不仅适用于单行，多行也是可以的。准确的说法应该是“line-height 可以让单行或多行元素近似垂直居中”
 
@@ -184,13 +179,13 @@ line-height 可以影响替换元素（如图片的高度）？
 
 ```html
 <style>
-p {
-  font-size: 80px;
-  line-height: 120px;
-  background-color: #666;
-  font-family: 'microsoft yahei';
-  color: #fff;
-}
+  p {
+    font-size: 80px;
+    line-height: 120px;
+    background-color: #666;
+    font-family: 'microsoft yahei';
+    color: #fff;
+  }
 </style>
 <p>微软雅黑</p>
 ```
@@ -201,30 +196,12 @@ p {
 
 多行文本或者替换元素的垂直居中实现原理和单行文本就不一样了，需要 line-height 属性的好朋友 vertical-align 属性帮助才可以，示例代码如下：
 
-```html
-<style>
-  .box {
-    line-height: 120px;
-    background-color: #f0f3f9;
-  }
-  .content {
-    display: inline-block;
-    line-height: 20px;
-    margin: 0 20px;
-    vertical-align: middle;
-  }
-</style>
-<div class="box">
-  <div class="content">基于行高实现的...</div>
-</div>
-```
-
 <iframe src="/examples/code-editor.html?html=%3Cdiv%20class%3D%22box%22%3E%0A%20%20%20%20%3Cdiv%20class%3D%22content%22%3E%u57FA%u4E8E%u884C%u9AD8%u5B9E%u73B0%u7684...%3C/div%3E%0A%3C/div%3E&css=.box%20%7B%0A%20%20%20%20width%3A%20280px%3B%0A%20%20%20%20line-height%3A%20120px%3B%0A%20%20%20%20background-color%3A%20%23f0f3f9%3B%0A%20%20%20%20margin%3A%20auto%3B%0A%7D%0A.content%20%7B%0A%20%20%20%20display%3A%20inline-block%3B%0A%20%20%20%20line-height%3A%2020px%3B%0A%20%20%20%20margin%3A%200%2020px%3B%0A%20%20%20%20text-align%3A%20left%3B%0A%20%20%20%20vertical-align%3A%20middle%3B%0A%7D" width="400" height="200"></iframe>
 
 实现的原理大致如下:
 
 1. 多行文字使用一个标签包裹，然后设置 display 为 inline-block。好处在于既能重置外部的 line-height 为正常的大小，又能保持内联元素特性，从而可以设置 vertical-align 属性，以及产生一个非常关键的“行框盒子”。我们需要的其实并不是这个“行框盒子”，而是每个“行框盒子”都会附带的一个产物 — “幽灵空白节点”，即一个宽度为0、表现如同普通字符的看不见的“节点”。有了这个“幽灵空白节点”，我们的 line-height:120px 就有了作用的对象，从而相当于在.content 元素前面撑起了一个高度为 120px 的宽度为 0 的内联元素。
-2. 因为内联元素默认都是基线对齐的，所以我们通过对.content 元素设置 vertical-align:middle 来调整多行文本的垂直位置，从而实现我们想要的“垂直居中”效果。如果是要借助 line-height 实现图片垂直居中效果，也是类似的原理和做法
+2. 因为内联元素默认都是基线对齐的，所以我们通过对 .content 元素设置 vertical-align:middle 来调整多行文本的垂直位置，从而实现我们想要的“垂直居中”效果。如果是要借助 line-height 实现图片垂直居中效果，也是类似的原理和做法
 
 这里实现的“垂直居中”确实也不是真正意义上的垂直居中，也是“近似垂直居中”。还是上面的多行文本垂直居中的例子，如果我们捕获到多行文本元素的尺寸空间，截个图，然后通过尺子工具一量就会发现，上面的留空是41px，下面的留空是 39px，对啦，原来不是完全的垂直居中
 
@@ -241,6 +218,7 @@ div {
   line-height: normal;
   font-family: 'microsoft yahei';
 }
+
 div {
   line-height: normal;
   font-family: simsun;
@@ -270,10 +248,12 @@ body {
   font-size: 14px;
   line-height: 1.5;
 }
+
 body {
   font-size: 14px;
   line-height: 150%;
 }
+
 body {
   font-size: 14px;
   line-height: 1.5em;
@@ -282,10 +262,21 @@ body {
 
 对于`<body>`元素而言，上面 3 段 CSS 最终的行高计算值是 21px 是没有任何区别的，但是，如果同时还有子元素，例如：
 
-```css
-h3, p { margin: 0; }
-h3 { font-size: 32px; }
-p { font-size: 20px; }
+```html
+<style>
+  h3,
+  p {
+    margin: 0; 
+  }
+
+  h3 {
+    font-size: 32px; 
+  }
+
+  p {
+    font-size: 20px;
+  }
+</style>
 <h3>标题</h3>
 <p>内容</p>
 ```
@@ -310,47 +301,26 @@ line-height:150% 和 line-height:1.5em 代码下的文字重叠的原因在于`<
 
 既然 line-height 数值可以让元素天然继承相对计算特性，那这里的通配符岂不完全没必要？
 
-两者还是有差别的。HTML 中的很多替换元素，尤其表单类的替换元素，如输入框、按钮之类的，很多具有继承特性的CSS属性其自己也有一套，如font-family、font-size 以及这里的line-height。由于继承是属于最弱的权重，因此 body 中设置的line-height 是无法影响到这些替换元素的，但是 * 作为一个选择器，就不一样了，会直接重置这些替换元素默认的 line-height，这其实是我们需要的，因此从道义上讲，使用 * 通配也是合理的。但又考虑到*的性能以及明明有继承却不好好利用的羞耻感，我们可以折中使用下面的方法：
+两者还是有差别的。HTML 中的很多替换元素，尤其表单类的替换元素，如输入框、按钮之类的，很多具有继承特性的CSS属性其自己也有一套，如 font-family、font-size 以及这里的 line-height。由于继承是属于最弱的权重，因此 body 中设置的 line-height 是无法影响到这些替换元素的，但是 * 作为一个选择器，就不一样了，会直接重置这些替换元素默认的 line-height，这其实是我们需要的，因此从道义上讲，使用 * 通配也是合理的。但又考虑到*的性能以及明明有继承却不好好利用的羞耻感，我们可以折中使用下面的方法：
 
 ```css
 body {
   line-height: 1.5;
 }
-input, button {
+
+input,
+button {
   line-height: inherit;
 }
 ```
 
 ## 内联元素 line-height 的“大值特性”
 
-```html
-<div class="box">
-  <span>内容...</span>
-</div>
-<style>
-  .box {
-    line-height: 96px;
-  }
-  .box span {
-    line-height: 20px;
-  }
-
-  /*或*/
-
-  .box {
-    line-height: 20px;
-  }
-  .box span {
-    line-height: 96px;
-  }
-</style>
-```
-
 一个子元素行高是 20px，一个是96px，假如文字就 1 行，.box 元素的高度分别是多少？
 
 <iframe src="/examples/code-editor.html?html=%3Cdiv%20class%3D%22box%20box1%22%3E%0A%20%20%20%20%3Cspan%3Espan%3A%20line-height%3A20px%3C/span%3E%0A%3C/div%3E%0A%3Cdiv%20class%3D%22box%20box2%22%3E%0A%20%20%20%20%3Cspan%3Espan%3A%20line-height%3A20px%3C/span%3E%0A%3C/div%3E&css=.box%20%7B%0A%20%20%20%20width%3A%20280px%3B%0A%20%20%20%20margin%3A%201em%20auto%3B%0A%20%20%20%20outline%3A%201px%20solid%20%23beceeb%3B%0A%20%20%20%20background%3A%20%23f0f3f9%3B%0A%7D%0A.box1%20%7B%0A%20%20%20%20line-height%3A%2096px%3B%0A%7D%0A.box1%20span%20%7B%0A%20%20%20%20line-height%3A%2020px%3B%0A%7D%0A.box2%20%7B%0A%20%20%20%20line-height%3A%2020px%3B%0A%7D%0A.box2%20span%20%7B%0A%20%20%20%20line-height%3A%2096px%3B%0A%7D" width="400" height="200"></iframe>
 
-全都是 96px 高，无论内联元素 line-height 如何设置，最终父级元素的高度都是由数值大的那个 line-height 决定的，称之为“内联元素 line-height 的大值特性”，幽灵空白节点的问题，“幽灵空白节点”就在`<span>`元素的前方
+全都是 96px 高，无论内联元素 line-height 如何设置，最终父级元素的高度都是由数值大的那个 line-height 决定的，称之为“内联元素 line-height 的大值特性”，因为幽灵空白节点的问题，“幽灵空白节点”就在`<span>`元素的前方
 
 于是，就效果而言，我们的 HTML 实际上等同于：
 
@@ -362,17 +332,24 @@ input, button {
 
 这下就好理解了，当 .box 元素设置 line-height:96px 时，“字符”高度 96px；当设置 line-height:20px 时，`<span>`元素的高度则变成了 96px，而行框盒子的高度是由高度最高的那个“内联盒子”决定的，这就是 .box 元素高度永远都是最大的那个 line-height的原因。
 
-知道了原因也就能够对症下药，要避免“幽灵空白节点”的干扰，例如，设置`<span>`元素  display:inline-block，创建一个独立的“行框盒子”，这样`<span>`元素设置的 line-height:20px 就可以生效了，这也是多行文字垂直居中示例中这么设置的原因。
+知道了原因也就能够对症下药，要避免“幽灵空白节点”的干扰，例如，设置`<span>`元素 display:inline-block，创建一个独立的“行框盒子”，这样`<span>`元素设置的 line-height:20px 就可以生效了，否则 line-height 都是 96px，这也是多行文字垂直居中示例中这么设置的原因。
 
 # line-height 的好朋友 vertical-align
 
 ```html
 <style>
-  .box { line-height: 32px; }
-  .box > span { font-size: 24px; }
+  .box {
+    line-height: 32px;
+  }
+
+  .box > span {
+    font-size: 24px;
+  }
 </style>
 <div class="box">
-  <span>文字</span>
+  <span>
+    文字
+  </span>
 </div>
 ```
 
@@ -412,6 +389,8 @@ vertical-align 的数值属性值在实际开发的时候实用性非常强
 
 这里，我们需要的是垂直居中对齐效果，所以很多人都使用具有强烈语义的 vertical-align:middle 控制图标的垂直位置，然而，由于 middle 并不是真正意义上的垂直居中，因此还是会有像素级别的误差，误差大小与字体和字号均有关。例如，在本例中，图标往下多偏移了 1 像素而导致容器的可视高度变成了 21 像素，如图 5-21 所示。
 
+![](2020-01-07-11-51-28.png)
+
 但是，如果我们使用精确的数值，则一切尽在掌控之中。例如，设置 vertical-align:-5px，此时，图标和文字实现了真正意义上的垂直居中，此时容器的可视高度和当前行高 20 像素保持了一致
 
 在 CSS 世界中，凡是百分比值，均是需要一个相对计算的值，例如，margin 和 padding 是相对于宽度计算的，line-height 是相对于 font-size 计算的，而这里的 vertical-align 属性的百分比值则是相对于 line-height 的计算值计算的。可见，CSS 世界中的各类属性相互间有着紧密联系而非孤立的个体。
@@ -420,7 +399,7 @@ vertical-align 的数值属性值在实际开发的时候实用性非常强
 
 ## vertical-align 作用的前提
 
-为什么我设置了 vertical-align 却没任何作用
+### 为什么我设置了 vertical-align 却没任何作用？
 
 只能应用于内联元素以及 display 值为 table-cell 的元素，当然 CSS 世界中，有一些 CSS 属性值会在背后默默地改变元素 display 属性的计算值，从而导致 vertical-align 不起作用。比方说，浮动和绝对定位会让元素块状化，因此，下面的代码组合 vertical-align 是没有理由出现的：
 
@@ -429,6 +408,7 @@ vertical-align 的数值属性值在实际开发的时候实用性非常强
   float: left;
   vertical-align: middle; /* 没有作用 */
 }
+
 .example {
   position: absolute;
   vertical-align: middle; /* 没有作用 */
@@ -440,13 +420,14 @@ vertical-align 的数值属性值在实际开发的时候实用性非常强
   .box {
     height: 128px;
   }
+
   .box > img {
     height: 96px;
     vertical-align: middle;
   }
 </style>
 <div class="box">
-  <img src="1.jpg">
+  <img src="1.jpg" />
 </div>
 ```
 
@@ -459,35 +440,37 @@ vertical-align 的数值属性值在实际开发的时候实用性非常强
   height: 128px;
   line-height: 128px; /* 关键 CSS 属性 */
 }
+
 .box > img {
   height: 96px;
   vertical-align: middle;
 }
 ```
 
-为什么 display:table-cell 却可以无视行高？
+### 为什么 display:table-cell 却可以无视行高？
 
 那是因为对 table-cell 元素而言，vertical-align 起作用的是 table-cell 元素自身
 
 ```html
 <style>
-.cell {
-  height: 128px;
-  display: table-cell;
-}
-.cell > img {
-  height: 96px;
-  vertical-align: middle;
-}
+  .cell {
+    height: 128px;
+    display: table-cell;
+  }
+
+  .cell > img {
+    height: 96px;
+    vertical-align: middle;
+  }
 </style>
 <div class="cell">
-<img src="1.jpg">
+  <img src="1.jpg" />
 </div>
 ```
 
 结果图片并没有要垂直居中的迹象，还是紧贴着父元素的上边缘
 
-但是，如果 vertical-align:middle 是设置在 table-cell 元素上
+但是，如果 vertical-align:middle 是设置在 table-cell 元素上，图片就居中了
 
 ```css
 .cell {
@@ -495,6 +478,7 @@ vertical-align 的数值属性值在实际开发的时候实用性非常强
   display: table-cell;
   vertical-align: middle;
 }
+
 .cell > img {
   height: 96px;
 }
@@ -508,11 +492,18 @@ vertical-align 的数值属性值在实际开发的时候实用性非常强
 
 ```html
 <style>
-  .box { line-height: 32px; }
-  .box > span { font-size: 24px; }
-<style>
+  .box { 
+    line-height: 32px; 
+  }
+
+  .box > span { 
+    font-size: 24px; 
+  }
+</style>
 <div class="box">
-<span>文字</span>
+  <span>
+    文字
+  </span>
 </div>
 ```
 
@@ -539,13 +530,19 @@ vertical-align 的数值属性值在实际开发的时候实用性非常强
   line-height: 32px;
   font-size: 24px;
 }
-.box > span { }
+
+.box > span { 
+
+}
 ```
 
 或者改变垂直对齐方式，如顶部对齐，这样就不会有参差位移了：
 
 ```css
-.box { line-height: 32px; }
+.box {
+  line-height: 32px;
+}
+
 .box > span {
   font-size: 24px;
   vertical-align: top;
@@ -580,11 +577,11 @@ vertical-align 的数值属性值在实际开发的时候实用性非常强
 3. 容器 font-size 足够小。此方法要想生效，需要容器的 line-height 属性值和当前 font-size 相关，如 line-height:1.5 或者 line-height:150% 之类；否则只会让下面的间隙变得更大，因为基线位置因字符 x 变小而往上升了。
 4. 图片设置其他 vertical-align 属性值。间隙的产生原因之一就是基线对齐，所以我们设置 vertical-align 的值为 top、middle、bottom 中的任意一个都是可以的。
 
-**内联特性导致的 margin 无效的案例：**
+### 内联特性导致的 margin 无效的案例
 
 ```html
 <div class="box">
-  <img src="mm1.jpg">
+  <img src="mm1.jpg" />
 </div>
 <style>
   .box > img {
@@ -600,7 +597,7 @@ vertical-align 的数值属性值在实际开发的时候实用性非常强
 
 因为字符 x 下边缘和图片下边缘对齐，字符 x 非主动定位，不可能跑到容器外面，所以图片就被限死在此问题，margin-top 失效。
 
-**text-align:jusitfy 声明**
+### text-align:jusitfy 声明
 
 text-align:jusitfy 声明可以帮助我们实现兼容的列表两端对齐效果，但是 text-align:jusitfy 两端对齐需要内容超过一行，同时为了让任意个数的列表最后一行也是左对齐排列，我们需要在列表最后辅助和列表宽度一样的空标签元素来占位，类似下面 HTML 代码的`<i>`标签
 
@@ -651,23 +648,26 @@ vertical-align 属性的默认值 baseline 在文本之类的内联元素那里�
 
 ```html
 <style>
-.dib-baseline {
-  display: inline-block;
-  width: 150px; 
-  height: 150px;
-  border: 1px solid #cad5eb;
-  background-color: #f0f3f9;
-}
+   .dib-baseline {
+     display: inline-block;
+     width: 150px; 
+     height: 150px;
+     border: 1px solid #cad5eb;
+     background-color: #f0f3f9;
+   }
 </style>
-<span class="dib-baseline"></span>
-<span class="dib-baseline">x-baseline</span>
+<span class="dib-baseline">
+</span>
+<span class="dib-baseline">
+  x-baseline
+</span>
 ```
 
 ![](2018-10-09-19-48-40.png)
 
 你会发现，明明尺寸、display 水平都是一样的，结果两个却不在一个水平线上对齐，为什么呢？上面的规范已经说明了一切。第一个框里面没有内联元素，因此基线就是容器的 margin 下边缘，也就是下边框下面的位置；而第二个框里面有字符，纯正的内联元素，因此第二个框就是这些字符的基线，也就是字母 x 的下边缘了。于是，我们就看到了左边框框下边缘和右边框框里面字符 x 底边对齐的好戏。
 
-同情境模拟，我们也设置右边框的 line-height 值为 0，于是，就有所图 5-33 所示的表现。
+同情境模拟，我们也设置右边框的 line-height 值为 0，于是就有所图 5-33 所示的表现。
 
 因为字符实际占据的高度是由 line-height 决定的，当 line-height 变成 0 的时候，字符占据的高度也是 0，此时，高度的起始位置就变成了字符内容区域的垂直中心位置，于是文字就有一半落在框的外面了。由于文字字符上移了，自然基线位置（字母 x 的底边缘）也往上移动了，于是两个框的垂直落差就更大了。
 
@@ -679,8 +679,7 @@ vertical-align 属性的默认值 baseline 在文本之类的内联元素那里�
 
 ![](2018-10-09-19-54-45.png)
 
-理解了 x-baseline 的垂直位置表现，间隙问题就很好理解了。由于前面的`<i class="justify-fix"></i>`是一个 inline-block 的空元素，因此基线就是自身的底部，于是下
-移了差不多 3/4 个 x 的高度，这个下移的高度就是上面产生的间隙高度。
+理解了 x-baseline 的垂直位置表现，间隙问题就很好理解了。由于前面的`<i class="justify-fix"></i>`是一个 inline-block 的空元素，因此基线就是自身的底部，于是下移了差不多 3/4 个 x 的高度，这个下移的高度就是上面产生的间隙高度。
 
 好了，一旦知道了现象的本质，我们就能轻松对症下药了！要么改变占位`<i>`元素的基线，要么改造“幽灵空白节点”的基线位置，要么使用其他 vertical-align 对齐方式。
 
@@ -710,7 +709,7 @@ vertical-align 属性的默认值 baseline 在文本之类的内联元素那里�
 
 第一种做法中，`<i class="icon-delete"></i>`是一个空标签，里面无内联元素，因此，基线是底边缘；而第二种做法中，虽然里面有文字，但是此文字是不显示的，因此开发者习惯设置 overflow:hidden，这又导致基线是底边缘。而正是由于基线是元素底边缘，才导致图标和文字默认严重不对齐, 但是，我们不妨反过来试想下，如果图标和后面的文字高度一致，同时图标的基线和文字基线一样，那岂不是图标和文字天然对齐，根本就不需要 margin 或 vertical-align 的垂直偏移了？
 
-基于20px 图标对齐的处理技巧，该技巧有下面 3 个要点。
+基于 20px 图标对齐的处理技巧，该技巧有下面 3 个要点。
 
 1. 图标高度和当前行高都是 20px。
 2. 图标标签里面永远有字符
@@ -728,9 +727,11 @@ vertical-align 属性的默认值 baseline 在文本之类的内联元素那里�
   letter-spacing: -1em;
   text-indent: -999em;
 }
+
 .icon:before {
   content: '\3000';
 }
+
 /* 具体图标 */
 .icon-xxx {
   background-position: 0 -20px;
@@ -793,36 +794,44 @@ vertial-align:middle 可以让内联元素的真正意义上的垂直中心位�
 其 HTML 结构很简单，一个 container，显示半透明背景，然后里面的子元素就是弹框主体，假设类名是.dialog，则 HTML 如下：
 
 ```html
+<style>
+  .container {
+    position: fixed;
+    top: 0; 
+    right: 0; 
+    bottom: 0; 
+    left: 0;
+    background-color: rgba(0, 0, 0, .5);
+    /* 水平居中 */
+    text-align: center;
+    /* 使vertical-align: middle;真正的居中，防止幽灵结点“x”的干扰 */
+    font-size: 0;
+    /* 阻止换行，为了:after伪元素和.dialog在同一行 */
+    white-space: nowrap;
+    /* 过长时滚动 */
+    overflow: auto;
+  }
+
+  /* 参考实例“辅助实现两端对齐以及垂直居中、上边缘、下边缘对齐效果” */
+  .container:after {
+    content: '';
+    display: inline-block;
+    vertical-align: middle;
+    height: 100%;
+  }
+
+  .dialog {
+    display: inline-block;
+    vertical-align: middle;
+    text-align: left;
+    font-size: 14px;
+    /* 恢复换行 */
+    white-space: normal;
+  }
+</style>
 <div class="container">
   <div class="dialog"></dialog>
 </div>
-<style>
-.container {
-  position: fixed;
-  top: 0; 
-  right: 0; 
-  bottom: 0; 
-  left: 0;
-  background-color: rgba(0,0,0,.5);
-  text-align: center;
-  font-size: 0;
-  white-space: nowrap;
-  overflow: auto;
-}
-.container:after {
-  content: '';
-  display: inline-block;
-  height: 100%;
-  vertical-align: middle;
-}
-.dialog {
-  display: inline-block;
-  vertical-align: middle;
-  text-align: left;
-  font-size: 14px;
-  white-space: normal;
-}
-</style>
 ```
 
 此时，无论浏览器尺寸是多大，也无论弹框尺寸是多少，我们的弹框永远都是居中的。
@@ -832,26 +841,23 @@ vertial-align:middle 可以让内联元素的真正意义上的垂直中心位�
 - 节省了很多无谓的定位的 JavaScript 代码，也不需要浏览器 resize 事件之类的处理，当弹框内容动态变化的时候，也无须重新定位。
 - 性能更改、渲染速度更快，毕竟浏览器内置 CSS 的即时渲染显然比 JavaScript 的处理要更好。
 - 可以非常灵活控制垂直居中的比例，比方说设置：
+  ```css
+  .container:after {
+    height: 90%;
+  }
+  ```
 
-```css
-.container:after {
-  height: 90%;
-}
-```
-
-则弹框不是垂直居中对齐，而是近似上下 2 : 3 这种感觉的对齐，反而会让人有视觉上居中的感觉。
-
+  则弹框不是垂直居中对齐，而是近似上下 2 : 3 这种感觉的对齐，反而会让人有视觉上居中的感觉。
 - 容器设置 overflow:auto 可以实现弹框高度超过一屏时依然能看见屏幕外的内容，传统实现方法则比较尴尬。
-
 
 这里的技巧还有一个关键点是半透明黑色蒙层和弹框元素是在一起的父子关系
 
-此方法实现的原理关键就是两个 vertical-align:middle，前面“图片近似垂直居中”那里只图片一个元素vertical-align:middle 就实现了垂直居中，原因就是 line-height 大小设置得恰到好处，但是对于弹框，高度不确定，显然不能使用某个具体的行高值创建足够高的内联元素。于是，这里借助伪元素创建了一个和外部容器一样高的宽度为 0 的 inline-block 元素。有种“幽灵空白节点”的感觉
+此方法实现的原理关键就是两个 vertical-align:middle，前面“图片近似垂直居中”那里只图片一个元素 vertical-align:middle 就实现了垂直居中，原因就是 line-height 大小设置得恰到好处，但是对于弹框，高度不确定，显然不能使用某个具体的行高值创建足够高的内联元素。于是，这里借助伪元素创建了一个和外部容器一样高的宽度为 0 的 inline-block 元素。有种“幽灵空白节点”的感觉
 
 下面是原理作用的关键部分，在 5.3.7 节讲过如何分析多个 vertical-align 的作用，根据定义专注当前元素即可。vertical-align:middle 定义是元素的中线和字符 x 中心点对齐。
 
-1. 在本例中，由于 font-size 设置为 0，所以 x 中心点位置就是.container 的上边缘，此时，高度 100%的宽度为 0 的伪元素和这个中心点对齐。如果中心点位置不动，这个伪元素上面一半的位置应该在.container 的外面，但是 CSS 中默认是左上方排列对齐的，所以，伪元素和这个原本在容器上边缘的 x 中心点一起往下移动了半个容器高度，也就是此时 x 中心点就在容器的垂直中心线上。
-2. 弹框元素.dialog 也设置了 vertical-align:middle。根据定义，弹框的垂直中心位置和 x 中心点位置对齐，此时，x 中心点就在容器的垂直中心位置，于是.dialog 元素就和容器的垂直中心位置对齐了，从而实现了垂直居中效果。
+1. 在本例中，由于 font-size 设置为 0，所以 x 中心点位置就是 .container 的上边缘，此时，高度 100% 的宽度为 0 的伪元素和这个中心点对齐。如果中心点位置不动，这个伪元素上面一半的位置应该在.container 的外面，但是 CSS 中默认是左上方排列对齐的，所以，伪元素和这个原本在容器上边缘的 x 中心点一起往下移动了半个容器高度，也就是此时 x 中心点就在容器的垂直中心线上。
+2. 弹框元素 .dialog 也设置了 vertical-align:middle。根据定义，弹框的垂直中心位置和 x 中心点位置对齐，此时，x 中心点就在容器的垂直中心位置，于是 .dialog 元素就和容器的垂直中心位置对齐了，从而实现了垂直居中效果。
 3. 水平居中就 text-align:center 实现，非常好理解。
 
 按照初衷，块级元素负责布局，内联元素设置内容。但是，这里的弹框居中却是把块级元素内联化，利用一些内联属性实现垂直居中效果，这也是不得已而为之，因为 vertical-align 等内联属性确实比块级属性强悍，也正因为 CSS 世界在布局上的弱势，后来多栏布局、弹性盒子布局以及栅格布局一个一个都出来补强了。
