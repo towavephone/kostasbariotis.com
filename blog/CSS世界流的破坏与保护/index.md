@@ -1733,3 +1733,264 @@ img {
 此时，有人可能会惊呼：什么？设置 height:0 同时 overflow:hidden？那岂不是里面所有元素都被剪裁看不见啦？
 
 如果是普通元素确实会如此，但是对于 absolute 绝对定位以及 fixed 固定定位元素，规则要更复杂！
+
+# absolute 与 overflow
+
+overflow 对 absolute 元素的剪裁规则用一句话表述就是：绝对定位元素不总是被父级overflow 属性剪裁，尤其当 overflow 在绝对定位元素及其包含块之间的时候。
+
+如果 overflow 不是定位元素，同时绝对定位元素和 overflow 容器之间也没有定位元素，则 overflow 无法对 absolute 元素进行剪裁。
+
+因此下面 HTML 中的图片不会被剪裁：
+
+```html
+<div style="overflow: hidden;">
+  <img src="1.jpg" style="position: absolute;" />
+</div>
+```
+
+overflow 元素父级是定位元素也不会剪裁，例如：
+
+```html
+<div style="position: relative;">
+  <div style="overflow: hidden;">
+    <img src="1.jpg" style="position: absolute;" />
+  </div>
+</div>
+```
+
+但是，如果 overflow 属性所在的元素同时也是定位元素，里面的绝对定位元素会被剪裁：
+
+```html
+<div style="overflow: hidden; position: relative;">
+  <img src="1.jpg" style="position: absolute;" /> <!-- 剪裁 -->
+</div>
+```
+
+如果 overflow 元素和绝对定位元素之间有定位元素，也会被剪裁：
+
+```html
+<div style="overflow: hidden;">
+  <div style="position: relative;">
+    <img src="1.jpg" style="position: absolute;" /> <!-- 剪裁 -->
+  </div>
+</div>
+```
+
+如果 overflow 的属性值不是 hidden 而是 auto 或者 scroll，即使绝对定位元素高宽比 overflow 元素高宽还要大，也都不会出现滚动条。例如，下面的 HTML 和 CSS 代码：
+
+```html
+<style>
+  .box {
+    width: 300px;
+    height: 100px;
+    background-color: #f0f3f9;
+    overflow: auto;
+  }
+
+  .box > img {
+    width: 256px;
+    height: 192px;
+    position: absolute;
+  }
+</style>
+<div class="box">
+  <img src="1.jpg" />
+</div>
+```
+
+图片高度 256px 比容器 .box 高度 100px 明显高出了一截，但是，没有滚动条出现。
+
+实际开发的时候，绝对定位元素和非绝对定位元素往往可能混杂在一起，虽然绝对定位元素不能让滚动条出现，但是非绝对定位元素可以，于是，就可能出现另外一种很有特色的现象，即当容器滚动的时候，绝对定位元素微丝不动，不跟着滚动，表现类似 fixed 固定定位，如图 6-61 所示，滚动到头和滚动到尾，图片的位置都是一样的。
+
+![](2020-01-09-09-53-36.png)
+
+由于 position:fixed 固定定位元素的包含块是根元素，因此，除非是窗体滚动，否则上面讨论的所有 overflow 剪裁规则对固定定位都不适用。这一点后面还会提及。
+
+## overflow的作用
+
+作用一是解决实际问题。例如上一节最后“返回顶部”的案例，保证高度为 0，同时里面的定位内容不会被剪裁，或者在局部滚动的容器中模拟近似 position:fixed 的效果。作用二是在遇到类似现象的时候知道问题所在，可以“对症下药”，快速解决问题。
+
+然而，虽然实际开发的时候，对于局部滚动，我们经常会有元素不跟随滚动的需求，如表头固定，但是从可维护性的角度讲，建议还是将这个表头元素移动到滚动容器外进行模拟，因为我们总会不小心在某一层标签添加个类似 position:relative 的声明，此时，原本的不跟随滚动的表头会因为包含块的变化变得可以滚动了，这显然是我们不愿意看到的。当然，如果 HTML 结构被限制无法修改，则利用 overflow 滚动 absolute 元素不滚动的特性来实现表头固定的效果则是上上之选，会让人眼前一亮！
+
+在 CSS 世界中，上面说的这些几乎都是完美无瑕的，但是，随着 CSS3 新世界到来的冲击，规则在不经意间发生了一些变化，其中最明显的就是 transform 属性对 overflow 剪裁规则的影响，CSS3 新世界中 transform 属性似乎扮演了原本“定位元素”的角色，但是这种角色扮演并不完全。什么意思呢？我们先看下面我统计的出现 transform 属性时 overflow 剪裁绝对定位元素的数据。
+
+overflow 元素自身 transform：
+
+- IE9 及以上版本浏览器、Firefox 和 Safari（OS X、iOS）剪裁；
+- Chrome 和 Opera 不剪裁。
+
+overflow 子元素 transform：
+
+- IE9 及以上版本浏览器、Firefox 和 Safari（OS X、iOS）剪裁；
+- Chrome 和 Opera 剪裁。
+
+可以看到 overflow 元素自身 transform 的时候，Chrome 和 Opera 浏览器下的 overflow 剪裁是无效的，这是唯一和有定位属性时的 overflow 剪裁不一样的地方，因此才有“角色扮演并不完全”的说法。
+
+transform 除了改变 overflow 属性原有规则，对层叠上下文以及 position:fixed 的渲染都有影响。因此，当大家遇到 absolute 元素被剪裁或者 fixed 固定定位失效时，可以看看是不是 transform 属性在作祟。
+
+# absolute 与 clip
+
+# absolute 的流体特性
+
+## 当 absolute 遇到 left/top/right/bottom 属性
+
+当 absolute 遇到 left/top/right/bottom 属性的时候，absolute 元素才真正变成绝对定位元素。例如：
+
+```css
+.box {
+  position: absolute;
+  left: 0;
+  top: 0;
+}
+```
+
+表示相对于绝对定位元素包含块的左上角对齐，此时原本的相对特性丢失。但是，如果我们仅设置了一个方向的绝对定位，又会如何呢？例如：
+
+```css
+.box {
+  position: absolute;
+  left: 0;
+}
+```
+
+此时，水平方向绝对定位，但垂直方向的定位依然保持了相对特性。
+
+## absolute 的流体特性
+
+说到流体特性，我们通常第一反应就是`<div>`之类的普通块级元素。实际上，绝对定位元素也具有类似的流体特性，当然，不是默认就有的，而是在特定条件下才具有，这个条件就是“对立方向同时发生定位的时候”。
+
+left/top/right/bottom 是具有定位特性元素专用的 CSS 属性，其中 left 和 right 属于水平对立定位方向，而 top 和 bottom 属于垂直对立定位方向。
+
+当一个绝对定位元素，其对立定位方向属性同时有具体定位数值的时候，流体特性就发生了。例如：
+
+```html
+<style>
+  .box {
+    position: absolute;
+    left: 0;
+    right: 0;
+  }
+</style>
+<div class="box"></div>
+```
+
+如果只有 left 属性或者只有 right 属性，则由于包裹性，此时 .box 宽度是 0。但是在本例中，因为 left 和 right 同时存在，所以宽度就不是 0，而是表现为“格式化宽度”，宽度大小自适应于 .box 包含块的 padding box，也就是说，如果包含块 padding box 宽度发生变化，.box 的宽度也会跟着一起变。
+
+因此，假设 .box 元素的包含块是根元素，则下面的代码可以让 .box 元素正好完全覆盖浏览器的可视窗口，并且如果改变浏览器窗口大小，.box 会自动跟着一起变化：
+
+```css
+.box {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+}
+```
+
+绝对定位元素的这种流体自适应特性从 IE7 就开始支持了，但是出于历史习惯或者其他什么原因，很多同行依然使用下面这样的写法：
+
+```css
+.box {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+}
+```
+
+好像也能覆盖浏览器的可视窗口，并且用得挺好。那问题来了：这两种实现有什么区别呢？
+
+乍一看，效果都是一样的，但是骨子里却已经严重分化了。后者，也就是设定宽高都是 100% 的那个 .box，实际上已经完全丧失了流动性，我们可以通过添加简单的 CSS 声明让大家一眼就看出差别。例如，对两者都添加 padding: 30px：
+
+```css
+.box {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  padding: 30px;
+  /* 或 margin: 30px; */
+}
+
+.box {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  padding: 30px;
+  /* 或 margin: 30px; */
+}
+```
+
+前者此时宽高依然是窗体可视区域的宽高，但是，后者此时的尺寸是100%+60px，多出了60px。有人可能会立马想到使用 box-sizing: border-box，这样确实可以让 padding 表现保持一致，但是，如果添加的是 margin:30px 呢？
+
+前者自动上下左右留白 30px，但是后者的布局已经跑到窗体外面去了，并不支持 margin box 的 box-sizing 此时也无能为力。
+
+通过上面几个例子可以看到，设置了对立定位属性的绝对定位元素的表现神似普通的 `<div>` 元素，无论设置 padding 还是 margin，其占据的空间一直不变，变化的就是 content box 的尺寸，这就是典型的流体表现特性。
+
+所以，如果想让绝对定位元素宽高自适应于包含块，没有理由不使用流体特性写法，除非是替换元素的拉伸。而绝对定位元素的这种流体特性比普通元素要更强大，普通元素流体特性只有一个方向，默认是水平方向，但是绝对定位元素可以让垂直方向和水平方向同时保持流动性。
+
+有人可能还没意识到垂直方向也保持流动性的好处，实际上，其对我们的布局非常有价值。举个最简单的例子，因为子元素的 height 百分比值可以生效了（IE8 及以上版本浏览器），所以高度自适应、高度等比例布局等效果都可以从容实现了。
+
+## absolute 的 margin:auto 居中
+
+当绝对定位元素处于流体状态的时候，各个盒模型相关属性的解析和普通流体元素都是一模一样的，margin 负值可以让元素的尺寸更大，并且可以使用 margin:auto 让绝对定位元素保持居中。
+
+绝对定位元素的 margin:auto 的填充规则和普通流体元素的一模一样：
+
+- 如果一侧定值，一侧 auto，auto 为剩余空间大小；
+- 如果两侧均是 auto，则平分剩余空间。
+
+唯一的区别在于，绝对定位元素 margin:auto 居中从 IE8 浏览器开始支持，而普通元素的 margin:auto 居中很早就支持了。
+
+如果项目不需要管 IE7 浏览器的话，下面这种绝对定位元素水平垂直居中用法就可以直接淘汰了：
+
+```css
+.element {
+  width: 300px;
+  height: 200px;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  margin-left: -150px; /* 宽度的一半 */
+  margin-top: -100px; /* 高度的一半 */
+}
+```
+
+如果绝对定位元素的尺寸是已知的，也没有必要使用下面这种用法，因为按照我的经验，在有些场景下，百分比 transform 会让 iOS 微信闪退，还是尽量避免的好。
+
+```css
+.element {
+  width: 300px;
+  height: 200px;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%); /* 50%为自身尺寸的一半 */
+}
+```
+
+首推的方法就是利用绝对定位元素的流体特性和 margin:auto 的自动分配特性实现居中，例如：
+
+```css
+.element {
+  width: 300px;
+  height: 200px;
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  margin: auto;
+}
+```
+
+# position:relative 才是大哥
+
+# 强悍的 position:fixed 固定定位
+
+
