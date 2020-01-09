@@ -1991,6 +1991,298 @@ left/top/right/bottom 是具有定位特性元素专用的 CSS 属性，其中 l
 
 # position:relative 才是大哥
 
+## relative 对 absolute 的限制
+
+虽然说 relative/absolute/fixed 都能对 absolute 的“包裹性”以及“定位”产生限制，但只有 relative 可以让元素依然保持在正常的文档流中。
+
+下面举个简单例子示意一下 relative 对 absolute 的限制。下面的 CSS 代码之前出现过，是冲着覆盖整个浏览器可视窗体去的，这出手甚为霸气。
+
+```css
+.box {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+}
+```
+
+现在有如下的小图标样式：
+
+```css
+.icon {
+  width: 20px;
+  height: 20px;
+  position: relative;
+}
+```
+
+并且 HTML 结构关系如下：
+
+```html
+<div class="icon">
+  <div class="box"></div>
+</div>
+```
+
+请问，此时 .box 尺寸多少？
+
+原本霸气的窗体尺寸一下子被限制到这里的小不溜丢的 20px×20px，瞬间从天上掉到地上。最根本的原因是，此时.box 元素的包含块变成了.icon。
+
+## relative 与定位
+
+relative 的定位有两大特性：一是相对自身；二是无侵入。
+
+“无侵入”的意思是，当relative 进行定位偏移的时候，一般情况下不会影响周围元素的布局。
+
+![](2020-01-09-17-57-57.png)
+
+```css
+.pk-1 {
+  margin-top: -50px;
+}
+```
+
+relative 则是：
+
+```css
+.pk-2 {
+  position: relative;
+  top: -50px;
+}
+```
+
+作用于图片上，结果从视觉效果看，图片最终定位的位置是一样的，但是，图片后面的元素却表现出了明显的差异：margin 定位的图片后面的文字跟着上来了，而使用 relative 定位的图片后面的文字依然在原地纹丝不动，中间区域留出了一大块空白，如图 6-67 所示。
+
+![](2020-01-09-17-59-15.png)
+
+relative 的定位还有另外两点值得一提：相对定位元素的 left/top/right/bottom 的百分比值是相对于包含块计算的，而不是自身。注意，虽然定位位移是相对自身，但是百分比值的计算值不是。
+
+top 和 bottom 这两个垂直方向的百分比值计算跟 height 的百分比值是一样的，都是相对高度计算的。同时，如果包含块的高度是 auto，那么计算值是 0，偏移无效，也就是说，如果父元素没有设定高度或者不是“格式化高度”，那么 relative 类似 top:20% 的代码等同于 top:0。
+
+当相对定位元素同时应用对立方向定位值的时候，也就是 top/bottom 和 left/right 同时使用的时候，其表现和绝对定位差异很大。绝对定位是尺寸拉伸，保持流体特性，但是相对定位却是“你死我活”的表现，也就是说，只有一个方向的定位属性会起作用。而孰强孰弱则是与文档流的顺序有关的，默认的文档流是自上而下、从左往右，因此 top/bottom 同时使用的时候，bottom 被干掉；left/right 同时使用的时候，right 毙命。
+
+```css
+.example {
+  position: relative;
+  top: 10px;
+  right: 10px; /* 无效 */
+  bottom: 10px; /* 无效 */
+  left: 10px;
+}
+```
+
+## relative 的最小化影响原则
+
+“relative 的最小化影响原则”是我自己总结的一套更好地布局实践的原则，主要分为以下两部分：
+
+1. 尽量不使用 relative，如果想定位某些元素，看看能否使用“无依赖的绝对定位”；
+2. 如果场景受限，一定要使用 relative，则该 relative 务必最小化。
+
+第一点前文有重点介绍，应该很好理解，关键是第二点，“relative 最小化”是什么意思？
+
+我们可以看一个简单的例子。例如，我们希望在某个模块的右上角定位一个图标，初始 HTML 结构如下：
+
+```html
+<div>
+  <img src="icon.png" />
+  <p>内容 1</p>
+  <p>内容 2</p>
+  <p>内容 3</p>
+  <p>内容 4</p>
+</div>
+```
+
+如果让大家去实现的话，我估计十有八九都会如下面这样实现：
+
+```html
+<div style="position:relative;">
+  <img src="icon.png" style="position:absolute;top:0;right:0;">
+  <p>内容 1</p>
+  <p>内容 2</p>
+  <p>内容 3</p>
+  <p>内容 4</p>
+</div>
+```
+
+但是，如果采用“relative 的最小化影响原则”则应该是如下面这般实现：
+
+```html
+<div>
+  <div style="position:relative;">
+    <img src="icon.png" style="position:absolute;top:0;right:0;" />
+  </div>
+  <p>内容 1</p>
+  <p>内容 2</p>
+  <p>内容 3</p>
+  <p>内容 4</p>
+</div>
+```
+
+差别在于，此时 relative 影响的元素只是我们的图标，后面的“内容 1”之类的元素依然保持开始时干净的状态。
+
+页面一旦复杂，第一种实现方法就会留下隐患。因为一个普通元素变成相对定位元素，看上去长相什么的没有变化，但是实际上元素的层叠顺序提高了，甚至在 IE6 和 IE7 浏览器下无须设置 z-index 就直接创建了新的层叠上下文，会导致一些绝对定位浮层无论怎么设置 z-index 都会被其他元素覆盖。当然，z-index 无效已经算是比较严重的问题了。
+
+这里我们不妨看一个看似无伤大雅的小问题。场景是这样的：A 模块下方有一个“B 模块”，这个“B 模块”设置了 margin-top:-100px，希望可以覆盖“A 模块”后面的部分内容，此时两种实现的差异就显现出来了。
+
+如果是前面 position:relative 设置在容器上的实现，会发现“B 模块”并没有覆盖“A 模块”，反而是被“A 模块”覆盖了！原因很简单，相比普通元素，相对定位元素的层叠顺序是“鬼畜”级别的，自然“A 模块”要覆盖“B 模块”。如果要想实现目标效果，就需要给“B模块”也设置 position:relative。
+
+但是，如果是后面“relative 的最小化影响原则”的实现，由于 relative 只影响右上角的图标，“A 模块”后面的内容都还是普通元素，那么，最终的效果就是我们希望的“B 模块”覆盖“A 模块”。
+
+“relative 的最小化影响原则”不仅规避了复杂场景可能出现样式问题的隐患，从日后的维护角度讲也更方便，比方说过了一个月，我们不需要右上角的图标了，直接移除这个 relative 最小化的单元即可！但是，如果 relative 是这个容器上的，这段样式代码你敢删吗？万一其他元素定位也需要呢？万一 relative 还有提高层叠顺序的作用呢？留着没问题，删掉可能出bug，我想大多数的开发者一定会留着的，这也是为什么随着项目进程的推进代码会越来越冗余的原因。
+
+从这一点可以看出来，项目代码越来越臃肿、越来越冗余，归根结底还是一开始实现项目的人的技术水平和能力火候还不够。实现时 “洋溢着灿烂的笑容”没什么好得意的，能够让日后维护甚至其他人接手项目维护的时候也“洋溢着灿烂的笑容”，那才是真厉害！
+
 # 强悍的 position:fixed 固定定位
 
+定位属性值三兄弟的老三 position:fixed 固定定位是三人中最强悍的，一副天不怕地不怕的感觉，主要表现为把 absolute 管得服服帖帖的 relative 对 fixed 是一点儿办法都没有，普通元素想要 overflow:hidden 剪裁 position:fixed 也是痴人说梦。固定定位之所以这么强悍，根本原本是其“包含块”和其他元素不一样。
 
+## position:fixed 不一样的“包含块”
+
+position:fixed 固定定位元素的“包含块”是根元素，我们可以将其近似看成`<html>`元素。换句话说，唯一可以限制固定定位元素的就是`<html>`根元素，而根元素就这么一个，也就是全世界只有一个人能限制 position:fixed 元素，可见人家强悍还是有强悍的资本的。
+
+所以，如果想把某个元素固定定位在某个模块的右上角，下面这种做法是没有用的：
+
+```html
+<style>
+  .father {
+    width: 300px;
+    height: 200px;
+    position: relative;
+  }
+
+  .son {
+    width: 40px;
+    height: 40px;
+    position: fixed;
+    top: 0;
+    right: 0;
+  }
+</style>
+<div class="father">
+  <div class="son"></div>
+</div>
+```
+
+.son 元素只会跑到窗体的右上角，是不会在.father 的右上角的，relative 对 fixed 定位没有任何限制作用。
+
+但是，并不是说我们无法把 .son 元素精确定位到 .father 的右上角，事实上是可以实现的，如何实现呢？
+
+和“无依赖的绝对定位”类似，就是“无依赖的固定定位”，利用 absolute/fixed 元素没有设置 left/top/right/bottom 的相对定位特性，可以将目标元素定位到我们想要的位置，处理如下：
+
+```html
+<style>
+  .father {
+    width: 300px;
+    height: 200px;
+    position: relative;
+  }
+
+  .right {
+    height: 0;
+    text-align: right;
+    overflow: hidden;
+  }
+
+  .son {
+    display: inline;
+    width: 40px;
+    height: 40px;
+    position: fixed;
+    margin-left: -40px;
+  }
+</style>
+<div class="father">
+  <div class="right">
+    <!-- 内联元素充当幽灵结点 -->
+    &nbsp;
+    <div class="son"></div>
+  </div>
+</div>
+```
+
+## position:fixed 的 absolute 模拟
+
+有时候我们希望元素既有不跟随滚动的固定定位效果，又能被定位元素限制和精准定位，那该怎么办呢？
+
+我们可以使用 position:absolute 进行模拟，原理其实很简单：页面的滚动使用普通元素替代，此时滚动元素之外的其他元素自然就有了“固定定位”的效果了。
+
+常规的 HTML 结构和 CSS 代码是下面这样的：
+
+```html
+<style>
+  .fixed {
+    position: fixed;
+  }
+</style>
+<html>
+  <body>
+    <div class="fixed"><div>
+  </body>
+</html>
+```
+
+使用 position:absolute 进行模拟则需要一个滚动容器，假设类名是 .page，则有：
+
+```html
+<style>
+  html,
+  body {
+    height: 100%;
+    overflow: hidden;
+  }
+
+  .page {
+    height: 100%;
+    overflow: auto;
+  }
+
+  .fixed {
+    position: absolute;
+  }
+</style>
+<html>
+  <body>
+    <div class="page">固定定位元素<div>
+    <div class="fixed"><div>
+  </body>
+</html>
+```
+
+整个网页的滚动条由 .page 元素产生，而非根元素，此时 .fixed 元素虽然是绝对定位，但是并不在滚动元素内部，自然滚动时不会跟随，如同固定定位效果，同时本身绝对定位。因此，可以使用 relative 进行限制或者 overflow 进行裁剪等。
+
+然而，将网页的窗体滚动变成内部滚动，很多窗体滚动相关的小 JavaScript 组件需要跟着进行调整，并且可能会丢失其他一些浏览器内置行为，需要谨慎使用。
+
+## position:fixed 与背景锁定
+
+蒙层弹窗是网页中常见的交互，其中黑色半透明全屏覆盖的蒙层基本上都是使用 position: fixed 定位实现的。但是，如果细致一点儿就会发现蒙层无法覆盖浏览器右侧的滚动栏，并且鼠标滚动的时候后面的背景内容依然可以被滚动，并没有被锁定，体验略打折扣。
+
+如果希望背景锁定，该如何实现呢？
+
+要想解决一个问题，可以从发生这个问题的原因入手。position:fixed 蒙层之所以出现背景依然滚动，那是因为滚动元素是根元素，正好是 position:fixed 的“包含块”。所以，如果希望背景被锁定，可以借鉴“absolute 模拟 fixed 定位”的思路，让页面滚动条由内部的普通元素产生即可。
+
+如果网站的滚动结构不方便调整，则需要借助 JavaScript 来实现锁定。
+
+如果是移动端项目，阻止 touchmove 事件的默认行为可以防止滚动；如果是桌面端项目，可以让根元素直接 overflow:hidden。但是，Windows 操作系统下的浏览器的滚动条都是占据一定宽度的，滚动条的消失必然会导致页面的可用宽度变化，页面会产生体验更糟糕的晃动问题，那怎么办呢？很简单，我们只需要找个东西填补消失的滚动条就好了。那该找什么东西填充呢？这时候就轮到功勋卓越的 border 属性出马了 — 消失的滚动条使用同等宽度的透明
+边框填充！
+
+于是，在蒙层显示的同时执行下面的 JavaScript 代码：
+
+```js
+var widthBar = 17, root = document.documentElement;
+if (typeof window.innerWidth == 'number') {
+  widthBar = window.innerWidth - root.clientWidth;
+}
+root.style.overflow = 'hidden';
+root.style.borderRight = widthBar + 'px solid transparent';
+```
+
+隐藏的时候执行下面的 JavaScript 代码：
+
+```js
+var root = document.documentElement;
+root.style.overflow = '';
+root.style.borderRight = '';
+```
+
+就可以实现我们期望的锁定效果了。
