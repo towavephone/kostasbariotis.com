@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+  <style>
+    html,
+    body {
+      background-color: white;
+      margin: 0;
+    }
+
+    .textarea-x {
+      max-width: 298px;
+      border: 1px solid #d0d0d5;
+      border-radius: 4px;
+      background-color: #fff;
+      padding-bottom: 24px;
+      transition: border-color .2s;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .textarea-count {
+      position: absolute;
+      font-size: 12px;
+      line-height: 16px;
+      bottom: 5px; right: 10px;
+      color: #999;
+    }
+
+    .textarea-x > textarea {
+      display: block;
+      width: 100%;
+      padding: 7px 9px;
+      border: 0;
+      background: none;
+      -ms-box-sizing: border-box;
+      box-sizing: border-box;
+      outline: 0;
+      resize: none;
+    }
+
+    .textarea-x:focus-within {
+      border-color: #00a5e0;
+    }
+  </style>
+</head>
+<body>
+  <div class="textarea-x">
+    <textarea id="forFocus" maxlength="250" rows="5"></textarea>
+    <label for="forFocus" class="textarea-count">0/250</label>
+  </div>
+</body>
+</html>

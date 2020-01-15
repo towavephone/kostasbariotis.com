@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+  <style>
+    html,
+    body {
+      background-color: white;
+      margin: 0;
+    }
+
+    form {
+      transition: outline .2s;
+      outline: 2000px solid hsla(0,0%,100%,0);
+      position: relative;
+      z-index: 1;
+    }
+
+    form:focus-within {
+      outline: 2000px solid hsla(0,0%,100%,1);
+    }
+  </style>
+</head>
+<body>
+  购物订单详情
+  <form class="p20 bgwh">
+    <h6 class="f14 b">完成您的购物订单 <i class="icon icon_title_inf vn ui-tips" title="星号为必填"></i></h6>
+    <div class="clearfix mt15">
+      <label class="left">邮箱<span class="red abs">*</span></label>
+      <div class="cell">
+        <input type="email" class="ui-input" name="email" required="">
+      </div>
+    </div>
+    <div class="clearfix mt15">
+      <label class="left">手机号<span class="red abs">*</span></label>
+      <div class="cell">
+        <input type="tel" class="ui-input" name="tel" required="">
+      </div>
+    </div>
+    <div class="clearfix mt15">
+      <span class="left">您的款式<span class="red abs">*</span></span>
+      <div class="cell">
+        <input type="radio" id="radioMale" name="type" value="488"><label class="ui-radio" for="radioMale"></label><label class="mr20 ml5" for="radioMale">男款</label>
+        <input type="radio" id="radioFemale" name="type" value="388" required=""><label class="ui-radio" for="radioFemale"></label><label for="radioFemale" class="ml5">女款</label>
+        <p id="radioMaleP" class="dn mt10">男款每件488元</p>
+        <p id="radioFemaleP" class="dn mt10">女款每件388元</p>
+      </div>
+    </div>
+    <div class="clearfix mt15">
+      <label class="left" for="number">购买数量<span class="red abs">*</span></label>
+      <div class="cell">
+        <input type="number" id="number" class="ui-input" min="1" max="10" size="5" value="1" required="" placeholder="直接输入数值">
+      </div>
+    </div>
+    <div class="clearfix mt15">
+      <label class="left">所在城市<span class="red abs">*</span></label>
+      <div class="cell">
+        <select id="citySelect" required="">
+          <option value="">请选择</option>
+          <option value="10">深圳</option>
+          <option value="5">上海</option>
+          <option value="7">北京</option>
+          <option value="8">成都</option>
+          <option value="6">武汉</option>
+        </select>
+        <p class="mt10 dn">运费： <strong id="transPrice" class="red">0</strong> 元</p>
+      </div>
+    </div>
+    <div class="clearfix mt15">
+      <label class="left">给商家留言</label>
+      <div class="cell">
+        <div class="ui-textarea"><textarea name="message" rows="4" maxlength="200" placeholder="少于200字符"></textarea></div>
+      </div>
+    </div>
+    <div class="clearfix mt15">
+      <span class="left">&nbsp;</span>
+      <div class="cell">
+        <input type="checkbox" id="checkInsur" name="insurance" value="0.4"><label class="ui-checkbox" for="checkInsur"></label><label class="ml5" for="checkInsur">使用运费险0.4元</label>
+      </div>
+    </div>
+    <p class="pay">您总共需要支付 <strong id="total" class="red">0</strong> 元</p>
+    <div class="clearfix mt15">
+      <span class="left">是否货到付款</span>
+      <div class="cell">
+        <input type="checkbox" id="switch" name="pay"><label class="ui-switch" for="switch"></label>
+      </div>
+    </div>
+    <div class="clearfix mt15">
+      <label class="left" for="achieveDate">希望到货日期</label>
+      <div class="cell">
+        <span class="ui-input ui-date-input"><input type="date" id="achieveDate" name="achieve" value="2015-12-27" min="2015-12-27"></span>
+        <span class="gray ml20">默认尽快发货</span>
+      </div>
+    </div>
+    <div class="clearfix mt20">
+      <span class="left">&nbsp;</span>
+      <div class="cell">
+        <input type="submit" id="validateSubmit" class="ui-button ui-button-primary" value="提交">
+      </div>
+    </div>
+  </form>
+</body>
+</html>
