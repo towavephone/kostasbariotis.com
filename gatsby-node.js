@@ -196,4 +196,11 @@ exports.modifyWebpackConfig = ({ config, stage }) => {
       loader: 'null-loader',
     });
   }
+  // If production JavaScript and CSS build
+  if (stage === 'build-javascript') {
+    // Turn off source maps
+    config.merge({
+      devtool: false,
+    });
+  }
 };
