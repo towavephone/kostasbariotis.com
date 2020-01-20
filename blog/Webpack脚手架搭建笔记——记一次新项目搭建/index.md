@@ -231,9 +231,9 @@ export default function loadComponent(loader, options) {
       render: (loaded, props) => {
         const Component = loaded.default;
         const { withRef, ...rest } = props; // eslint-disable-line
-        const { isPureReactComponent, isReactComponent } = Component.prototype;
         let refProps = null;
-        if (isPureReactComponent || isReactComponent) {
+        // 只有 PureReactComponent 和 ReactComponent 才有生命周期，注意在 react-hook 的情况下 Component.prototype 为空
+        if (Component.prototype && (Component.prototype.isPureReactComponent || Component.prototype.isReactComponent)) {
           refProps = {
             ref: (r) => {
               withRef && withRef(r);
