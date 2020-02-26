@@ -1,11 +1,15 @@
 ---
-title: 编译器之旅（一）——词法分析篇
+title: 编译器之旅（一）——词法分析
 date: 2020-2-26 11:15:59
 categories:
 - 前端
 tags: 编译原理, 词法分析
 path: /tour-of-compiler-lexical-analysis
 ---
+
+# 原理知识
+
+可参考 [parsing techniques 中文译本——《解析技术》](http://parsing-techniques.duguying.net/)
 
 # 需求
 
@@ -107,7 +111,7 @@ static int scanint(int c) {
 int scan(struct token *t) {
   int c;
 
-  // 跳过空白
+  // 跳过空白，读取第一个非空字符
   c = skip();
 
   // 处理字符
