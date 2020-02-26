@@ -142,7 +142,7 @@ int scan(struct token *t) {
 }
 ```
 
-# main.c
+## main.c
 
 ```c
 #include "defs.h"
