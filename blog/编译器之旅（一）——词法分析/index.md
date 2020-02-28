@@ -2,7 +2,7 @@
 title: 编译器之旅（一）——词法分析
 date: 2020-2-26 11:15:59
 categories:
-- 前端
+- 计算机基础
 tags: 编译原理, 词法分析
 path: /tour-of-compiler-lexical-analysis
 ---

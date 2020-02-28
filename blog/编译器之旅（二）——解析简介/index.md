@@ -2,7 +2,7 @@
 title: 编译器之旅（二）——解析简介
 date: 2020-2-27 09:57:06
 categories:
-- 前端
+- 计算机基础
 tags: 编译原理, 语法分析
 path: /tour-of-compiler-analysis-introduction
 ---
@@ -373,6 +373,17 @@ exit(0);
 08 / 3
 ```
 
+```
+12 34 + -56 * / - - 8 + * 2
+```
+
+```
+23 +
+18 -
+45.6 * 2
+/ 18
+```
+
 ## 输出
 
 ```
@@ -401,6 +412,14 @@ int 3
 6 + 28
 13 - 34
 -21
+```
+
+```
+unknown token in arithop() on line 1
+```
+
+```
+Unrecognised character . on line 3
 ```
 
 # 结论
