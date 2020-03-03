@@ -199,6 +199,9 @@ struct ASTnode *multiplicative_expr(void) {
 
 ```c
 // Operator precedence for each token
+// enum {
+//   A_ADD, A_SUBTRACT, A_MULTIPLY, A_DIVIDE, A_INTLIT
+// };
 static int OpPrec[] = { 0, 10, 10, 20, 20, 0 };
 
 // Check that we have a binary operator and
@@ -245,10 +248,12 @@ struct ASTnode *binexpr(int ptp) {
 
     // Recursively call binexpr() with the
     // precedence of our token to build a sub-tree
+    // 优先级高的优先建立子树
     right = binexpr(OpPrec[tokentype]);
 
     // Join that sub-tree with ours. Convert the token
     // into an AST operation at the same time.
+    // 同时转换左子树
     left = mkastnode(arithop(tokentype), left, right, 0);
 
     // Update the details of the current token.
@@ -330,16 +335,37 @@ binexpr():
 
 ```
 $ make test
+cc -o parser -g expr.c interp.c main.c scan.c tree.c
 (./parser input01; \
  ./parser input02; \
  ./parser input03; \
  ./parser input04; \
  ./parser input05)
-15                                       # input01 result
-29                                       # input02 result
-syntax error on line 1, token 5          # input03 result
-Unrecognised character . on line 3       # input04 result
-Unrecognised character a on line 1       # input05 result
+int 2
+int 3
+int 5
+3 * 5
+2 + 15
+int 8
+int 3
+8 / 3
+17 - 2
+15
+int 13
+int 6
+13 - 6
+int 4
+int 5
+4 * 5
+7 + 20
+int 8
+int 3
+8 / 3
+27 + 2
+29
+syntax error on line 1, token 5
+Unrecognised character . on line 3
+Unrecognised character a on line 1
 ```
 
 ```
@@ -358,7 +384,7 @@ Unrecognised character a on line 1       # input05 result
 
 # 结论
 
-现在应该退后一步，看看我们要做什么。现在我们有：
+现在退后一步，看看我们要做什么。现在我们有：
 
 - 识别并以我们的语言返回令牌的扫描仪
 - 识别我们的语法，报告语法错误并构建抽象语法树的解析器
@@ -367,4 +393,4 @@ Unrecognised character a on line 1       # input05 result
 
 我们还没有一个编译器。但是，我们非常接近制作第一个编译器！
 
-在编译器编写过程的下一部分中，我们将替换解释器。取而代之的是，我们将编写一个转换器，为具有数学运算符的每个 AST 节点生成 x86-64 汇编代码。我们还将生成一些汇编前同步码和后同步码，以支持生成器输出的汇编代码。
+在编译器编写过程的下一部分中，我们将替换解释器。取而代之的是我们将编写一个转换器，为具有数学运算符的每个 AST 节点生成 x86-64 汇编代码。我们还将生成一些汇编前同步码和后同步码，以支持生成器输出的汇编代码。
