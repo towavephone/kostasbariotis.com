@@ -4,7 +4,7 @@ date: 2020-3-2 12:06:36
 categories:
 - 计算机基础
 tags: 编译原理, 语法分析
-path: /tour-of-compiler-operator-precedence
+path: /tour-of-compiler-operator-precedence/
 ---
 
 # 需求

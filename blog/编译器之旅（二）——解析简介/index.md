@@ -4,7 +4,7 @@ date: 2020-2-27 09:57:06
 categories:
 - 计算机基础
 tags: 编译原理, 语法分析
-path: /tour-of-compiler-analysis-introduction
+path: /tour-of-compiler-analysis-introduction/
 ---
 
 # 需求

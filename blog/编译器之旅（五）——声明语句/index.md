@@ -4,7 +4,7 @@ date: 2020-3-4 14:42:21
 categories:
 - 计算机基础
 tags: 编译原理, 声明语句
-path: /tour-of-compiler-declarative-statement
+path: /tour-of-compiler-declarative-statement/
 ---
 
 # 需求
@@ -210,7 +210,7 @@ void statements(void) {
 }
 ```
 
-在每个循环中代码都会找到一个 T_PRINT 元素，然后它调用 binexpr() 解析表达式，最后它找到 T_SEMI 元素，如果紧跟着 T_EOF 元素，我们就会跳出循环。
+在每个循环中代码都会找到一个 `T_PRINT` 元素，然后它调用 `binexpr()` 解析表达式，最后它找到 `T_SEMI` 元素，如果紧跟着 `T_EOF` 元素，我们就会跳出循环。
 
 在每个表达式树之后，将 gen.c 调用的代码以将树转换为汇编代码，并调用 printint() 函数以打印出最终值。
 

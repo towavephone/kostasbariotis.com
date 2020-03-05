@@ -4,7 +4,7 @@ date: 2020-3-3 10:44:03
 categories:
 - 计算机基础
 tags: 编译原理, 代码生成
-path: /tour-of-compiler-real-compiler
+path: /tour-of-compiler-real-compiler/
 ---
 
 # 需求

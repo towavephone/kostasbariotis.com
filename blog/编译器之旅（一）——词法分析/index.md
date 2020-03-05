@@ -4,7 +4,7 @@ date: 2020-2-26 11:15:59
 categories:
 - 计算机基础
 tags: 编译原理, 词法分析
-path: /tour-of-compiler-lexical-analysis
+path: /tour-of-compiler-lexical-analysis/
 ---
 
 # 原理知识
