@@ -4,7 +4,7 @@ date: 2018-3-29 15:39:17
 categories:
 - 面试
 tags: 面试, 计算机网络
-path: /HTTP/
+path: /http-reading-notes/
 ---
 
 ## 基础概念

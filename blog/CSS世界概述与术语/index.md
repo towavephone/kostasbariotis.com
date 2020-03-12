@@ -1,7 +1,7 @@
 ---
 title: CSS世界概述与术语
 date: 2018-5-22 12:17:44
-path: /CSS-world-overview-term/
+path: /css-world-overview-term/
 tags: 前端, CSS, CSS世界
 ---
 # 概述

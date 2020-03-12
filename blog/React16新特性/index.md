@@ -4,7 +4,7 @@ date: 2019-6-4 20:43:46
 categories:
 - 前端
 tags: 前端, React
-path: /react16-new-feature/
+path: /react-16-new-feature/
 ---
 
 # React16 新特性

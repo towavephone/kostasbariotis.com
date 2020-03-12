@@ -1,7 +1,7 @@
 ---
 title: CSS世界内联元素与流
 date: 2018-9-21 16:52:43
-path: /CSS-world-inline-element-flow/
+path: /css-world-inline-element-flow/
 tags: 前端, CSS, CSS世界
 ---
 

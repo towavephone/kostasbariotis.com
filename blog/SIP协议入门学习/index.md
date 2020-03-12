@@ -4,7 +4,7 @@ date: 2019-6-10 11:43:51
 categories:
 - 前端
 tags: 前端, SIP
-path: /SIP-protocol-introduction-learning/
+path: /sip-protocol-introduction-learning/
 ---
 
 会话发起协议（SIP）是 VoIP 技术中最常用的协议之一。它是一种应用层协议，与其他应用层协议协同工作，通过 Internet 控制多媒体通信会话。

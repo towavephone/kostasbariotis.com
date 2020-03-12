@@ -4,7 +4,7 @@ date: 2019-6-10 11:44:03
 categories:
 - 前端
 tags: 前端, SIP, webrtc
-path: /practice-of-SIP-protocol/
+path: /sip-protocol-practice/
 ---
 
 # 需求背景

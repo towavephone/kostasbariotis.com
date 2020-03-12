@@ -3,7 +3,7 @@ title: SQL语句必知必会
 categories:
   - 面试
 tags: 后端, 面试, 数据库, SQL
-path: /SQL-must-know/
+path: /sql-must-know/
 date: 2018-04-03 15:23:56
 ---
 # 一、基础

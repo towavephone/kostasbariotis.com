@@ -1,7 +1,7 @@
 ---
 title: CSS经典样例实现
 date: 2018-10-30 15:57:12
-path: /CSS-world-classic-example/
+path: /css-classic-example/
 tags: 前端, CSS, CSS实践
 ---
 

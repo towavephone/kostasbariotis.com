@@ -4,7 +4,7 @@ date: 2020-2-28 15:54:47
 categories:
 - 前端
 tags: JS风格, 代码风格
-path: /clean-code-js
+path: /clean-code-js/
 ---
 
 # 介绍

@@ -1,7 +1,7 @@
 ---
 title: CSS世界强大文本处理能力
 date: 2020-1-10 11:47:48
-path: /CSS-world-text-processing/
+path: /css-world-text-processing/
 tags: 前端, CSS, CSS世界
 ---
 

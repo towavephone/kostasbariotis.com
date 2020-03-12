@@ -1,7 +1,7 @@
 ---
 title: CSS世界四大盒尺寸
 date: 2018-8-1 22:49:14
-path: /CSS-world-four-kinds-of-box/
+path: /css-world-four-kinds-of-box/
 tags: 前端, CSS, CSS世界
 ---
 # 深入理解content

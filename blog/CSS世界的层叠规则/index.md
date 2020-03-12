@@ -1,7 +1,7 @@
 ---
 title: CSS世界的层叠规则
 date: 2020-1-10 10:19:55
-path: /CSS-world-stacking-rule/
+path: /css-world-stacking-rule/
 tags: 前端, CSS, CSS世界
 ---
 

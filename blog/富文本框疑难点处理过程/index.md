@@ -4,7 +4,7 @@ date: 2019-2-13 20:13:58
 categories:
 - 前端
 tags: 前端, 富文本框, contenteditable
-path: /rich-input-question
+path: /rich-input-question/
 ---
 
 # 需求背景

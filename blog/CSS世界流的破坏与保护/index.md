@@ -1,7 +1,7 @@
 ---
 title: CSS世界流的破坏与保护
 date: 2020-1-16 16:03:27
-path: /CSS-world-flow-destroy-protect/
+path: /css-world-flow-destroy-protect/
 tags: 前端, CSS, CSS世界
 ---
 
