@@ -460,13 +460,41 @@ html2canvas(document.querySelector('.demo'), { canvas: newCanvas }).then(functio
 
 ## 产生原因
 
-默认开启阻止跨站跟踪导致的，具体表现为最新的 IOS 系统下的 safari，chrome 都有这个问题
+### 苹果浏览器
+
+在苹果浏览器失效是由于默认开启阻止跨站跟踪导致的，具体表现为最新的 IOS 系统下的 safari，chrome 都有这个问题
+
+### 谷歌浏览器
+
+至于最新版本的 chrome 是由于默认开启了 SameSite: Lax
+
+>Chrome 计划将Lax变为默认设置。这时网站可以选择显式关闭 SameSite 属性，将其设为None。不过前提是必须同时设置 Secure 属性（Cookie 只能通过 HTTPS 协议发送），否则无效。
+
+下面的设置无效：
+
+```
+Set-Cookie: widget_session=abc123; SameSite=None
+```
+
+下面的设置有效：
+
+```
+Set-Cookie: widget_session=abc123; SameSite=None; Secure
+```
+
+相同二级域名的子域名下是没有 SameSite 的限制的，举例来说 www.web.dev 和 static.web.dev 之间就没有限制，注意跨站与跨域的区别
+
+具体可查看 [当 CORS 遇到 SameSite](https://juejin.im/post/5e7097b4518825496452cef9?utm_source=gold_browser_extension)
+
+不过经过具体实践，即使设置了也没有用，有可能是我们公司后台的 flask 版本过低，设置 SameSite 没什么效果
+
+[如何在 flask 中显式设置 samesite = None](https://stackoverflow.com/questions/56828663/how-to-explicitly-set-samesite-none-on-a-flask-response)
 
 ## 解决方案
 
 ### 手动关闭
 
-用户手动关闭阻止跨站跟踪，并在产品上予以提示
+用户手动关闭阻止跨站跟踪或者 SameSite 限制，并在产品上予以提示
 
 ### 重定向页面
 
