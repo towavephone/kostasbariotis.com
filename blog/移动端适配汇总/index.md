@@ -393,7 +393,6 @@ async url => {
 
 将 await QRCode.toDataURL(url, options) 赋值给 图片 url 即可
 
-
 ### 生成图片
 
 主要是使用 htmlToCanvas 生成 canvas 画布
@@ -452,7 +451,7 @@ html2canvas(document.querySelector('.demo'), { canvas: newCanvas }).then(functio
 
 更新于 `2020-1-20 11:27:54`
 
-# 解决第三方 cookie 在苹果浏览器失效问题
+# 第三方 cookie 失效
 
 ## 现象
 
