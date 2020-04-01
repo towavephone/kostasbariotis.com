@@ -29,13 +29,13 @@ path: /micro-front-end-demo-practice/
 
 ### 主框架
 
-以下是在 ice/stark 1.4.1 的版本上开始做的，需要添加代码如下：
-
-src\platform\layout\index.js
-
 以路径作为识别子应用的方式，子应用需要配置 publicPath，否则访问不到
 
 这里假设产品 1 是采用了旧框架的子应用，产品 2 采用了新的
+
+以下是在 ice/stark 1.4.1 的版本上开始做的，需要添加代码如下：
+
+src\platform\layout\index.js
 
 ```js
 import { AppRouter, AppRoute } from '@ice/stark';
@@ -221,6 +221,8 @@ setup(app, {
 新项目采用了 react-router 3.2.1，相同的部分不再阐述，只有入口文件不同于老项目
 
 ##### 入口文件
+
+src\index.js
 
 ```js
 import { BrowserRouter, Router } from 'react-router-dom';
