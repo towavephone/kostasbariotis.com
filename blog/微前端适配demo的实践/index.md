@@ -1,5 +1,5 @@
 ---
-title: 微前端适配demo实践过程
+title: 微前端适配demo的实践
 date: 2020-4-1 09:59:12
 categories:
 - 前端
