@@ -53,9 +53,10 @@ draft: true
   - 公司需要能配置各种话术且能调度三方线路的平台，以及统计拨打的效果
 - 任务
   - 负责智能呼叫项目脚手架的升级，编译时间由 `40s` 左右降低到 `10s` 左右，首屏时间由 `855ms` 缩短到 `567ms`，首屏加载大小由 `1.3MB` 减小到 `880KB`，具体过程见 [Webpack升级优化](https://blog.towavephone.com/webpack-upgrade-about-product/)
-  - 开发带话术变量的话术，使用 draft.js 构建可以使用话术变量的富文本框，具体过程见 [富文本框疑难点处理过程](https://blog.towavephone.com/rich-input-question/)
-  - 负责声音波形图组件的封装，使用 wavesurfer.js 完成声音波形图切分组件，具体过程见 [基于wavesurfer.js声音波形图的研究](https://blog.towavephone.com/wavesurfer-voice-wave-research/)
+  - 封装带话术变量的话术富文本框，底层使用 draft.js，具体过程见 [富文本框疑难点处理过程](https://blog.towavephone.com/rich-input-question/)
+  - 封装声音波形图切分组件，底层使用 wavesurfer.js，具体过程见 [基于wavesurfer.js声音波形图的研究](https://blog.towavephone.com/wavesurfer-voice-wave-research/)
   - 使声音播放组件兼容到 IE9，单独对 IE 封装能播放声音的组件，底层使用了 embed 标签，具体过程见 [ReactPlayer之IE兼容性研究](https://blog.towavephone.com/reactplayer-ie-compatibility/)
+  - 封装 SIP 打电话三方库，底层采用了支持 freeswitch 的 SIP.js，具体过程见 [基于SIP协议云端电话的实践](https://blog.towavephone.com/sip-protocol-practice/)
 - 成果
   - 实现了智能呼叫项目从 webpack v2 到 webpack v4 的升级，编译时间缩短了 `75%`，首屏时间缩短了 `33%`
   - 处理各种组件兼容性问题，使用户数量提升了 `10%`
