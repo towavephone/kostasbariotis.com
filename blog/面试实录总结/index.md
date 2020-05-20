@@ -1,27 +1,28 @@
 ---
-title: 腾讯一面面试总结
+title: 面试实录总结
 categories:
   - 面试
-path: /tx-interview-part-1-summary/
-tags: 面试, 腾讯一面
+path: /interview-record-summary/
+tags: 面试, 面试实录
 date: 2018-04-27 12:02:32
+draft: true
 ---
 
-注：只总结与项目无关的知识
+# 腾讯 SNG 一面总结
 
-# Ionic框架是做什么的？
+## Ionic框架是做什么的？
 
-Ionic 是一个用HTML, CSS 跟JS 开发的一个用于移动设备的混合APP 开发框架，采用 Sass与AngularJS 开发。
+Ionic 是一个用HTML, CSS 跟JS 开发的一个用于移动设备的混合 APP 开发框架，采用 Sass与AngularJS 开发。
 
-# Ionic前身是解决什么问题的？
+## Ionic前身是解决什么问题的？
 
 开发混合手机应用的，开源的，免费的代码库，开发成本低
 
-# websocket怎么实现的？
+## websocket怎么实现的？
 
 WebSocket是HTML5出的东西（协议），也就是说HTTP协议没有变化，或者说没关系，但HTTP是不支持持久连接的（长连接，循环连接的不算）
 
-## 客户端发出websocket
+### 客户端发出websocket
 
 ```js 客户端websocket
 GET /chat HTTP/1.1
@@ -50,7 +51,7 @@ Sec-WebSocket-Version: 13
 - Sec-WebSocket-Key 是一个Base64 encode的值，这个是浏览器随机生成的，告诉服务器验证是不是真的是Websocket助理。
 - Sec_WebSocket-Protocol 是一个用户定义的字符串，用来区分同URL下，不同的服务所需要的协议。简单理解要服务A来处理，- Sec-WebSocket-Version 是告诉服务器所使用的Websocket Draft（协议版本），然后服务器会返回下列东西，表示已经接受到请求，成功建立Websocket！
 
-## 服务器响应websocket
+### 服务器响应websocket
 
 ```js 服务器websocket
 HTTP/1.1 101 Switching Protocols
@@ -71,7 +72,7 @@ Connection: Upgrade
 
 依然是固定的，告诉客户端即将升级的是Websocket协议，而不是mozillasocket，lurnarsocket或者shitsocket。
 
-## websocket背景
+### websocket背景
 
 **背景技术**
 
@@ -110,13 +111,13 @@ Connection: Upgrade
 - ajax轮询需要服务器有很快的处理速度和资源。
 - long poll需要有很高的并发，也就是说同时响应客户端的能力。
 
-## websocket实现原理
+### websocket实现原理
 
-- 我们所用的程序是要经过两层代理的，即HTTP协议在Nginx等服务器的解析下，然后再传送给相应的Handler（PHP等）来处理。
+- 我们所用的程序是要经过两层代理的，即 HTTP 协议在 Nginx 等服务器的解析下，然后再传送给相应的 Handler（PHP等）来处理。
 - 简单地说，我们有一个非常快速的接线员（Nginx），他负责把问题转交给相应的客服（Handler）。本身接线员基本上速度是足够的，但是每次都卡在客服（Handler）了，老有客服处理速度太慢，导致客服不够。
-- Websocket就解决了这样一个难题，建立后，可以直接跟接线员建立持久连接，有信息的时候客服想办法通知接线员，然后接线员在统一转交给客户。这样就可以解决客服处理速度过慢的问题了。
+- Websocket 就解决了这样一个难题，建立后，可以直接跟接线员建立持久连接，有信息的时候客服想办法通知接线员，然后接线员在统一转交给客户。这样就可以解决客服处理速度过慢的问题了。
 
-## js调用代码
+### js调用代码
 
 ```js
 var websocket = new WebSocket("ws://www.host.com/path");   
@@ -129,20 +130,20 @@ function onError(evt) { alert( evt.data); }
 websocket.send("client to server"); 
 ```
 
-# 还有什么别的方式来实现消息推送机制？
+## 还有什么别的方式来实现消息推送机制？
 
 1. 长链接 
     例如用 iframe 维护长链接开销较大，而且页面会显示一直在加载，不利于使用
 2. flash socket
     利用 flash 插件提供的 socket，需要会 flash，无法避免如安全
 
-# 双向绑定是怎么实现的？
+## 双向绑定是怎么实现的？
 
-## 发布者-订阅者模式（backbone.js）
+### 发布者-订阅者模式（backbone.js）
 
 一般通过sub, pub的方式实现数据和视图的绑定监听，更新数据方式通常做法是vm.set('property', value)，这种方式现在毕竟太low了，我们更希望通过 vm.property = value 这种方式更新数据，同时自动更新视图，于是有了下面两种方式
 
-## 脏值检查（angular.js）
+### 脏值检查（angular.js）
 
 angular.js 是通过脏值检测的方式比对数据是否有变更，来决定是否更新视图，最简单的方式就是通过 setInterval() 定时轮询检测数据变动，当然Google不会这么low，angular只有在指定的事件触发时进入脏值检测，大致如下：
 
@@ -152,11 +153,11 @@ angular.js 是通过脏值检测的方式比对数据是否有变更，来决定
 - Timer事件( &#36timeout , &#36interval )
 - 执行 &#36digest() 或 &#36apply()
 
-## 数据劫持（vue.js）
+### 数据劫持（vue.js）
 
 vue.js 则是采用数据劫持结合发布者-订阅者模式的方式，通过Object.defineProperty()来劫持各个属性的setter，getter，在数据变动时发布消息给订阅者，触发相应的监听回调。
 
-## mvvm的实现
+### mvvm的实现
 
 []
 通过Object.defineProperty()来实现对属性的劫持，达到监听数据变动的目的
@@ -170,15 +171,15 @@ vue.js 则是采用数据劫持结合发布者-订阅者模式的方式，通过
 
 后见本篇文章[](/mvvm-principle/)
 
-# 301与302区别？
+## 301与302区别？
 
 302重定向只是暂时的重定向，搜索引擎会抓取新的内容而保留旧的地址，因为服务器返回302，所以，搜索搜索引擎认为新的网址是暂时的。
 
 301重定向是永久的重定向，搜索引擎在抓取新的内容的同时也将旧的网址替换为了重定向之后的网址。
 
-# jquery中bind和on的用法？以及他们的区别？优缺点？
+## jquery中bind和on的用法？以及他们的区别？优缺点？
 
-## bind()
+### bind()
 
 1. 使用方式：$(selector).bind(event,data,function)；
 2. event：必需项；添加到元素的一个或多个事件，例如 click,dblclick 等；
@@ -192,7 +193,7 @@ vue.js 则是采用数据劫持结合发布者-订阅者模式的方式，通过
 6. function：必需；当绑定事件发生时，需要执行的函数；
 7. 适用所有版本，但是根据官网解释，自从jquery1.7版本以后bind()函数推荐用on()来代替。
 
-## on()
+### on()
 
 1. 使用方式：$(selector).on(event,childselector,data,function):
 2. event：必需项；添加到元素的一个或多个事件，例如 click,dblclick 等；
@@ -207,12 +208,12 @@ vue.js 则是采用数据劫持结合发布者-订阅者模式的方式，通过
 7. function：必需；当绑定事件发生时，需要执行的函数；
 8. jquery1.7及其以上版本；jquery1.7版本出现之后用于替代bind()，live()绑定事件方式；
 
-## 相同点：
+### 相同点
 
 1. 都支持单元素多事件的绑定，空格相隔方式或者大括号替代方式;
 2. 均是通过事件冒泡方式，将事件传递到document进行事件的响应；
 
-## 比较和联系:
+### 比较和联系
 
 1. bind()函数只能针对已经存在的元素进行事件的设置；但是live(),on(),delegate()均支持未来新添加元素的事件设置；
 2. bind()函数在jquery1.7版本以前比较受推崇，1.7版本出来之后，官方已经不推荐用bind()，替代函数为on()，这也是1.7版本新添加的函数，同样，可以用来代替live()函数，live()函数在1.9版本已经删除；
@@ -220,25 +221,25 @@ vue.js 则是采用数据劫持结合发布者-订阅者模式的方式，通过
 4. bind()支持Jquery所有版本；live()支持jquery1.8-；delegate()支持jquery1.4.2+；on()支持jquery1.7+；
 5. 如果项目中引用jquery版本为低版本，推荐用delegate(),高版本jquery可以使用on()来代替。
 
-# react？react虚拟dom算法的实现方式？虚拟dom是什么？
+## react？react虚拟dom算法的实现方式？虚拟dom是什么？
 
-## React定义
+### React定义
 
 1. 是一个用于构建用户界面的 js 库；
 2. 主要用于构建UI，很多人认为 React 是 MVC 中的 V（视图）；
 3. 起源于 Facebook 的内部项目，用来架设 Instagram 的网站，并于 2013 年 5 月开源；
 4. 拥有较高的性能，代码逻辑非常简单，越来越多的人已开始关注和使用它。
 
-## react虚拟dom算法
+### react虚拟dom算法
 
 见本篇文章[](/react-virtual-dom/)
 
-# 重绘与重排是什么？他们的区别？有一个动画怎样实现使它的dom的重排重绘改变最小？也就是更流畅？
+## 重绘与重排是什么？他们的区别？有一个动画怎样实现使它的dom的重排重绘改变最小？也就是更流畅？
 
 重绘：是一个元素的外观变化所引发的浏览器行为；例如改变visibility、outline、背景色等属性。
 重排：是引起DOM树重新计算的行为；
 
-## 引发重排:
+### 引发重排
 
 1. 添加、删除可见的dom
 2. 元素的位置改变
@@ -246,12 +247,12 @@ vue.js 则是采用数据劫持结合发布者-订阅者模式的方式，通过
 4. 页面渲染初始化
 5. 浏览器窗口尺寸改变
 
-## 升华版：
+### 升华版
 
 1. dom树的结构变化 (添加、删除dom)
 2. 获取某些属性 offsetTop、offsetLeft、 offsetWidth、offsetHeight、scrollTop、scrollLeft、scrollWidth、scrollHeight、clientTop、clientLeft、clientWidth、clientHeight
 
-## 改进的方法：
+### 改进的方法
 
 1. 将多次dom修改合并成一次操作
 2. 多次重排的元素，先脱离文档流，在修改
@@ -259,21 +260,21 @@ vue.js 则是采用数据劫持结合发布者-订阅者模式的方式，通过
 4. 在需要经常获取那些引起浏览器重排的属性值时，要缓存到变量
 5. 在内存中多次操作节点，完成后再添加到文档中去（有动画效果时）
 
-## 浏览器加载文档过程
+### 浏览器加载文档过程
 
 >浏览器从下载文档到显示页面的过程是个复杂的过程，这里包含了重绘和重排。各家浏览器引擎的工作原理略有差别，但也有一定规则。简单讲，通常在文档初次加载时，浏览器引擎会解析HTML文档来构建DOM树，之后根据DOM元素的几何属性构建一棵用于渲染的树。渲染树的每个节点都有大小和边距等属性，类似于盒子模型（由于隐藏元素不需要显示，渲染树中并不包含DOM树中隐藏的元素）。当渲染树构建完成后，浏览器就可以将元素放置到正确的位置了，再根据渲染树节点的样式属性绘制出页面。由于浏览器的流布局，对渲染树的计算通常只需要遍历一次就可以完成。但table及其内部元素除外，它可能需要多次计算才能确定好其在渲染树中节点的属性，通常要花3倍于同等元素的时间。这也是为什么我们要避免使用table做布局的一个原因。
 
-# 什么是一级dom和二级dom？
+## 什么是一级dom和二级dom？
 
 文档对象模型（Document Object Model，简称DOM），是W3C组织推荐的处理可扩展标志语言的标准编程接口。Document Object Model的历史可以追溯至1990年代后期微软与Netscape的“浏览器大战”，双方为了在JavaScript与JScript一决生死，于是大规模的赋予浏览器强大的功能。微软在网页技术上加入了不少专属事物，计有VBScript、ActiveX、以及微软自家的DHTML格式等，使不少网页使用非微软平台及浏览器无法正常显示。DOM即是当时蕴酿出来的杰作。
 
 根据W3C DOM规范，DOM是HTML与XML的应用编程接口（API），DOM将整个页面映射为一个由层次节点组成的文件。有1级、2级、3级共3个级别。
 
-## 1级DOM
+### 1级DOM
 
 1级DOM在1998年10月份成为W3C的提议，由DOM核心与DOM HTML两个模块组成。DOM核心能映射以XML为基础的文档结构，允许获取和操作文档的任意部分。DOM HTML通过添加HTML专用的对象与函数对DOM核心进行了扩展。
 
-## 2级DOM
+### 2级DOM
 
 鉴于1级DOM仅以映射文档结构为目标，DOM 2级面向更为宽广。通过对原有DOM的扩展，2级DOM通过对象接口增加了对鼠标和用户界面事件（DHTML长期支持鼠标与用户界面事件）、范围、遍历（重复执行DOM文档）和层叠样式表（CSS）的支持。同时也对DOM 1的核心进行了扩展，从而可支持XML命名空间。
 
@@ -284,19 +285,19 @@ vue.js 则是采用数据劫持结合发布者-订阅者模式的方式，通过
 - DOM样式：描述处理基于CSS样式的接口；
 - DOM遍历与范围：描述遍历和操作文档树的接口；
 
-## 3级DOM
+### 3级DOM
 
 3级DOM通过引入统一方式载入和保存文档和文档验证方法对DOM进行进一步扩展，DOM3包含一个名为“DOM载入与保存”的新模块，DOM核心扩展后可支持XML1.0的所有内容，包括XML Infoset、 XPath、和XML Base。
 
-## 0级DOM
+### 0级DOM
 
 当阅读与DOM有关的材料时，可能会遇到参考0级DOM的情况。需要注意的是并没有标准被称为0级DOM，它仅是DOM历史上一个参考点（0级DOM被认为是在Internet Explorer 4.0 与Netscape Navigator4.0支持的最早的DHTML）。
 
-# 跨域postMessage内部的实现方式？调用过程？伪装域名怎么解决？其中服务器端怎么实现Access-Control-Allow-Origin的跨域的（怎么拦截跨域的）？
+## 跨域postMessage内部的实现方式？调用过程？伪装域名怎么解决？其中服务器端怎么实现Access-Control-Allow-Origin的跨域的（怎么拦截跨域的）？
 
 window.postMessage() 方法被调用时，会在所有页面脚本执行完毕之后（e.g., 在该方法之后设置的事件、之前设置的timeout 事件,etc.）向目标窗口派发一个  MessageEvent 消息。 该MessageEvent消息有四个属性需要注意： message 属性表示该 message 的类型； data 属性为 window.postMessage 的第一个参数；origin 属性表示调用 window.postMessage() 方法时调用页面的当前状态； source 属性记录调用 window.postMessage() 方法的窗口信息。
 
-## postMessage语法
+### postMessage语法
 
 >otherWindow.postMessage(message, targetOrigin, [transfer]);
 
@@ -316,28 +317,28 @@ window.postMessage() 方法被调用时，会在所有页面脚本执行完毕�
 - source
     对发送消息的窗口对象的引用; 您可以使用此来在具有不同origin的两个窗口之间建立双向通信。
 
-## 伪装域名解决？
+### 伪装域名解决？
 
 - 如果您不希望从其他网站接收message，请不要为message事件添加任何事件侦听器。
 - 始终使用origin和source属性验证发件人的身份
 - 当您使用postMessage将数据发送到其他窗口时，始终指定精确的目标origin，而不是*。
 
-## 实现Access-Control-Allow-Origin的跨域
+### 实现Access-Control-Allow-Origin的跨域
 
 - 直接在浏览器地址栏中，输入某接口地址。是不会产生跨域问题的；
 - 只有当在某域名的页面中，由该页面发起的接口请求。才可能会跨域；
 - nginx就类似于这个浏览器，它接收到外部对它的请求（注意，nginx只会接收别人对它的请求，而不会拦截浏览器的请求），再类似浏览器地址栏一样去请求某个接口，最后将请求到的内容返回回去。
 
-# 缓存的实现方式？
+## 缓存的实现方式？
 
-## 强缓存
+### 强缓存
 
-### Expires
+#### Expires
 
 - 表示存在时间，允许客户端在这个时间之前不去检查（发请求），例如：Expires: Wed, 21 Oct 2015 07:28:00 GMT
 - 以上时间表示消息发送的时间，时间的描述格式由rfc822定义。例如，Web服务器告诉浏览器在2018-04-28 03:30:01这个时间点之前，可以使用缓存文件。发送请求的时间是2018-04-28 03:25:01，即缓存5分钟。
 
-### cache-control
+#### cache-control
 
 1. max-age
     - “max-age”指令指定从请求的时间开始，允许获取的响应被重用的最长时间（单位：秒）。如果还有一个设置了 "max-age" 或者 "s-max-age" 指令的Cache-Control响应头，那么 Expires 头就会被忽略。
@@ -347,50 +348,50 @@ window.postMessage() 方法被调用时，会在所有页面脚本执行完毕�
 4. public：如果响应被标记为“public”，则即使它有关联的 HTTP 身份验证，甚至响应状态代码通常无法缓存，也可以缓存响应。大多数情况下，“public”不是必需的，因为明确的缓存信息（例如“max-age”）已表示响应是可以缓存的。我们有时可以在memory,disk,路由等找到缓存就是因为这是public的设置。
 5. private：不允许任何中间缓存对其进行缓存，只能最终用户做缓存。
 
-### 例子
+#### 例子
 
 缓存设置max-age=86400浏览器以及任何中间缓存均可将响应（如果是“public”响应）缓存长达 1 天（60 秒 x 60 分钟 x 24 小时）。private, max-age=600客户端的浏览器只能将响应缓存最长 10 分钟（60 秒 x 10 分钟）。no-store不允许缓存响应，每次请求都必须完整获取。
 
-### 引申问题： from memory cache 与 from disk cache 的区别
+#### 引申问题： from memory cache 与 from disk cache 的区别
 
 浏览器访问页面时，查找静态文件首先会从缓存中读取，缓存分为两种，内存缓存与硬盘缓存。查找文件的顺序为：memory -> disk -> 服务器。内存缓存是在kill进程时删除，即关闭浏览器时内存缓存消失，而硬盘缓存则是即使关闭浏览器也仍然存在。当我们首次访问页面，需要从服务器获取资源，将可缓存的文件缓存在内存与硬盘，当刷新页面时(这种情况没有关闭浏览器)则从内存缓存中读取，我们可以在上面的截图看到from memory cache的所需要的时间为0，这是最快的读取文件方式，当我们重新开一个页面时，也就是已经kill这个进程，内存缓存已经消失了，这时候就从硬件缓存获取，而当我们手动在浏览器清除缓存时，下次访问就只能再去服务器拉取文件了。但有一点可以从上面图中看到，并不是从硬盘获取缓存的时间一定比从网络获取的时间短，示例中的时间是更长的，这取决于网络状态和文件大小等因素，从缓存获取有利有弊，当网络较差或者文件较大时，从硬盘缓存获取可以给用户较好的体验。
 
-## 协商缓存
+### 协商缓存
 
-### Last-Modified
+#### Last-Modified
 
 标示这个响应资源的最后修改时间。web 服务器在响应请求时，告诉浏览器资源的最后修改时间
 
-### If-Modify-since 
+#### If-Modify-since 
 
 再次向服务器请求时带上，如果资源已修改，返回 HTTP 200，未被修改，返回 HTTP 304
 
-### ETag
+#### ETag
 
 告诉浏览器当前资源在服务器的唯一标识
 
-### If-None-Match
+#### If-None-Match
 
 再次向服务器请求时带上，如果资源已修改，返回 HTTP 200,未被修改，返回 HTTP 304
 
-## 总结
+### 总结
 
 浏览器获取文件的过程如下：
 
 ![](./IJVVB3v.jpg)
 
-# dns的查询过程？
+## dns的查询过程？
 
 假设www.abc.com的主机要查询www.xyz.abc.com的服务器ip地址。
  
-## 知识点
+### 知识点
 
 1. hosts文件：以静态映射的方式提供IP地址与主机名的对照表，类似ARP表
 2. 域：abc.com是一个域，它可以划分为多个区域，如abc.com和xyz.abc.com
 
-## 步骤
+### 步骤
 
-### 递归查询
+#### 递归查询
 
 1. 在hosts静态文件、DNS解析器缓存中查找某主机的ip地址
 2. 上一步无法找到，去DNS本地服务器（即域服务器）查找，其本质是去区域服务器、服务器缓存中查找
@@ -398,14 +399,14 @@ window.postMessage() 方法被调用时，会在所有页面脚本执行完毕�
 4. ‘根DNS服务器’根据查询域名中的‘xyz.com’，再向xyz.com的区域服务器查询
 5. www.xyz.abc.com的DNS服务器直接解析该域名，将查询到的ip再原路返回给请求查询的主机
 
-### 迭代查询
+#### 迭代查询
 
 1. 在hosts静态文件、DNS解析器缓存中查找某主机的ip地址
 2. 上一步无法找到，在DNS本地服务器（即域服务器）查找所有本层次的区域服务器
 3. 本地DNS服务器查不到就查询上一层次的所有区域服务器，以此类推直至根域名DNS服务器‘.’
 4. 到达根域名服务器后又向下查询，直至查到结果为止。
 
-### 迭代查询与递归查询结合
+#### 迭代查询与递归查询结合
 
 递归查询需要经过逐层查询才能获得查询结果，当查询具有许多层次的DNS结构时效率很低，所以一般采用两者相结合的查询方式。
 
