@@ -4934,7 +4934,7 @@ React 需要使用算法来了解如何有效地更新 UI 以匹配最新的树�
 
     当对 DOM 节点的子节点进行递归时，React 会同时迭代两个子节点列表，并在出现差异时生成变异。例如，在子节点末尾添加元素时，在这两个树之间进行转换效果很好。
 
-    ```javascript
+    ```html
     <ul>
       <li>first</li>
       <li>second</li>
@@ -4945,14 +4945,13 @@ React 需要使用算法来了解如何有效地更新 UI 以匹配最新的树�
       <li>second</li>
       <li>third</li>
     </ul>
-
     ```
 
 5. **处理 Key：**
 
     React 支持 key 属性。当子节点有 key 时，React 使用 key 将原始树中的子节点与后续树中的子节点相匹配。例如，添加 key 可以使树有效地转换，
 
-    ```javascript
+    ```html
     <ul>
       <li key="2015">Duke</li>
       <li key="2016">Villanova</li>
@@ -4985,7 +4984,7 @@ React 需要使用算法来了解如何有效地更新 UI 以匹配最新的树�
 
 实际上，以上的 children 属性不一定需要在 JSX 元素的 `attributes` 列表中命名。反之，你可以将它直接放在元素内部：  
 
-```javascript
+```jsx
 <Mouse>
   {mouse => (
     <p>The mouse position is {mouse.x}, {mouse.y}</p>
@@ -5007,7 +5006,7 @@ Mouse.propTypes = {
 
 ### 如何使用渲染属性创建 HOC?
 
-可以使用带有渲染属性的常规组件实现大多数高阶组件（HOC）。例如，如果希望使用 withMouse HOC 而不是 <Mouse> 组件，则你可以使用带有渲染属性的常规 <Mouse> 组件轻松创建一个 HOC 组件。
+可以使用带有渲染属性的常规组件实现大多数高阶组件（HOC）。例如，如果希望使用 withMouse HOC 而不是 `<Mouse>` 组件，则你可以使用带有渲染属性的常规 `<Mouse>` 组件轻松创建一个 HOC 组件。
 
 ```javascript
 function withMouse(Component) {
@@ -5031,7 +5030,7 @@ Windowing 是一种技术，它在任何给定时间只呈现一小部分行，�
 
 Falsy 值比如 false，null，undefined 是有效的子元素，但它们不会呈现任何内容。如果仍要显示它们，则需要将其转换为字符串。我们来举一个如何转换为字符串的例子：
 
-```javascript
+```jsx
 <div>
   My JavaScript variable is {String(myVariable)}.
 </div>
