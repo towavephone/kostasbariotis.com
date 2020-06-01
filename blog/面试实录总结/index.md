@@ -26,7 +26,8 @@ WebSocket是HTML5出的东西（协议），也就是说HTTP协议没有变化�
 
 ### 客户端发出websocket
 
-```js 客户端websocket
+```js
+// 客户端websocket
 GET /chat HTTP/1.1
 Host: server.example.com
 Upgrade: websocket
@@ -51,11 +52,12 @@ Sec-WebSocket-Version: 13
 ```
 
 - Sec-WebSocket-Key 是一个Base64 encode的值，这个是浏览器随机生成的，告诉服务器验证是不是真的是Websocket助理。
-- Sec_WebSocket-Protocol 是一个用户定义的字符串，用来区分同URL下，不同的服务所需要的协议。简单理解要服务A来处理，- Sec-WebSocket-Version 是告诉服务器所使用的Websocket Draft（协议版本），然后服务器会返回下列东西，表示已经接受到请求，成功建立Websocket！
+- Sec_WebSocket-Protocol 是一个用户定义的字符串，用来区分同URL下，不同的服务所需要的协议。简单理解要服务A来处理，-Sec-WebSocket-Version 是告诉服务器所使用的Websocket Draft（协议版本），然后服务器会返回下列东西，表示已经接受到请求，成功建立Websocket！
 
 ### 服务器响应websocket
 
-```js 服务器websocket
+```js
+// 服务器websocket
 HTTP/1.1 101 Switching Protocols
 Upgrade: websocket
 Connection: Upgrade
@@ -72,7 +74,7 @@ Upgrade: websocket
 Connection: Upgrade
 ```
 
-依然是固定的，告诉客户端即将升级的是Websocket协议，而不是mozillasocket，lurnarsocket或者shitsocket。
+依然是固定的，告诉客户端即将升级的是Websocket协议，而不是 mozillasocket，lurnarsocket或者shitsocket。
 
 ### websocket背景
 
@@ -150,10 +152,10 @@ websocket.send("client to server");
 angular.js 是通过脏值检测的方式比对数据是否有变更，来决定是否更新视图，最简单的方式就是通过 setInterval() 定时轮询检测数据变动，当然Google不会这么low，angular只有在指定的事件触发时进入脏值检测，大致如下：
 
 - DOM事件，譬如用户输入文本，点击按钮等( ng-click )
-- XHR响应事件 ( $http )
-- 浏览器Location变更事件 ( $location )
-- Timer事件( &#36timeout , &#36interval )
-- 执行 $digest() 或 $apply()
+- XHR响应事件 ( `$http` )
+- 浏览器Location变更事件 ( `$location` )
+- Timer事件( `$timeout` , `$interval` )
+- 执行 `$digest()` 或 `$apply()`
 
 ### 数据劫持（vue.js）
 
@@ -182,12 +184,12 @@ vue.js 则是采用数据劫持结合发布者-订阅者模式的方式，通过
 
 ### bind()
 
-1. 使用方式：$(selector).bind(event,data,function)；
+1. 使用方式：`$(selector).bind(event,data,function)`；
 2. event：必需项；添加到元素的一个或多个事件，例如 click,dblclick 等；
-3. 单事件处理：例如 $(selector).bind("click",data,function)；
+3. 单事件处理：例如 `$(selector).bind("click",data,function)`；
 4. 多事件处理：
-    1. 利用空格分隔多事件，例如 $(selector).bind("click dbclick mouseout",data,function);
-    2. 利用大括号灵活定义多事件，例如 $(selector).bind({event1:function, event2:function, ...})；
+    1. 利用空格分隔多事件，例如 `$(selector).bind("click dbclick mouseout",data,function)`;
+    2. 利用大括号灵活定义多事件，例如 `$(selector).bind({event1:function, event2:function, ...})`；
     3. 空格相隔方式：绑定较为死板，不能给事件单独绑定函数,适合处理多个事件调用同一函数情况；
     4. 大括号替代方式：绑定较为灵活，可以给事件单独绑定函数；
 5. data：可选；需要传递的参数；
@@ -196,12 +198,12 @@ vue.js 则是采用数据劫持结合发布者-订阅者模式的方式，通过
 
 ### on()
 
-1. 使用方式：$(selector).on(event,childselector,data,function):
+1. 使用方式：`$(selector).on(event,childselector,data,function)`:
 2. event：必需项；添加到元素的一个或多个事件，例如 click,dblclick 等；
-3. 单事件处理：例如 $(selector).on("click",childselector,data,function);
+3. 单事件处理：例如 `$(selector).on("click",childselector,data,function)`;
 4. 多事件处理：
-    1. 利用空格分隔多事件，例如 $(selector).on("click dbclick mouseout",childseletor,data,function);
-    2. 利用大括号灵活定义多事件，例如 $(selector).on({event1:function, event2:function, ...},childselector);　
+    1. 利用空格分隔多事件，例如 `$(selector).on("click dbclick mouseout",childseletor,data,function)`;
+    2. 利用大括号灵活定义多事件，例如 `$(selector).on({event1:function, event2:function, ...},childselector)`;　
     3. 空格相隔方式：绑定较为死板，不能给事件单独绑定函数,适合处理多个事件调用同一函数情况；
     4. 大括号替代方式：绑定较为灵活，可以给事件单独绑定函数；　
 5. childSelector: 可选；需要添加事件处理程序的元素，一般为selector的子元素；　　  
@@ -300,7 +302,7 @@ window.postMessage() 方法被调用时，会在所有页面脚本执行完毕�
 
 ### postMessage语法
 
->otherWindow.postMessage(message, targetOrigin, [transfer]);
+>`otherWindow.postMessage(message, targetOrigin, [transfer])`;
 
 - otherWindow
     其他窗口的一个引用，比如iframe的contentWindow属性、执行window.open返回的窗口对象、或者是命名过或数值索引的window.frames。
