@@ -70,6 +70,8 @@ console.log(Object.getPrototypeOf(person) === Person.prototype) // true
 console.log(Object.prototype.__proto__ === null) // true
 ```
 
+![](2020-06-02-16-04-31.png)
+
 ## 讲讲this？
 
 [JavaScript中的this](https://juejin.im/post/59748cbb6fb9a06bb21ae36d)
