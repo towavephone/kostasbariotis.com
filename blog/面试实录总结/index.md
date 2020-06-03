@@ -555,8 +555,177 @@ Mobx的优势：
 ### 图片格式的选择？
 ### 拿到美工的图片时会怎么选择？做什么处理？
 ### iconfont 字体库原理？
+
+使用 @font-face 定义一个字体family
+
+```css
+@font-face {
+  font-family: 'iconfont';
+  src: url('//at.alicdn.com/t/font_1453702746_9938898.eot'); 
+  src: url('//at.alicdn.com/t/font_1453702746_9938898.eot?#iefix') format('embedded-opentype'), /* IE6-IE8 */
+  url('//at.alicdn.com/t/font_1453702746_9938898.woff') format('woff'), /* chrome、firefox */
+  url('//at.alicdn.com/t/font_1453702746_9938898.ttf') format('truetype'), /* chrome、firefox、opera、Safari, Android, iOS 4.2+*/
+  url('//at.alicdn.com/t/font_1453702746_9938898.svg#iconfont') format('svg'); /* iOS 4.1- */
+}
+
+.test{
+  font-size: 16px;
+  font-family: 'iconfont';
+}
+```
+
+这样我们就可以用自定义字体渲染这些文字了，每一个字都有对应的 unicode，比如我们在 web 上输入我跟输入 `&#x6211;` 是一样的，浏览器会自动帮你找到对应的图形去渲染。
+
+>当然因为兼容性的问题，不同的浏览器需要加载不同格式的字体，所以我们要同时支持四种字体。
+
 ### css 选择器优先级？
 ### 对方技术栈？
 ### 对方面试几轮？
 ### 对方做什么业务？
 
+# 腾讯
+
+## 一面
+
+### 项目介绍？
+### 浏览器缓存介绍？
+### sw缓存怎么实现的？原理是什么？
+
+一个服务器与浏览器之间的中间人角色，如果网站中注册了 service worker 那么它可以拦截当前网站所有的请求，进行判断（需要编写相应的判断程序），如果需要向服务器发起请求的就转给服务器，如果可以直接使用缓存的就直接返回缓存不再转给服务器。从而大大提高浏览体验。
+
+1. 注册 Service worker 在你的 index.html 加入以下内容
+
+```js
+/* 判断当前浏览器是否支持serviceWorker */
+if ('serviceWorker' in navigator) {
+  /* 当页面加载完成就创建一个serviceWorker */
+  window.addEventListener('load', function () {
+      /* 创建并指定对应的执行内容 */
+      /* scope 参数是可选的，可以用来指定你想让 service worker 控制的内容的子目录。 在这个例子里，我们指定了 '/'，表示根网域下的所有内容，这也是默认值。 */
+      navigator.serviceWorker.register('./serviceWorker.js', {scope: './'})
+          .then(function (registration) {
+              console.log('ServiceWorker registration successful with scope: ', registration.scope);
+          })
+          .catch(function (err) {
+              console.log('ServiceWorker registration failed: ', err);
+          });
+  });
+}
+```
+
+2. 安装 worker：在我们指定的处理程序 serviceWorker.js 中书写对应的安装及拦截逻辑
+
+```js
+/* 监听安装事件，install 事件一般是被用来设置你的浏览器的离线缓存逻辑 */
+this.addEventListener('install', function (event) {
+    /* 通过这个方法可以防止缓存未完成，就关闭 serviceWorker */
+    event.waitUntil(
+        /* 创建一个名叫V1的缓存版本 */
+        caches.open('v1').then(function (cache) {
+            /* 指定要缓存的内容，地址为相对于跟域名的访问路径 */
+            return cache.addAll([
+                './index.html'
+            ]);
+        })
+    );
+});
+
+/* 注册fetch事件，拦截全站的请求 */
+this.addEventListener('fetch', function(event) {
+  event.respondWith(
+    // magic goes here
+      
+    /* 在缓存中匹配对应请求资源直接返回 */
+    caches.match(event.request)
+  );
+});
+```
+
+### sw缓存机制是否有了解？如何更新sw缓存？
+
+[谨慎处理 Service Worker 的更新](/handle-service-worker-updates/)
+
+### https原理？中途被篡改的话该怎么预防？
+
+https本质上是加密版本的http，提供传输安全性，通过ssl协议提供安全层，然后通过http进行传输的协议
+
+![](2020-06-04-02-38-26.png)
+
+中途被篡改的话该怎么预防？
+
+这个时候就要使用数字签名了，数字签名的定义是：`将原文(部分数据关键信息)先用 Hash 函数生成消息摘要`，然后`用发送者的私钥加密生成数字签名`，与原文一起传送给接收者。
+
+然后接受者用`服务端的公钥去解密数字签名得到消息摘要`和`用 Hash 函数对收到的原文计算生成的摘要信息`进行比较，如果一致则数据未篡改。同时要注意服务器的公钥必须是数字证书认证机构（CA）认证的数字证书，浏览器会将内置的数字证书与传过来的数字证书做对比，如果不一致则报证书错误。
+
+### 代码劫持实现XMLHttpRequest Send方法，要求每个ajax请求把请求参数打印出来？
+
+```js
+XMLHttpRequest.prototype.realSend = XMLHttpRequest.prototype.send;
+var newSend = function(params) { 
+  console.log("params: " + params);
+  this.realSend(params); 
+};
+XMLHttpRequest.prototype.send = newSend;
+```
+
+### 叙述一下js事件的处理机制？
+### 实现一段程序，检测括号是否成对出现？例如`(())()`
+
+```js
+
+```
+
+### 实现一个sum函数，要求：`sum(1, 2).result = 3;sum(1, 2)(3).result = 6;sum(1, 2)(3, 4).result = 10;sum(1, 2)(3, 4)(5).result = 15`
+
+```js
+function sum() {
+   var args = Array.prototype.slice.call(arguments);
+
+   var fn = function () {
+     var arg_fn = Array.prototype.slice.call(arguments);
+     return sum.apply(null, args.concat(arg_fn));
+   }
+
+  //  fn.valueOf = function() {
+  //    return args.reduce(function(a, b) {
+  //        return a + b;
+  //    })
+  //  }
+
+   fn.result = args.reduce(function(a, b) {
+    return a + b;
+   })
+
+   return fn;
+}
+
+console.log(
+  sum(1)(2).result,
+  sum(1, 2)(3).result,
+  sum(1, 2)(3, 4).result,
+  sum(1, 2)(3, 4)(5).result
+);
+```
+
+函数柯里化：
+
+```js
+// 实现1
+function currying(fn, length) {
+  length = length || fn.length; // 第一次调用获取函数 fn 参数的长度，后续调用获取 fn 剩余参数的长度
+  return function (...args) {  // currying 包裹之后返回一个新函数，接收参数为 ...args
+    return args.length >= length  // 新函数接收的参数长度是否大于等于 fn 剩余参数需要接收的长度
+    	? fn.apply(this, args)  // 满足要求，执行 fn 函数，传入新函数的参数
+      : currying(fn.bind(this, ...args), length - args.length) // 不满足要求，递归 currying 函数，新的 fn 为 bind 返回的新函数（bind 绑定了 ...args 参数，未执行），新的 length 为 fn 剩余参数的长度
+  }
+}
+
+// 实现2
+const currying = fn =>
+    judge = (...args) =>
+        args.length >= fn.length
+            ? fn(...args)
+            : (...arg) => judge(...args, ...arg)
+```
+
+### 求字符串的最长公共前缀，例如输入：`["flower", "flow", "flight"]`，输出：`fl`
