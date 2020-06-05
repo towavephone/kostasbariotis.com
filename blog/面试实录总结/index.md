@@ -672,7 +672,40 @@ XMLHttpRequest.prototype.send = newSend;
 ### 实现一段程序，检测括号是否成对出现？例如`(())()`
 
 ```js
-
+// 左括号入栈，右括号与栈顶比较是否匹配，匹配弹出栈顶，不匹配 return false
+// 查看栈是否为空
+var isValid = function(s) {
+  if (!s.length) {
+    return true;
+  }
+  let stack = [];
+  for (let i = 0; i < s.length; i++) {
+      if (s[i] === '(' || s[i] === '{' || s[i] === '[') {
+          stack.unshift(s[i]);
+      } else {
+          if (s[i] === ')') {
+              if (stack[0] === '(') {
+                stack.shift();
+              } else {
+                return false;
+              }
+          } else if (s[i] === ']') {
+              if (stack[0] === '[') {
+                stack.shift();
+              } else {
+                return false;
+              }
+          } else if (s[i] === '}') {
+              if (stack[0] === '{') {
+                stack.shift();
+              } else {
+                return false;
+              }
+          }
+      }
+  }
+  return stack.length === 0;
+};
 ```
 
 ### 实现一个sum函数，要求：`sum(1, 2).result = 3;sum(1, 2)(3).result = 6;sum(1, 2)(3, 4).result = 10;sum(1, 2)(3, 4)(5).result = 15`
@@ -729,3 +762,23 @@ const currying = fn =>
 ```
 
 ### 求字符串的最长公共前缀，例如输入：`["flower", "flow", "flight"]`，输出：`fl`
+
+```js
+var longestCommonPrefix = function(strs) {
+  if (!strs.length) {
+    return '';
+  }
+  strs.sort();
+  let a = strs[0];
+  let b = strs[strs.length - 1];
+  let res = '';
+  for (let i = 0; i < a.length; i++) {
+    if (i < b.length && a[i] === b[i]) {
+        res += a[i];
+    } else {
+      break;
+    }
+  }
+  return res;
+};
+```
