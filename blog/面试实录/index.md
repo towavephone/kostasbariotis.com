@@ -167,3 +167,101 @@ draft: true
 1. 期望薪资？
 2. 未来期望？
 3. 来到这个团队希望担任的角色？
+
+# 腾讯
+
+这里是 QQ 邮箱架构组前端的面试
+
+## 一面
+
+1. 合并两个升序链表。比如：L1={1, 3, 5}, L2={2, 4}, L1.merge(L2)后，L1={1, 2, 3, 4, 5}
+
+```js
+/**
+ * function LinkNode(val) {
+ *     this.val = val;
+ *     this.next = null;
+ * }
+ *
+ * @param {LinkNode} headL2
+ */
+LinkNode.prototype.merge = function (headL2) {
+
+}
+```
+
+2. 给定一个递增的循环数组，从里面找出最小的元素。比如：[50, 52, 63, 90, 3, 8, 15, 44]，最小元素为3，要求时间复杂度尽可能小。
+
+```js
+/**
+ * @param {number[]} nums
+ * @returns {number}
+ */
+const findmin = function (nums) {
+
+}
+```
+
+3. 找出二叉排序树中第3大的节点，要求空间复杂度为O(1)。
+
+```js
+/**
+* function TreeNode(value) {
+*     this.value = value
+*     this.left = null
+*     this.right = null
+* }
+*
+*
+* @param {TreeNode} root
+* @returns {number}
+*/
+const find = function (root) {
+
+}
+```
+
+4. 完成函数inherit，使得函数Child继承函数Parent，这里的子类为什么能访问到父类中的变量a？
+
+```js
+/**
+* function Parent() {
+*     this.a = 'a'
+* }
+*
+* function Child() {
+*     Parent.call(this)
+*     this.b = 'b'
+* }
+*
+* inherit(Child, Parent)
+*/
+const inherit = function (a, b) {
+
+}
+```
+
+5. 将一个带callback参数的函数promise化
+
+```js
+/**
+* const callbackFunc = function (callback) {
+*     callback()
+* }
+*
+* promisify(callbackFunc).call(this).then(() => {
+*     // after callback() called
+* })
+*/
+function promisify(original) {
+
+}
+```
+
+6. 项目难点介绍
+7. 微前端是什么？解决什么问题？
+8. https原理？如果中间人伪造了权威机构的 ca 证书的话，有什么办法解决？
+9. 兼容性平时怎么做的？做过一体化的解决方法没？类似于polyfill
+10. 对方人员构成？8 个人左右，都是轮流负责任务，没有专人负责某一块的说法
+11. 对方技术栈？老的都是用原生的，新的用 vue
+
