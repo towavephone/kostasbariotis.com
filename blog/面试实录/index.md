@@ -265,3 +265,61 @@ function promisify(original) {
 10. 对方人员构成？8 个人左右，都是轮流负责任务，没有专人负责某一块的说法
 11. 对方技术栈？老的都是用原生的，新的用 vue
 
+# 头条
+
+## 一面
+
+1. 写出执行结果
+
+```js
+function a() {
+    console.log('a');
+    Promise.resolve().then(() => {
+      console.log('e');
+    });
+}
+
+function b() {
+    console.log('b');
+}
+
+function c() {
+  console.log('c');
+}
+
+function d() {
+    setTimeout(a, 0);
+    var temp = Promise.resolve().then(b);
+    setTimeout(c, 0);
+    console.log('d');
+}
+d();
+```
+
+d b a e c
+
+2. 实现以下函数，失败时重试次数为 retryTime，延时执行的时间 delay
+
+fetchTry(url, retryTime, delay)
+
+3. 实现一个函数 add 3 个数相加， add(1, 2, 3), add(1)(2)(3), add(1, 2)(3) add(1)(2,3) 都返回6
+
+```js
+function add() {
+  const args = [...arguments];
+  function fn() {
+    return add.apply(null, [...args, ...arguments]);
+  }
+  fn.toString = function() {
+    return args.reduce((sum, item) => sum + item, 0);
+  }
+  return fn;
+}
+```
+
+4. react fiber 架构，如何实现不影响 ui 主线程并顺序更新？
+5. async 如何实现 promise？
+6. redux 结构怎样？api 有哪些？写过 redux 中间件吗？
+7. webpack 加速构建？
+8. webpack 的 loader、plugin 是什么？写过 plugin 吗？
+
