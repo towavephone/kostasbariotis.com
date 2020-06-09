@@ -1263,3 +1263,405 @@ console.log((false || foo.bar)()); // 1
 
 此外，又如何确定调用函数的对象是谁呢？在写文章之初，我就面临着这些问题，最后还是放弃从多个情形下给大家讲解 this 指向的思路，而是追根溯源的从 ECMASciript 规范讲解 this 的指向，尽管从这个角度写起来和读起来都比较吃力，但是一旦多读几遍，明白原理，绝对会给你一个全新的视角看待 this 。而你也就能明白，尽管 foo() 和 (foo.bar = foo.bar)() 最后结果都指向了 undefined，但是两者从规范的角度上却有着本质的区别。
 
+# 执行上下文
+
+## 前言
+
+当 JavaScript 代码执行一段可执行代码(executable code)时，会创建对应的执行上下文(execution context)。
+
+对于每个执行上下文，都有三个重要属性：
+
+- 变量对象(Variable object，VO)
+- 作用域链(Scope chain)
+- this
+
+然后分别在变量对象、作用域链、从 ECMAScript 规范解读 this 中讲解了这三个属性。
+
+阅读本文前，如果对以上的概念不是很清楚，希望先阅读这些文章。
+
+因为这一篇，我们会结合着所有内容，讲讲执行上下文的具体处理过程。
+
+## 思考题
+
+在词法作用域和动态作用域中，提出这样一道思考题：
+
+```js
+var scope = "global scope";
+function checkscope(){
+    var scope = "local scope";
+    function f() {
+        return scope;
+    }
+    return f();
+}
+checkscope();
+```
+
+
+```js
+var scope = "global scope";
+function checkscope(){
+    var scope = "local scope";
+    function f() {
+        return scope;
+    }
+    return f;
+}
+checkscope()();
+```
+
+两段代码都会打印'local scope'。虽然两段代码执行的结果一样，但是两段代码究竟有哪些不同呢？
+
+紧接着就在执行上下文栈中，讲到了两者的区别在于执行上下文栈的变化不一样，然而如果是这样笼统的回答，依然显得不够详细，本篇就会详细的解析执行上下文栈和执行上下文的具体变化过程。
+
+## 具体执行分析
+
+我们分析第一段代码：
+
+```js
+var scope = "global scope";
+function checkscope(){
+    var scope = "local scope";
+    function f() {
+        return scope;
+    }
+    return f();
+}
+checkscope();
+```
+
+执行过程如下：
+
+1. 执行全局代码，创建全局执行上下文，全局上下文被压入执行上下文栈
+
+    ```js
+    ECStack = [
+      globalContext
+    ];
+    ```
+
+2. 全局上下文初始化
+
+    ```js
+    globalContext = {
+      VO: [global],
+      Scope: [globalContext.VO],
+      this: globalContext.VO
+    }
+    ```
+
+3. 初始化的同时，checkscope 函数被创建，保存作用域链到函数的内部属性[[scope]]
+
+    ```js
+    checkscope.[[scope]] = [
+      globalContext.VO
+    ];
+    ```
+
+4. 执行 checkscope 函数，创建 checkscope 函数执行上下文，checkscope 函数执行上下文被压入执行上下文栈
+
+    ```js
+    ECStack = [
+      checkscopeContext,
+      globalContext
+    ];
+    ```
+
+5. checkscope 函数执行上下文初始化：
+
+    1. 复制函数 [[scope]] 属性创建作用域链
+    2. 用 arguments 创建活动对象
+    3. 初始化活动对象，即加入形参、函数声明、变量声明
+    4. 将活动对象压入 checkscope 作用域链顶端
+
+    同时 f 函数被创建，保存作用域链到 f 函数的内部属性[[scope]]
+
+    ```js
+    checkscopeContext = {
+      AO: {
+        arguments: {
+          length: 0
+        },
+        scope: undefined,
+        f: reference to function f(){}
+      },
+      Scope: [AO, globalContext.VO],
+      this: undefined
+    }
+    ```
+
+6. 执行 f 函数，创建 f 函数执行上下文，f 函数执行上下文被压入执行上下文栈
+
+    ```js
+    ECStack = [
+      fContext,
+      checkscopeContext,
+      globalContext
+    ];
+    ```
+
+7. f 函数执行上下文初始化, 以下跟第 4 步相同：
+
+    1. 复制函数 [[scope]] 属性创建作用域链
+    2. 用 arguments 创建活动对象
+    3. 初始化活动对象，即加入形参、函数声明、变量声明
+    4. 将活动对象压入 f 作用域链顶端
+
+    ```js
+    fContext = {
+      AO: {
+        arguments: {
+          length: 0
+        }
+      },
+      Scope: [
+        AO, 
+        checkscopeContext.AO, 
+        globalContext.VO
+      ],
+      this: undefined
+    }
+    ```
+
+8. f 函数执行，沿着作用域链查找 scope 值，返回 scope 值
+9. f 函数执行完毕，f 函数上下文从执行上下文栈中弹出
+
+    ```js
+    ECStack = [
+      checkscopeContext,
+      globalContext
+    ];
+    ```
+
+10. checkscope 函数执行完毕，checkscope 执行上下文从执行上下文栈中弹出
+
+    ```js
+    ECStack = [
+      globalContext
+    ];
+    ```
+
+第二段代码就留给大家去尝试模拟它的执行过程
+
+```js
+var scope = "global scope";
+function checkscope(){
+    var scope = "local scope";
+    function f(){
+        return scope;
+    }
+    return f;
+}
+checkscope()();
+```
+
+不过，在闭包中也会提及这段代码的执行过程。
+
+# 闭包
+
+## 定义
+
+MDN 对闭包的定义为：
+
+>闭包是指那些能够访问自由变量的函数。
+
+那什么是自由变量呢？
+
+>自由变量是指在函数中使用的，但既不是函数参数也不是函数的局部变量的变量。
+
+由此，我们可以看出闭包共有两部分组成：
+
+>闭包 = 函数 + 函数能够访问的自由变量
+
+举个例子：
+
+```js
+var a = 1;
+
+function foo() {
+    console.log(a);
+}
+
+foo();
+```
+
+foo 函数可以访问变量 a，但是 a 既不是 foo 函数的局部变量，也不是 foo 函数的参数，所以 a 就是自由变量。
+
+那么，函数 foo + foo 函数访问的自由变量 a 不就是构成了一个闭包嘛……
+
+还真是这样的！
+
+所以在《JavaScript权威指南》中就讲到：从技术的角度讲，所有的JavaScript函数都是闭包。
+
+咦，这怎么跟我们平时看到的讲到的闭包不一样呢！？
+
+别着急，这是理论上的闭包，其实还有一个实践角度上的闭包，让我们看看汤姆大叔翻译的关于闭包的文章中的定义：
+
+ECMAScript中，闭包指的是：
+
+1. 从理论角度：所有的函数。因为它们都在创建的时候就将上层上下文的数据保存起来了。哪怕是简单的全局变量也是如此，因为函数中访问全局变量就相当于是在访问自由变量，这个时候使用最外层的作用域。
+2. 从实践角度：以下函数才算是闭包：
+    1. 即使创建它的上下文已经销毁，它仍然存在（比如，内部函数从父函数中返回）
+    2. 在代码中引用了自由变量
+
+接下来就来讲讲实践上的闭包。
+
+## 分析
+
+让我们先写个例子，例子依然是来自《JavaScript权威指南》，稍微做点改动：
+
+```js
+var scope = "global scope";
+function checkscope(){
+    var scope = "local scope";
+    function f(){
+        return scope;
+    }
+    return f;
+}
+
+var foo = checkscope();
+foo();
+```
+
+首先我们要分析一下这段代码中执行上下文栈和执行上下文的变化情况。
+
+另一个与这段代码相似的例子，在执行上下文中有着非常详细的分析。如果看不懂以下的执行过程，建议先阅读这篇文章。
+
+这里直接给出简要的执行过程：
+
+1. 进入全局代码，创建全局执行上下文，全局执行上下文压入执行上下文栈
+2. 全局执行上下文初始化
+3. 执行 checkscope 函数，创建 checkscope 函数执行上下文，checkscope 执行上下文被压入执行上下文栈
+4. checkscope 执行上下文初始化，创建变量对象、作用域链、this等
+5. checkscope 函数执行完毕，checkscope 执行上下文从执行上下文栈中弹出
+6. 执行 f 函数，创建 f 函数执行上下文，f 执行上下文被压入执行上下文栈
+7. f 执行上下文初始化，创建变量对象、作用域链、this等
+8. f 函数执行完毕，f 函数上下文从执行上下文栈中弹出
+
+了解到这个过程，我们应该思考一个问题，那就是：
+
+当 f 函数执行的时候，checkscope 函数上下文已经被销毁了啊(即从执行上下文栈中被弹出)，怎么还会读取到 checkscope 作用域下的 scope 值呢？
+
+以上的代码，要是转换成 PHP，就会报错，因为在 PHP 中，f 函数只能读取到自己作用域和全局作用域里的值，所以读不到 checkscope 下的 scope 值。(这段我问的PHP同事……)
+
+然而 JavaScript 却是可以的！
+
+当我们了解了具体的执行过程后，我们知道 f 执行上下文维护了一个作用域链：
+
+```js
+fContext = {
+  Scope: [AO, checkscopeContext.AO, globalContext.VO],
+}
+```
+
+对的，就是因为这个作用域链，f 函数依然可以读取到 checkscopeContext.AO 的值，说明当 f 函数引用了 checkscopeContext.AO 中的值的时候，即使 checkscopeContext 被销毁了，但是 JavaScript 依然会让 checkscopeContext.AO 活在内存中，f 函数依然可以通过 f 函数的作用域链找到它，正是因为 JavaScript 做到了这一点，从而实现了闭包这个概念。
+
+所以，让我们再看一遍实践角度上闭包的定义：
+
+1. 即使创建它的上下文已经销毁，它仍然存在（比如，内部函数从父函数中返回）
+2. 在代码中引用了自由变量
+
+在这里再补充一个《JavaScript权威指南》英文原版对闭包的定义:
+
+> This combination of a function object and a scope (a set of variable bindings) in which the function’s variables are resolved is called a closure in the computer science literature.
+
+闭包在计算机科学中也只是一个普通的概念，大家不要去想得太复杂。
+
+## 必刷题
+
+```js
+var data = [];
+
+for (var i = 0; i < 3; i++) {
+  data[i] = function () {
+    console.log(i);
+  };
+}
+
+data[0]();
+data[1]();
+data[2]();
+```
+
+答案是都是 3，让我们分析一下原因：
+
+当执行到 data[0] 函数之前，此时全局上下文的 VO 为：
+
+```js
+globalContext = {
+  VO: {
+    data: [...],
+    i: 3,
+  }
+}
+```
+
+当执行 data[0] 函数的时候，data[0] 函数的作用域链为：
+
+```js
+data[0]Context = {
+  Scope: [AO, globalContext.VO]
+}
+```
+
+data[0]Context 的 AO 并没有 i 值，所以会从 globalContext.VO 中查找，i 为 3，所以打印的结果就是 3。
+
+data[1] 和 data[2] 是一样的道理。
+
+所以让我们改成闭包看看：
+
+```js
+var data = [];
+
+for (var i = 0; i < 3; i++) {
+  data[i] = (function (i) {
+        return function(){
+            console.log(i);
+        }
+  })(i);
+}
+
+data[0]();
+data[1]();
+data[2]();
+```
+
+当执行到 data[0] 函数之前，此时全局上下文的 VO 为：
+
+```js
+globalContext = {
+  VO: {
+    data: [...],
+    i: 3,
+  }
+}
+```
+
+跟没改之前一模一样。
+
+当执行 data[0] 函数的时候，data[0] 函数的作用域链发生了改变：
+
+```js
+data[0]Context = {
+    Scope: [AO, 匿名函数Context.AO, globalContext.VO]
+}
+```
+
+匿名函数执行上下文的AO为：
+
+```js
+匿名函数Context = {
+    AO: {
+        arguments: {
+            0: 0,
+            length: 1
+        },
+        i: 0
+    }
+}
+```
+
+data[0]Context 的 AO 并没有 i 值，所以会沿着作用域链从匿名函数 Context.AO 中查找，这时候就会找 i 为 0，找到了就不会往 globalContext.VO 中查找了，即使 globalContext.VO 也有 i 的值(值为3)，所以打印的结果就是0。
+
+data[1] 和 data[2] 是一样的道理。
