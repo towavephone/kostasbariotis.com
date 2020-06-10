@@ -237,11 +237,12 @@ const find = function (root) {
 * inherit(Child, Parent)
 */
 const inherit = function (a, b) {
-
+  a.prototype = Object.create(b.prototype);
+  a.prototype.constructor = a;
 }
 ```
 
-5. 将一个带callback参数的函数promise化
+5. 将一个带 callback 参数的函数 promise 化
 
 ```js
 /**
@@ -261,7 +262,10 @@ function promisify(original) {
 6. 项目难点介绍
 7. 微前端是什么？解决什么问题？
 8. https原理？如果中间人伪造了权威机构的 ca 证书的话，有什么办法解决？
-9. 兼容性平时怎么做的？做过一体化的解决方法没？类似于polyfill
+
+每年都会有 CA 评级，把垃圾 CA 加入到操作系统的 untrusted root 列表或者从 Firefox 中移除
+
+9. 兼容性平时怎么做的？做过一体化的解决方法没？类似于 polyfill
 10. 对方人员构成？8 个人左右，都是轮流负责任务，没有专人负责某一块的说法
 11. 对方技术栈？老的都是用原生的，新的用 vue
 
@@ -319,7 +323,122 @@ function add() {
 
 4. react fiber 架构，如何实现不影响 ui 主线程并顺序更新？
 5. async 如何实现 promise？
-6. redux 结构怎样？api 有哪些？写过 redux 中间件吗？
+6. redux 结构怎样？api 有哪些？写过 redux 中间件吗？connect 原理？
+
+中间件源码
+
+```js
+export default function applyMiddleware(...middlewares) {
+  return createStore => (...args) => {
+    // 利用传入的 createStore 和 reducer 和创建一个 store
+    const store = createStore(...args);
+    let dispatch = () => {
+      throw new Error(
+      )
+    };
+    const middlewareAPI = {
+      getState: store.getState,
+      dispatch: (...args) => dispatch(...args),
+    }
+    // 让每个 middleware 带着 middlewareAPI 这个参数分别执行一遍
+    const chain = middlewares.map(middleware => middleware(middlewareAPI));
+    // 接着 compose 将 chain 中的所有匿名函数，组装成一个新的函数，即新的 dispatch
+    dispatch = compose(...chain)(store.dispatch);
+    return {
+      ...store,
+      dispatch,
+    }
+  }
+}
+```
+
+redux-thunk
+
+```js
+function createThunkMiddleware(extraArgument) {
+  return ({ dispatch, getState }) => next => action => {
+    if (typeof action === 'function') {
+      return action(dispatch, getState, extraArgument);
+    }
+    return next(action);
+  };
+}
+const thunk = createThunkMiddleware();
+thunk.withExtraArgument = createThunkMiddleware;
+export default thunk;
+```
+
+redux-promise
+
+```js
+import { isFSA } from 'flux-standard-action';
+
+function isPromise(val) {
+  return val && typeof val.then === 'function';
+}
+
+export default function promiseMiddleware({ dispatch }) {
+  return next => action => {
+    if (!isFSA(action)) {
+      return isPromise(action)
+        ? action.then(dispatch)
+        : next(action);
+    }
+
+    return isPromise(action.payload)
+      ? action.payload.then(
+          result => dispatch({ ...action, payload: result }),
+          error => {
+            dispatch({ ...action, payload: error, error: true });
+            return Promise.reject(error);
+          }
+        )
+      : next(action);
+  };
+}
+```
+
 7. webpack 加速构建？
 8. webpack 的 loader、plugin 是什么？写过 plugin 吗？
 
+```js
+// A JavaScript class.
+class MyExampleWebpackPlugin {
+  // Define `apply` as its prototype method which is supplied with compiler as its argument
+  apply(compiler) {
+    // Specify the event hook to attach to
+    compiler.hooks.emit.tapAsync(
+      'MyExampleWebpackPlugin',
+      (compilation, callback) => {
+        console.log('This is an example plugin!');
+        console.log('Here’s the `compilation` object which represents a single build of assets:', compilation);
+
+        // Manipulate the build using the plugin API provided by webpack
+        compilation.addModule(/* ... */);
+
+        callback();
+      }
+    );
+  }
+}
+```
+
+一个 webpack 插件的基本模式包括几个要素：类名、apply 方法、event hook、compilation 的处理和 hook type 及其回调处理。
+
+apply 方法是必须有的，因为 webpack 运行的时候会调用 plugin 实例的 apply 方法。
+
+compiler 可以理解为全局的 webpack 实例，webpack 在生命周期的不同阶段提供了不同的钩子，方便我们自定义 webpack 打包的行为。
+
+compliation 是 webpack 要进行处理的资源（js、css、html 等），我们可以根据自己的需要对资源进行加工。
+
+在上面，tapAsync 是 hook type 的一种，第一个参数一般跟插件的类名一样，主要用来区分在该 hook type 上定义的不同的回调行为。
+
+`event hook`
+
+webpack plugin 的 event hook 很多，如：entryOption，run，compile，make，emit，done等等。具体可以参照官方文档，这里不一一介绍。这些钩子在 webpack 编译的不同阶段会依次触发，开发插件的时候只要选择自己需要的钩子做处理就可以了。
+
+`hook type`
+
+webpack 的事件机制是基于 tapable 这个库实现的，tapable 的具体使用方式可以参考它的 README。
+
+开发 webpack plugin 主要用到的 hook type 是：tap（同步），tapAsync（异步，回调写法），tapPromise（异步，Promise 写法）
