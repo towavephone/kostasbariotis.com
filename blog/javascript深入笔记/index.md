@@ -2533,3 +2533,855 @@ function objectFactory() {
 ```
 
 # 类数组对象与 arguments
+
+所谓的类数组对象:
+
+> 拥有一个 length 属性和若干索引属性的对象
+
+举个例子：
+
+```js
+var array = ['name', 'age', 'sex'];
+
+var arrayLike = {
+    0: 'name',
+    1: 'age',
+    2: 'sex',
+    length: 3
+}
+```
+
+即便如此，为什么叫做类数组对象呢？
+
+那让我们从读写、获取长度、遍历三个方面看看这两个对象。
+
+## 读写
+
+```js
+console.log(array[0]); // name
+console.log(arrayLike[0]); // name
+
+array[0] = 'new name';
+arrayLike[0] = 'new name';
+```
+
+## 长度
+
+```js
+console.log(array.length); // 3
+console.log(arrayLike.length); // 3
+```
+
+## 遍历
+
+```js
+for(var i = 0, len = array.length; i < len; i++) {
+   ……
+}
+for(var i = 0, len = arrayLike.length; i < len; i++) {
+    ……
+}
+```
+
+是不是很像？
+
+那类数组对象可以使用数组的方法吗？比如：
+
+```js
+arrayLike.push('4');
+```
+
+然而上述代码会报错: arrayLike.push is not a function
+
+## 调用数组方法
+
+如果类数组就是任性的想用数组的方法怎么办呢？
+
+既然无法直接调用，我们可以用 Function.call 间接调用：
+
+```js
+var arrayLike = { 0: 'name', 1: 'age', 2: 'sex', length: 3 }
+
+Array.prototype.join.call(arrayLike, '&'); // name&age&sex
+
+Array.prototype.slice.call(arrayLike, 0); // ["name", "age", "sex"] 
+// slice 可以做到类数组转数组
+
+Array.prototype.map.call(arrayLike, function(item) {
+    return item.toUpperCase();
+});
+// ["NAME", "AGE", "SEX"]
+```
+
+## 类数组转数组
+
+在上面的例子中已经提到了一种类数组转数组的方法，再补充三个：
+
+```js
+var arrayLike = {0: 'name', 1: 'age', 2: 'sex', length: 3 }
+// 1. slice
+Array.prototype.slice.call(arrayLike); // ["name", "age", "sex"] 
+// 2. splice
+Array.prototype.splice.call(arrayLike, 0); // ["name", "age", "sex"] 
+// 3. ES6 Array.from
+Array.from(arrayLike); // ["name", "age", "sex"] 
+// 4. apply
+Array.prototype.concat.apply([], arrayLike)
+```
+
+那么为什么会讲到类数组对象呢？以及类数组有什么应用吗？
+
+要说到类数组对象，Arguments 对象就是一个类数组对象。在客户端 JavaScript 中，一些 DOM 方法(document.getElementsByTagName()等)也返回类数组对象。
+
+## Arguments 对象
+
+接下来重点讲讲 Arguments 对象。
+
+Arguments 对象只定义在函数体中，包括了函数的参数和其他属性。在函数体中，arguments 指代该函数的 Arguments 对象。
+
+举个例子：
+
+```js
+function foo(name, age, sex) {
+    console.log(arguments);
+}
+
+foo('name', 'age', 'sex')
+```
+
+打印结果如下：
+
+![](2020-06-11-10-04-42.png)
+
+我们可以看到除了类数组的索引属性和 length 属性之外，还有一个 callee 属性，接下来我们一个一个介绍。
+
+## length 属性
+
+Arguments 对象的 length 属性，表示实参的长度，举个例子：
+
+```js
+function foo(b, c, d){
+    console.log("实参的长度为：" + arguments.length)
+}
+
+console.log("形参的长度为：" + foo.length)
+
+foo(1)
+
+// 形参的长度为：3
+// 实参的长度为：1
+```
+
+## callee 属性
+
+Arguments 对象的 callee 属性，通过它可以调用函数自身。
+
+讲个闭包经典面试题使用 callee 的解决方法：
+
+```js
+var data = [];
+
+for (var i = 0; i < 3; i++) {
+    (data[i] = function () {
+       console.log(arguments.callee.i) 
+    }).i = i;
+}
+
+data[0]();
+data[1]();
+data[2]();
+
+// 0
+// 1
+// 2
+```
+
+接下来讲讲 arguments 对象的几个注意要点：
+
+## arguments 和对应参数的绑定
+
+```js
+function foo(name, age, sex, hobbit) {
+  console.log(name, arguments[0]); // name name
+  // 改变形参
+  name = 'new name';
+  console.log(name, arguments[0]); // new name new name
+  // 改变arguments
+  arguments[1] = 'new age';
+  console.log(age, arguments[1]); // new age new age
+  // 测试未传入的是否会绑定
+  console.log(sex); // undefined
+  sex = 'new sex';
+  console.log(sex, arguments[2]); // new sex undefined
+  arguments[3] = 'new hobbit';
+  console.log(hobbit, arguments[3]); // undefined new hobbit
+}
+
+foo('name', 'age')
+```
+
+传入的参数，实参和 arguments 的值会共享，当没有传入时，实参与 arguments 值不会共享
+
+除此之外，以上是在非严格模式下，如果是在严格模式下，实参和 arguments 是不会共享的。
+
+## 传递参数
+
+将参数从一个函数传递到另一个函数
+
+```js
+// 使用 apply 将 foo 的参数传递给 bar
+function foo() {
+    bar.apply(this, arguments);
+}
+
+function bar(a, b, c) {
+   console.log(a, b, c);
+}
+
+foo(1, 2, 3)
+```
+
+## 强大的ES6
+
+使用 ES6 的 ... 运算符，我们可以轻松转成数组。
+
+```js
+function func(...arguments) {
+    console.log(arguments); // [1, 2, 3]
+}
+
+func(1, 2, 3);
+```
+
+## 应用
+
+arguments的应用其实很多，在下个系列，也就是 JavaScript 专题系列中，我们会在 jQuery 的 extend 实现、函数柯里化、递归等场景看见 arguments 的身影。这篇文章就不具体展开了。
+
+如果要总结这些场景的话，暂时能想到的包括：
+
+- 参数不定长
+- 函数柯里化
+- 递归调用
+- 函数重载
+
+# 创建对象的多种方式以及优缺点
+
+这篇文章讲解创建对象的各种方式，以及优缺点。
+
+## 工厂模式
+
+```js
+function createPerson(name) {
+    var o = new Object();
+    o.name = name;
+    o.getName = function () {
+        console.log(this.name);
+    };
+
+    return o;
+}
+
+var person1 = createPerson('kevin');
+```
+
+缺点：对象无法识别，因为所有的实例都指向一个原型
+
+## 构造函数模式
+
+```js
+function Person(name) {
+    this.name = name;
+    this.getName = function () {
+        console.log(this.name);
+    };
+}
+
+var person1 = new Person('kevin');
+```
+
+优点：实例可以识别为一个特定的类型（person1 instanceof Person）
+
+缺点：每次创建实例时，每个方法都要被创建一次
+
+### 构造函数模式优化
+
+```js
+function Person(name) {
+    this.name = name;
+    this.getName = getName;
+}
+
+function getName() {
+    console.log(this.name);
+}
+
+var person1 = new Person('kevin');
+```
+
+优点：解决了每个方法都要被重新创建的问题
+
+缺点：这叫啥封装……
+
+## 原型模式
+
+```js
+function Person(name) {
+
+}
+
+Person.prototype.name = 'keivn';
+Person.prototype.getName = function () {
+    console.log(this.name);
+};
+
+var person1 = new Person();
+```
+
+优点：方法不会重新创建
+
+缺点：1. 所有的属性和方法都共享 2. 不能初始化参数
+
+### 原型模式优化一
+
+```js
+function Person(name) {
+
+}
+
+Person.prototype = {
+    name: 'kevin',
+    getName: function () {
+        console.log(this.name);
+    }
+};
+
+var person1 = new Person();
+```
+
+优点：封装性好了一点
+
+缺点：重写了原型，丢失了 constructor 属性
+
+### 原型模式优化
+
+```js
+function Person(name) {
+
+}
+
+Person.prototype = {
+    constructor: Person,
+    name: 'kevin',
+    getName: function () {
+        console.log(this.name);
+    }
+};
+
+var person1 = new Person();
+```
+
+优点：实例可以通过 constructor 属性找到所属构造函数
+
+缺点：原型模式该有的缺点还是有
+
+## 组合模式
+
+构造函数模式与原型模式双剑合璧。
+
+```js
+function Person(name) {
+    this.name = name;
+}
+
+Person.prototype = {
+    constructor: Person,
+    getName: function () {
+        console.log(this.name);
+    }
+};
+
+var person1 = new Person();
+```
+
+优点：该共享的共享，该私有的私有，使用最广泛的方式
+
+缺点：有的人就是希望全部都写在一起，即更好的封装性
+
+### 动态原型模式
+
+```js
+function Person(name) {
+    this.name = name;
+    if (typeof this.getName != "function") {
+        Person.prototype.getName = function () {
+            console.log(this.name);
+        }
+    }
+}
+
+var person1 = new Person();
+```
+
+注意：使用动态原型模式时，不能用对象字面量重写原型
+
+解释下为什么：
+
+```js
+function Person(name) {
+    this.name = name;
+    if (typeof this.getName != "function") {
+        Person.prototype = {
+            constructor: Person,
+            getName: function () {
+                console.log(this.name);
+            }
+        }
+    }
+}
+
+var person1 = new Person('kevin');
+var person2 = new Person('daisy');
+
+// 报错并没有该方法，这里的 person1 的原型并不是指向 Person.prototype，而是指向 Person.prototype 指向的原型对象，所以直接赋值 Person.prototype 并不会影响，有点共享传值的味道
+// 当 new Person() 的时候，是先建立的原型关系，即 person .__proto__ = Person.prototype，而后修改了 Person.prototype 的值，但是 person.__proto__ 还是指向以前的 Person.prototype
+person1.getName();
+
+// 注释掉上面的代码，这句是可以执行的。
+person2.getName();
+```
+
+为了解释这个问题，假设开始执行 var person1 = new Person('kevin')。
+
+如果对 new 和 apply 的底层执行过程不是很熟悉，可以阅读底部相关链接中的文章。
+
+我们回顾下 new 的实现步骤：
+
+1. 首先新建一个对象
+2. 然后将对象的原型指向 Person.prototype
+3. 然后 Person.apply(obj)
+4. 返回这个对象
+
+注意这个时候，回顾下 apply 的实现步骤，会执行 obj.Person 方法，这个时候就会执行 if 语句里的内容，注意构造函数的 prototype 属性指向了实例的原型，使用字面量方式直接覆盖 Person.prototype，并不会更改实例的原型的值，person1 依然是指向了以前的原型，而不是 Person.prototype。而之前的原型是没有 getName 方法的，所以就报错了！
+
+如果你就是想用字面量方式写代码，可以尝试下这种：
+
+```js
+function Person(name) {
+    this.name = name;
+    if (typeof this.getName != "function") {
+        Person.prototype = {
+            constructor: Person,
+            getName: function () {
+                console.log(this.name);
+            }
+        }
+
+        return new Person(name);
+    }
+}
+
+var person1 = new Person('kevin');
+var person2 = new Person('daisy');
+
+person1.getName(); // kevin
+person2.getName();  // daisy
+```
+
+## 寄生构造函数模式
+
+```js
+function Person(name) {
+    var o = new Object();
+    o.name = name;
+    o.getName = function () {
+        console.log(this.name);
+    };
+    return o;
+}
+
+var person1 = new Person('kevin');
+console.log(person1 instanceof Person) // false
+console.log(person1 instanceof Object)  // true
+```
+
+寄生构造函数模式，我个人认为应该这样读：
+
+寄生-构造函数-模式，也就是说寄生在构造函数的一种方法。
+
+也就是说打着构造函数的幌子挂羊头卖狗肉，你看创建的实例使用 instanceof 都无法指向构造函数！
+
+这样方法可以在特殊情况下使用。比如我们想创建一个具有额外方法的特殊数组，但是又不想直接修改Array构造函数，我们可以这样写：
+
+```js
+function SpecialArray() {
+    var values = new Array();
+
+    for (var i = 0, len = arguments.length; i < len; i++) {
+        values.push(arguments[i]);
+    }
+
+    values.toPipedString = function () {
+        return this.join("|");
+    };
+    return values;
+}
+
+var colors = new SpecialArray('red', 'blue', 'green');
+var colors2 = SpecialArray('red2', 'blue2', 'green2');
+
+
+console.log(colors);
+console.log(colors.toPipedString()); // red|blue|green
+
+console.log(colors2);
+console.log(colors2.toPipedString()); // red2|blue2|green2
+```
+
+你会发现，其实所谓的寄生构造函数模式就是比工厂模式在创建对象的时候，多使用了一个new，实际上两者的结果是一样的。
+
+但是作者可能是希望能像使用普通 Array 一样使用 SpecialArray，虽然把 SpecialArray 当成函数也一样能用，但是这并不是作者的本意，也变得不优雅。
+
+在可以使用其他模式的情况下，不要使用这种模式。
+
+但是值得一提的是，上面例子中的循环：
+
+```js
+for (var i = 0, len = arguments.length; i < len; i++) {
+    values.push(arguments[i]);
+}
+```
+
+可以替换成：
+
+```js
+values.push.apply(values, arguments);
+```
+
+## 稳妥构造函数模式
+
+```js
+function person(name) {
+    var o = new Object();
+    o.sayName = function() {
+        console.log(name);
+    };
+    return o;
+}
+
+var person1 = person('kevin');
+
+person1.sayName(); // kevin
+
+person1.name = "daisy";
+
+person1.sayName(); // kevin
+
+console.log(person1.name); // daisy
+```
+
+所谓稳妥对象，指的是没有公共属性，而且其方法也不引用 this 的对象。
+
+与寄生构造函数模式有两点不同：
+
+1. 新创建的实例方法不引用 this
+2. 不使用 new 操作符调用构造函数
+
+稳妥对象最适合在一些安全的环境中。
+
+稳妥构造函数模式也跟工厂模式一样，无法识别对象所属类型。
+
+优先推荐使用组合模式
+
+# 继承的多种方式和优缺点
+
+本文讲解 JavaScript 各种继承方式和优缺点。
+
+## 原型链继承
+
+```js
+function Parent () {
+    this.name = 'kevin';
+}
+
+Parent.prototype.getName = function () {
+    console.log(this.name);
+}
+
+function Child () {
+
+}
+
+Child.prototype = new Parent();
+
+var child1 = new Child();
+
+console.log(child1.getName()) // kevin
+```
+
+问题：
+
+1. 引用类型的属性被所有实例共享，举个例子：
+
+```js
+function Parent () {
+    this.names = ['kevin', 'daisy'];
+}
+
+function Child () {
+
+}
+
+Child.prototype = new Parent();
+
+var child1 = new Child();
+
+child1.names.push('yayu');
+
+console.log(child1.names); // ["kevin", "daisy", "yayu"]
+
+var child2 = new Child();
+
+console.log(child2.names); // ["kevin", "daisy", "yayu"]
+```
+
+2. 在创建 Child 的实例时，不能向 Parent 传参
+
+## 借用构造函数（经典继承）
+
+```js
+function Parent () {
+    this.names = ['kevin', 'daisy'];
+}
+
+function Child () {
+    Parent.call(this);
+}
+
+var child1 = new Child();
+
+child1.names.push('yayu');
+
+console.log(child1.names); // ["kevin", "daisy", "yayu"]
+
+var child2 = new Child();
+
+console.log(child2.names); // ["kevin", "daisy"]
+```
+
+优点：
+
+1. 避免了引用类型的属性被所有实例共享
+
+2. 可以在 Child 中向 Parent 传参
+
+举个例子：
+
+```js
+function Parent (name) {
+    this.name = name;
+}
+function Child (name) {
+    Parent.call(this, name);
+}
+var child1 = new Child('kevin');
+console.log(child1.name); // kevin
+var child2 = new Child('daisy');
+console.log(child2.name); // daisy
+```
+
+缺点：方法都在构造函数中定义，每次创建实例都会创建一遍方法。
+
+## 组合继承
+
+原型链继承和经典继承双剑合璧。
+
+```js
+function Parent (name) {
+    this.name = name;
+    this.colors = ['red', 'blue', 'green'];
+}
+
+Parent.prototype.getName = function () {
+    console.log(this.name);
+}
+
+function Child (name, age) {
+    Parent.call(this, name);
+    this.age = age;
+}
+
+Child.prototype = new Parent();
+Child.prototype.constructor = Child;
+
+var child1 = new Child('kevin', '18');
+child1.colors.push('black');
+
+console.log(child1.name); // kevin
+console.log(child1.age); // 18
+console.log(child1.colors); // ["red", "blue", "green", "black"]
+
+var child2 = new Child('daisy', '20');
+console.log(child2.name); // daisy
+console.log(child2.age); // 20
+console.log(child2.colors); // ["red", "blue", "green"]
+```
+
+优点：融合原型链继承和构造函数的优点，是 JavaScript 中最常用的继承模式。
+
+## 原型式继承
+
+```js
+function createObj(o) {
+    function F(){}
+    F.prototype = o;
+    return new F();
+}
+```
+
+就是 ES5 Object.create 的模拟实现，将传入的对象作为创建的对象的原型。
+
+缺点：包含引用类型的属性值始终都会共享相应的值，这点跟原型链继承一样。
+
+```js
+var person = {
+    name: 'kevin',
+    friends: ['daisy', 'kelly']
+}
+
+var person1 = createObj(person);
+var person2 = createObj(person);
+
+person1.name = 'person1';
+console.log(person2.name); // kevin
+
+person1.__proto__.name = 'person1';
+console.log(person2.name); // person1
+
+person1.friends.push('taylor');
+console.log(person2.friends); // ["daisy", "kelly", "taylor"]
+```
+
+注意：修改 person1.name 的值，person2.name 的值并未发生改变，并不是因为 person1 和 person2 有独立的 name 值，而是因为 person1.name = 'person1'，给 person1 添加了 name 值，并非修改了 person1 原型即 F.prototype 上的 name 值。
+
+## 寄生式继承
+
+创建一个仅用于封装继承过程的函数，该函数在内部以某种形式来做增强对象，最后返回对象。
+
+```js
+function createObj (o) {
+    var clone = Object.create(o);
+    clone.sayName = function () {
+        console.log('hi');
+    }
+    return clone;
+}
+```
+
+缺点：跟借用构造函数模式一样，每次创建对象都会创建一遍方法。
+
+## 寄生组合式继承
+
+为了方便大家阅读，在这里重复一下组合继承的代码：
+
+```js
+function Parent (name) {
+    this.name = name;
+    this.colors = ['red', 'blue', 'green'];
+}
+
+Parent.prototype.getName = function () {
+    console.log(this.name)
+}
+
+function Child (name, age) {
+    Parent.call(this, name);
+    this.age = age;
+}
+
+Child.prototype = new Parent();
+
+var child1 = new Child('kevin', '18');
+
+console.log(child1);
+```
+
+组合继承最大的缺点是会调用两次父构造函数。
+
+一次是设置子类型实例的原型的时候：
+
+```js
+Child.prototype = new Parent();
+```
+
+一次在创建子类型实例的时候：
+
+```js
+var child1 = new Child('kevin', '18');
+```
+
+回想下 new 的模拟实现，其实在这句中，我们会执行：
+
+```js
+Parent.call(this, name);
+```
+
+在这里，我们又会调用了一次 Parent 构造函数。
+
+所以，在这个例子中，如果我们打印 child1 对象，我们会发现 Child.prototype 和 child1 都有一个属性为 colors，属性值为['red', 'blue', 'green']。
+
+那么我们该如何精益求精，避免这一次重复调用呢？
+
+如果我们不使用 Child.prototype = new Parent() ，而是间接的让 Child.prototype 访问到 Parent.prototype 呢？
+
+看看如何实现：
+
+```js
+function Parent (name) {
+    this.name = name;
+    this.colors = ['red', 'blue', 'green'];
+}
+
+Parent.prototype.getName = function () {
+    console.log(this.name)
+}
+
+function Child (name, age) {
+    Parent.call(this, name);
+    this.age = age;
+}
+
+// 关键的三步
+var F = function () {};
+
+F.prototype = Parent.prototype;
+
+Child.prototype = new F();
+
+
+var child1 = new Child('kevin', '18');
+
+console.log(child1);
+```
+
+最后我们封装一下这个继承方法：
+
+```js
+function object(o) {
+    function F() {}
+    F.prototype = o;
+    return new F();
+}
+
+function prototype(child, parent) {
+    var prototype = object(parent.prototype);
+    prototype.constructor = child;
+    child.prototype = prototype;
+}
+
+// 当我们使用的时候：
+prototype(Child, Parent);
+```
+
+引用《JavaScript高级程序设计》中对寄生组合式继承的夸赞就是：
+
+这种方式的高效率体现它只调用了一次 Parent 构造函数，并且因此避免了在 Parent.prototype 上面创建不必要的、多余的属性。与此同时，原型链还能保持不变；因此，还能够正常使用 instanceof 和 isPrototypeOf。开发人员普遍认为寄生组合式继承是引用类型最理想的继承范式。
