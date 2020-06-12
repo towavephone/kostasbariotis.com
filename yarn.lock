@@ -5178,6 +5178,20 @@ gatsby-remark-autolink-headers@^1.4.18:
     mdast-util-to-string "^1.0.2"
     unist-util-visit "^1.1.1"
 
+gatsby-remark-copy-linked-files@1.5.37:
+  version "1.5.37"
+  resolved "https://registry.npm.taobao.org/gatsby-remark-copy-linked-files/download/gatsby-remark-copy-linked-files-1.5.37.tgz#cfa2a055e6ba3dbb2fd9bbbd33a1211788bbd49e"
+  integrity sha1-z6KgVea6Pbsv2bu9M6EhF4i71J4=
+  dependencies:
+    babel-runtime "^6.26.0"
+    cheerio "^1.0.0-rc.2"
+    fs-extra "^4.0.1"
+    is-relative-url "^2.0.0"
+    lodash "^4.17.4"
+    path-is-inside "^1.0.2"
+    probe-image-size "^4.0.0"
+    unist-util-visit "^1.1.1"
+
 gatsby-remark-design-system@^1.0.9:
   version "1.0.16"
   resolved "https://registry.npm.taobao.org/gatsby-remark-design-system/download/gatsby-remark-design-system-1.0.16.tgz#44bc4718001de5cbf43c08ea61a4b74919ee0292"
@@ -5280,6 +5294,15 @@ gatsby-remark-smartypants@^1.4.12:
     retext "^4.0.0"
     retext-smartypants "^2.0.0"
     unist-util-visit "^1.1.1"
+
+gatsby-remark-static-images@^1.0.1:
+  version "1.0.1"
+  resolved "https://registry.npm.taobao.org/gatsby-remark-static-images/download/gatsby-remark-static-images-1.0.1.tgz#fa34ad4a715e396e273ba113abe50a08f5d65ac7"
+  integrity sha1-+jStSnFeOW4nO6ETq+UKCPXWWsc=
+  dependencies:
+    himalaya "^1.1.0"
+    is-relative-url "^2.0.0"
+    slash "^2.0.0"
 
 gatsby-source-filesystem@^1.5.36:
   version "1.5.39"
@@ -6187,6 +6210,11 @@ hastscript@^3.0.0:
     hast-util-parse-selector "^2.0.0"
     property-information "^3.0.0"
     space-separated-tokens "^1.0.0"
+
+himalaya@^1.1.0:
+  version "1.1.0"
+  resolved "https://registry.npm.taobao.org/himalaya/download/himalaya-1.1.0.tgz#31724ae9d35714cd7c6f4be94888953f3604606a"
+  integrity sha1-MXJK6dNXFM18b0vpSIiVPzYEYGo=
 
 history@^4.6.2, history@^4.7.2:
   version "4.9.0"

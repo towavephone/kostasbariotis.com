@@ -81,6 +81,8 @@ module.exports = {
               backgroundColor: '#fafafa',
             },
           },
+          'gatsby-remark-static-images',
+          'gatsby-remark-copy-linked-files',
           `gatsby-remark-autolink-headers`,
           `gatsby-remark-emoji`,
           `gatsby-remark-katex`,
