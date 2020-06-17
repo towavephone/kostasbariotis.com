@@ -18,6 +18,7 @@
         "build": "gatsby build --prefix-paths",
         "deploy:github": "gh-pages -d public -r git@github.com:towavephone/towavephone.github.io.git -b master",
         "deploy:coding": "gh-pages -d public -r git@git.coding.net:towavephone/towavephone.coding.me.git -b master",
+        "deploy:gitee": "gh-pages -d public -r git@gitee.com:towavephone/towavephone.github.io.git -b master",
         "bdg": "yarn build && yarn deploy:github",
         "bdc": "yarn build && yarn deploy:coding",
         "dev": "gatsby develop",
