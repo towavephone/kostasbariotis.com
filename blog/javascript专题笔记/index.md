@@ -1246,7 +1246,6 @@ isArrayLike，看名字可能会让我们觉得这是判断类数组对象的，
 
 ```js
 function isArrayLike(obj) {
-
     // obj 必须有 length属性
     var length = !!obj && "length" in obj && obj.length;
     var typeRes = type(obj);
@@ -1272,6 +1271,209 @@ function isArrayLike(obj) {
 第一个就不说了，看第二个，为什么长度为 0 就可以直接判断为 true 呢？
 
 那我们写个对象：
+
+```js
+var obj = {
+  a: 1,
+  b: 2,
+  length: 0
+}
+```
+
+isArrayLike 函数就会返回 true，那这个合理吗？
+
+回答合不合理之前，我们先看一个例子：
+
+```js
+function a() {
+    console.log(isArrayLike(arguments))
+}
+a();
+```
+
+如果我们去掉 length === 0 这个判断，就会打印 false，然而我们都知道 arguments 是一个类数组对象，这里是应该返回 true 的。
+
+所以是不是为了放过空的 arguments 时也放过了一些存在争议的对象呢？
+
+第三个条件：length 是数字，并且 length > 0 且最后一个元素存在。
+
+为什么仅仅要求最后一个元素存在呢？
+
+让我们先想下数组是不是可以这样写：
+
+```js
+var arr = [,,3]
+```
+
+当我们写一个对应的类数组对象就是：
+
+```js
+var arrLike = {
+    2: 3,
+    length: 3
+}
+```
+
+也就是说当我们在数组中用逗号直接跳过的时候，我们认为该元素是不存在的，类数组对象中也就不用写这个元素，但是最后一个元素是一定要写的，要不然 length 的长度就不会是最后一个元素的 key 值加 1。比如数组可以这样写
+
+```js
+var arr = [1,,];
+console.log(arr.length) // 2
+```
+
+但是类数组对象就只能写成：
+
+```js
+var arrLike = {
+    0: 1,
+    length: 1
+}
+```
+
+所以符合条件的类数组对象是一定存在最后一个元素的！
+
+这就是满足 isArrayLike 的三个条件，其实除了 jQuery 之外，很多库都有对 isArrayLike 的实现，比如 underscore:
+
+```js
+var MAX_ARRAY_INDEX = Math.pow(2, 53) - 1;
+
+var isArrayLike = function(collection) {
+    var length = getLength(collection);
+    return typeof length == 'number' && length >= 0 && length <= MAX_ARRAY_INDEX;
+};
+```
+
+## isElement
+
+isElement 判断是不是 DOM 元素。
+
+```js
+isElement = function(obj) {
+    return !!(obj && obj.nodeType === 1);
+};
+```
+
+# 深浅拷贝
+
+## 数组的浅拷贝
+
+如果是数组，我们可以利用数组的一些方法比如：slice、concat 返回一个新数组的特性来实现拷贝。
+
+比如：
+
+```js
+var arr = ['old', 1, true, null, undefined];
+
+var new_arr = arr.concat();
+
+new_arr[0] = 'new';
+
+console.log(arr) // ["old", 1, true, null, undefined]
+console.log(new_arr) // ["new", 1, true, null, undefined]
+```
+
+用 slice 可以这样做：
+
+```js
+var new_arr = arr.slice();
+```
+
+但是如果数组嵌套了对象或者数组的话，比如：
+
+```js
+var arr = [{old: 'old'}, ['old']];
+
+var new_arr = arr.concat();
+
+arr[0].old = 'new';
+arr[1][0] = 'new';
+
+console.log(arr) // [{old: 'new'}, ['new']]
+console.log(new_arr) // [{old: 'new'}, ['new']]
+```
+
+我们会发现，无论是新数组还是旧数组都发生了变化，也就是说使用 concat 方法，克隆的并不彻底。
+
+如果数组元素是基本类型，就会拷贝一份，互不影响，而如果是对象或者数组，就会只拷贝对象和数组的引用，这样我们无论在新旧数组进行了修改，两者都会发生变化。
+
+我们把这种复制引用的拷贝方法称之为浅拷贝，与之对应的就是深拷贝，深拷贝就是指完全的拷贝一个对象，即使嵌套了对象，两者也相互分离，修改一个对象的属性，也不会影响另一个。
+
+所以我们可以看出使用 concat 和 slice 是一种浅拷贝。
+
+## 数组的深拷贝
+
+那如何深拷贝一个数组呢？这里介绍一个技巧，不仅适用于数组还适用于对象！那就是：
+
+```js
+var arr = ['old', 1, true, ['old1', 'old2'], {old: 1}]
+
+var new_arr = JSON.parse(JSON.stringify(arr));
+
+console.log(new_arr);
+```
+
+是一个简单粗暴的好方法，就是有一个问题，不能拷贝函数，我们做个试验：
+
+```js
+var arr = [function(){
+    console.log(a)
+}, {
+    b: function(){
+        console.log(b)
+    }
+}]
+
+var new_arr = JSON.parse(JSON.stringify(arr));
+
+console.log(new_arr);
+```
+
+我们会发现 new_arr 变成了：
+
+![](2020-06-18-11-59-25.png)
+
+## 浅拷贝的实现
+
+以上三个方法 concat、slice、JSON.stringify 都算是技巧类，可以根据实际项目情况选择使用，接下来我们思考下如何实现一个对象或者数组的浅拷贝。
+
+想一想，好像很简单，遍历对象，然后把属性和属性值都放在一个新的对象不就好了~
+
+嗯，就是这么简单，注意几个小点就可以了：
+
+```js
+var shallowCopy = function(obj) {
+    // 只拷贝对象
+    if (typeof obj !== 'object') return;
+    // 根据 obj 的类型判断是新建一个数组还是对象
+    var newObj = obj instanceof Array ? [] : {};
+    // 遍历obj，并且判断是obj的属性才拷贝
+    for (var key in obj) {
+        if (obj.hasOwnProperty(key)) {
+            newObj[key] = obj[key];
+        }
+    }
+    return newObj;
+}
+```
+
+## 深拷贝的实现
+
+那如何实现一个深拷贝呢？说起来也好简单，我们在拷贝的时候判断一下属性值的类型，如果是对象，我们递归调用深拷贝函数不就好了~
+
+```js
+var deepCopy = function(obj) {
+    if (typeof obj !== 'object') return;
+    var newObj = obj instanceof Array ? [] : {};
+    for (var key in obj) {
+        if (obj.hasOwnProperty(key)) {
+            newObj[key] = typeof obj[key] === 'object' ? deepCopy(obj[key]) : obj[key];
+        }
+    }
+    return newObj;
+}
+```
+
+
 
 
 
