@@ -26,9 +26,7 @@ jobs:
     - name: Build and Deploy to GitHub Pages
       uses: JamesIves/github-pages-deploy-action@releases/v2
       env:
+        ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
         BRANCH: gh-pages
         FOLDER: public
-        CNAME: ${{ secrets.CNAME }}
         BUILD_SCRIPT: yarn install --frozen-lockfile && yarn build
-    
-    
