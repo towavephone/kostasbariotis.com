@@ -22,6 +22,21 @@ jobs:
     # 切代码
     - name: Checkout
       uses: actions/checkout@v2
+    # 缓存操作
+    - name: Cache node modules
+      uses: actions/cache@v2
+      env:
+        cache-name: cache-node-modules
+      with:
+        # npm cache files are stored in `~/.npm` on Linux/macOS
+        path: |
+          .cache
+          node_modules
+        key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('yarn.lock') }}
+        restore-keys: |
+          ${{ runner.os }}-build-${{ env.cache-name }}-
+          ${{ runner.os }}-build-
+          ${{ runner.os }}-
     # 构建部署代码
     - name: Build and Deploy to GitHub Pages
       uses: JamesIves/github-pages-deploy-action@releases/v2
@@ -34,3 +49,9 @@ jobs:
         BRANCH: gh-pages
         FOLDER: public
         BUILD_SCRIPT: yarn install --frozen-lockfile && yarn build
+    # 上传压缩包
+    - name: Archive production artifacts
+      uses: actions/upload-artifact@v1
+      with:
+        name: public
+        path: public
