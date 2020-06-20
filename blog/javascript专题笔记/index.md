@@ -2467,7 +2467,7 @@ var postFromTest = post('www.test.com');
 postFromTest("name=kevin");
 ```
 
-想想 jQuery 虽然有 $.ajax 这样通用的方法，但是也有 $.get 和 $.post 的语法糖。(当然 jQuery 底层是否是这样做的，我就没有研究了)。
+想想 jQuery 虽然有 `$.ajax` 这样通用的方法，但是也有 `$.get` 和 `$.post` 的语法糖。(当然 jQuery 底层是否是这样做的，我就没有研究了)。
 
 curry 的这种用途可以理解为：参数复用。本质上是降低通用性，提高适用性。
 
