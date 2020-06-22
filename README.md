@@ -1,5 +1,6 @@
 ## 技术博客
 
+[![build-and-deploy](https://github.com/towavephone/GatsbyBlog/workflows/build-and-deploy/badge.svg)](https://github.com/towavephone/GatsbyBlog/actions)
 [![](https://img.shields.io/github/last-commit/towavephone/GatsbyBlog.svg)](https://github.com/towavephone/GatsbyBlog/commits/master)
 [![](https://img.shields.io/github/commit-activity/m/towavephone/GatsbyBlog.svg)](https://github.com/towavephone/GatsbyBlog/commits/master)
 [![MIT Licence](https://badges.frapsoft.com/os/mit/mit.svg?v=103)](https://opensource.org/licenses/mit-license.php)
