@@ -22,22 +22,35 @@ jobs:
     # 切代码
     - name: Checkout
       uses: actions/checkout@v2
+    # 得到 yarn 缓存位置
+    - name: Get yarn cache directory path
+      id: yarn-cache-dir-path
+      run: echo "::set-output name=dir::$(yarn cache dir)"
+    # 缓存 yarn
+    - name: Cache yarn cache
+      uses: actions/cache@v2
+      id: cache-yarn-cache
+      with:
+        path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
+        key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+        restore-keys: |
+          ${{ runner.os }}-yarn-
     # 缓存操作
     - name: Cache node modules
-      uses: c-hive/gha-yarn-cache@v1
-      # uses: actions/cache@v2
-      # env:
-      #   cache-name: cache-node-modules
-      # with:
-      #   # npm cache files are stored in `~/.npm` on Linux/macOS
-      #   path: |
-      #     .cache
-      #     node_modules
-      #   key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('yarn.lock') }}
-      #   restore-keys: |
-      #     ${{ runner.os }}-build-${{ env.cache-name }}-
-      #     ${{ runner.os }}-build-
-      #     ${{ runner.os }}-
+      id: cache-node-modules # use this to check for `cache-hit` (`steps.yarn-cache.outputs.cache-hit != 'true'`)
+      uses: actions/cache@v2
+      with:
+        # npm cache files are stored in `~/.npm` on Linux/macOS
+        path: node-modules
+        key: ${{ runner.os }}-${{ matrix.node-version }}-nodemodules-${{ hashFiles('**/yarn.lock') }}
+        restore-keys: |
+          ${{ runner.os }}-${{ matrix.node-version }}-nodemodules-
+    # yarn --prefer-offline
+    - name: yarn
+      run: yarn
+      if: |
+        steps.cache-yarn-cache.outputs.cache-hit != 'true' ||
+        steps.cache-node-modules.outputs.cache-hit != 'true'
     # 构建部署代码
     - name: Build and Deploy to GitHub Pages
       uses: JamesIves/github-pages-deploy-action@releases/v2
@@ -49,7 +62,7 @@ jobs:
         ALGOLIA_INDEX_NAME: ${{ secrets.ALGOLIA_INDEX_NAME }}
         BRANCH: gh-pages
         FOLDER: public
-        BUILD_SCRIPT: yarn && yarn build
+        BUILD_SCRIPT: yarn build
     # 上传压缩包
     - name: Archive production artifacts
       uses: actions/upload-artifact@v1
