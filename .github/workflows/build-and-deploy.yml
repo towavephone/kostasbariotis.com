@@ -22,19 +22,19 @@ jobs:
     # 切代码
     - name: Checkout
       uses: actions/checkout@v2
-    # 得到 yarn 缓存位置
-    - name: Get yarn cache directory path
-      id: yarn-cache-dir-path
-      run: echo "::set-output name=dir::$(yarn cache dir)"
-    # 缓存 yarn
-    - name: Cache yarn cache
-      uses: actions/cache@v2
-      id: cache-yarn-cache
-      with:
-        path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
-        key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
-        restore-keys: |
-          ${{ runner.os }}-yarn-
+    # # 得到 yarn 缓存位置
+    # - name: Get yarn cache directory path
+    #   id: yarn-cache-dir-path
+    #   run: echo "::set-output name=dir::$(yarn cache dir)"
+    # # 缓存 yarn
+    # - name: Cache yarn cache
+    #   uses: actions/cache@v2
+    #   id: cache-yarn-cache
+    #   with:
+    #     path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
+    #     key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+    #     restore-keys: |
+    #       ${{ runner.os }}-yarn-
     # 缓存操作
     - name: Cache node modules
       id: cache-node-modules # use this to check for `cache-hit` (`steps.yarn-cache.outputs.cache-hit != 'true'`)
@@ -49,7 +49,6 @@ jobs:
     - name: yarn
       run: yarn
       if: |
-        steps.cache-yarn-cache.outputs.cache-hit != 'true' ||
         steps.cache-node-modules.outputs.cache-hit != 'true'
     # 构建部署代码
     - name: Build and Deploy to GitHub Pages
