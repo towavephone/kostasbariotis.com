@@ -2880,3 +2880,5 @@ var curry = fn =>
             ? fn(...args)
             : (arg) => judge(...args, arg)
 ```
+
+# 偏函数
