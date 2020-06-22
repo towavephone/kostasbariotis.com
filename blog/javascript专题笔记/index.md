@@ -2902,3 +2902,563 @@ var addOne = partial(add, 1);
 
 addOne(2) // 3
 ```
+
+个人觉得翻译成“局部应用”或许更贴切些，以下全部使用“局部应用”。
+
+## 柯里化与局部应用
+
+如果看过上一篇文章《JavaScript专题之柯里化》，实际上你会发现这个例子和柯里化太像了，所以两者到底是有什么区别呢？
+
+其实也很明显：
+
+柯里化是将一个多参数函数转换成多个单参数函数，也就是将一个 n 元函数转换成 n 个一元函数。
+
+局部应用则是固定一个函数的一个或者多个参数，也就是将一个 n 元函数转换成一个 n - x 元函数。
+
+如果说两者有什么关系的话，引用 functional-programming-jargon 中的描述就是：
+
+> Curried functions are automatically partially applied.
+
+## partial
+
+我们今天的目的是模仿 underscore 写一个 partial 函数，比起 curry 函数，这个显然简单了很多。
+
+也许你在想我们可以直接使用 bind 呐，举个例子：
+
+```js
+function add(a, b) {
+    return a + b;
+}
+
+var addOne = add.bind(null, 1);
+
+addOne(2) // 3
+```
+
+然而使用 bind 我们还是改变了 this 指向，我们要写一个不改变 this 指向的方法。
+
+## 第一版
+
+根据之前的表述，我们可以尝试着写出第一版：
+
+```js
+// 第一版
+// 似曾相识的代码
+function partial(fn) {
+    var args = [].slice.call(arguments, 1);
+    return function() {
+        var newArgs = args.concat([].slice.call(arguments));
+        return fn.apply(this, newArgs);
+    };
+};
+```
+
+我们来写个 demo 验证下 this 的指向：
+
+```js
+function add(a, b) {
+    return a + b + this.value;
+}
+
+// var addOne = add.bind(null, 1);
+var addOne = partial(add, 1);
+
+var value = 1;
+var obj = {
+    value: 2,
+    addOne: addOne
+}
+obj.addOne(2); // ???
+// 使用 bind 时，结果为 4
+// 使用 partial 时，结果为 5
+```
+
+## 第二版
+
+然而正如 curry 函数可以使用占位符一样，我们希望 partial 函数也可以实现这个功能，我们再来写第二版：
+
+```js
+// 第二版
+var _ = {};
+
+function partial(fn) {
+    var args = [].slice.call(arguments, 1);
+    return function() {
+        var position = 0, len = args.length;
+        for(var i = 0; i < len; i++) {
+            args[i] = args[i] === _ ? arguments[position++] : args[i]
+        }
+        while(position < arguments.length) args.push(arguments[position++]);
+        return fn.apply(this, args);
+    };
+};
+```
+
+我们验证一下：
+
+```js
+var subtract = function(a, b) { return b - a; };
+subFrom20 = partial(subtract, _, 20);
+subFrom20(5);
+```
+
+# 惰性函数
+
+我们现在需要写一个 foo 函数，这个函数返回首次调用时的 Date 对象，注意是首次。
+
+## 普通方法
+
+```js
+var t;
+function foo() {
+    if (t) return t;
+    t = new Date()
+    return t;
+}
+```
+
+问题有两个，一是污染了全局变量，二是每次调用 foo 的时候都需要进行一次判断。
+
+## 闭包
+
+```js
+var foo = (function() {
+    var t;
+    return function() {
+        if (t) return t;
+        t = new Date();
+        return t;
+    }
+})();
+```
+
+然而还是没有解决调用时都必须进行一次判断的问题。
+
+## 函数对象
+
+函数也是一种对象，利用这个特性，我们也可以解决这个问题。
+
+```js
+function foo() {
+    if (foo.t) return foo.t;
+    foo.t = new Date();
+    return foo.t;
+}
+```
+
+依旧没有解决调用时都必须进行一次判断的问题。
+
+## 惰性函数
+
+不错，惰性函数就是解决每次都要进行判断的这个问题，解决原理很简单，重写函数。
+
+```js
+var foo = function() {
+    var t = new Date();
+    // 运行一次后，以后只会调用这个函数
+    foo = function() {
+        return t;
+    };
+    return foo();
+};
+```
+
+## 更多应用
+
+DOM 事件添加中，为了兼容现代浏览器和 IE 浏览器，我们需要对浏览器环境进行一次判断：
+
+```js
+// 简化写法
+function addEvent(type, el, fn) {
+    if (window.addEventListener) {
+        el.addEventListener(type, fn, false);
+    }
+    else if (window.attachEvent) {
+        el.attachEvent('on' + type, fn);
+    }
+}
+```
+
+问题在于我们每当使用一次 addEvent 时都会进行一次判断。
+
+利用惰性函数，我们可以这样做：
+
+```js
+function addEvent(type, el, fn) {
+    if (window.addEventListener) {
+        addEvent = function(type, el, fn) {
+            el.addEventListener(type, fn, false);
+        }
+    }
+    else if (window.attachEvent) {
+        addEvent = function(type, el, fn) {
+            el.attachEvent('on' + type, fn);
+        }
+    }
+}
+```
+
+当然我们也可以使用闭包的形式：
+
+```js
+var addEvent = (function(){
+    if (window.addEventListener) {
+        return function (type, el, fn) {
+            el.addEventListener(type, fn, false);
+        }
+    }
+    else if(window.attachEvent){
+        return function (type, el, fn) {
+            el.attachEvent('on' + type, fn);
+        }
+    }
+})();
+```
+
+当我们每次都需要进行条件判断，其实只需要判断一次，接下来的使用方式都不会发生改变的时候，想想是否可以考虑使用惰性函数。
+
+# 函数组合
+
+我们需要写一个函数，输入 'kevin'，返回 'HELLO, KEVIN'。
+
+## 尝试
+
+```js
+var toUpperCase = function(x) { return x.toUpperCase(); };
+var hello = function(x) { return 'HELLO, ' + x; };
+
+var greet = function(x) {
+    return hello(toUpperCase(x));
+};
+
+greet('kevin');
+```
+
+还好我们只有两个步骤，首先小写转大写，然后拼接字符串。如果有更多的操作，greet 函数里就需要更多的嵌套，类似于 fn3(fn2(fn1(fn0(x))))。
+
+## 优化
+
+试想我们写个 compose 函数：
+
+```js
+var compose = function(f, g) {
+    return function(x) {
+        return f(g(x));
+    };
+};
+```
+
+greet 函数就可以被优化为：
+
+```js
+var greet = compose(hello, toUpperCase);
+greet('kevin');
+```
+
+利用 compose 将两个函数组合成一个函数，让代码从右向左运行，而不是由内而外运行，可读性大大提升。这便是函数组合。
+
+但是现在的 compose 函数也只是能支持两个参数，如果有更多的步骤呢？我们岂不是要这样做：
+
+```js
+compose(d, compose(c, compose(b, a)))
+```
+
+为什么我们不写一个帅气的 compose 函数支持传入多个函数呢？这样就变成了：
+
+```js
+compose(d, c, b, a)
+```
+
+## compose
+
+我们直接抄袭 underscore 的 compose 函数的实现：
+
+```js
+function compose() {
+    var args = arguments;
+    var start = args.length - 1;
+    return function() {
+        var i = start;
+        var result = args[start].apply(this, arguments);
+        while (i--) result = args[i].call(this, result);
+        return result;
+    };
+};
+```
+
+现在的 compose 函数已经可以支持多个函数了，然而有了这个又有什么用呢？
+
+在此之前，我们先了解一个概念叫做 pointfree。
+
+## pointfree (函数式编程)
+
+pointfree 指的是函数无须提及将要操作的数据是什么样的。依然是以最初的需求为例：
+
+```js
+// 需求：输入 'kevin'，返回 'HELLO, KEVIN'。
+
+// 非 pointfree，因为提到了数据：name
+var greet = function(name) {
+    return ('hello ' + name).toUpperCase();
+}
+
+// pointfree
+// 先定义基本运算，这些可以封装起来复用
+var toUpperCase = function(x) { return x.toUpperCase(); };
+var hello = function(x) { return 'HELLO, ' + x; };
+
+var greet = compose(hello, toUpperCase);
+greet('kevin');
+```
+
+我们再举个稍微复杂一点的例子，为了方便书写，我们需要借助在《JavaScript专题之函数柯里化》中写到的 curry 函数：
+
+```js
+// 需求：输入 'kevin daisy kelly'，返回 'K.D.K'
+
+// 非 pointfree，因为提到了数据：name
+var initials = function (name) {
+    return name.split(' ').map(compose(toUpperCase, head)).join('. ');
+};
+
+// pointfree
+// 先定义基本运算
+var split = curry(function(separator, str) { return str.split(separator) })
+var head = function(str) { return str.slice(0, 1) }
+var toUpperCase = function(str) { return str.toUpperCase() }
+var join = curry(function(separator, arr) { return arr.join(separator) })
+var map = curry(function(fn, arr) { return arr.map(fn) })
+
+var initials = compose(join('.'), map(compose(toUpperCase, head)), split(' '));
+
+initials("kevin daisy kelly");
+```
+
+从这个例子中我们可以看到，利用柯里化（curry）和函数组合 (compose) 非常有助于实现 pointfree。
+
+也许你会想，这种写法好麻烦呐，我们还需要定义那么多的基础函数……可是如果有工具库已经帮你写好了呢？比如 ramda.js：
+
+```js
+// 使用 ramda.js
+var initials = R.compose(R.join('.'), R.map(R.compose(R.toUpper, R.head)), R.split(' '));
+```
+
+而且你也会发现：
+
+> Pointfree 的本质就是使用一些通用的函数，组合出各种复杂运算。上层运算不要直接操作数据，而是通过底层函数去处理。即不使用所要处理的值，只合成运算过程。
+
+那么使用 pointfree 模式究竟有什么好处呢？
+
+> pointfree 模式能够帮助我们减少不必要的命名，让代码保持简洁和通用，更符合语义，更容易复用，测试也变得轻而易举。
+
+## 实战
+
+这个例子来自于 Favoring Curry：
+
+假设我们从服务器获取这样的数据：
+
+```js
+var data = {
+    result: "SUCCESS",
+    tasks: [
+        {id: 104, complete: false,            priority: "high",
+                  dueDate: "2013-11-29",      username: "Scott",
+                  title: "Do something",      created: "9/22/2013"},
+        {id: 105, complete: false,            priority: "medium",
+                  dueDate: "2013-11-22",      username: "Lena",
+                  title: "Do something else", created: "9/22/2013"},
+        {id: 107, complete: true,             priority: "high",
+                  dueDate: "2013-11-22",      username: "Mike",
+                  title: "Fix the foo",       created: "9/22/2013"},
+        {id: 108, complete: false,            priority: "low",
+                  dueDate: "2013-11-15",      username: "Punam",
+                  title: "Adjust the bar",    created: "9/25/2013"},
+        {id: 110, complete: false,            priority: "medium",
+                  dueDate: "2013-11-15",      username: "Scott",
+                  title: "Rename everything", created: "10/2/2013"},
+        {id: 112, complete: true,             priority: "high",
+                  dueDate: "2013-11-27",      username: "Lena",
+                  title: "Alter all quuxes",  created: "10/5/2013"}
+    ]
+};
+```
+
+我们需要写一个名为 getIncompleteTaskSummaries 的函数，接收一个 username 作为参数，从服务器获取数据，然后筛选出这个用户的未完成的任务的 ids、priorities、titles、和 dueDate 数据，并且按照日期升序排序。
+
+以 Scott 为例，最终筛选出的数据为：
+
+```js
+[
+    {id: 110, title: "Rename everything", 
+        dueDate: "2013-11-15", priority: "medium"},
+    {id: 104, title: "Do something", 
+        dueDate: "2013-11-29", priority: "high"}
+]
+```
+
+普通的方式为：
+
+```js
+// 第一版 过程式编程
+var fetchData = function() {
+    // 模拟
+    return Promise.resolve(data)
+};
+
+var getIncompleteTaskSummaries = function(membername) {
+     return fetchData()
+         .then(function(data) {
+             return data.tasks;
+         })
+         .then(function(tasks) {
+             return tasks.filter(function(task) {
+                 return task.username == membername
+             })
+         })
+         .then(function(tasks) {
+             return tasks.filter(function(task) {
+                 return !task.complete
+             })
+         })
+         .then(function(tasks) {
+             return tasks.map(function(task) {
+                 return {
+                     id: task.id,
+                     dueDate: task.dueDate,
+                     title: task.title,
+                     priority: task.priority
+                 }
+             })
+         })
+         .then(function(tasks) {
+             return tasks.sort(function(first, second) {
+                 var a = first.dueDate,
+                     b = second.dueDate;
+                 return a < b ? -1 : a > b ? 1 : 0;
+             });
+         })
+         .then(function(task) {
+             console.log(task)
+         })
+};
+
+getIncompleteTaskSummaries('Scott')
+```
+
+如果使用 pointfree 模式：
+
+```js
+// 第二版 pointfree 改写
+var fetchData = function() {
+    return Promise.resolve(data)
+};
+
+// 编写基本函数
+var prop = curry(function(name, obj) {
+    return obj[name];
+});
+
+var propEq = curry(function(name, val, obj) {
+    return obj[name] === val;
+});
+
+var filter = curry(function(fn, arr) {
+    return arr.filter(fn)
+});
+
+var map = curry(function(fn, arr) {
+    return arr.map(fn)
+});
+
+var pick = curry(function(args, obj){
+    var result = {};
+    for (var i = 0; i < args.length; i++) {
+        result[args[i]] = obj[args[i]]
+    }
+    return result;
+});
+
+var sortBy = curry(function(fn, arr) {
+    return arr.sort(function(a, b){
+        var a = fn(a),
+            b = fn(b);
+        return a < b ? -1 : a > b ? 1 : 0;
+    })
+});
+
+var getIncompleteTaskSummaries = function(membername) {
+    return fetchData()
+        .then(prop('tasks'))
+        .then(filter(propEq('username', membername)))
+        .then(filter(propEq('complete', false)))
+        .then(map(pick(['id', 'dueDate', 'title', 'priority'])))
+        .then(sortBy(prop('dueDate')))
+        .then(console.log)
+};
+
+getIncompleteTaskSummaries('Scott')
+```
+
+如果直接使用 ramda.js，你可以省去编写基本函数:
+
+```js
+// 第三版 使用 ramda.js
+var fetchData = function() {
+    return Promise.resolve(data)
+};
+
+var getIncompleteTaskSummaries = function(membername) {
+    return fetchData()
+        .then(R.prop('tasks'))
+        .then(R.filter(R.propEq('username', membername)))
+        .then(R.filter(R.propEq('complete', false)))
+        .then(R.map(R.pick(['id', 'dueDate', 'title', 'priority'])))
+        .then(R.sortBy(R.prop('dueDate')))
+        .then(console.log)
+};
+
+getIncompleteTaskSummaries('Scott')
+```
+
+当然了，利用 compose，你也可以这样写：
+
+```js
+// 第四版 使用 compose
+var fetchData = function() {
+    return Promise.resolve(data)
+};
+
+var getIncompleteTaskSummaries = function(membername) {
+    return fetchData()
+        .then(R.compose(
+            console.log,
+            R.sortBy(R.prop('dueDate')),
+            R.map(R.pick(['id', 'dueDate', 'title', 'priority'])
+            ),
+            R.filter(R.propEq('complete', false)),
+            R.filter(R.propEq('username', membername)),
+            R.prop('tasks'),
+        ))
+};
+
+getIncompleteTaskSummaries('Scott')
+```
+
+compose 是从右到左依此执行，当然你也可以写一个从左到右的版本，但是从右向左执行更加能够反映数学上的含义。
+
+ramda.js 提供了一个 R.pipe 函数，可以做的从左到右，以上可以改写为：
+
+```js
+// 第五版 使用 R.pipe
+var getIncompleteTaskSummaries = function(membername) {
+    return fetchData()
+        .then(R.pipe(
+            R.prop('tasks'),
+            R.filter(R.propEq('username', membername)),
+            R.filter(R.propEq('complete', false)),
+            R.map(R.pick(['id', 'dueDate', 'title', 'priority'])
+            R.sortBy(R.prop('dueDate')),
+            console.log,
+        ))
+};
+```
