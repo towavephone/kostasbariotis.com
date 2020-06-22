@@ -35,23 +35,18 @@ jobs:
         key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
         restore-keys: |
           ${{ runner.os }}-yarn-
-    # 缓存操作
-    - name: Cache node modules
-      id: cache-node-modules # use this to check for `cache-hit` (`steps.yarn-cache.outputs.cache-hit != 'true'`)
-      uses: actions/cache@v2
-      with:
-        # npm cache files are stored in `~/.npm` on Linux/macOS
-        path: |
-          node_modules
-          .cache
-        key: ${{ runner.os }}-nodemodules-${{ hashFiles('**/yarn.lock') }}
-        restore-keys: |
-          ${{ runner.os }}-nodemodules-
-    # yarn --prefer-offline
-    # - name: yarn
-    #   run: yarn
-    #   if: |
-    #     steps.cache-node-modules.outputs.cache-hit != 'true'
+    # # 缓存操作
+    # - name: Cache node modules
+    #   id: cache-node-modules # use this to check for `cache-hit` (`steps.yarn-cache.outputs.cache-hit != 'true'`)
+    #   uses: actions/cache@v2
+    #   with:
+    #     # npm cache files are stored in `~/.npm` on Linux/macOS
+    #     path: |
+    #       node_modules
+    #       .cache
+    #     key: ${{ runner.os }}-nodemodules-${{ hashFiles('**/yarn.lock') }}
+    #     restore-keys: |
+    #       ${{ runner.os }}-nodemodules-
     # 构建部署代码
     - name: Build and Deploy to GitHub Pages
       uses: JamesIves/github-pages-deploy-action@releases/v2
@@ -63,7 +58,7 @@ jobs:
         ALGOLIA_INDEX_NAME: ${{ secrets.ALGOLIA_INDEX_NAME }}
         BRANCH: gh-pages
         FOLDER: public
-        BUILD_SCRIPT: yarn && yarn build
+        BUILD_SCRIPT: yarn --prefer-offline && yarn build
     # 上传压缩包
     - name: Archive production artifacts
       uses: actions/upload-artifact@v1
