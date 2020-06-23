@@ -437,13 +437,13 @@ window.postMessage() 方法被调用时，会在所有页面脚本执行完毕�
 6. 更小的打包大小，总体体积减少 30%
 8. 新的核心架构 Fiber，正是得益于 FIber，上述提到的支持返回数据及错误边界等功能才变得可能。Fiber 相较于之前最大的不同是它可以支持异步渲染（async rendering），这意味着 React 可以在更细的粒度上控制组件的绘制过程，从最终的用户体验来讲，用户可以体验到更流畅交互及动画体验。而因为异步渲染涉及到 React 的方方面面甚至未来，在 16.0 版本中 React 还暂时没有启用，并将在未来几个月陆续推出。
 
-见文章 [React16新特性](/react-16-new-feature/)
+见文章 [React16 新特性](/react-16-new-feature/)
 
 ### react v15 getChildContext 与 react v16 Context.Provider 优缺点？
 
 缺点：
 
-1. 新的Context API 通过创建一个 Context 对象来完成，在实际项目中，Provider 和 Consumer往往都存在于不同的源代码文件中，在一个文件中定义 Context 对象，然后，这个文件被被其他文件来 import，老的 Context API 并不需要共同依赖一个什么对象
+1. 新的 Context API 通过创建一个 Context 对象来完成，在实际项目中，Provider 和 Consumer 往往都存在于不同的源代码文件中，在一个文件中定义 Context 对象，然后，这个文件被被其他文件来 import，老的 Context API 并不需要共同依赖一个什么对象
 2. 引入新的问题——如何管理 Context 对象
 
 优点：
@@ -462,9 +462,9 @@ mobx
 - store - view 的闭环
 - 使用了类双向绑定的思维
 
-从目前经验来看，我建议前端数据流不太复杂的情况，使用 Mobx，因为更加清晰，也便于维护；如果前端数据流极度复杂，建议谨慎使用 Redux，通过中间件减缓巨大业务复杂度，但还是要做到对开发人员尽量透明，如果可以建议使用 typescript 辅助。
+从目前经验来看，我建议前端数据流不太复杂的情况使用 Mobx，因为更加清晰，也便于维护；如果前端数据流极度复杂，建议谨慎使用 Redux，通过中间件减缓巨大业务复杂度，但还是要做到对开发人员尽量透明，如果可以建议使用 typescript 辅助。
 
-Redux 的优势：
+Redux 的优缺点：
 
 - 数据流流动很自然，因为任何 dispatch 都会导致广播，需要依据对象引用是否变化来控制更新粒度。
 - 如果充分利用时间回溯的特征，可以增强业务的可预测性与错误定位能力。
@@ -474,7 +474,7 @@ Redux 的优势：
 - 但是灵活利用中间件，可以通过约定完成许多复杂的工作。
 - 对 typescript 支持困难。
 
-Mobx的优势：
+Mobx 的优缺点：
 
 - 数据流流动不自然，只有用到的数据才会引发绑定，局部精确更新，但免去了粒度控制烦恼。
 - 没有时间回溯能力，因为数据只有一份引用。
@@ -491,8 +491,19 @@ Mobx的优势：
 ### 页面性能优化？
 ### react 页面白屏的原因及解决方法？
 ### react 中全局主题色怎么配置？
-### style 与 className 那种更好？style-components
+### style 与 className 那种更好？
+
+style-components
+
 ### react 组件最耗性能的地方？怎么优化？
+
+如何防止不必要的渲染是解决问题的关键。
+
+1. 尽量多使用无状态函数构建组件
+2. 拆分组件为子组件，对组件做更细粒度的控制
+3. 减少 render 的次数，类组件可以使用 shouldComponentUpdate 或 PureComponent，函数组件可以利用高级组件的特性或者 React.memo
+4. Immutable 实现的原理是持久化的数据结构，即使用旧数据创建新数据时，保证新旧数据同时可用且不变。同时为了避免深拷贝带来的性能损耗，Immutable使用了结构共享(structural sharing)，即如果对象树中一个节点发生变化，只修改这个节点和受它影响的父节点，其他节点则进行共享。
+
 ### 面试需要几轮？
 ### 面试官是做什么业务的？
 
@@ -546,12 +557,40 @@ Mobx的优势：
 ### 为什么要加上 react 16 的生命周期？
 ### fiber 原理？底层架构？
 
-见文章：[React Fiber数据结构](/react-fiber-data-struct/)
+[React Fiber数据结构](/react-fiber-data-struct/)
 
 ### webpack 原理？
-### webpack 分包机制？webpack 4 与 2 的分包机制有什么区别？
+### webpack 分包机制？webpack 4 与 2 的有什么区别？
 
-解决复杂场景下的代码拆分问题。针对异步加载中公共模块的拆分，我们只需设置需要被公共打包的代码，SplitChunksPlugin 就会自动帮我们按照各异步模块的需求，将公共的 Chunk 拆分成一些小的公共 Chunks 供各异步模块使用，并且这些公共Chunks不会首屏加载，会随着使用使用它们的异步模块，使用时再一同并行加载。
+解决复杂场景下的代码拆分问题，针对异步加载中公共模块的拆分，我们只需设置需要被公共打包的代码，SplitChunksPlugin 就会自动帮我们按照各异步模块的需求，将公共的 Chunk 拆分成一些小的公共 Chunks 供各异步模块使用，并且这些公共 Chunks 不会首屏加载，会随着使用使用它们的异步模块，使用时再一同并行加载。
+
+webpack 4 与 2 区别：
+
+1. webpack 4 更快（速度提升 98%），多项性能改进，尤其是更快的增量重建；UglifyJs现在默认情况下会缓存并进行参数化；RemoveParentModulesPlugin 的性能改进
+2. Mode 配置，零配置以及默认值
+3. CommonsChunkPlugin -> optimization.splitChunks，optimization.runtimeChunk
+4. WebAssembly 支持
+5. 模块类型以及 .mjs 支持
+6. NoEmitOnErrorsPlugin -> optimization.noEmitOnErrors，ModuleConcatenationPlugin-> optimization.concatenateModules，NamedModulesPlugin-> optimization.namedModules
+7. 可以本地处理 JSON
+8. sideEffects: false 现在在 package.json 中受支持
+
+webpack 5 新特性：
+
+1. 优化持久缓存：v5 中缓存默认是 memory，你可以修改设置写入硬盘。之前版本的替代者是 cache-loader 和 babel-loader 中的 cacheDirectory 选项。缓存（内存 / 磁盘两种形式）中的主要内容是 module objects，在编译的时候会将 graph 以二进制或者 json 文件存储在硬盘上。每当代码变化、模块之间依赖关系改变导致 graph 改变时，Webpack 会读取记录做增量编译。
+2. 优化长期缓存：针对 moduleId 和 chunkId 的计算方式进行了优化，增加确定性的 moduleId 和 chunkId 的生成策略。moduleId 根据上下文模块路径，chunkId 根据 chunk 内容计算，最后为 moduleId 和 chunkId 生成 3 - 4 位的数字 id，实现长期缓存，生产环境下默认开启。
+    1. 原来的 moduleId 默认值自增 id，容易导致文件缓存失效。在 v4 之前，可以安装 HashedModuleIdsPlugin 插件覆盖默认的 moduleId 规则， 它会使用模块路径生成的 hash 作为 moduleId。在 v4 中，可以配置 optimization.moduleIds = 'hashed'
+    2. 原来的 chunkId 默认值自增 id。比如这样的配置下，如果有新的 entry 增加，chunk 数量也会跟着增加，chunkId 也会递增。之前可以安装 NamedChunksPlugin 插件来稳定 chunkId；或者配置 optimization.chunkIds = 'named'
+3. NodeJS 的 polyfill 脚本被移除
+4. 更好的 TreeShaking：在 v5 中会分析模块 export 与 import 之间的依赖关系，最终的代码生成非常简洁
+5. Module Federation：让 Webpack 达到了线上 runtime 的效果，让代码直接在独立应用间利用 CDN 直接共享，不再需要本地安装 NPM 包、构建再发布了！之前代码共享一般通过
+NPM、UMD、微前端
+6. Top Level Await
+7. SplitChunks 支持更灵活的资源拆分
+8. 不包含 JS 代码的 Chunk 将不再生成 JS 文件
+9. Output 默认生成 ES6 规范代码，也支持配置为 5 - 11
+
+[Webpack5新特性](/webpack-v5-new-feature/)
 
 ### 网页性能优化
 ### 图片格式的选择？
@@ -591,7 +630,7 @@ Mobx的优势：
 
 ### 项目介绍？
 ### 浏览器缓存介绍？
-### sw缓存怎么实现的？原理是什么？
+### sw 缓存怎么实现的？原理是什么？
 
 一个服务器与浏览器之间的中间人角色，如果网站中注册了 service worker 那么它可以拦截当前网站所有的请求，进行判断（需要编写相应的判断程序），如果需要向服务器发起请求的就转给服务器，如果可以直接使用缓存的就直接返回缓存不再转给服务器。从而大大提高浏览体验。
 
@@ -643,13 +682,13 @@ this.addEventListener('fetch', function(event) {
 });
 ```
 
-### sw缓存机制是否有了解？如何更新sw缓存？
+### sw 缓存机制是否有了解？如何更新 sw 缓存？
 
 [谨慎处理 Service Worker 的更新](/handle-service-worker-updates/)
 
-### https原理？中途被篡改的话该怎么预防？
+### https 原理？中途被篡改的话该怎么预防？
 
-https本质上是加密版本的http，提供传输安全性，通过ssl协议提供安全层，然后通过http进行传输的协议
+https 本质上是加密版本的 http，提供传输安全性，通过 ssl 协议提供安全层，然后通过 http 进行传输的协议
 
 ![](2020-06-04-02-38-26.png)
 
@@ -659,7 +698,7 @@ https本质上是加密版本的http，提供传输安全性，通过ssl协议�
 
 然后接受者用`服务端的公钥去解密数字签名得到消息摘要`和`用 Hash 函数对收到的原文计算生成的摘要信息`进行比较，如果一致则数据未篡改。同时要注意服务器的公钥必须是数字证书认证机构（CA）认证的数字证书，浏览器会将内置的数字证书与传过来的数字证书做对比，如果不一致则报证书错误。
 
-### 代码劫持实现XMLHttpRequest Send方法，要求每个ajax请求把请求参数打印出来？
+### 代码劫持实现 XMLHttpRequest Send 方法，要求每个 ajax 请求把请求参数打印出来？
 
 ```js
 XMLHttpRequest.prototype.realSend = XMLHttpRequest.prototype.send;
@@ -790,8 +829,28 @@ var longestCommonPrefix = function(strs) {
 ## 一面
 
 ### 冒泡排序与选择排序的区别？
-### BFC与IFC？
-### react生命周期？
+
+排序的稳定性和复杂度
+
+不稳定：
+
+1. 选择排序 (selection sort) — O(n2)
+2. 快速排序 (quicksort) — O(nlogn) 平均时间, O(n2) 最坏情况; 对于大的、乱序串列一般认为是最快的已知排序
+3. 堆排序 (heapsort) — O(nlogn)
+4. 希尔排序 (shell sort) — O(nlogn)
+5. 基数排序 (radix sort) — O(n·k); 需要 O(n) 额外存储空间 （K为特征个数）
+
+稳定：
+
+1. 插入排序（insertion sort) — O(n2)
+2. 冒泡排序（bubble sort) — O(n2)
+3. 归并排序 （merge sort) — O(nlogn); 需要 O(n) 额外存储空间
+4. 二叉树排序（Binary tree sort) — O(nlogn); 需要 O(n) 额外存储空间
+5. 计数排序 (counting sort) — O(n+k); 需要 O(n+k) 额外存储空间，k 为序列中 Max-Min+1
+6. 桶排序 (bucket sort)— O(n); 需要 O(k) 额外存储空间
+
+### BFC 与 IFC？
+### react 生命周期？
 ### 移动端适配的点？
 ### 移动端像素的适配做过没？rem 转 px 之类的方案？
 ### webpack pc/mobile 是怎么多渠道打包的？
@@ -1175,15 +1234,14 @@ webpack 的事件机制是基于 tapable 这个库实现的，tapable 的具体�
 
 ### react-lite 少了什么东西？
 
-- 所有 React.PropTypes 方法都是no-op（空函数）
+- 所有 React.PropTypes 方法都是 no-op（空函数）
 - 在服务器端渲染中使用 React，在浏览器中使用 React-lite
 - react-lite 将用新的 dom 树替换 dom 树
 - 您最好避免 script|head|link 在客户端标记
 - 不能使用 react-dev-tool inspect react-lite，应该切换到常规的 react 进行调试
 - react-lite 仅适用于 JSX 工具链（问题）
 - 与 react 不同，eventreact-lite 中的对象始终是持久性的，并且 event.persist 设置为 no-op 以避免抛出错误。
-- react-lite 无法使用 react-tap-event-plugin，请用 fastclick 代替，或添加别名'react-tap-event-plugin': 'react-lite/lib/react-tap-event-plugin'，就像这里
-不能使用 transform-react-inline-elements，您将获得包含 react 和捆绑包 react-lite。
+- react-lite 无法使用 react-tap-event-plugin，请用 fastclick 代替，或添加别名'react-tap-event-plugin': 'react-lite/lib/react-tap-event-plugin'，就像这里不能使用 transform-react-inline-elements，您将获得包含 react 和捆绑包 react-lite。
 - react-lite 只遵循 React 最佳实践。
 
 ### react hooks 原理
@@ -1192,11 +1250,11 @@ webpack 的事件机制是基于 tapable 这个库实现的，tapable 的具体�
 
 ```js
 type Hooks = {
-    memoizedState: any, // 指向当前渲染节点 Fiber
+  memoizedState: any, // 指向当前渲染节点 Fiber
   baseState: any, // 初始化 initialState， 已经每次 dispatch 之后 newState
-  baseUpdate: Update<any> | null,// 当前需要更新的 Update ，每次更新完之后，会赋值上一个 update，方便 react 在渲染错误的边缘，数据回溯
-  queue: UpdateQueue<any> | null,// UpdateQueue 通过
-  next: Hook | null, // link 到下一个 hooks，通过 next 串联每一 hooks
+  baseUpdate: Update<any> | null, // 当前需要更新的 Update ，每次更新完之后，会赋值上一个 update，方便 react 在渲染错误的边缘，数据回溯
+  queue: UpdateQueue<any> | null, // UpdateQueue 通过
+  next: Hook | null, // link 到下一个 hooks，通过 next 串联每一个 hooks
 }
 
 type Effect = {
