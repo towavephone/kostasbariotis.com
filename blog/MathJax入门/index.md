@@ -18,8 +18,6 @@ tags: Markdown, mathjax
 - 要显示希腊字母，可以用 `\alpha, \beta, …, \omega`，输出`α,β,…ω` 
 - 想要显示大写的话，就用 `\Gamma, \Delta, …, \Omega`, 输出 `Γ,Δ,…,Ω`
 
-
-
 ### 上下标
 
 - 上下标可用 `^` 和 `_`, 比如`\log_2 x` 显示 $\log_2 x$
