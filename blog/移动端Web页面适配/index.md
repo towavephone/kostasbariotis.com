@@ -374,7 +374,7 @@ rem 弹性布局方式作为移动端 web 页面适配方法，后期从 rem 过
 
 ### 设置 scale 为 1/dpr
 
-css 中涉及 1 像素的地方仍然使用 px 作为单位，设置 `<meta>` 标签中 `initial-scale=1/dpr` ，将整个页面缩小 dpr 倍，对于页面采用 rem 方案的情况，将页面的根字体再放大dpr 倍，这个时候就能够在不改变页面其他布局的情况下，保持边框的 css 像素为 1px。
+css 中涉及 1 像素的地方仍然使用 px 作为单位，设置 `<meta>` 标签中 `initial-scale=1/dpr` ，将整个页面缩小 dpr 倍，对于页面采用 rem 方案的情况，将页面的根字体再放大 dpr 倍，这个时候就能够在不改变页面其他布局的情况下，保持边框的 css 像素为 1px。
 
 ### transform 的 scale 属性
 
@@ -404,7 +404,7 @@ transform 的 scale 属性允许对元素进行缩放，其中 scaleY(y) 通过�
 
 ### border-image 属性
 
-使用 border-image，在元素的边框上设置一个一半透明一半显示的图片。
+使用 border-image，在元素的边框上设置一个一半透明一半显示的图片，也可以使用 CSS3 渐变填充
 
 ## 对图片的处理
 
@@ -511,14 +511,14 @@ img.onload = function(imgObj) {
 
 /* 高清显示屏(设备像素比例大于等于2)使用2倍图  */
 @media only screen and (min-device-pixel-ratio:2) {
-    .css{
+    .css {
         background-image: url(img_2x.png);
     }
 }
 
 /* 高清显示屏(设备像素比例大于等于3)使用3倍图  */
 @media only screen and (min-device-pixel-ratio:3) {
-    .css{
+    .css {
         background-image: url(img_3x.png);
     }
 }
