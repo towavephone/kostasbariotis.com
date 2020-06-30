@@ -19,12 +19,17 @@ Webpack 在执行的时候，以配置的 entry 为入口，递归解析文件�
 
 缓存（内存 / 磁盘两种形式）中的主要内容是 module objects，在编译的时候会将 graph 以二进制或者 json 文件存储在硬盘上。每当代码变化、模块之间依赖关系改变导致 graph 改变时，Webpack 会读取记录做增量编译。
 
+## 之前持久缓存的方式
+
 之前可以使用 loader 设置缓存：
 
 1. 使用 cache-loader 可以将编译结果写入硬盘缓存，Webpack 再次构建时如果文件没有发生变化则会直接拉取缓存
 2. 还有一部分 loader 自带缓存配置，比如 babel-loader，可以配置参数 cacheDirectory 使用缓存，将每次的编译结果写进磁盘（默认在 node_modules/.cache/babel-loader 目录），UglifyJsPlugin 插件中的 cache 选项
-3. HardSourceWebpackPlugin 插件
+3. terser-webpack-plugin 开启缓存
+3. hard-source-webpack-plugin 插件
 4. webpack.DllPlugin 插件
+
+## 现在的方案
 
 v5 中缓存默认是 memory，你可以修改设置写入硬盘：
 
@@ -38,7 +43,7 @@ module.exports = {
 };
 ```
 
-注：对大部分 node_modules 哈希处理以构建依赖项，代价昂贵，还降低 Webpack 执行速度。为避免这种情况出现，Webpack 加入了一些优化，默认会跳过 node_modules，并使用 package.json 中的 version 和 name 作为数据源，有点类似于 webpack.DllPlugin
+注：对大部分 `node_modules` 哈希处理以构建依赖项，代价昂贵，还降低 Webpack 执行速度。为避免这种情况出现，Webpack 加入了一些优化，默认会跳过 `node_modules`，并使用 package.json 中的 version 和 name 作为数据源，有点类似于 webpack.DllPlugin
 
 # 优化长期缓存
 
@@ -46,11 +51,11 @@ Webpack 5 针对 moduleId  和 chunkId 的计算方式进行了优化，增加�
 
 ## 对比原来的 moduleId
 
-    原来的 moduleId 默认值是自增 id，容易导致文件缓存失效。在 v4 之前，可以安装 HashedModuleIdsPlugin 插件覆盖默认的 moduleId 规则， 它会使用模块路径生成的 hash 作为 moduleId。在 v4 中，可以配置 optimization.moduleIds = 'hashed'
+原来的 moduleId 默认值是自增 id，容易导致文件缓存失效。在 v4 之前，可以安装 HashedModuleIdsPlugin 插件覆盖默认的 moduleId 规则， 它会使用模块路径生成的 hash 作为 moduleId。在 v4 中，可以配置 optimization.moduleIds = 'hashed'
 
 ## 对比原来的 chunkId
 
-    原来的 chunkId 默认值自增 id。比如这样的配置下，如果有新的 entry 增加，chunk 数量也会跟着增加，chunkId 也会递增。之前可以安装 NamedChunksPlugin 插件来稳定 chunkId；或者配置 optimization.chunkIds = 'named'
+原来的 chunkId 默认值自增 id。比如这样的配置下，如果有新的 entry 增加，chunk 数量也会跟着增加，chunkId 也会递增。之前可以安装 NamedChunksPlugin 插件来稳定 chunkId；或者配置 optimization.chunkIds = 'named'
 
 # NodeJS 的 polyfill 脚本被移除
 
@@ -70,7 +75,7 @@ console.log(hashDigest);
 
 ![](2020-06-23-12-15-19.png)
 
-在 v5 中，如果遇到了这样的情况，会提示你进行确认。如果确认不需要 node polyfill，按照提示 alias 设置为 false 即可。最后的编译结果仅有 「5.69 kb」：
+在 v5 中，如果遇到了这样的情况，会提示你进行确认。如果确认不需要 node polyfill，按照提示 alias 设置为 false 即可。最后的编译结果仅有 `5.69 kb`：
 
 ![](2020-06-23-12-15-57.png)
 
@@ -376,7 +381,7 @@ var override = (override) => {
 };
 ```
 
-所以，app2/Button 实际就是 app2Lib.get('Button')，然后根据映射找到模块，随后__webpack_require__：
+所以，app2/Button 实际就是 app2Lib.get('Button')，然后根据映射找到模块，随后 `__webpack_require__`：
 
 ```js
 var moduleMap = {
@@ -444,7 +449,7 @@ app1 则从 app2 加载 react 依赖：
 
 总结，根据 app2 配置的 exposes & shared 内容，产生对应的模块文件，以及模块映射关系，通过全局变量 app2Lib 进行访问；app1 通过全局变量 get 能知道应该去如何加载 button.js，override 能知道共享依赖的模块。
 
-以上，Federation 初看很像 DLL + External，但好处是你无需手动维护、打包依赖，代码运行时加载。这种模式下，调试也变得容易，不再需要复制粘贴代码或者 npm link，只需要启动应用即可。这里仅以 Button 组件为例，Button 可以一个组件，也可以是一个页面、一个应用。Module Federation 的落地，结合自动化流程等系列工作，还需要大家在各自场景中实践。
+以上，Federation 初看很像 DLL + External，但好处是你无需手动维护、打包依赖，代码运行时加载。这种模式下，调试也变得容易，不再需要复制粘贴代码或者 npm link，只需要启动应用即可。这里仅以 Button 组件为例，Button 可以是一个组件，也可以是一个页面、一个应用。Module Federation 的落地，结合自动化流程等系列工作，还需要大家在各自场景中实践。
 
 # 其他特性
 
