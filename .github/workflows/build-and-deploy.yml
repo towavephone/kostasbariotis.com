@@ -58,7 +58,8 @@ jobs:
         ALGOLIA_INDEX_NAME: ${{ secrets.ALGOLIA_INDEX_NAME }}
         BRANCH: gh-pages
         FOLDER: public
-        BUILD_SCRIPT: yarn --prefer-offline && yarn build
+        NODE_OPTIONS: --max_old_space_size=4096
+        BUILD_SCRIPT: yarn && yarn build
     # 上传压缩包
     - name: Archive production artifacts
       uses: actions/upload-artifact@v1

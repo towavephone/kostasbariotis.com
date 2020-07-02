@@ -24,9 +24,9 @@
         "dev": "gatsby develop",
         "serve": "gatsby serve",
         "lint": "yarn lint:markdown",
-        "lint:js": "./node_modules/.bin/eslint --fix src/**/*.js gatsby-config.js gatsby-browser.js gatsby-node.js",
+        "lint:js": "eslint --fix src/**/*.js gatsby-config.js gatsby-browser.js gatsby-node.js",
         "test": "echo \"Should probably write some tests!\"",
-        "lint:markdown": "markdownlint --config ./.markdownlint.json ./blog/**/*.md",
+        "lint:markdown": "markdownlint --config .markdownlint.json ./blog/**/*.md",
         "precommit": "yarn lint:markdown",
         "cleanup": "rimraf -rf node_modules/gh-pages/.cache"
     },
