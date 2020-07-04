@@ -1,7 +1,7 @@
 ---
 title: Webpack5新特性
 path: /webpack-v5-new-feature/
-tags: 前端, 前端构建工具, Webpack
+tags: 前端, 前端构建工具, webpack
 date: 2020-6-23 12:03:29
 ---
 

@@ -1,7 +1,7 @@
 ---
 title: Module federation 原理研究
 path: /module-federation-principle-research/
-tags: 前端, 前端构建工具, Webpack
+tags: 前端, 前端构建工具, webpack
 date: 2020-6-30 19:26:39
 ---
 
