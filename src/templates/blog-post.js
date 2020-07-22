@@ -35,8 +35,9 @@ export default class Template extends Component {
     }
 
     componentDidMount() {
-        if (this.isProduction) {
-            const { mainPost: post } = this.props.data;
+        const { data } = this.props;
+        const { mainPost: post } = data;
+        if (this.isProduction && !post.frontmatter.draft) {
             const gitalk = new Gitalk({
                 clientID: 'c6d8d75c91d5c0cfa42d',
                 clientSecret: 'b8e5e295b87b062e292978826729dc7178187fbe',
@@ -259,21 +260,21 @@ export default class Template extends Component {
                                             </li>
                                         </ul>
                                     ) : (
-                                            <small>这是草稿页，默认分享关闭</small>
+                                            <small>这是草稿页，默认分享、评论关闭</small>
                                         )}
                                 </section>
                             </footer>
 
-                            <section className="blog-section">
-                                {this.isProduction && (
-                                    <div>
-                                        <header className="header">
-                                            <h2>评论</h2>
-                                        </header>
-                                        <div id="gitalk-container" />
-                                    </div>
-                                )}
-                            </section>
+                            {
+                              this.isProduction && !post.frontmatter.draft && <section className="blog-section">
+                                <div>
+                                  <header className="header">
+                                    <h2>评论</h2>
+                                  </header>
+                                  <div id="gitalk-container" />
+                                </div>
+                              </section>
+                            }
 
                             <section className="blog-section">
                                 {next ? (
