@@ -542,3 +542,453 @@ printAnimalAbilities(animal); // animal has claws, animal can fly
 ```
 
 上例代码中 |= 用来添加一个标志，&= 和 ~ 用来删除标志，| 用来合并标志。
+
+## Decorator
+
+Decorator 早已不是什么新鲜事物，在 TypeScript 1.5 + 的版本中，我们可以利用内置类型 ClassDecorator、PropertyDecorator、MethodDecorator 与 ParameterDecorator 更快书写 Decorator，如 MethodDecorator：
+
+```js
+declare type MethodDecorator = <T>(target: Object, propertyKey: string | symbol, descriptor: TypedPropertyDescriptor<T>) => TypedPropertyDescriptor<T> | void;
+```
+
+使用时，只需在相应地方加上类型注解，匿名函数的参数类型也就会被自动推导出来了。
+
+```js
+function methodDecorator(): MethodDecorator {
+  return (target, key, descriptor) => {
+    // ...
+  };
+}
+```
+
+值得一提的是，如果你在 Decorator 给目标类的 prototype 添加属性时，TypeScript 并不知道这些：
+
+```js
+function testAble(): ClassDecorator {
+  return target => {
+    target.prototype.someValue = true
+  }
+}
+
+@testAble()
+class SomeClass {}
+
+const someClass = new SomeClass()
+
+someClass.someValue() // Error: Property 'someValue' does not exist on type 'SomeClass'.
+```
+
+这很常见，特别是当你想用 Decorator 来扩展一个类时。
+
+GitHub 上有一个关于此问题的 issues，直至目前，也没有一个合适的方案实现它。其主要问题在于 TypeScript 并不知道目标类是否使用了 Decorator 以及 Decorator 的名称。从这个 issues 来看，建议的解决办法是使用 Mixin：
+
+```js
+type Constructor<T> = new(...args: any[]) => T
+
+// mixin 函数的声明，需要实现
+declare function mixin<T1, T2>(...MixIns: [Constructor<T1>, Constructor<T2>]): Constructor<T1 & T2>;
+
+class MixInClass1 {
+    mixinMethod1() {}
+}
+
+class MixInClass2 {
+    mixinMethod2() {}
+}
+
+class Base extends mixin(MixInClass1, MixInClass2) {
+    baseMethod() { }
+}
+
+const x = new Base();
+
+x.baseMethod(); // OK
+x.mixinMethod1(); // OK
+x.mixinMethod2(); // OK
+x.mixinMethod3(); // Error
+```
+
+当把大量的 JavaScript Decorator 重构为 Mixin 时，这无疑是一件让人头大的事情。
+
+这有一些偏方，能让你顺利从 JavaScript 迁移至 TypeScript：
+
+- 显式赋值断言修饰符，即是在类里，明确说明某些属性存在于类上：
+
+    ```js
+    function testAble(): ClassDecorator {
+      return target => {
+        target.prototype.someValue = true
+      }
+    }
+
+    @testAble()
+    class SomeClass {
+      public someValue!: boolean;
+    }
+
+    const someClass = new SomeClass();
+    someClass.someValue // true
+    ```
+
+- 采用声明合并形式，单独定义一个 interface，把用 Decorator 扩展的属性的类型，放入 interface 中：
+
+    ```js
+    interface SomeClass {
+      someValue: boolean;
+    }
+
+    function testAble(): ClassDecorator {
+      return target => {
+        target.prototype.someValue = true
+      }
+    }
+
+    @testAble()
+    class SomeClass {}
+
+    const someClass = new SomeClass();
+    someClass.someValue // true
+    ```
+
+## Reflect Metadata
+
+Reflect Metadata 是 ES7 的一个提案，它主要用来在声明的时候添加和读取元数据。TypeScript 在 1.5+ 的版本已经支持它，你只需要：
+
+- npm i reflect-metadata --save。
+- 在 tsconfig.json 里配置 emitDecoratorMetadata 选项。
+
+它具有诸多使用场景。
+
+### 获取类型信息
+
+譬如在 vue-property-decorator 6.1 及其以下版本中，通过使用 Reflect.getMetadata API，Prop Decorator 能获取属性类型传至 Vue，简要代码如下：
+
+```js
+function Prop(): PropertyDecorator {
+  return (target, key: string) => {
+    const type = Reflect.getMetadata('design:type', target, key);
+    console.log(`${key} type: ${type.name}`);
+    // other...
+  }
+}
+
+class SomeClass {
+  @Prop()
+  public Aprop!: string;
+};
+```
+
+运行代码可在控制台看到 Aprop type: string。除能获取属性类型外，通过 Reflect.getMetadata("design:paramtypes", target, key) 和 Reflect.getMetadata("design:returntype", target, key) 可以分别获取函数参数类型和返回值类型。
+
+### 自定义 metadataKey
+
+除能获取类型信息外，常用于自定义 metadataKey，并在合适的时机获取它的值，示例如下：
+
+```js
+function classDecorator(): ClassDecorator {
+  return target => {
+    // 在类上定义元数据，key 为 `classMetaData`，value 为 `a`
+    Reflect.defineMetadata('classMetaData', 'a', target);
+  }
+}
+
+function methodDecorator(): MethodDecorator {
+  return (target, key, descriptor) => {
+    // 在类的原型属性 'someMethod' 上定义元数据，key 为 `methodMetaData`，value 为 `b`
+    Reflect.defineMetadata('methodMetaData', 'b', target, key);
+  }
+}
+
+@classDecorator()
+class SomeClass {
+
+  @methodDecorator()
+  someMethod() {}
+};
+
+Reflect.getMetadata('classMetaData', SomeClass);                         // 'a'
+Reflect.getMetadata('methodMetaData', new SomeClass(), 'someMethod');    // 'b'
+```
+
+### 用例
+
+#### 控制反转和依赖注入
+
+在 Angular 2+ 的版本中，控制反转与依赖注入便是基于此实现，现在，我们来实现一个简单版：
+
+```js
+type Constructor<T = any> = new (...args: any[]) => T;
+
+const Injectable = (): ClassDecorator => target => {}
+
+class OtherService {
+  a = 1
+}
+
+@Injectable()
+class TestService {
+  constructor(public readonly otherService: OtherService) {}
+
+  testMethod() {
+    console.log(this.otherService.a);
+  }
+}
+
+const Factory = <T>(target: Constructor<T>): T  => {
+  // 获取所有注入的服务
+  const providers = Reflect.getMetadata('design:paramtypes', target); // [OtherService]
+  const args = providers.map((provider: Constructor) => new provider());
+  return new target(...args);
+}
+
+Factory(TestService).testMethod()   // 1
+```
+
+#### Controller 与 Get 的实现
+
+如果你在使用 TypeScript 开发 Node 应用，相信你对 Controller、Get、POST 这些 Decorator，并不陌生：
+
+```js
+@Controller('/test')
+class SomeClass {
+
+  @Get('/a')
+  someGetMethod() {
+    return 'hello world';
+  }
+
+  @Post('/b')
+  somePostMethod() {}
+};
+```
+
+它们也是基于 Reflect Metadata 实现，不同的是，这次我们将 metadataKey 定义在 descriptor 的 value 上（稍后解释），简单实现如下：
+
+```js
+const METHOD_METADATA = 'method'；
+const PATH_METADATA = 'path'；
+
+const Controller = (path: string): ClassDecorator => {
+  return target => {
+    Reflect.defineMetadata(PATH_METADATA, path, target);
+  }
+}
+
+const createMappingDecorator = (method: string) => (path: string): MethodDecorator => {
+  return (target, key, descriptor) => {
+    Reflect.defineMetadata(PATH_METADATA, path, descriptor.value);
+    Reflect.defineMetadata(METHOD_METADATA, method, descriptor.value);
+  }
+}
+
+const Get = createMappingDecorator('GET');
+const Post = createMappingDecorator('POST');
+```
+
+接着，创建一个函数，映射出 route：
+
+```js
+function mapRoute(instance: Object) {
+  const prototype = Object.getPrototypeOf(instance);
+  
+  // 筛选出类的 methodName
+  const methodsNames = Object.getOwnPropertyNames(prototype)
+                              .filter(item => !isConstructor(item) && isFunction(prototype[item]));
+  return methodsNames.map(methodName => {
+    const fn = prototype[methodName];
+
+    // 取出定义的 metadata
+    const route = Reflect.getMetadata(PATH_METADATA, fn);
+    const method = Reflect.getMetadata(METHOD_METADATA, fn);
+    return {
+      route,
+      method,
+      fn,
+      methodName
+    }
+  })
+};
+```
+
+我们可以得到一些有用的信息：
+
+```js
+Reflect.getMetadata(PATH_METADATA, SomeClass);  // '/test'
+
+mapRoute(new SomeClass())
+
+/**
+ * [{
+ *    route: '/a',
+ *    method: 'GET',
+ *    fn: someGetMethod() { ... },
+ *    methodName: 'someGetMethod'
+ *  },{
+ *    route: '/b',
+ *    method: 'POST',
+ *    fn: somePostMethod() { ... },
+ *    methodName: 'somePostMethod'
+ * }]
+ * 
+ */
+```
+
+最后，只需把 route 相关信息绑在 express 或者 koa 上就 ok 了。
+
+至于为什么要定义在 descriptor 的 value 上，我们希望 mapRoute 函数的参数是一个实例，而非 class 本身（控制反转）。
+
+## 数组与元组
+
+创建一个数组很简单：
+
+```js
+const arr = [1];
+```
+
+此时 TypeScript 将会推断 arr 类型为 number[]：
+
+```js
+arr.push('1');  // Error
+```
+
+当数组元素具有其它类型时，可以通过类型注解的方式：
+
+```js
+const arr: Array<string | number> = [1];
+
+arr.push('1');  // OK
+arr.push(true);  // Error
+```
+
+或者你也可以通过可选元组的方式：
+
+```js
+const arr: [number, string?] = [1];  // arr 的成员类型可以是: number, string, undefined 
+arr.push('1');   // OK
+arr.push(true);   // Error
+```
+
+使用元组形式，还能提供指定位置的类型检查：
+
+```js
+arr[0] = '1';   // Error
+arr[1] = 1;    // Error
+```
+
+### 使用
+
+通常，我们使用 Promise.all 并行发出多个请求：
+
+```js
+interface A {
+  name: string;
+}
+
+interface B {
+  age: number;
+}
+
+const [{ data: a }, { data: b }] = await Promise.all([
+  axios.get<A>('http://some.1'),
+  axios.get<B>('http://some.2')
+])
+```
+
+此时，TypeScript 能推出 a 的类型是 A, b 的类型是 B。
+
+现在，稍作改变：当满足特定条件时，才发出第二个请求：
+
+```js
+// 使用类型注解
+const requestList: [Promise<AxiosResponse<A>>, Promise<AxiosResponse<B>>?]
+                    = [axios.get<A>('http://some.1')];
+if (flag) {
+  requestList[1] = (axios.get<B>('http://some.2'));
+};
+const [ { data: a }, response ] = await Promise.all(requestList);
+```
+
+我们期望它会如预想时那样工作，可是事与愿违，Promise.all(requestList)，会出现类型兼容性的报错，在这个 Issues 里，描述了相同的问题。
+
+现在，你可以通过断言的方式，来让程序正常运作：
+
+```js
+const requestList: any[]  = [axios.get<A>('http://some.1')];  // 设置为 any[] 类型
+if (flag) {
+  requestList[1] = (axios.get<B>('http://some.2'));
+}
+const [
+  { data: a },
+  response
+] = await Promise.all(requestList) as [AxiosResponse<A>, AxiosResponse<B>?] // 类型安全
+```
+
+## 字面量类型
+
+在 JavaScript 基础上，TypeScript 扩展了一系列字面量类型，用来确保类型的准确性。
+
+如创建一个字符串字面量：
+
+```js
+const a = 'hello';  // a 的类型是 'hello'
+a = 'world';   // Error
+```
+
+或者你也可以：
+
+```js
+let a: 'hello' = 'hello';  // a 的类型是 'hello'
+a = 'world';     // Error
+```
+
+其它数据类型与此相似。
+
+你也可以定义交叉类型与联合类型的字面量：
+
+```js
+interface A {
+  name: string;
+}
+interface B {
+  name: string;
+  age: number;
+}
+
+type C = A | B;
+type D = A & B;
+```
+
+### 对象字面量类型
+
+对于对象字面量的类型，TypeScript 有一个被称之为 `Freshness` 的概念，它也被称为更严格的对象字面量检查，如下例子：
+
+```js
+let someThing: { name: string };
+someThing = { name: 'hello' };              // ok
+someThing = { name: 'hello', age: 123 };    // Error, 对象字面量只能指定已知属性, { name: string } 类型中不存在 age 属性
+
+let otherThing = { name: 'hello', age: 123 };
+someThing = otherThing;                     // ok
+```
+
+TypeScript 认为创建的每个对象字面量都是 `fresh` 状态；当一个 `fresh` 对象字面量赋值给一个变量时，如果对象的类型与变量类型不兼容时，会出现报错（如上例子中 someThine = { name: 'hello', age: 123 }; 的错误）；当对象字面量的类型变宽，对象字面量的 `fresh` 状态会消失（如上例子中 someThing = otherThing; ，赋值以后，someThing 的类型变宽）。
+
+一个更实际的用例如下：
+
+```js
+function logName(something: { name: string }) {
+  console.log(something.name);
+}
+
+const obj = {
+  name: 'matt',
+  job: 'being awesome'
+}
+
+logName(obj); // ok
+logName({ name: 'matt' }); // ok
+logName({ nama: 'matt' }); // Error: nama 属性在 { name: string } 属性中不存在。
+logName({ name: 'matt', job: 'being awesome' }); // Error: 对象字面量只能指定已知属性，`job` 属性在这里并不存在。
+```
+
+基本原理与上文中相似，当想用更严格的类型检查时，可以传一个具有 fresh 状态的对象字面量（如 logName({ name: 'matt', job: 'being awesome' });）。当你想多传一些属性至函数，可以将对象字面量赋值至一个新变量，然后再传至函数（如 logName(obj)）。或者你也可以通过给函数形参添加多余类型的方式 function logName(someThing: { name: string; [key: string]: string })。
