@@ -8,6 +8,7 @@ tags: 前端， TypeScript
 # 背景知识
 
 [TypeScript Handbook 入门教程](https://zhongsp.gitbooks.io/typescript-handbook/content/)
+[深入理解 TypeScript](https://jkchao.github.io/typescript-book-chinese/)
 
 # 工具泛型的实现
 
@@ -992,3 +993,307 @@ logName({ name: 'matt', job: 'being awesome' }); // Error: 对象字面量只能
 ```
 
 基本原理与上文中相似，当想用更严格的类型检查时，可以传一个具有 fresh 状态的对象字面量（如 logName({ name: 'matt', job: 'being awesome' });）。当你想多传一些属性至函数，可以将对象字面量赋值至一个新变量，然后再传至函数（如 logName(obj)）。或者你也可以通过给函数形参添加多余类型的方式 function logName(someThing: { name: string; [key: string]: string })。
+
+## 用 Decorator 限制类型
+
+Decorator 可用于限制类方法的返回类型，如下所示：
+
+```js
+const TestDecorator = () => {
+  return (
+    target: Object,
+    key: string | symbol,
+    descriptor: TypedPropertyDescriptor<() => number>   // 函数返回值必须是 number
+  ) => {
+    // 其他代码
+  }
+}
+
+class Test {
+  @TestDecorator()
+  testMethod() {
+    return '123';   // Error: Type 'string' is not assignable to type 'number'
+  }
+}
+```
+
+你也可以用泛型让 TestDecorator 的传入参数类型与 testMethod 的返回参数类型兼容：
+
+```js
+const TestDecorator = <T>(para: T) => {
+  return (
+    target: Object,
+    key: string | symbol,
+    descriptor: TypedPropertyDescriptor<() => T>
+  ) => {
+    // 其他代码
+  }
+}
+
+class Test {
+  @TestDecorator('hello')
+  testMethod() {
+    return 123;      // Error: Type 'number' is not assignable to type 'string'
+  }
+}
+```
+
+## 泛型的类型推断
+
+在定义泛型后，有两种方式使用，一种是传入泛型类型，另一种使用类型推断，即编译器根据其他参数类型来推断泛型类型。简单示例如下：
+
+```js
+declare function fn<T>(arg: T): T;      // 定义一个泛型函数
+
+const fn1 = fn<string>('hello');        // 第一种方式，传入泛型类型 string
+const fn2 = fn(1);                      // 第二种方式，从参数 arg 传入的类型 number，来推断出泛型 T 的类型是 number
+```
+
+它通常与映射类型一起使用，用来实现一些比较复杂的功能。
+
+### Vue Type 简单实现
+
+如下一个例子：
+
+```js
+type Options<T> = {
+  [P in keyof T]: T[P];
+}
+
+declare function test<T>(o: Options<T>): T;
+
+test({ name: 'Hello' }).name     // string
+```
+
+test 函数将传入参数的所有属性取出来，现在我们来一步一步加工，实现想要的功能。
+
+首先，更改传入参数的形式，由 `{ name: 'Hello' }` 的形式变更为 `{ data: { name: 'Hello' } }`，调用函数的返回值类型不变，即 `test({ data: { name: 'Hello' } }).name` 的值也是 string 类型。
+
+这并不复杂，这只需要把传入参数的 data 类型设置为 T 即可：
+
+```js
+declare function test<T>(o: { data: Options<T> }): T;
+
+test({data: { name: 'Hello' }}).name     // string
+```
+
+当 data 对象里，含有函数时，它也能运作：
+
+```js
+const param = {
+  data: {
+    name: 'Hello',
+    someMethod() {
+      return 'hello world'
+    }
+  }
+}
+
+test(param).someMethod()    // string
+```
+
+接着，考虑一种特殊的函数情景，像 Vue 中 Computed 一样，不调用函数，也能取出函数的返回值类型。现在传入参数的形式变更为：
+
+```js
+const param = {
+  data: {
+    name: 'Hello'
+  },
+  computed: {
+    age() {
+      return 20;
+    }
+  }
+}
+```
+
+一个函数的类型可以简单的看成是 `() => T` 的形式，对象中的方法类型，可以看成 `a: () => T` 的形式，在反向推导时（由函数返回值，来推断类型 a 的类型）可以利用它，需要添加一个映射类型 `Computed<T>`，用来处理 computed 里的函数：
+
+```js
+type Options<T> = {
+  [P in keyof T]: T[P]
+}
+
+type Computed<T> = {
+  [P in keyof T]: () => T[P]
+}
+
+interface Params<T, M> {
+  data: Options<T>;
+  computed: Computed<M>;
+}
+
+declare function test<T, M>(o: Params<T, M>): T & M;
+
+const param = {
+  data: {
+    name: 'Hello'
+  },
+  computed: {
+    age() {
+      return 20
+    }
+  }
+}
+
+test(param).name    // string
+test(param).age     // number
+```
+
+最后，结合巧用 ThisType 映射类型，可以轻松的实现在 computed age 方法下访问 data 中的数据：
+
+```js
+type Options<T> = {
+  [P in keyof T]: T[P]
+}
+
+type Computed<T> = {
+  [P in keyof T]: () => T[P]
+}
+
+interface Params<T, M> {
+  data: Options<T>;
+  computed: Computed<M>;
+}
+
+declare function test<T, M>(o: Params<T, M>): T & M;
+
+const param = {
+  data: {
+    name: 'Hello'
+  },
+  computed: {
+    age() {
+      return 20
+    }
+  }
+}
+
+test(param).name    // string
+test(param).age     // number
+```
+
+### 扁平数组构建树形结构
+
+扁平数组构建树形结构即是将一组扁平数组，根据 parent_id（或者是其他）转换成树形结构：
+
+```js
+// 转换前数据
+const arr = [
+  { id: 1, parentId: 0, name: 'test1'},
+  { id: 2, parentId: 1, name: 'test2'},
+  { id: 3, parentId: 0, name: 'test3'}
+];
+
+// 转化后
+[
+  {
+    id: 1,
+    parentId: 0,
+    name: 'test1',
+    children: [
+      { 
+        id: 2, 
+        parentId: 1, 
+        name: 'test2', 
+        children: [] 
+      }
+    ]
+  },
+  {
+    id: 3,
+    parentId: 0,
+    name: 'test3',
+    children: []
+  }
+]
+```
+
+如果 children 字段名字不变，函数的类型并不难写，它大概是如下样子：
+
+```js
+interface Item {
+  id: number;
+  parentId: number;
+  name: string;
+}
+
+type TreeItem = Item & { children: TreeItem[] | [] };
+
+declare function listToTree(list: Item[]): TreeItem[];
+
+listToTree(arr).forEach(i => i.children)    // ok
+```
+
+但是在很多时候，children 字段的名字并不固定，而是从参数中传进来：
+
+```js
+const options = {
+  childrenKey: 'childrenList'
+}
+
+listToTree(arr, options);
+```
+
+此时 children 字段名称应该为 childrenList：
+
+```js
+[
+  {
+    id: 1,
+    parentId: 0,
+    name: 'test1',
+    childrenList: [
+      { id: 2, parentId: 1, name: 'test2', childrenList: [] }
+    ]
+  },
+  {
+    id: 3,
+    parentId: 0,
+    name: 'test3',
+    childrenList: []
+  }
+]
+```
+
+实现的思路大致是前文所说的利用泛型的类型推断，从传入的 options 参数中，得到 childrenKey 的类型，然后再传给 TreeItem，如下：
+
+```js
+interface Options<T extends string> {   // 限制为 string 类型
+  childrenKey: T;
+}
+
+declare function listToTree<T extends string = 'children'>(list: Item[], options: Options<T>): TreeItem<T>[];
+```
+
+当 options 为 `{ childrenKey: 'childrenList' }` 时，T 能被正确推导出为 childrenList，接着只需要在 TreeItem 中，把 children 修改为传入的 T 即可：
+
+```js
+interface Item {
+  id: number;
+  parentId: number;
+  name: string;
+}
+
+interface Options<T extends string> {
+  childrenKey: T;
+}
+
+type TreeItem<T extends string> = Item & { [key in T]: TreeItem<T>[] | [] };
+
+declare function listToTree<T extends string = 'children'>(list: Item[], options: Options<T>): TreeItem<T>[];
+
+listToTree(arr, { childrenKey: 'childrenList' }).forEach(i => i.childrenList)    // ok
+```
+
+有一点局限性，由于对象字面量的 Fresh 的影响，当 options 不是以对象字面量的形式传入时，需要给它断言：
+
+```js
+const options = {
+  childrenKey: 'childrenList' as 'childrenList'
+}
+
+listToTree(arr, options).forEach(i => i.childrenList)    // ok
+```
+
+## 
