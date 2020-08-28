@@ -1507,3 +1507,486 @@ type Connect = (module: Module) => {
   [T in ModuleMethods]: ModuleMethodsConnect<Module[T]>
 }
 ```
+
+# 实战
+
+## 参数简化
+
+通过一个简单的功能把
+
+```js
+distribute({
+    type: 'LOGIN',
+    email: string
+})
+```
+
+这样的函数调用方式给简化为：
+
+```js
+distribute('LOGIN', {
+    email: string
+})
+```
+
+### 分布条件类型的真实用例
+
+举一个类似 redux 中的 dispatch 的例子。
+
+首先，我们有一个联合类型 Action，用来表示所有可以被 dispatch 接受的参数类型：
+
+```js
+type Action =
+  | {
+      type: "INIT"
+    }
+  | {
+      type: "SYNC"
+    }
+  | {
+      type: "LOG_IN"
+      emailAddress: string
+    }
+  | {
+      type: "LOG_IN_SUCCESS"
+      accessToken: string
+    }
+```
+
+然后我们定义这个 dispatch 方法：
+
+```js
+declare function dispatch(action: Action): void
+
+// ok
+dispatch({
+  type: "INIT"
+})
+
+// ok
+dispatch({
+  type: "LOG_IN",
+  emailAddress: "david.sheldrick@artsy.net"
+})
+
+// ok
+dispatch({
+  type: "LOG_IN_SUCCESS",
+  accessToken: "038fh239h923908h"
+})
+```
+
+这个 API 是类型安全的，当 TS 识别到 type 为 LOG_IN 的时候，它会要求你在参数中传入 emailAddress 这个参数，这样才能完全满足联合类型中的其中一项。
+
+等等，我们好像可以让这个api变得更简单一点：
+
+```js
+dispatch("LOG_IN_SUCCESS", {
+  accessToken: "038fh239h923908h"
+})
+```
+
+### 参数简化实现
+
+首先，利用方括号选择出 Action 中的所有 type，这个技巧很有用。
+
+```js
+type ActionType = Action["type"]
+// => "INIT" | "SYNC" | "LOG_IN" | "LOG_IN_SUCCESS"
+```
+
+但是第二个参数的类型取决于第一个参数，我们可以使用类型变量来对该依赖关系建模。
+
+```js
+declare function dispatch<T extends ActionType>(
+  type: T,
+  args: ExtractActionParameters<Action, T>
+): void
+```
+
+注意，这里就用到了 extends 语法，规定了我们的入参 type 必须是 ActionType 中一部分。
+
+注意这里的第二个参数 args 用 `ExtractActionParameters<Action, T>` 这个类型来把 type 和 args 做了关联
+
+来看看 ExtractActionParameters 是如何实现的：
+
+```js
+type ExtractActionParameters<A, T> = A extends { type: T } ? A : never
+```
+
+在这次实战中，我们第一次运用到了条件类型，`ExtractActionParameters<Action, T>` 会按照我们上文提到的分布条件类型，把 Action 中的 4 项依次去和 `{ type: T }` 进行比对，找出符合的那一项。
+
+来看看如何使用它：
+
+```js
+type Test = ExtractActionParameters<Action, "LOG_IN">
+// => { type: "LOG_IN", emailAddress: string }
+```
+
+这样就筛选出了 type 匹配的一项。
+
+接下来我们要把 type 去掉，第一个参数已经是 type 了，因此我们不想再额外声明 type 了。
+
+```js
+// 把类型中key为"type"去掉
+type ExcludeTypeField<A> = { [K in Exclude<keyof A, "type">]: A[K] }
+```
+
+这里利用了 keyof 语法，并且利用内置类型 Exclude 把 type 这个 key 去掉，因此只会留下额外的参数。
+
+```js
+type Test = ExcludeTypeField<{ type: "LOG_IN", emailAddress: string }>
+// { emailAddress: string }
+```
+
+然后用它来剔除参数中的 type
+
+```js
+// 把参数对象中的type去掉
+type ExtractActionParametersWithoutType<A, T> =
+    ExcludeTypeField<ExtractActionParameters<A, T>>;
+```
+
+```js
+declare function dispatch<T extends ActionType>(
+  type: T,
+  args: ExtractActionParametersWithoutType<Action, T>
+): void
+```
+
+到此为止，我们就可以实现上文中提到的参数简化功能：
+
+```js
+// ok
+dispatch({
+  type: "LOG_IN",
+  emailAddress: "david.sheldrick@artsy.net"
+})
+```
+
+### 利用重载进一步优化
+
+到了这一步为止，虽然带参数的 Action 可以完美支持了，但是对于 "INIT" 这种不需要传参的 Action，我们依然要写下面这样代码：
+
+```js
+dispatch("INIT", {})
+```
+
+这肯定是不能接受的！所以我们要利用 TypeScript 的函数重载功能。
+
+```js
+// 简单参数类型
+function dispatch<T extends SimpleActionType>(type: T): void
+
+// 复杂参数类型
+function dispatch<T extends ComplexActionType>(
+  type: T,
+  args: ExtractActionParametersWithoutType<Action, T>,
+): void
+
+// 实现
+function dispatch(arg: any, payload?: any) {}
+```
+
+那么关键点就在于 SimpleActionType 和 ComplexActionType 要如何实现了
+
+SimpleActionType 顾名思义就是除了 type 以外不需要额外参数的 Action 类型
+
+```js
+type SimpleAction = ExtractSimpleAction<Action>
+```
+
+我们如何定义这个 ExtractSimpleAction 条件类型？如果我们从这个 Action 中删除 type 字段，并且结果是一个空的接口，那么这就是一个 SimpleAction，所以我们可能会凭直觉写出这样的代码：
+
+```js
+type ExtractSimpleAction<A> = ExcludeTypeField<A> extends {} ? A : never
+```
+
+但这样是行不通的，几乎所有的类型都可以 `extends {}`，因为 `{}` 太宽泛了。
+
+我们应该反过来写：
+
+```js
+type ExtractSimpleAction<A> = {} extends ExcludeTypeField<A> ? A : never
+```
+
+现在如果 `ExcludeTypeField <A>` 为空，则 extends 表达式为 true，否则为 false。
+
+但这仍然行不通！因为分布条件类型仅在 extends 关键字的前面是类型变量时发生。
+
+分布条件类型仅发生在如下场景：
+
+```js
+type Blah<Var> = Var extends Whatever ? A : B
+```
+
+而不是：
+
+```js
+type Blah<Var> = Foo<Var> extends Whatever ? A : B
+type Blah<Var> = Whatever extends Var ? A : B
+```
+
+但是我们可以通过一些小技巧绕过这个限制：
+
+```js
+type ExtractSimpleAction<A> = A extends any
+  ? {} extends ExcludeTypeField<A>
+    ? A
+    : never
+  : never
+```
+
+`A extends any` 是一定成立的，这只是用来绕过 ts 对于分布条件类型的限制，没错啊，我们的 A 确实是在 extends 的前面了，就是骗你 TS，这里是分布条件类型。
+
+而我们真正想要做的条件判断被放在了中间，因此 Action 联合类型中的每一项又能够分布的去匹配了。
+
+那么我们就可以简单的筛选出所有不需要额外参数的 type
+
+```js
+type SimpleAction = ExtractSimpleAction<Action>
+type SimpleActionType = SimpleAction['type']
+```
+
+再利用 Exclude 取反，找到复杂类型：
+
+type ComplexActionType = Exclude<ActionType, SimpleActionType>
+
+到此为止，我们所需要的功能就完美实现了：
+
+```js
+// 简单参数类型
+function dispatch<T extends SimpleActionType>(type: T): void
+// 复杂参数类型
+function dispatch<T extends ComplexActionType>(
+  type: T,
+  args: ExtractActionParameters<Action, T>,
+): void
+// 实现
+function dispatch(arg: any, payload?: any) {}
+
+// ok
+dispatch("SYNC")
+
+// ok
+dispatch({
+  type: "LOG_IN",
+  emailAddress: "david.sheldrick@artsy.net"
+})
+```
+
+### 完整代码
+
+```js
+type Action =
+  | {
+      type: "INIT";
+    }
+  | {
+      type: "SYNC";
+    }
+  | {
+      type: "LOG_IN";
+      emailAddress: string;
+    }
+  | {
+      type: "LOG_IN_SUCCESS";
+      accessToken: string;
+    };
+
+// 用类型查询查出 Action 中所有 type 的联合类型
+type ActionType = Action["type"];
+
+// 把类型中 key 为 type 去掉
+type ExcludeTypeField<A> = { [K in Exclude<keyof A, "type">]: A[K] };
+
+type ExtractActionParameters<A, T> = A extends { type: T } ? A : never
+
+// 把参数对象中的 type 去掉
+// Extract<A, { type: T } 会挑选出能 extend { type: T } 这个结构的 Action 中的类型
+type ExtractActionParametersWithoutType<A, T> = ExcludeTypeField<ExtractActionParameters<A, T>>;
+
+type ExtractSimpleAction<A> = A extends any
+  ? {} extends ExcludeTypeField<A>
+    ? A
+    : never
+  : never;
+
+type SimpleActionType = ExtractSimpleAction<Action>["type"];
+type ComplexActionType = Exclude<ActionType, SimpleActionType>;
+
+// 简单参数类型
+function dispatch<T extends SimpleActionType>(type: T): void;
+// 复杂参数类型
+function dispatch<T extends ComplexActionType>(
+  type: T,
+  args: ExtractActionParametersWithoutType<Action, T>
+): void;
+// 实现
+function dispatch(arg: any, payload?: any) {}
+
+dispatch("SYNC");
+
+dispatch('LOG_IN', {
+  emailAddress: 'ssh@qq.com'
+})
+```
+
+## Ref 类型从零实现
+
+```js
+const count = ref(ref(ref(ref(2))))
+```
+
+需要支持嵌套后解包，最后只会剩下 { value: number } 这个类型。
+
+### 泛型的反向推导
+
+泛型的正向用法很多人都知道了。
+
+```js
+type Value<T> = T
+
+type NumberValue = Value<number>
+```
+
+这样，NumberValue 解析出的类型就是 number，其实就类似于类型系统里的传参。
+
+那么反向推导呢？
+
+```js
+function create<T>(val: T): T
+
+let num: number
+
+const c = create(num)
+```
+
+这里泛型没有传入，居然也能推断出 value 的类型是 number。
+
+因为 `create<T>` 这里的泛型 T 被分配给了传入的参数 `value: T`，然后又用这个 T 直接作为返回的类型，
+
+简单来说，这里的三个 T 被关联起来了，并且在传入 create(2) 的那一刻，这个 T 被统一推断成了 number。
+
+```js
+function create<2>(value: 2): 2
+```
+
+### 索引签名
+
+假设我们有一个这样的类型：
+
+```js
+type Test = {
+  foo: number;
+  bar: string
+}
+
+type N = Test['foo'] // number
+```
+
+可以通过类似 JavaScript 中的对象属性查找的语法来找出对应的类型。
+
+### 条件类型
+
+假设我们有一个这样的类型：
+
+```js
+type IsNumber<T> = T extends number ? 'yes' : 'no';
+
+type A = IsNumber<2> // yes
+type B = isNumber<'3'> // no
+```
+
+这就是一个典型的条件类型，用 extends 关键字配合三元运算符来判断传入的泛型是否可分配给 extends 后面的类型。
+
+同时也支持多层的三元运算符（后面会用到）：
+
+```js
+type TypeName<T> = T extends string
+  ? "string"
+  : T extends boolean
+      ? "boolean"
+      : "object";
+
+type T0 = TypeName<string>; // "string"
+type T1 = TypeName<"a">; // "string"
+type T2 = TypeName<true>; // "boolean"
+```
+
+### keyof
+
+keyof 操作符是 TS 中用来获取对象的 key 值集合的，比如：
+
+```js
+type Obj = {
+  foo: number;
+  bar: string;
+}
+
+type Keys = keyof Obj // "foo" | "bar"
+```
+
+这样就轻松获取到了对象 key 值的联合类型："foo" | "bar"。
+
+它也可以用在遍历中：
+
+```js
+type Obj = {
+  foo: number;
+  bar: string;
+}
+
+type Copy = {
+  [K in keyof Obj]: Obj[K]
+}
+
+// Copy 得到和 Obj 一模一样的类型
+```
+
+可以看出，遍历的过程中右侧也可以通过索引直接访问到原类型 Obj 中对应 key 的类型。
+
+### infer
+
+这是一个比较难的点，文档中对它的描述是 条件类型中的类型推断。
+
+它的出现使得 ReturnType、 Parameters 等一众工具类型的支持都成为可能，是 TypeScript 进阶必须掌握的一个知识点了。
+
+注意前置条件，它一定是出现在条件类型中的。
+
+```js
+type Get<T> = T extends infer R ? R: never
+```
+
+注意，infer R 的位置代表了一个未知的类型，可以理解为在条件类型中给了它一个占位符，然后就可以在后面的三元运算符中使用它。
+
+```js
+type T = Get<number>
+
+// 经过计算
+type Get<number> = number extends infer number ? number: never
+
+// 得到
+number
+```
+
+它的使用非常灵活，它也可以出现在泛型位置：
+
+```js
+type Unpack<T> = T extends Array<infer R> ? R : T
+```
+
+```js
+type NumArr = Array<number>
+type U = Unpack<NumArr>
+
+// 经过计算
+type Unpack<Array<number>> = Array<number> extends Array<infer R> ? R : T
+
+// 得到
+number
+```
+
+仔细看看，是不是有那么点感觉了，它就是对于 extends 后面未知的某些类型进行一个占位 infer R，后续就可以使用推断出来的 R 这个类型。
+
+
