@@ -2,7 +2,7 @@
 title: TypeScript 入门学习
 date: 2020-8-21 18:25:02
 path: /type-script-introduce-learn/
-tags: 前端， TypeScript
+tags: 前端, TypeScript
 ---
 
 # 背景知识
