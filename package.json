@@ -21,7 +21,7 @@
         "deploy:gitee": "gh-pages -d public -r git@gitee.com:towavephone/towavephone.github.io.git -b master",
         "bdg": "yarn build && yarn deploy:github",
         "bdc": "yarn build && yarn deploy:coding",
-        "dev": "gatsby develop",
+        "dev": "NODE_OPTIONS='--max-old-space-size=4048' gatsby develop",
         "serve": "gatsby serve",
         "lint": "yarn lint:markdown",
         "lint:js": "eslint --fix src/**/*.js gatsby-config.js gatsby-browser.js gatsby-node.js",
