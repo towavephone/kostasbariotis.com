@@ -389,7 +389,6 @@ JavaScript 操作 DOM 很慢，尤其是 DOM 节点很多时。
 - 尽早处理事件，在 DOMContentLoaded 即可进行，不用等到 load 以后。
 
 >对于 resize、scroll 等触发频率极高的事件，应该通过 debounce 等机制降低处理程序执行频率。
-TODO: 补充相关内容 `http://demo.nimius.net/debounce_throttle/`
 
 ## 图片
 

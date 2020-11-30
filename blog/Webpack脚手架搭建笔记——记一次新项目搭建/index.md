@@ -340,7 +340,7 @@ class ErrorBoundary extends Component {
     this.setState({
       hasError: true,
     });
-    // TODO: upload error message
+
     console.error(error);
     if (window.__bl) {
       window.__bl.error(error);

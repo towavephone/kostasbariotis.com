@@ -2094,3 +2094,6 @@ TypeError: Iterator result undefined is not an object
 这是因为 return 方法必须返回一个对象，而这又是 Generator 规范决定的……
 
 总之如果是在浏览器中使用的话，return 函数的返回值其实并不生效 T^T
+
+// TODO es6 未完待续，下一篇地址 https://github.com/mqyqingfeng/Blog/issues/91
+

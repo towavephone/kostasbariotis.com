@@ -32,9 +32,9 @@ $ hexo new "My New Post"
 More info: [Writing](http://hexo.io/docs/writing.html)
 
 - [x] All
-- [ ] is
+- [x] is
 - [x] Well
-- [ ] !
+- [x] !
 
 
 Run server

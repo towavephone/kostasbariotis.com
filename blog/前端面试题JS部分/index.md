@@ -588,8 +588,6 @@ for (let i = 1; i <= 100; i++) {
 
 DOM 事件`DOMContentLoaded`将在页面的 DOM 构建完成后触发，但不要等待其他资源完成加载。如果在初始化之前不需要装入整个页面，这个事件是使用首选。
 
-TODO.
-
 **参考**
 
 * <https://developer.mozilla.org/en-US/docs/Web/API/GlobalEventHandlers/onload>
