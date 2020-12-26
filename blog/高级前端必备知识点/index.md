@@ -116,65 +116,65 @@ Vue 方面的话，我主要是师从黄轶老师，跟着他认真走，基本�
    以[vue-promised](https://github.com/posva/vue-promised)这个库为例。
    Promised 组件并不关注你的视图展示成什么样，它只是帮你管理异步流程，并且通过你传入的`slot-scope`，在合适的时机把数据回抛给你，并且帮你去展示你传入的视图。
 
-```vue
-<template>
-  <Promised :promise="usersPromise">
-    <!-- Use the "pending" slot to display a loading message -->
-    <template v-slot:pending>
-      <p>Loading...</p>
+    ```vue
+    <template>
+      <Promised :promise="usersPromise">
+        <!-- Use the "pending" slot to display a loading message -->
+        <template v-slot:pending>
+          <p>Loading...</p>
+        </template>
+        <!-- The default scoped slot will be used as the result -->
+        <template v-slot="data">
+          <ul>
+            <li v-for="user in data">{{ user.name }}</li>
+          </ul>
+        </template>
+        <!-- The "rejected" scoped slot will be used if there is an error -->
+        <template v-slot:rejected="error">
+          <p>Error: {{ error.message }}</p>
+        </template>
+      </Promised>
     </template>
-    <!-- The default scoped slot will be used as the result -->
-    <template v-slot="data">
-      <ul>
-        <li v-for="user in data">{{ user.name }}</li>
-      </ul>
-    </template>
-    <!-- The "rejected" scoped slot will be used if there is an error -->
-    <template v-slot:rejected="error">
-      <p>Error: {{ error.message }}</p>
-    </template>
-  </Promised>
-</template>
-```
+    ```
 
 3. 你需要熟练的使用`Vue.extends`，配合项目做一些`命令式api`的封装。并且知道它为什么可以这样用。（需要具备源码知识）
    [confirm 组件](https://github.com/sl1673495/vue-netease-music/blob/master/src/base/confirm.vue)
 
-```js
-export const confirm = function (text, title, onConfirm = () => {}) {
-  if (typeof title === "function") {
-    onConfirm = title;
-    title = undefined;
-  }
-  const ConfirmCtor = Vue.extend(Confirm);
-  const getInstance = () => {
-    if (!instanceCache) {
-      instanceCache = new ConfirmCtor({
-        propsData: {
-          text,
-          title,
-          onConfirm,
-        },
+    ```js
+    export const confirm = function (text, title, onConfirm = () => {}) {
+      if (typeof title === "function") {
+        onConfirm = title;
+        title = undefined;
+      }
+      const ConfirmCtor = Vue.extend(Confirm);
+      const getInstance = () => {
+        if (!instanceCache) {
+          instanceCache = new ConfirmCtor({
+            propsData: {
+              text,
+              title,
+              onConfirm,
+            },
+          });
+          // 生成dom
+          instanceCache.$mount();
+          document.body.appendChild(instanceCache.$el);
+        } else {
+          // 更新属性
+          instanceCache.text = text;
+          instanceCache.title = title;
+          instanceCache.onConfirm = onConfirm;
+        }
+        return instanceCache;
+      };
+      const instance = getInstance();
+      // 确保更新的prop渲染到dom
+      // 确保动画效果
+      Vue.nextTick(() => {
+        instance.visible = true;
       });
-      // 生成dom
-      instanceCache.$mount();
-      document.body.appendChild(instanceCache.$el);
-    } else {
-      // 更新属性
-      instanceCache.text = text;
-      instanceCache.title = title;
-      instanceCache.onConfirm = onConfirm;
-    }
-    return instanceCache;
-  };
-  const instance = getInstance();
-  // 确保更新的prop渲染到dom
-  // 确保动画效果
-  Vue.nextTick(() => {
-    instance.visible = true;
-  });
-};
-```
+    };
+    ```
 
 4. 你要开始使用`JSX`来编写你项目中的复杂组件了，比如在我的网易云音乐项目中，我遇到了一个[复杂的音乐表格需求](https://juejin.im/post/5d40fa605188255d2e32c929)，支持搜索文字高亮、动态隐藏列等等。
    当然对于现在版本的 Vue，JSX 还是不太好用，有很多属性需要写嵌套对象，这会造成很多不必要的麻烦，比如没办法像 React 一样直接把外层组件传入的 props 透传下去，Vue3 的 rfc 中提到会把 vnode 节点的属性进一步扁平化，我们期待得到接近于 React 的完美 JSX 开发体验吧。
