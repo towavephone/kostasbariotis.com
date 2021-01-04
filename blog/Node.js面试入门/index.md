@@ -805,5 +805,74 @@ console.log(process.pid, p.pid);
 process.exit(0);
 ```
 
+# IO
+
+## 简述
+
+Node.js 是以 IO 密集型业务著称. 那么问题来了, 你真的了解什么叫 IO, 什么又叫 IO 密集型业务吗?
+
+## Buffer
+
+Buffer 是 Node.js 中用于处理二进制数据的类, 其中与 IO 相关的操作 (网络/文件等) 均基于 Buffer. Buffer 类的实例非常类似整数数组, 但其大小是固定不变的, 并且其内存在 V8 堆栈外分配原始内存空间. Buffer 类的实例创建之后, 其所占用的内存大小就不能再进行调整.
+
+在 Node.js v6.x 之后 new Buffer() 接口开始被废弃, 理由是参数类型不同会返回不同类型的 Buffer 对象, 所以当开发者没有正确校验参数或没有正确初始化 Buffer 对象的内容时, 以及不了解的情况下初始化 就会在不经意间向代码中引入安全性和可靠性问题.
+
+接口|用途
+---|---
+Buffer.from()|根据已有数据生成一个 Buffer 对象
+Buffer.alloc()|创建一个初始化后的 Buffer 对象
+Buffer.allocUnsafe()|创建一个未初始化的 Buffer 对象
+
+### TypedArray
+
+Node.js 的 Buffer 在 ES6 增加了 TypedArray 类型之后, 修改了原来的 Buffer 的实现, 选择基于 TypedArray 中 Uint8Array 来实现, 从而提升了一波性能.
+
+使用上, 你需要了解如下情况:
+
+```js
+const arr = new Uint16Array(2);
+arr[0] = 5000;
+arr[1] = 4000;
+
+const buf1 = Buffer.from(arr); // 拷贝了该 buffer
+const buf2 = Buffer.from(arr.buffer); // 与该数组共享了内存
+
+console.log(buf1);
+// 输出: <Buffer 88 a0>, 拷贝的 buffer 只有两个元素
+console.log(buf2);
+// 输出: <Buffer 88 13 a0 0f>
+
+arr[1] = 6000;
+console.log(buf1);
+// 输出: <Buffer 88 a0>
+console.log(buf2);
+// 输出: <Buffer 88 13 70 17>
+```
+
+## String Decoder
+
+字符串解码器 (String Decoder) 是一个用于将 Buffer 拿来 decode 到 string 的模块, 是作为 Buffer.toString 的一个补充, 它支持多字节 UTF-8 和 UTF-16 字符. 例如
+
+```js
+const StringDecoder = require('string_decoder').StringDecoder;
+const decoder = new StringDecoder('utf8');
+
+const cent = Buffer.from([0xC2, 0xA2]);
+console.log(decoder.write(cent)); // ¢
+
+const euro = Buffer.from([0xE2, 0x82, 0xAC]);
+console.log(decoder.write(euro)); // €
+```
+
+stringDecoder.write 会确保返回的字符串不包含 Buffer 末尾残缺的多字节字符，残缺的多字节字符会被保存在一个内部的 buffer 中用于下次调用 stringDecoder.write() 或 stringDecoder.end()。
+
+```js
+const StringDecoder = require('string_decoder').StringDecoder;
+const decoder = new StringDecoder('utf8');
+
+decoder.write(Buffer.from([0xE2]));
+decoder.write(Buffer.from([0x82]));
+console.log(decoder.end(Buffer.from([0xAC])));  // €
+```
 
 // TODO nodejs 未完待续，下一篇地址：https://github.com/ElemeFE/node-interview/blob/master/sections/zh-cn/io.md

@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="initial-scale=1,maximum-scale=1,user-scalable=no"
+    />
+    <title>
+      Intro to MapView - Create a 2D map | Sample | ArcGIS API for JavaScript
+      4.18
+    </title>
+    <style>
+      html,
+      body,
+      #viewDiv {
+        padding: 0;
+        margin: 0;
+        height: 100%;
+        width: 100%;
+      }
+    </style>
+
+    <script src="https://js.arcgis.com/4.16/"></script>
+
+    <script>
+      require([
+        "esri/Map",
+        "esri/views/MapView",
+        "esri/layers/WebTileLayer"
+      ], function(Map, MapView, WebTileLayer) {
+        // 天地图加载图层，这里可以替换为内网服务器的图层
+        // mapLayerUrlTemplate: 矢量底图经纬度投影
+        // markerLayerUrlTemplate: 矢量注记经纬度投影
+        // subDomains: 占位符
+        const mapLayerUrlTemplate = 'http://{subDomain}.tianditu.gov.cn/vec_w/wmts?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER=vec&STYLE=default&TILEMATRIXSET=w&FORMAT=tiles&TILEMATRIX={level}&TILEROW={row}&TILECOL={col}&tk=f73eace6fbf7a640861984ea1b3ffa07'
+        const markerLayerUrlTemplate = 'http://{subDomain}.tianditu.gov.cn/cva_w/wmts?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER=cva&STYLE=default&TILEMATRIXSET=w&FORMAT=tiles&TILEMATRIX={level}&TILEROW={row}&TILECOL={col}&tk=f73eace6fbf7a640861984ea1b3ffa07'
+        const subDomains = ['t0', 't1', 't2', 't3', 't4', 't5', 't6', 't7']
+
+        const mapLayer = new WebTileLayer({
+          urlTemplate: mapLayerUrlTemplate,
+          subDomains
+        })
+        const markerLayer = new WebTileLayer({
+          urlTemplate: markerLayerUrlTemplate,
+          subDomains
+        })
+
+        const map = new Map({
+          layers: [mapLayer, markerLayer]
+        });
+
+        const view = new MapView({
+          container: "viewDiv",
+          map,
+          zoom: 5,
+          center: [110, 38] // longitude, latitude
+        });
+
+        view.when(
+          () => {
+            console.log('地图加载完成')
+          },
+          error => {
+            console.log('地图加载失败', error)
+          }
+        )
+      });
+    </script>
+  </head>
+
+  <body>
+    <div id="viewDiv"></div>
+  </body>
+</html>
