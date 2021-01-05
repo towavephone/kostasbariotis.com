@@ -79,20 +79,15 @@ config.static = {
   dir: [
     path.join(appInfo.baseDir, 'app/public'),
     {
-      prefix: '/static-apps/mut/gtstatic',
-      dir: path.join(process.cwd(), 'node_modules/sugo-sanhuan-html/dist'),
-      maxAge: 60 * 10 // 缓存 10 分钟
-    },
-    {
-      prefix: '/static-apps/mut/arcgis', // 三环地图静态地址访问前缀
-      dir: path.join(process.cwd(), 'node_modules/sugo-arcgis-js/dist'),
+      prefix: '/static-apps/mut/arcgis',
+      dir: path.join(process.cwd(), 'node_modules/上传到 npm 私有库的三方库/dist'),
       maxAge: 60 * 10 // 缓存 10 分钟
     }
   ]
 }
 ```
 
-## 内网验证
+## 内网图层验证
 
 由于需要在内网离线运行，验证在政府内网 demo 是否能正常加载图层
 
@@ -205,7 +200,7 @@ updateGps({
 })
 ```
 
-### 政府内网修复脚本
+### 内网修复脚本
 
 在以上的版本上，核心逻辑多了以下功能：
 
@@ -1305,5 +1300,6 @@ export default function useAddOrDelPoint(props) {
 
 # 实现效果
 
-![](./basic-map.gif)
-![](./basic-map-2.gif)
+<a target="_blank" href="./basic-map.gif">基本功能</a>
+
+<a target="_blank" href="./basic-map-2.gif">基本功能-路线的粗细</a>
