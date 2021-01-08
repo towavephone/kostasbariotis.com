@@ -1,7 +1,7 @@
 ---
 title: 基于arcgis地图组件的搭建部署
 path: /arcgis-map-component-build-deploy/
-date: 2021-1-4 16:08:16
+date: 2021-1-8 10:30:36
 tags: 前端, arcgis, 地图
 ---
 
@@ -1298,8 +1298,207 @@ export default function useAddOrDelPoint(props) {
 }
 ```
 
-# 实现效果
+## 实现效果
 
 <a target="_blank" href="./basic-map.gif">基本功能</a>
 
 <a target="_blank" href="./basic-map-2.gif">基本功能-路线的粗细</a>
+
+# 修复路线未加载
+
+在跳转页面时发现这个组件会有一定概率渲染不出路线，经过调试打印发现，是路线多次渲染造成的，需要限制多次渲染的问题，以下是跳转页面到这个组件：
+
+![](res/2021-01-08-09-38-58.png)
+
+![](res/2021-01-08-09-39-28.png)
+
+如图所示这里 hooks 多次渲染是导致路线加载不出来的原因，需要修复依赖的数据多次改变的问题，使用 useMemo 修复
+
+## 主入口文件
+
+```js{54-59,61-118}
+import React, { useState, useEffect, useMemo } from 'react'
+import { setDefaultOptions } from 'esri-loader'
+
+import RouteDisplayLayer from './components/route-display-layer'
+import Map from './components/map'
+import { getConfig } from './api'
+
+import styles from './styles.less'
+
+setDefaultOptions({
+  css: '/static-apps/mut/arcgis/esri/themes/light/main.css',
+  url: '/static-apps/mut/arcgis/init.js'
+})
+
+/*
+  config: esri 三方库后端配置地址（外部配置）
+  height: 地图高度
+  onRef：map 的 ref 回调
+  settings： {
+    centerLon 地图中心经度
+    centerLat 地图中心纬度
+    zoom 缩放级别
+  }
+  pointInfo: 过滤条件的起点、终点、途径点渲染
+  onPointInfoChange: 过滤条件变化回调
+  goToCenter: 初次加载是否到中心点
+  isAddOrEdit: 是否显示添加删除按钮
+  path: 站点信息
+  route: 路线信息
+  transport: 运输信息
+*/
+
+export { getConfig }
+
+export default function RailwayMap(props) {
+  const { path, route } = props
+  const [config, setConfig] = useState(props.config)
+
+  useEffect(() => {
+    const fetchConfig = async () => {
+      const data = await getConfig()
+      setConfig(data.result)
+    }
+    if (!config) {
+      fetchConfig()
+    }
+  }, [config])
+
+  const { centerLon = 110, centerLat = 38, zoom = 5 } = props.settings || {}
+
+  const [map, setMap] = useState()
+  const [view, setView] = useState()
+
+  const isFloat = number => /^(-?\d+)(\.\d+)?$/.test(number)
+
+  // 过滤掉没有经纬度结点或者经纬度为 0 的结点
+  const filterPath = useMemo(() => {
+    return path.filter(item => isFloat(item.lat) && isFloat(item.lon) && +item.lat !== 0 && +item.lon !== 0)
+  }, [path])
+
+  const filterRoute = useMemo(() => {
+    const getPointInfoByZmdm = zmdm => path.find(item => item.zmdm === zmdm) || {}
+    const renderFilterRoute = []
+    for (let i = 0; i < route.length; i++) {
+      // 补充缺失的线路，比如这种情况长沙-湘潭-武汉，长沙-湘潭段属于长湘线，湘潭到武汉属于湘武线
+      // 湘潭的经纬度为空，那么直接连起来的长沙 - 武汉叫长湘线
+      if (
+        getPointInfoByZmdm(route[i].zmdm).lon &&
+        getPointInfoByZmdm(route[i].zmdm).lat &&
+        (!getPointInfoByZmdm(route[i].next_zmdm).lon || !getPointInfoByZmdm(route[i].next_zmdm).lat)
+      ) {
+        const { zm: startZm, zmdm: startZmdm, xm } = route[i]
+
+        // 累加缺失的站点的里程数
+        let distance = 0
+        if (route[i].czjl) {
+          distance = route[i].czjl
+        }
+
+        let index = null
+        for (let j = i + 1; j < route.length; j++) {
+          if (route[j].czjl) {
+            distance += route[j].czjl
+          }
+          // 这里需要找到第一个终点站经纬度不为零的站点的下标，以此来进行缺失经纬度站点的合并
+          if (getPointInfoByZmdm(route[j].next_zmdm).lon && getPointInfoByZmdm(route[j].next_zmdm).lat) {
+            index = j
+            break
+          }
+        }
+        if (!index) {
+          // eslint-disable-next-line no-continue
+          continue
+        }
+        const { next_zmdm: endZmdm, next_zm: endZm } = route[index]
+        renderFilterRoute.push({
+          zmdm: startZmdm,
+          zm: startZm,
+          next_zmdm: endZmdm,
+          next_zm: endZm,
+          xm,
+          czjl: distance
+        })
+        i = index
+      }
+
+      // 经纬度都有的结点直接插入
+      if (
+        getPointInfoByZmdm(route[i].zmdm).lon &&
+        getPointInfoByZmdm(route[i].zmdm).lat &&
+        getPointInfoByZmdm(route[i].next_zmdm).lon &&
+        getPointInfoByZmdm(route[i].next_zmdm).lat
+      ) {
+        renderFilterRoute.push(route[i])
+      }
+    }
+    return renderFilterRoute
+  }, [route, path])
+
+  if (!config) {
+    return null
+  }
+
+  return (
+    <div className={styles.container}>
+      <Map
+        {...props}
+        config={config}
+        viewProperties={{
+          zoom: +zoom,
+          center: [+centerLon, +centerLat]
+        }}
+        setMap={setMap}
+        setView={setView}
+        view={view}
+      />
+      {map && view && <RouteDisplayLayer {...props} path={filterPath} route={filterRoute} map={map} view={view} />}
+    </div>
+  )
+}
+```
+
+## 传入的参数文件
+
+```js{8-17}
+import React, { useMemo } from 'react'
+import _ from 'lodash'
+import RailwayMap from '@/common/railway-map'
+
+export default function RailwayMapDisplay({ data, config, index }: any) {
+  const path = _.get(data, `[${index}].result.path`, [])
+  const pointInfo = _.get(data, `[${index}].filter.pointInfo`, [])
+  const filterPointInfo = useMemo(
+    () =>
+      pointInfo.map((item: any) => ({
+        value: {
+          key: item.zmdm,
+          label: item.zm
+        }
+      })),
+    [pointInfo]
+  )
+  return (
+    config && (
+      <RailwayMap
+        path={path}
+        route={_.get(data, `[${index}].result.route`, [])}
+        transport={_.get(data, `[${index}].result.transport`, [])}
+        height={240}
+        goToCenter
+        showAddOrDelBtn={false}
+        showLineInfo={false}
+        config={config}
+        pointInfo={filterPointInfo}
+      />
+    )
+  )
+}
+```
+
+## 修复效果
+
+![](res/2021-01-08-10-20-28.png)
+
+![](res/2021-01-08-10-20-47.png)
