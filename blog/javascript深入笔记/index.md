@@ -2,7 +2,7 @@
 title: javascript深入笔记
 path: /javascript-deep-learn-note/
 date: 2020-6-7 18:09:27
-tags: 前端, JS
+tags: 前端, JS, 高级前端
 ---
 
 # 从原型到原型链

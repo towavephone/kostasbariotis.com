@@ -2,7 +2,7 @@
 title: Promise 实现原理
 date: 2020-12-25 10:59:33
 path: /promise-implementation-principle/
-tags: 前端, JS, JS知识点
+tags: 前端, JS, 高级前端
 ---
 
 # 简化版

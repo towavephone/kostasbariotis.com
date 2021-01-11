@@ -2,7 +2,7 @@
 title: javascript ES6 笔记
 path: /javascript-es6-note/
 date: 2020-7-15 19:33:53
-tags: 前端, JS
+tags: 前端, JS, 高级前端
 ---
 
 # let 和 const

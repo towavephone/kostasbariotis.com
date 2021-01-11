@@ -2,7 +2,7 @@
 title: javascript专题笔记
 path: /javascript-subject-note/
 date: 2020-6-12 16:46:23
-tags: 前端, JS
+tags: 前端, JS, 高级前端
 ---
 
 # 防抖
