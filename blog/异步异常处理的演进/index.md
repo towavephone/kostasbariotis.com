@@ -247,7 +247,7 @@ main()
 
 # Async Await 无法捕获的异常
 
-和 `Promise 无法捕获的异常` 一样，这也是 await 的软肋，不过依然可以通过第六章的方案解决：
+和 `Promise 无法捕获的异常` 一样，这也是 await 的软肋，不过依然可以通过 `Promise 异常追问` 的方案解决：
 
 ```js
 function thirdFunction() {
@@ -270,7 +270,7 @@ async function main() {
 main()
 ```
 
-现在解答 `Promise 无法捕获的异常` 尾部的问题，为什么 await 是更加优雅的方案：
+现在解答 `Promise 异常追问` 尾部的问题，为什么 await 是更加优雅的方案：
 
 ```js
 async function main() {
@@ -287,6 +287,208 @@ async function main() {
 main()
 ```
 
-// TODO 异常处理的演进：https://juejin.cn/post/6844903462002491399
+# 业务场景
 
+在如今 action 概念成为标配的时代，我们大可以将所有异常处理收敛到 action 中。
 
+我们以如下业务代码为例，默认不捕获错误的话，错误会一直冒泡到顶层，最后抛出异常。
+
+```js
+const successRequest = () => Promise.resolve('a')
+const failRequest = () => Promise.reject('b')
+
+class Action {
+    async successReuqest() {
+        const result = await successRequest()
+        console.log('successReuqest', '处理返回值', result) // successReuqest 处理返回值 a
+    }
+
+    async failReuqest() {
+        const result = await failRequest()
+        console.log('failReuqest', '处理返回值', result) // 永远不会执行
+    }
+
+    async allReuqest() {
+        const result1 = await successRequest()
+        console.log('allReuqest', '处理返回值 success', result1) // allReuqest 处理返回值 success a
+        const result2 = await failRequest()
+        console.log('allReuqest', '处理返回值 success', result2) // 永远不会执行
+    }
+}
+
+const action = new Action()
+action.successReuqest()
+action.failReuqest()
+action.allReuqest()
+
+// 程序崩溃
+// Uncaught (in promise) b
+// Uncaught (in promise) b
+```
+
+为了防止程序崩溃，需要业务线在所有 async 函数中包裹 try catch。
+
+我们需要一种机制捕获 action 最顶层的错误进行统一处理。
+
+# 业务场景 统一异常捕获
+
+我们来编写类级别装饰器，专门捕获 async 函数抛出的异常：
+
+```js
+const asyncClass = (errorHandler?: (error?: Error) => void) => (target: any) => {
+    Object.getOwnPropertyNames(target.prototype).forEach(key => {
+        const func = target.prototype[key]
+        target.prototype[key] = async (...args: any[]) => {
+            try {
+                await func.apply(this, args)
+            } catch (error) {
+                errorHandler && errorHandler(error)
+            }
+        }
+    })
+    return target
+}
+```
+
+将类所有方法都用 try catch 包裹住，将异常交给业务方统一的 errorHandler 处理：
+
+```js
+const successRequest = () => Promise.resolve('a')
+const failRequest = () => Promise.reject('b')
+
+const iAsyncClass = asyncClass(error => {
+    console.log('统一异常处理', error) // 统一异常处理 b
+})
+
+@iAsyncClass
+class Action {
+    async successReuqest() {
+        const result = await successRequest()
+        console.log('successReuqest', '处理返回值', result)
+    }
+
+    async failReuqest() {
+        const result = await failRequest()
+        console.log('failReuqest', '处理返回值', result) // 永远不会执行
+    }
+
+    async allReuqest() {
+        const result1 = await successRequest()
+        console.log('allReuqest', '处理返回值 success', result1)
+        const result2 = await failRequest()
+        console.log('allReuqest', '处理返回值 success', result2) // 永远不会执行
+    }
+}
+
+const action = new Action()
+action.successReuqest()
+action.failReuqest()
+action.allReuqest()
+```
+
+我们也可以编写方法级别的异常处理：
+
+```js
+const asyncMethod = (errorHandler?: (error?: Error) => void) => (target: any, propertyKey: string, descriptor: PropertyDescriptor) => {
+    const func = descriptor.value
+    return {
+        get() {
+            return (...args: any[]) => {
+                return Promise.resolve(func.apply(this, args)).catch(error => {
+                    errorHandler && errorHandler(error)
+                })
+            }
+        },
+        set(newValue: any) {
+            return newValue
+        }
+    }
+}
+```
+
+业务方用法类似，只是装饰器需要放在函数上：
+
+```js
+const successRequest = () => Promise.resolve('a')
+const failRequest = () => Promise.reject('b')
+
+const asyncAction = asyncMethod(error => {
+    console.log('统一异常处理', error) // 统一异常处理 b
+})
+
+class Action {
+    @asyncAction async successReuqest() {
+        const result = await successRequest()
+        console.log('successReuqest', '处理返回值', result)
+    }
+
+    @asyncAction async failReuqest() {
+        const result = await failRequest()
+        console.log('failReuqest', '处理返回值', result) // 永远不会执行
+    }
+
+    @asyncAction async allReuqest() {
+        const result1 = await successRequest()
+        console.log('allReuqest', '处理返回值 success', result1)
+        const result2 = await failRequest()
+        console.log('allReuqest', '处理返回值 success', result2) // 永远不会执行
+    }
+}
+
+const action = new Action()
+action.successReuqest()
+action.failReuqest()
+action.allReuqest()
+```
+
+# 业务场景 没有后顾之忧的主动权
+
+在上面这种场景下，业务方是不用担心异常导致的 crash，因为所有异常都会在顶层统一捕获，可能表现为弹出一个提示框，告诉用户请求发送失败。
+
+业务方也不需要判断程序中是否存在异常，而战战兢兢的到处 try catch，因为程序中任何异常都会立刻终止函数的后续执行，不会再引发更恶劣的结果。
+
+> 像 golang 中异常处理方式，就存在这个问题通过 err, result := func() 的方式，虽然固定了第一个参数是错误信息，但下一行代码免不了要以 if error {...} 开头，整个程序的业务代码充斥着巨量的不必要错误处理，而大部分时候，我们还要为如何处理这些错误想的焦头烂额。
+
+而 js 异常冒泡的方式，在前端可以用提示框兜底，nodejs端可以返回 500 错误兜底，并立刻中断后续请求代码，等于在所有危险代码身后加了一层隐藏的 return。
+
+同时业务方也握有绝对的主动权，比如登录失败后，如果账户不存在，那么直接跳转到注册页，而不是傻瓜的提示用户帐号不存在，可以这样做：
+
+```js
+async login(nickname, password) {
+    try {
+        const user = await userService.login(nickname, password)
+        // 跳转到首页，登录失败后不会执行到这，所以不用担心用户看到奇怪的跳转
+    } catch (error) {
+        if (error.no === -1) {
+            // 跳转到登录页
+        } else {
+            throw Error(error) // 其他错误不想管，把球继续踢走
+        }
+    }
+}
+```
+
+# 补充
+
+在 nodejs 端，记得监听全局错误，兜住落网之鱼：
+
+```js
+process.on('uncaughtException', (error: any) => {
+    logger.error('uncaughtException', error)
+})
+
+process.on('unhandledRejection', (error: any) => {
+    logger.error('unhandledRejection', error)
+})
+```
+
+在浏览器端，记得监听 window 全局错误，兜住漏网之鱼：
+
+```js
+window.addEventListener('unhandledrejection', (event: any) => {
+    logger.error('unhandledrejection', event)
+})
+window.addEventListener('onrejectionhandled', (event: any) => {
+    logger.error('onrejectionhandled', event)
+})
+```
