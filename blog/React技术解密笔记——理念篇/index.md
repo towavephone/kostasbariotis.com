@@ -1,7 +1,7 @@
 ---
 title: React技术解密笔记——理念篇
 date: 2021-1-20 10:51:32
-path: /react-technology-notes/
+path: /react-technology-notes-idea/
 tags: 前端, React, 高级前端
 ---
 
