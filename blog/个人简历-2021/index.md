@@ -40,6 +40,9 @@ draft: true
 
 - 背景
   - 由于需要开发政府定制项目，需要启动在主项目的基础上开发一个拓展项目
+- 任务
+  - 负责地图组件的选型、搭建、验证、部署，详见 [基于arcgis地图组件的搭建部署](https://blog.towavephone.com/arcgis-map-component-build-deploy/)
+  - 优化主项目监听子项目文件变化，以实现增量编译的功能，详见 [基于nodemon实现监听文件链接变化](https://blog.towavephone.com/nodemon-monitor-link-changes/)
 
 ## 广州探迹科技有限公司——中级前端工程师（2018 年 6 月 ~ 2020 年 7 月）
 
