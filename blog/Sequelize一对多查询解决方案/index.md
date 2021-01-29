@@ -2,7 +2,7 @@
 title: Sequelize一对多查询解决方案
 path: /sequelize-one-to-many-find-solution/
 date: 2021-1-5 13:55:57
-tags: 后端, nodejs, Sequelize
+tags: 后端, nodejs, Sequelize, SQL
 ---
 
 # 前置知识
