@@ -1,7 +1,7 @@
 ---
 title: 基于arcgis地图组件的搭建部署
 path: /arcgis-map-component-build-deploy/
-date: 2021-1-8 10:30:36
+date: 2021-2-1 10:49:15
 tags: 前端, arcgis, 地图
 ---
 
@@ -667,7 +667,7 @@ export default function useGotoMap(props) {
       return
     }
 
-    // TODO hack 暂时未找到 view.graphics 完全加载时的方法，会造成白屏 bug
+    // 暂时未找到 view.graphics 完全加载时的方法，会造成白屏 bug
     if (goToCenter === true) {
       view.goTo({
         target: view.graphics,
@@ -1306,7 +1306,7 @@ export default function useAddOrDelPoint(props) {
 
 # 修复路线未加载
 
-在跳转页面时发现这个组件会有一定概率渲染不出路线，经过调试打印发现，是路线多次渲染造成的，需要限制多次渲染的问题，以下是跳转页面到这个组件：
+`暂时未找到 view.graphics 完全加载时的方法，会造成白屏 bug` 的原因是在跳转页面时发现这个组件会有一定概率渲染不出路线，经过调试打印发现，是路线多次渲染造成的，需要解决多次渲染的问题，以下是跳转页面到这个组件：
 
 ![](res/2021-01-08-09-38-58.png)
 
