@@ -1266,3 +1266,301 @@ memoizedState: 'ABCD'
 
 通过以上例子我们可以发现，React 保证最终的状态一定和用户触发的交互一致，但是中间过程状态可能由于设备不同而不同。
 
+## ReactDOM.render
+
+经过五章的学习，我们终于回到了 React 应用的起点。
+
+这一节我们完整的走通 ReactDOM.render 完成页面渲染的整个流程。
+
+### 创建 fiber
+
+从[双缓存机制一节](https://react.iamkasong.com/process/doubleBuffer.html#mount%E6%97%B6)我们知道，首次执行 ReactDOM.render 会创建 fiberRootNode 和 rootFiber。其中 fiberRootNode 是整个应用的根节点，rootFiber 是要渲染组件所在组件树的根节点。
+
+这一步发生在调用 ReactDOM.render 后进入的 legacyRenderSubtreeIntoContainer 方法中。
+
+```js
+// container 指 ReactDOM.render 的第二个参数（即应用挂载的 DOM 节点）
+root = container._reactRootContainer = legacyCreateRootFromDOMContainer(
+  container,
+  forceHydrate,
+);
+fiberRoot = root._internalRoot;
+```
+
+> 你可以从[这里](https://github.com/facebook/react/blob/1fb18e22ae66fdb1dc127347e169e73948778e5a/packages/react-dom/src/client/ReactDOMLegacy.js#L193)看到这一步的代码
+
+legacyCreateRootFromDOMContainer 方法内部会调用 createFiberRoot 方法完成 fiberRootNode 和 rootFiber 的创建以及关联并初始化 updateQueue。
+
+```js
+export function createFiberRoot(
+  containerInfo: any,
+  tag: RootTag,
+  hydrate: boolean,
+  hydrationCallbacks: null | SuspenseHydrationCallbacks,
+): FiberRoot {
+  // 创建 fiberRootNode
+  const root: FiberRoot = (new FiberRootNode(containerInfo, tag, hydrate): any);
+  
+  // 创建 rootFiber
+  const uninitializedFiber = createHostRootFiber(tag);
+
+  // 连接 rootFiber 与 fiberRootNode
+  root.current = uninitializedFiber;
+  uninitializedFiber.stateNode = root;
+
+  // 初始化 updateQueue
+  initializeUpdateQueue(uninitializedFiber);
+
+  return root;
+}
+```
+
+根据以上代码，现在我们可以在双缓存机制一节基础上补充上 rootFiber 到 fiberRootNode 的引用。
+
+![](res/2021-02-02-10-21-45.png)
+
+> 你可以从[这里](https://github.com/facebook/react/blob/1fb18e22ae66fdb1dc127347e169e73948778e5a/packages/react-reconciler/src/ReactFiberRoot.new.js#L97)看到这一步的代码
+
+### 创建 update
+
+我们已经做好了组件的初始化工作，接下来就等待创建 Update 来开启一次更新。
+
+这一步发生在 updateContainer 方法中。
+
+```js
+export function updateContainer(
+  element: ReactNodeList,
+  container: OpaqueRoot,
+  parentComponent: ?React$Component<any, any>,
+  callback: ?Function,
+): Lane {
+  // ...省略与逻辑不相关代码
+
+  // 创建 update
+  const update = createUpdate(eventTime, lane, suspenseConfig);
+  
+  // update.payload 为需要挂载在根节点的组件
+  update.payload = {element};
+
+  // callback 为 ReactDOM.render 的第三个参数 —— 回调函数
+  callback = callback === undefined ? null : callback;
+  if (callback !== null) {
+    update.callback = callback;
+  }
+
+  // 将生成的 update 加入 updateQueue
+  enqueueUpdate(current, update);
+  // 调度更新
+  scheduleUpdateOnFiber(current, lane, eventTime);
+
+  // ...省略与逻辑不相关代码
+}
+```
+
+> 你可以从[这里](https://github.com/facebook/react/blob/1fb18e22ae66fdb1dc127347e169e73948778e5a/packages/react-reconciler/src/ReactFiberReconciler.new.js#L255)看到 updateContainer 的代码
+
+值得注意的是其中 `update.payload = {element}`;
+
+这就是我们在 Update 一节介绍的，对于 HostRoot，payload 为 ReactDOM.render 的第一个传参。
+
+### 流程概览
+
+至此，ReactDOM.render 的流程就和我们已知的流程连接上了。
+
+整个流程如下：
+
+```js
+创建 fiberRootNode、rootFiber、updateQueue（`legacyCreateRootFromDOMContainer`）
+
+    |
+    |
+    v
+
+创建 Update 对象（`updateContainer`）
+
+    |
+    |
+    v
+
+从 fiber 到 root（`markUpdateLaneFromFiberToRoot`）
+
+    |
+    |
+    v
+
+调度更新（`ensureRootIsScheduled`）
+
+    |
+    |
+    v
+
+render 阶段（`performSyncWorkOnRoot` 或 `performConcurrentWorkOnRoot`）
+
+    |
+    |
+    v
+
+commit 阶段（`commitRoot`）
+```
+
+### React 的其他入口函数
+
+当前 React 共有三种模式：
+
+- legacy，这是当前 React 使用的方式。当前没有计划删除本模式，但是这个模式可能不支持一些新功能。
+- blocking，开启部分 concurrent 模式特性的中间模式。目前正在实验中。作为迁移到 concurrent 模式的第一个步骤。
+- concurrent，面向未来的开发模式。我们之前讲的任务中断/任务优先级都是针对concurrent模式。
+
+你可以从下表看出各种模式对特性的支持：
+
+||legacy 模式|blocking 模式|concurrent 模式|
+|:--:|:--:|:--:|:--:|
+|String Refs|✅|🚫**	|🚫**|
+|Legacy Context|✅|🚫** |🚫**|
+|findDOMNode|✅|🚫** |🚫**|
+|Suspense|✅|✅|✅|
+|SuspenseList|🚫|✅|✅|
+|Suspense SSR + Hydration|🚫|✅|✅|
+|Progressive Hydration|🚫|✅|✅|
+|Selective Hydration|🚫|🚫|✅|
+|Cooperative Multitasking|🚫|🚫|✅|
+|Automatic batching of multiple setStates|🚫*|✅|✅|
+|Priority-based Rendering|🚫|🚫|✅|
+|Interruptible Prerendering|🚫|🚫|✅|
+|useTransition|🚫|🚫|✅|
+|useDeferredValue|🚫|🚫|✅|
+|Suspense Reveal "Train"|🚫|🚫|✅|
+
+*：legacy 模式在合成事件中有自动批处理的功能，但仅限于一个浏览器任务。非 React 事件想使用这个功能必须使用 unstable_batchedUpdates。在 blocking 模式和 concurrent 模式下，所有的 setState 在默认情况下都是批处理的。
+
+**：会在开发中发出警告。
+
+模式的变化影响整个应用的工作方式，所以无法只针对某个组件开启不同模式。
+
+基于此原因，可以通过不同的入口函数开启不同模式：
+
+- legacy -- `ReactDOM.render(<App />, rootNode)`
+- blocking -- `ReactDOM.createBlockingRoot(rootNode).render(<App />)`
+- concurrent -- `ReactDOM.createRoot(rootNode).render(<App />)`
+
+> 你可以在[这里](https://zh-hans.reactjs.org/docs/concurrent-mode-adoption.html#why-so-many-modes)看到 React 团队解释为什么会有这么多模式
+
+虽然不同模式的入口函数不同，但是他们仅对 fiber.mode 变量产生影响，对我们在流程概览中描述的流程并无影响。
+
+## this.setState
+
+当我们有了前面知识的铺垫，就很容易理解 this.setState 的工作流程。
+
+### 流程概览
+
+可以看到，this.setState 内会调用 this.updater.enqueueSetState 方法。
+
+```js
+Component.prototype.setState = function (partialState, callback) {
+  if (!(typeof partialState === 'object' || typeof partialState === 'function' || partialState == null)) {
+    {
+      throw Error( "setState(...): takes an object of state variables to update or a function which returns an object of state variables." );
+    }
+  }
+  this.updater.enqueueSetState(this, partialState, callback, 'setState');
+};
+```
+
+> 你可以在[这里](https://github.com/facebook/react/blob/1fb18e22ae66fdb1dc127347e169e73948778e5a/packages/react/src/ReactBaseClasses.js#L57)看到这段代码
+
+在 enqueueSetState 方法中就是我们熟悉的从创建 update 到调度 update 的流程了。
+
+```js
+enqueueSetState(inst, payload, callback) {
+  // 通过组件实例获取对应 fiber
+  const fiber = getInstance(inst);
+
+  const eventTime = requestEventTime();
+  const suspenseConfig = requestCurrentSuspenseConfig();
+
+  // 获取优先级
+  const lane = requestUpdateLane(fiber, suspenseConfig);
+
+  // 创建 update
+  const update = createUpdate(eventTime, lane, suspenseConfig);
+
+  update.payload = payload;
+
+  // 赋值回调函数
+  if (callback !== undefined && callback !== null) {
+    update.callback = callback;
+  }
+
+  // 将 update 插入 updateQueue
+  enqueueUpdate(fiber, update);
+  // 调度 update
+  scheduleUpdateOnFiber(fiber, lane, eventTime);
+}
+```
+
+> 你可以在[这里](https://github.com/facebook/react/blob/1fb18e22ae66fdb1dc127347e169e73948778e5a/packages/react-reconciler/src/ReactFiberClassComponent.old.js#L196)看到 enqueueSetState 代码
+
+这里值得注意的是对于 ClassComponent，update.payload 为 this.setState 的第一个传参（即要改变的 state）。
+
+### this.forceUpdate
+
+在 this.updater 上，除了 enqueueSetState 外，还存在 enqueueForceUpdate，当我们调用 this.forceUpdate 时会调用他。
+
+可以看到，除了赋值 `update.tag = ForceUpdate;` 以及没有 payload 外，其他逻辑与 this.setState 一致。
+
+```js
+enqueueForceUpdate(inst, callback) {
+    const fiber = getInstance(inst);
+    const eventTime = requestEventTime();
+    const suspenseConfig = requestCurrentSuspenseConfig();
+    const lane = requestUpdateLane(fiber, suspenseConfig);
+
+    const update = createUpdate(eventTime, lane, suspenseConfig);
+
+    // 赋值 tag 为 ForceUpdate
+    update.tag = ForceUpdate;
+
+    if (callback !== undefined && callback !== null) {
+      update.callback = callback;
+    }
+
+    enqueueUpdate(fiber, update);
+    scheduleUpdateOnFiber(fiber, lane, eventTime);
+  },
+};
+```
+
+> 你可以在[这里](https://github.com/facebook/react/blob/1fb18e22ae66fdb1dc127347e169e73948778e5a/packages/react-reconciler/src/ReactFiberClassComponent.old.js#L260)看到 enqueueForceUpdate 代码
+
+那么赋值 `update.tag = ForceUpdate;` 有何作用呢？
+
+在判断 ClassComponent 是否需要更新时有两个条件需要满足：
+
+```js
+const shouldUpdate =
+checkHasForceUpdateAfterProcessing() ||
+checkShouldComponentUpdate(
+  workInProgress,
+  ctor,
+  oldProps,
+  newProps,
+  oldState,
+  newState,
+  nextContext,
+);
+```
+
+> 你可以在[这里](https://github.com/facebook/react/blob/1fb18e22ae66fdb1dc127347e169e73948778e5a/packages/react-reconciler/src/ReactFiberClassComponent.old.js#L1137)看到这段代码
+
+- checkHasForceUpdateAfterProcessing：内部会判断本次更新的 Update 是否为 ForceUpdate。即如果本次更新的 Update 中存在 tag 为 ForceUpdate，则返回 true。
+- checkShouldComponentUpdate：内部会调用 shouldComponentUpdate 方法。以及当该 ClassComponent 为 PureComponent 时会浅比较 state 与 props。
+
+> 你可以在[这里](https://github.com/facebook/react/blob/1fb18e22ae66fdb1dc127347e169e73948778e5a/packages/react-reconciler/src/ReactFiberClassComponent.old.js#L294)看到 checkShouldComponentUpdate 代码
+
+所以，当某次更新含有 tag 为 ForceUpdate 的 Update，那么当前 ClassComponent 不会受其他性能优化手段（shouldComponentUpdate|PureComponent）影响，一定会更新。
+
+### 总结
+
+至此，我们学习完了 `HostRoot | ClassComponent` 所使用的Update的更新流程。
+
+在下一章我们会学习另一种数据结构的 Update —— 用于 Hooks 的 Update。
