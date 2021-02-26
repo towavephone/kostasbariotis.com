@@ -2008,3 +2008,300 @@ function App() {
 4. React Hooks 的 update 有优先级概念，可以跳过不高优先的 update。
 
 更多的细节，我们会在本章后续小节讲解。
+
+## Hooks 数据结构
+
+在上一节我们实现了一个极简的 useState，了解了 Hooks 的运行原理。
+
+本节我们讲解 Hooks 的数据结构，为后面介绍具体的 hook 打下基础。
+
+### dispatcher
+
+在上一节的极简 useState 实现中，使用 isMount 变量区分 mount 与 update。
+
+在真实的 Hooks 中，组件 mount 时的 hook 与 update 时的 hook 来源于不同的对象，这类对象在源码中被称为 dispatcher。
+
+```js
+// mount 时的 Dispatcher
+const HooksDispatcherOnMount: Dispatcher = {
+  useCallback: mountCallback,
+  useContext: readContext,
+  useEffect: mountEffect,
+  useImperativeHandle: mountImperativeHandle,
+  useLayoutEffect: mountLayoutEffect,
+  useMemo: mountMemo,
+  useReducer: mountReducer,
+  useRef: mountRef,
+  useState: mountState,
+  // ...省略
+};
+
+// update 时的 Dispatcher
+const HooksDispatcherOnUpdate: Dispatcher = {
+  useCallback: updateCallback,
+  useContext: readContext,
+  useEffect: updateEffect,
+  useImperativeHandle: updateImperativeHandle,
+  useLayoutEffect: updateLayoutEffect,
+  useMemo: updateMemo,
+  useReducer: updateReducer,
+  useRef: updateRef,
+  useState: updateState,
+  // ...省略
+};
+```
+
+可见，mount 时调用的 hook 和 update 时调用的 hook 其实是两个不同的函数。
+
+在 FunctionComponent render 前，会根据 FunctionComponent 对应 fiber 的以下条件区分 mount 与 update。
+
+```js
+current === null || current.memoizedState === null
+```
+
+并将不同情况对应的 dispatcher 赋值给全局变量 ReactCurrentDispatcher 的 current 属性。
+
+```js
+ReactCurrentDispatcher.current =
+      current === null || current.memoizedState === null
+        ? HooksDispatcherOnMount
+        : HooksDispatcherOnUpdate;  
+```
+
+> 你可以在[这里](https://github.com/acdlite/react/blob/1fb18e22ae66fdb1dc127347e169e73948778e5a/packages/react-reconciler/src/ReactFiberHooks.new.js#L409)看到这行代码
+
+在 FunctionComponent render 时，会从 ReactCurrentDispatcher.current（即当前 dispatcher）中寻找需要的 hook。
+
+换言之，不同的调用栈上下文为 ReactCurrentDispatcher.current 赋值不同的 dispatcher，则 FunctionComponent render 时调用的 hook 也是不同的函数。
+
+> 除了这两个 dispatcher，你可以在[这里](https://github.com/acdlite/react/blob/1fb18e22ae66fdb1dc127347e169e73948778e5a/packages/react-reconciler/src/ReactFiberHooks.new.js#L1775)看到其他dispatcher定义
+
+### 一个 dispatcher 使用场景
+
+当错误的书写了嵌套形式的 hook，如：
+
+此时 ReactCurrentDispatcher.current 已经指向 ContextOnlyDispatcher，所以调用 useState 实际会调用 throwInvalidHookError，直接抛出异常。
+
+```js
+export const ContextOnlyDispatcher: Dispatcher = {
+  useCallback: throwInvalidHookError,
+  useContext: throwInvalidHookError,
+  useEffect: throwInvalidHookError,
+  useImperativeHandle: throwInvalidHookError,
+  useLayoutEffect: throwInvalidHookError,
+  // ...省略
+```
+
+你可以在[这里](https://github.com/acdlite/react/blob/1fb18e22ae66fdb1dc127347e169e73948778e5a/packages/react-reconciler/src/ReactFiberHooks.new.js#L458)看到这段逻辑
+
+### Hook 的数据结构
+
+接下来我们学习 hook 的数据结构。
+
+```js
+const hook: Hook = {
+  memoizedState: null,
+
+  baseState: null,
+  baseQueue: null,
+  queue: null,
+
+  next: null,
+};
+```
+
+> 你可以在[这里](https://github.com/acdlite/react/blob/1fb18e22ae66fdb1dc127347e169e73948778e5a/packages/react-reconciler/src/ReactFiberHooks.new.js#L546)看到创建 hook 的逻辑
+
+其中除 memoizedState 以外字段的意义与上一章介绍的 updateQueue 类似。
+
+### memoizedState
+
+hook 与 FunctionComponent fiber 都存在 memoizedState 属性，不要混淆他们的概念。
+
+fiber.memoizedState：FunctionComponent 对应 fiber 保存的 Hooks 链表。
+
+hook.memoizedState：Hooks 链表中保存的单一 hook 对应的数据。
+
+不同类型 hook 的 memoizedState 保存不同类型数据，具体如下：
+
+- useState：对于 `const [state, updateState] = useState(initialState)`，memoizedState 保存 state 的值
+- useReducer：对于 `const [state, dispatch] = useReducer(reducer, {});`，memoizedState 保存 state 的值
+- useEffect：memoizedState 保存包含 useEffect 回调函数、依赖项等的链表数据结构 effect，你可以在[这里](https://github.com/acdlite/react/blob/1fb18e22ae66fdb1dc127347e169e73948778e5a/packages/react-reconciler/src/ReactFiberHooks.new.js#L1181)看到 effect 的创建过程。effect 链表同时会保存在 fiber.updateQueue 中
+- useRef：对于 useRef(1)，memoizedState 保存 `{current: 1}`
+- useMemo：对于 `useMemo(callback, [depA])`，memoizedState 保存[ `[callback(), depA]`
+- useCallback：对于 `useCallback(callback, [depA])`，memoizedState 保存 `[callback, depA]`。与 useMemo 的区别是，useCallback 保存的是 callback 函数本身，而 useMemo 保存的是 callback 函数的执行结果
+
+有些 hook 是没有 memoizedState 的，比如：
+
+- useContext
+
+## useState 与 useReducer
+
+Redux 的作者 Dan 加入 React 核心团队后的一大贡献就是“将 Redux 的理念带入 React”。
+
+这里面最显而易见的影响莫过于 useState 与 useReducer 这两个 Hook。本质来说，useState 只是预置了 reducer 的 useReducer。
+
+本节我们来学习 useState 与 useReducer 的实现。
+
+### 流程概览
+
+我们将这两个 Hook 的工作流程分为声明阶段和调用阶段，对于：
+
+```js
+function App() {
+  const [state, dispatch] = useReducer(reducer, {a: 1});
+
+  const [num, updateNum] = useState(0);
+  
+  return (
+    <div>
+      <button onClick={() => dispatch({type: 'a'})}>{state.a}</button>  
+      <button onClick={() => updateNum(num => num + 1)}>{num}</button>  
+    </div>
+  )
+}
+```
+
+声明阶段即 App 调用时，会依次执行 useReducer 与 useState 方法。
+
+调用阶段即点击按钮后，dispatch 或 updateNum 被调用时。
+
+### 声明阶段
+
+当 FunctionComponent 进入 render 阶段的 beginWork 时，会调用 [renderWithHooks](https://github.com/acdlite/react/blob/1fb18e22ae66fdb1dc127347e169e73948778e5a/packages/react-reconciler/src/ReactFiberBeginWork.new.js#L1419) 方法。
+
+该方法内部会执行 FunctionComponent 对应函数（即 fiber.type）。
+
+你可以在 [这里](https://github.com/acdlite/react/blob/1fb18e22ae66fdb1dc127347e169e73948778e5a/packages/react-reconciler/src/ReactFiberHooks.new.js#L415) 看到这段逻辑
+
+对于这两个 Hook，他们的源码如下：
+
+```js
+function useState(initialState) {
+  var dispatcher = resolveDispatcher();
+  return dispatcher.useState(initialState);
+}
+function useReducer(reducer, initialArg, init) {
+  var dispatcher = resolveDispatcher();
+  return dispatcher.useReducer(reducer, initialArg, init);
+}
+```
+
+正如上一节 [dispatcher](https://react.iamkasong.com/hooks/structure.html#dispatcher) 所说，在不同场景下，同一个 Hook 会调用不同处理函数。
+
+我们分别讲解 mount 与 update 两个场景。
+
+#### mount 时
+
+mount 时，useReducer 会调用 [mountReducer](https://github.com/acdlite/react/blob/1fb18e22ae66fdb1dc127347e169e73948778e5a/packages/react-reconciler/src/ReactFiberHooks.new.js#L638)，useState 会调用 [mountState](https://github.com/acdlite/react/blob/1fb18e22ae66fdb1dc127347e169e73948778e5a/packages/react-reconciler/src/ReactFiberHooks.new.js#L1143)。
+
+我们来简单对比这这两个方法：
+
+```js
+function mountState<S>(
+  initialState: (() => S) | S,
+): [S, Dispatch<BasicStateAction<S>>] {
+  // 创建并返回当前的 hook
+  const hook = mountWorkInProgressHook();
+
+  // ...赋值初始 state
+
+  // 创建 queue
+  const queue = (hook.queue = {
+    pending: null,
+    dispatch: null,
+    lastRenderedReducer: basicStateReducer,
+    lastRenderedState: (initialState: any),
+  });
+
+  // ...创建 dispatch
+  return [hook.memoizedState, dispatch];
+}
+
+function mountReducer<S, I, A>(
+  reducer: (S, A) => S,
+  initialArg: I,
+  init?: I => S,
+): [S, Dispatch<A>] {
+  // 创建并返回当前的 hook
+  const hook = mountWorkInProgressHook();
+
+  // ...赋值初始 state
+
+  // 创建 queue
+  const queue = (hook.queue = {
+    pending: null,
+    dispatch: null,
+    lastRenderedReducer: reducer,
+    lastRenderedState: (initialState: any),
+  });
+
+  // ...创建 dispatch
+  return [hook.memoizedState, dispatch];
+}
+```
+
+其中 mountWorkInProgressHook 方法会创建并返回对应 hook，对应极简 Hooks 实现中 useState 方法的 isMount 逻辑部分。
+
+可以看到，mount 时这两个 Hook 的唯一区别为 queue 参数的 lastRenderedReducer 字段。
+
+queue 的数据结构如下：
+
+```js
+const queue = (hook.queue = {
+  // 与极简实现中的同名字段意义相同，保存 update 对象
+  pending: null,
+  // 保存 dispatchAction.bind() 的值
+  dispatch: null,
+  // 上一次 render 时使用的 reducer
+  lastRenderedReducer: reducer,
+  // 上一次 render 时的 state
+  lastRenderedState: (initialState: any),
+});
+```
+
+其中，useReducer 的 lastRenderedReducer 为传入的 reducer 参数。useState 的 lastRenderedReducer 为 basicStateReducer。
+
+basicStateReducer 方法如下：
+
+```js
+function basicStateReducer<S>(state: S, action: BasicStateAction<S>): S {
+  return typeof action === 'function' ? action(state) : action;
+}
+```
+
+可见，useState 即 reducer 参数为 basicStateReducer 的 useReducer。
+
+mount 时的整体运行逻辑与极简实现的 isMount 逻辑类似，你可以对照着看。
+
+#### update 时
+
+如果说 mount 时这两者还有区别，那 update 时，useReducer 与 useState 调用的则是同一个函数 [updateReducer](https://github.com/acdlite/react/blob/1fb18e22ae66fdb1dc127347e169e73948778e5a/packages/react-reconciler/src/ReactFiberHooks.new.js#L665)。
+
+```js
+function updateReducer<S, I, A>(
+  reducer: (S, A) => S,
+  initialArg: I,
+  init?: I => S,
+): [S, Dispatch<A>] {
+  // 获取当前 hook
+  const hook = updateWorkInProgressHook();
+  const queue = hook.queue;
+  
+  queue.lastRenderedReducer = reducer;
+
+  // ...同 update 与 updateQueue 类似的更新逻辑
+
+  const dispatch: Dispatch<A> = (queue.dispatch: any);
+  return [hook.memoizedState, dispatch];
+}
+```
+
+整个流程可以概括为一句话：
+
+> 找到对应的 hook，根据 update 计算该 hook 的新 state 并返回。
+
+mount 时获取当前 hook 使用的是 mountWorkInProgressHook，而 update 时使用的是 updateWorkInProgressHook，这里的原因是：
+
+- mount 时可以确定是调用 ReactDOM.render 或相关初始化 API 产生的更新，只会执行一次。
+- update 可能是在事件回调或副作用中触发的更新或者是 render 阶段触发的更新，为了避免组件无限循环更新，后者需要区别对待。
