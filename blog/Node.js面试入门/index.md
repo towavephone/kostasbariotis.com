@@ -1,7 +1,7 @@
 ---
 title: Node.js面试入门
 path: /nodejs-interview-introduce-learn/
-date: 2021-1-4 11:31:04
+date: 2021-2-26 18:27:10
 tags: 后端, nodejs
 ---
 
@@ -874,5 +874,59 @@ decoder.write(Buffer.from([0xE2]));
 decoder.write(Buffer.from([0x82]));
 console.log(decoder.end(Buffer.from([0xAC])));  // €
 ```
+
+## Stream
+
+Node.js 内置的 stream 模块是多个核心模块的基础. 但是流 (stream) 是一种很早之前流行的编程方式. 可以用大家比较熟悉的 C 语言来看这种流式操作:
+
+```c
+int copy(const char *src, const char *dest)
+{
+    FILE *fpSrc, *fpDest;
+    char buf[BUF_SIZE] = {0};
+    int lenSrc, lenDest;
+
+    // 打开要 src 的文件
+    if ((fpSrc = fopen(src, "r")) == NULL)
+    {
+        printf("文件 '%s' 无法打开\n", src);
+        return FAILURE;
+    }
+
+    // 打开 dest 的文件
+    if ((fpDest = fopen(dest, "w")) == NULL)
+    {
+        printf("文件 '%s' 无法打开\n", dest);
+        fclose(fpSrc);
+        return FAILURE;
+    }
+    
+    // 从 src 中读取 BUF_SIZE 长的数据到 buf 中
+    while ((lenSrc = fread(buf, 1, BUF_SIZE, fpSrc)) > 0)
+    {
+        // 将 buf 中的数据写入 dest 中
+        if ((lenDest = fwrite(buf, 1, lenSrc, fpDest)) != lenSrc)
+        {
+            printf("写入文件 '%s' 失败\n", dest);
+            fclose(fpSrc);
+            fclose(fpDest);
+            return FAILURE;
+        }
+        // 写入成功后清空 buf
+        memset(buf, 0, BUF_SIZE);
+    }
+  
+    // 关闭文件
+    fclose(fpSrc);
+    fclose(fpDest);
+    return SUCCESS;
+}
+```
+
+应用的场景很简单, 你要拷贝一个 20G 大的文件, 如果你一次性将 20G 的数据读入到内存, 你的内存条可能不够用, 或者严重影响性能. 但是你如果使用一个 1MB 大小的缓存 (buf) 每次读取 1Mb, 然后写入 1Mb, 那么不论这个文件多大都只会占用 1Mb 的内存.
+
+而在 Node.js 中, 原理与上述 C 代码类似, 不过在读写的实现上通过 libuv 与 EventEmitter 加上了异步的特性. 在 linux/unix 中你可以通过 | 来感受到流式操作.
+
+### Stream 的类型
 
 // TODO nodejs 未完待续，下一篇地址：https://github.com/ElemeFE/node-interview/blob/master/sections/zh-cn/io.md
