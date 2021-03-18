@@ -9,8 +9,11 @@ import Posts from './../components/Posts';
 import MetaTags from './../components/MetaTags';
 
 export default function Drafts({ data }) {
-  let { edges: posts } = data.allMarkdownRemark;
+  let { edges } = data.allMarkdownRemark;
   let { siteUrl } = data.site.siteMetadata;
+  let length = edges.length;
+  let [...posts] = edges;
+  posts.length = 3;
   posts = posts.map(post => post.node);
   return (
     <div>
@@ -32,9 +35,9 @@ export default function Drafts({ data }) {
             <Separator />
             <article className="post text-right">
               <header className="post-head">
-                {posts && posts.length > 5 ? (
+                {length > 3 ? (
                   <h3 className="post-title">
-                    <GatsbyLink to="/drafts/page/2">阅读更多 &gt;</GatsbyLink>
+                    <GatsbyLink to="/drafts/page/1">阅读更多 &gt;</GatsbyLink>
                   </h3>
                 ) : null}
               </header>
@@ -60,7 +63,7 @@ export const pageQuery = graphql`
     }
     allMarkdownRemark(
       sort: { order: DESC, fields: [frontmatter___date] }
-      limit: 5
+      limit: 4
       filter: { frontmatter: { draft: { eq: true } } }
     ) {
       edges {
