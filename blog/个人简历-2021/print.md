@@ -1,3 +1,16 @@
+---
+title: 涂波涛的个人简历-打印版本
+date: 2021-3-18 17:27:15
+categories:
+- 面试
+tags: 面试, 简历
+path: /personal-resume-2021-print/
+password: 19930319
+abstract: 输入密码可见。
+message: 请输入密码以浏览：
+draft: true
+---
+
 # 联系方式
 
 - 手机：13072748105/19928327201
