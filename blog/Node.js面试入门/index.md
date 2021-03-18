@@ -1590,7 +1590,7 @@ end of line (EOL) 同 newline, line ending, 以及 line break.
 
 ## Path
 
-Node.js 内置的 path 是用于处理路径问题的模块. 不过众所周知, 路径在不同操作系统下又不可调和的差异.
+Node.js 内置的 path 是用于处理路径问题的模块. 不过众所周知, 路径在不同操作系统下有不可调和的差异.
 
 ### Windows vs. POSIX
 
@@ -1724,7 +1724,7 @@ path.parse('C:\\path\\dir\\file.txt')
 
 ## 负载
 
-负载是衡量服务器运行状态的一个重要概念. 通过负载情况, 我们可以知道服务器目前状态是清闲, 良好, 繁忙还是即将 crash.
+负载是衡量服务器运行状态的一个重要概念. 通过负载情况, 我们可以知道服务器目前状态是空闲、良好、繁忙还是即将 crash.
 
 通常我们要查看的负载是 CPU 负载, 详细一点的情况你可以通过阅读这篇博客: [Understanding Linux CPU Load](http://blog.scoutapp.com/articles/2009/07/31/understanding-load-averages) 来了解.
 
@@ -1866,4 +1866,4 @@ file locks                      (-x) unlimited
 注意, open socket 等资源拿到的也是 fd, 所以 `ulimit -n` 比较小除了文件打不开, 还可能建立不了 socket 链接.
 
 
-// TODO nodejs 未完待续，下一篇地址：https://github.com/ElemeFE/node-interview/blob/master/sections/zh-cn/os.md
+// TODO nodejs 未完待续，下一篇地址：https://github.com/ElemeFE/node-interview/blob/master/sections/zh-cn/error.md
