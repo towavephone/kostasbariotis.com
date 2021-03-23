@@ -2440,4 +2440,353 @@ glob("**/*.js", (err, files) => {
 });
 ```
 
-// TODO nodejs 未完待续，下一篇地址：https://github.com/ElemeFE/node-interview/blob/master/sections/zh-cn/storage.md
+# 存储
+
+## 简介
+
+科班的同学可以了解一下[数据库范式](http://www.cnblogs.com/CareySon/archive/2010/02/16/1668803.html), 在 ElemeFe 面试不会问, 但是其他地方可能会问 (比如阿里).
+
+## Mysql
+
+SQL (Structured Query Language) 是[关系式数据库管理系统](https://en.wikipedia.org/wiki/Relational_database)的标准语言, 关于关系型数据库这里主要带大家看一下 Mysql 的几个问题
+
+### 存储引擎
+
+|attr|MyISAM|InnoDB|
+|----|----|----|
+|Locking|Table-level|Row-level|
+|designed for|need of speed|high volume of data|
+|foreign keys | × (DBMS) | ✓ (RDBMS)|
+|transaction | × | ✓ |
+|fulltext search | ✓ | × |
+|scene| lots of select | lots of insert/update |
+|count rows| fast | slow |
+|auto_increment | fast | slow |
+
+* 你的数据库有外键吗？
+* 你需要事务支持吗？
+* 你需要全文索引吗？
+* 你经常使用什么样的查询模式？
+* 你的数据有多大？
+
+参见 [MYSQL: INNODB 还是 MYISAM?](http://coolshell.cn/articles/652.html)
+
+### 索引
+
+索引是用空间换时间的一种优化策略. 推荐阅读: [mysql索引类型](http://www.cnblogs.com/cq-home/p/3482101.html) 以及 [主键与唯一索引的区别](http://blog.mimvp.com/2015/03/the-difference-between-primary-key-and-unique-index/)
+
+## Mongodb
+
+> Monogdb 连接问题(超时/断开等)有可能是什么问题导致的?
+
+* 网络问题
+* 任务跑不完, 超过了 driver 的默认链接超时时间 (如 30s)
+* Monogdb 宕机了
+* 超过了连接空闲时间 (connection idle time) 被断开
+* fd 不够用 (ulimit 设置)
+* mongodb 最大连接数不够用 (可能是连接未复用导致)
+* etc...
+
+### other
+
+populate
+
+aggregate
+
+pipeline
+
+Cursor
+
+整理中
+
+## Replication
+
+> 备份数据库与 M/S, M/M 等部署方式的区别?
+
+关于数据库基于各种模式的特点全部可以通过以下图片分清:
+
+![](res/2021-03-23-13-51-02.png)
+
+图片出处：Google App Engine 的 co-founder Ryan Barrett 在 2009 年的 google i/o 上的演讲 [《Transaction Across DataCenter》](http://snarfed.org/transactions_across_datacenters_io.html)（视频： http://www.youtube.com/watch?v=srOgpXECblk） 
+
+根据上图, 我们可以知道  Master/Slave 与 Master/Master 的关系.
+
+<table>
+  <tr><th>attr</th><th>Master/Slave</th><th>Master/Master</th></tr>
+  <tr><td>一致性</td><td colspan="2">Eventually：当你写入一个新值后，有可能读不出来，但在某个时间窗口之后保证最终能读出来。比如：DNS，电子邮件、Amazon S3，Google搜索引擎这样的系统。</td></tr>
+  <tr><td>事务</td><td align="center">完整</td><td align="center">本地</td></tr>
+  <tr><td>延迟</td><td colspan="2" align="center">低延迟</td></tr>
+  <tr><td>吞吐</td><td colspan="2" align="center">高吞吐</td></tr>
+  <tr><td>数据丢失</td><td colspan="2" align="center">部分丢失</td></tr>
+  <tr><td>熔断</td><td align="center">只读</td><td align="center">读/写</td></tr>
+</table>
+
+### 读写分离
+
+读写分离是在 query 量大的情况下减轻单个 DB 节点压力, 优化数据库读/写速度的一种策略. 不论是 MySQL 还是 MongoDB 都可以进行读写分离.
+
+读写分离的配置方式直接搜索一下 `数据库名 + 读写分离` 即可找到. 通常是 M/S 的情况, 使用 Master 专门写, 用 Slave 节点专门读. 使用读写分离时, 请确认读的请求对一致性要求不高, 因为从写库同步读库是有延迟的.
+
+## 数据一致性
+
+关于数据一致性推荐看陈皓的[分布式系统的事务处理](http://www.infoq.com/cn/articles/distributed-system-transaction-processing)
+
+> 什么情况下数据会出现脏数据? 如何避免?
+
+* 从 A 帐号中把余额读出来
+* 对 A 帐号做减法操作
+* 把结果写回 A 帐号中
+* 从 B 帐号中把余额读出来
+* 对 B 帐号做加法操作
+* 把结果写回 B 帐号中
+
+为了数据的一致性, 这6件事, 要么都成功做完, 要么都不成功, 而且这个操作的过程中, 对A、B帐号的其它访问必需锁死, 所谓锁死就是要排除其它的读写操作, 否则就会出现脏数据 ---- 即数据一致性的问题.
+
+这个问题并不仅仅出现在数据库操作中, 普通的并发以及并行操作都可能导致出现脏数据. 避免出现脏数据通常是从架构上避免或者采用事务的思想处理.
+
+### 矛盾
+
+* 1）要想让数据有高可用性，就得写多份数据
+* 2）写多份的问题会导致数据一致性的问题
+* 3）数据一致性的问题又会引发性能问题
+
+强一致性必然导致性能短板, 而弱一致性则有很好的性能但是存在数据安全(灾备数据丢失)/一致性(脏读/脏写等)的问题.
+
+目前 Node.js 业内流行的主要是与 Mongodb 配合, 在数据一致性方面属于短板.
+
+### 事务
+
+事务并不仅仅是 sql 数据库中的一个功能, 也是分布式系统开发中的一个思想, 事务在分布式的问题中可以称为 "两阶段提交" (以下引用陈皓原文)
+
+第一阶段：
+
+* 协调者会问所有的参与者结点，是否可以执行提交操作。 
+* 各个参与者开始事务执行的准备工作：如：为资源上锁，预留资源，写undo/redo log…… 
+* 参与者响应协调者，如果事务的准备工作成功，则回应“可以提交”，否则回应“拒绝提交”。 
+
+第二阶段：
+
+* 如果所有的参与者都回应“可以提交”，那么，协调者向所有的参与者发送“正式提交”的命令。参与者完成正式提交，并释放所有资源，然后回应“完成”，协调者收集各结点的“完成”回应后结束这个Global Transaction。 
+* 如果有一个参与者回应“拒绝提交”，那么，协调者向所有的参与者发送“回滚操作”，并释放所有资源，然后回应“回滚完成”，协调者收集各结点的“回滚”回应后，取消这个Global Transaction。 
+
+异常:
+
+* 如果第一阶段中，参与者没有收到询问请求，或是参与者的回应没有到达协调者。那么，需要协调者做超时处理，一旦超时，可以当作失败，也可以重试。
+* 如果第二阶段中，正式提交发出后，如果有的参与者没有收到，或是参与者提交/回滚后的确认信息没有返回，一旦参与者的回应超时，要么重试，要么把那个参与者标记为问题结点剔除整个集群，这样可以保证服务结点都是数据一致性的。
+* 第二阶段中，如果参与者收不到协调者的commit/fallback指令，参与者将处于“状态未知”阶段，参与者完全不知道要怎么办。
+
+## 缓存
+
+> redis 与 memcached 的区别?
+
+|attr|memcached|redis|
+|----|----|----|
+|struct|key/value|key/value + list, set, hash etc. |
+|backup | × | ✓ |
+|Persistence | × | ✓ |
+|transcations | × | ✓ |
+|consistency | strong (by cas) | weak |
+|thread | multi | single |
+|memory | physical | physical & swap |
+
+## 其他
+
+* zookeeper
+* kafka
+* storm
+* hadoop
+* spark
+
+# 安全
+
+## Crypto
+
+Node.js 的 `crypto` 模块封装了诸多的加密功能, 包括 OpenSSL 的哈希、HMAC、加密、解密、签名和验证函数等.
+
+Node.js 的加密貌似有点问题, 某些算法算出来跟别的语言 (比如 Python) 不一样. 具体情况还在整理中 (时间不定), 欢迎补充.
+
+> 加密是如何保证用户密码的安全性?
+
+在客户端加密, 是增加传输的过程中被第三方嗅探到密码后破解的成本. 对于游戏, 在客户端加密是防止外挂/破解等. 在服务端加密 (如 md5) 是避免管理数据库的 DBA 或者攻击者攻击数据库之后直接拿到明文密码, 从而提高安全性.
+
+## TLS/SSL
+
+早期的网络传输协议由于只在大学内使用, 所以是默认互相信任的. 所以传统的网络通信可以说是没有考虑网络安全的. 早年的浏览器大厂网景公司为了应对这个情况设计了 SSL (Secure Socket Layer), SSL 的主要用途是:
+
+1. 认证用户和服务器, 确保数据发送到正确的客户机和服务器;
+2. 加密数据以防止数据中途被窃取;
+3. 维护数据的完整性, 确保数据在传输过程中不被改变.
+
+存在三个特性:
+
+* 机密性：SSL协议使用密钥加密通信数据
+* 可靠性：服务器和客户都会被认证, 客户的认证是可选的
+* 完整性：SSL协议会对传送的数据进行完整性检查
+
+1999年, SSL 因为应用广泛, 已经成为互联网上的事实标准. IETF 就在那年把 SSL 标准化/强化. 标准化之后的名称改为传输层安全协议 (Transport Layer Security, TLS). 很多相关的文章都把这两者并列称呼 (TLS/SSL), 因为这两者可以视作同一个东西的不同阶段.
+
+## HTTPS
+
+在网络上, 每个网站都在各自的服务器上, 想要确保你访问的是一个正确的网站, 并且访问到这个网站正确的数据 (没有被劫持/篡改), 除了需要传输安全之外, 还需要安全的认证, 认证不能由目标网站进行, 否则恶意/钓鱼网站也可以自己说自己是对的, 所以为了能在网络上维护网络之间的基本信任, 早期的大厂们合力推动了一项名为 PKI 的基础设施, 通过第三方来认证网站.
+
+公钥基础设施 (Public Key Infrastructure, PKI) 是一种遵循标准的, 利用公钥加密技术为电子商务的开展提供一套安全基础平台的技术和规范. 其基础建置包含认证中心 (Certification Authority, CA) 、注册中心 (Register Authority, RA) 、目录服务 (Directory Service, DS) 服务器. 
+
+由 RA 统筹、审核用户的证书申请, 将证书申请送至 CA 处理后发出证书, 并将证书公告至 DS 中. 在使用证书的过程中, 除了对证书的信任关系与证书本身的正确性做检查外, 并透过产生和发布证书废止列表 (Certificate Revocation List, CRL) 对证书的状态做确认检查, 了解证书是否因某种原因而遭废弃. 证书就像是个人的身分证, 其内容包括证书序号、用户名称、公开金钥 (Public Key) 、证书有效期限等.
+
+在 TLS/SSL 中你可以使用 OpenSSL 来生成 TLS/SSL 传输时用来认证的 public/private key. 不过这个 public/private key 是自己生成的, 而通过 PKI 基础设施可以获得权威的第三方证书 (key) 从而加密 HTTP 传输安全. 目前博客圈子里比较流行的是 [Let's Encrypt 签发免费的 HTTPS 证书](https://imququ.com/post/letsencrypt-certificate.html).
+
+需要注意的是, 如果 PKI 受到攻击, 那么 HTTPS 也一样不安全. 可以参见 [HTTPS 劫持 - 知乎讨论](https://www.zhihu.com/question/22795329) 中的情况, 证书由 CA 机构签发, 一般浏览器遇到非权威的 CA 机构是会告警的 (参见 [12306](https://kyfw.12306.cn/otn/)), 但是如果你在某些特殊的情况下信任了某个未知机构/证书, 那么也可能被劫持.
+
+此外有的 CA 机构以邮件方式认证, 那么当某个网站的邮件服务收到攻击/渗透, 那么攻击者也可能以此从 CA 机构获取权威的正确的证书.
+
+## XSS
+
+跨站脚本 (Cross-Site Scripting, XSS) 是一种代码注入方式, 为了与 CSS 区分所以被称作 XSS. 早期常见于网络论坛, 起因是网站没有对用户的输入进行严格的限制, 使得攻击者可以将脚本上传到帖子让其他人浏览到有恶意脚本的页面, 其注入方式很简单包括但不限于 JavaScript / VBScript / CSS / Flash 等.
+
+当其他用户浏览到这些网页时, 就会执行这些恶意脚本, 对用户进行 Cookie 窃取/会话劫持/钓鱼欺骗等各种攻击. 其原理, 如使用 js 脚本收集当前用户环境的信息 (Cookie 等), 然后通过 img.src, Ajax, onclick/onload/onerror 事件等方式将用户数据传递到攻击者的服务器上. 钓鱼欺骗则常见于使用脚本进行视觉欺骗, 构建假的恶意的 Button 覆盖/替换真实的场景等情况 (该情况在用户上传 CSS 的时候也可能出现, 如早期淘宝网店装修, 使用 CSS 拼接假的评分数据等覆盖在真的评分数据上误导用户).
+
+> 过滤 Html 标签能否防止 XSS? 请列举不能的情况?
+
+用户除了上传
+
+```html
+<script>alert('xss');</script>
+```
+
+还可以使用图片 url 等方式来上传脚本进行攻击
+
+```html
+<table background="javascript:alert(/xss/)"></table>
+<img src="javascript:alert('xss')">
+```
+
+还可以使用各种方式来回避检查, 例如空格, 回车, Tab
+
+```html
+<img src="javas cript:
+alert('xss')">
+```
+
+还可以通过各种编码转换 (URL 编码, Unicode 编码, HTML 编码, ESCAPE 等) 来绕过检查
+
+```
+<img%20src=%22javascript:alert('xss');%22>
+<img src="javascrip&#116&#58alert(/xss/)">
+```
+
+### CSP 策略
+
+在百般无奈, 没有统一解决方案的情况下, 厂商们推出了 CSP 策略. 
+
+以 Node.js 为例, 计算脚本的 hashes 值:
+
+```js
+const crypto = require('crypto');
+
+function getHashByCode(code, algorithm = 'sha256') {
+  return algorithm + '-' + crypto.createHash(algorithm).update(code, 'utf8').digest("base64");
+}
+
+getHashByCode('console.log("hello world");'); // 'sha256-wxWy1+9LmiuOeDwtQyZNmWpT0jqCUikqaqVlJdtdh/0='
+```
+
+设置 CSP 头:
+
+```
+content-security-policy: script-src 'sha256-wxWy1+9LmiuOeDwtQyZNmWpT0jqCUikqaqVlJdtdh/0='
+```
+
+```html
+<script>console.log('hello geemo')</script> <!-- 不执行 -->
+<script>console.log('hello world');</script> <!-- 执行 -->
+```
+
+策略指令可以参见 [CSP Policy Directives](https://developer.mozilla.org/en-US/docs/Web/Security/CSP/CSP_policy_directives)以及[阮一峰的博文](http://www.ruanyifeng.com/blog/2016/09/csp.html), [屈大神的博文](https://imququ.com/post/content-security-policy-reference.html)
+
+## CSRF
+
+跨站请求伪造 `(Cross-Site Request Forgery, CSRF, https://www.owasp.org/index.php/Cross-Site_Request_Forgery_(CSRF)_Prevention_Cheat_Sheet)` 是一种伪造跨站请求的攻击方式. 例如利用你在 A 站 (攻击目标) 的 cookie / 权限等, 在 B 站 (恶意/钓鱼网站) 拼装 A 站的请求.
+
+比如 Q 君是某论坛管理员. 已知这个论坛 A 删除的接口是 post 到某个地址, 并指定一个帖子的 id.  那么我可以在自己的博客 B 上组织一个 CSRF 请求. 然后诱使 Q 君来访问我的博客. 就可以在 Q 君不知情的情况下删除掉我想删的某个帖子.
+
+钓鱼方式包括但不限于公开网站 (xss), 攻击者的恶意网站, email 邮件, 微博, 微信, 短信等及时消息.
+
+同源策略是最早用于防止 CSRF 的一种方式, 即关于跨站请求 (Cross-Site Request) 只有在同源/信任的情况下才可以请求. 但是如果一个网站群, 在互相信任的情况下, 某个网站出现了问题:
+
+```
+a.public.com
+b.public.com
+c.public.com
+...
+```
+
+以上情况下, 如果 c.public.com 上没有预防 xss 等情况, 使得攻击者可以基于此站对其他信任的网站发起 CSRF 攻击.
+
+另外同源策略主要是浏览器来进行验证的, 并且不同浏览器的实现又各自不同, 所以在某些浏览器上可以直接绕过, 而且也可以直接通过短信等方式直接绕过浏览器.
+
+预防:
+
+1. A 站 (预防站) 检查 http 请求的 header 确认其 origin
+2. 检查 CSRF token
+
+### 1.同源检查 
+
+通过检查来过滤简单的 CSRF 攻击, 主要检查一下两个 header:
+
+* Origin Header
+* Referer Header
+
+### 2.CSRF token 
+
+简单来说, 对需要预防的请求, 通过特别的算法生成 token 存在 session 中, 然后将 token 隐藏在正确的界面表单中, 正式请求时带上该 token 在服务端验证, 避免跨站请求.
+
+## 中间人攻击
+
+中间人 (Man-in-the-middle attack, MITM) 是指攻击者与通讯的两端分别创建独立的联系, 并交换其所收到的数据, 使通讯的两端认为他们正在通过一个私密的连接与对方直接对话, 但事实上整个会话都被攻击者完全控制. 在中间人攻击中, 攻击者可以拦截通讯双方的通话并插入新的内容.
+
+目前比较常见的是在公共场所放置精心准备的免费 wifi, 劫持/监控通过该 wifi 的流量. 或者攻击路由器, 连上你家 wifi 攻破你家 wifi 之后在上面劫持流量等.
+
+对于通信过程中的 MITM, 常见的方案是通过 PKI / TLS 预防, 及时是通过存在第三方中间人的 wifi 你通过 HTTPS 访问的页面依旧是安全的. 而 HTTP 协议是明文传输, 则没有任何防护可言.
+
+不常见的还有强力的互相认证, 你确认他之后, 他也确认你一下; 延迟测试, 统计传输时间, 如果通讯延迟过高则认为可能存在第三方中间人; 等等.
+
+## SQL/NoSQL 注入
+
+注入攻击是指当所执行的一些操作中有部分由用户传入时, 用户可以将其恶意逻辑注入到操作中. 当你使用 eval, new Function 等方式执行的字符串中有用户输入的部分时, 就可能被注入攻击. 上文中的 XSS 就属于一种注入攻击. 前面的章节中也提到过 Node.js 的 child_process.exec 由于调用 bash 解析, 如果执行的命令中有部分属于用户输入, 也可能被注入攻击.
+
+### SQL
+
+Sql 注入是网站常见的一种注入攻击方式. 其原因主要是由于登录时需要验证用户名/密码, 其执行 sql 类似:
+
+```sql
+SELECT * FROM users WHERE usernae = 'myName' AND password = 'mySecret';
+```
+
+其中的用户名和密码属于用户输入的部分, 那么在未做检查的情况下, 用户可能拼接恶意的字符串来达到其某种目的, 例如上传密码为 `'; DROP TABLE users; --` 使得最终执行的内容为:
+
+```sql
+SELECT * FROM users WHERE usernae = 'myName' AND password = ''; DROP TABLE users; --';
+```
+
+其能实现的功能, 包括但不限于删除数据 (经济损失), 篡改数据 (密码等), 窃取数据 (网站管理权限, 用户数据) 等. 防治手段常见于:
+
+* 给表名/字段名加前缀 (避免被猜到)
+* 报错隐藏表信息 (避免被看到, 12306 早期就出现过的问题)
+* 过滤可以拼接 SQL 的关键字符
+* 对用户输入进行转义
+* 验证用户输入的类型 (避免 limit, order by 等注入)
+
+### NoSQL
+
+看个简单的情况:
+
+```js
+let {user, pass, age} = ctx.query;
+
+db.collection.find({
+  user, pass,
+  $where: `this.age >= ${age}`
+})
+```
+
+那么这里的 age 就可以注入了. 另外 GET/POST 还可以传递深层结构 (比如 `?name[0]=alan` 传递上来), 通过 qs 之类的模块解析后导致注入, 如 [cnodejs 遭遇 mongodb 注入](https://github.com/cnodejs/nodeclub/commit/0f6cc14f6bcbbe6b4de3199c6896efaec637693e).
