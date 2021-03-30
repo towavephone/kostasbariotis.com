@@ -203,7 +203,7 @@ Module.prototype._compile = function(content, filename) {
 });
 ```
 
-Module._compile 方法是同步执行的，所以 Module._load 要等它执行完成，才会向用户返回 module.exports 的值。
+`Module._compile` 方法是同步执行的，所以 `Module._load` 要等它执行完成，才会向用户返回 module.exports 的值。
 
 ## 热更新
 
