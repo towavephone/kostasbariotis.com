@@ -170,6 +170,7 @@ export default class Template extends Component {
         const { data } = this.props;
         const { mainPost: post } = data;
         const { nextPost: next } = data;
+        const { prePost: pre } = data;
         const { siteUrl } = data.site.siteMetadata;
         const fullUrl = `${siteUrl}${post.frontmatter.path}`;
         const {
@@ -277,6 +278,15 @@ export default class Template extends Component {
                             }
 
                             <section className="blog-section">
+                                {pre ? (
+                                    <header className="header">
+                                        <h2>阅读上一篇</h2>
+                                    </header>
+                                ) : null}
+                                <NavigateLink post={pre} />
+                            </section>
+
+                            <section className="blog-section">
                                 {next ? (
                                     <header className="header">
                                         <h2>阅读下一篇</h2>
@@ -315,7 +325,7 @@ Template.propTypes = {
 };
 
 export const pageQuery = graphql`
-  query BlogPostByPath($mainPostPath: String!, $nextPostPath: String!) {
+  query BlogPostByPath($mainPostPath: String!, $nextPostPath: String!, $prePostPath: String!) {
     file(relativePath: { eq: "avatar.png" }) {
       childImageSharp {
         sizes {
@@ -348,6 +358,17 @@ export const pageQuery = graphql`
       }
     }
     nextPost: markdownRemark(frontmatter: { path: { eq: $nextPostPath } }) {
+      html
+      excerpt
+      frontmatter {
+        date(formatString: "YYYY-MM-DD HH:mm:ss")
+        path
+        tags
+        title
+        draft
+      }
+    }
+    prePost: markdownRemark(frontmatter: { path: { eq: $prePostPath } }) {
       html
       excerpt
       frontmatter {

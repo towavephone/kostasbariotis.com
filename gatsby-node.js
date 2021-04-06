@@ -35,6 +35,11 @@ exports.createPages = ({ boundActionCreators, graphql }) => {
               path
             }
           }
+          previous {
+            frontmatter {
+              path
+            }
+          }
           node {
             excerpt(pruneLength: 250)
             html
@@ -57,6 +62,11 @@ exports.createPages = ({ boundActionCreators, graphql }) => {
       ) {
         edges {
           next {
+            frontmatter {
+              path
+            }
+          }
+          previous {
             frontmatter {
               path
             }
@@ -106,13 +116,14 @@ function generateContent(createPage, posts) {
   /**
    * Create pages for each markdown file.
    */
-  posts.forEach(({ node, next }) => {
+  posts.forEach(({ node, next, previous: pre }) => {
     createPage({
       path: node.frontmatter.path,
       component: blogPostTemplate,
       context: {
         mainPostPath: node.frontmatter.path,
         nextPostPath: next ? next.frontmatter.path : 'none',
+        prePostPath: pre ? pre.frontmatter.path : 'none',
       },
     });
   });
