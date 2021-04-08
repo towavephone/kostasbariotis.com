@@ -22,7 +22,7 @@ draft: true
 
 - 涂波涛/男/1993 
 - 本科/武汉科技大学/软件工程
-- 工作年限：4 年
+- 工作年限：5 年
 - 技术博客：https://blog.towavephone.com/
 - Github: https://github.com/towavephone
 - 期望职位：高级前端工程师
