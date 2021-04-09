@@ -677,37 +677,37 @@ instanceof 只能用来判断对象和函数，不能用来判断字符串和数
 
 ### ES6 相关
 
-// TODO 阅读到这里
+#### 谈一谈 let 与 var 和 const 的区别？
 
-#### 谈一谈let与var和const的区别？
+let 为 ES6 新添加申明变量的命令，它类似于 var，但是有以下不同：
 
-- let为ES6新添加申明变量的命令，它类似于var，但是有以下不同：
-- let命令不存在变量提升，如果在let前使用，会导致报错
+- let 命令不存在变量提升，如果在 let 前使用，会导致报错
 - 暂时性死区的本质，其实还是块级作用域必须“先声明后使用”的性质。
-- let，const和class声明的全局变量不是全局对象的属性。
+- let，const 和 class 声明的全局变量不是全局对象的属性。
 
-const声明的变量与let声明的变量类似，它们的不同之处在于，const声明的变量只可以在声明时赋值，不可随意修改，否则会导致SyntaxError（语法错误）。
+const 声明的变量与 let 声明的变量类似，它们的不同之处在于，const 声明的变量只可以在声明时赋值，不可随意修改，否则会导致 SyntaxError（语法错误）。
 
-const只是保证变量名指向的地址不变，并不保证该地址的数据不变。const可以在多个模块间共享
+const 只是保证变量名指向的地址不变，并不保证该地址的数据不变，const 可以在多个模块间共享
+
 let 暂时性死区的原因：var 会变量提升，let 不会。
 
 #### 箭头函数
 
-箭头函数不属于普通的 function，所以没有独立的上下文。箭头函数体内的this对象，就是定义时所在的对象，而不是使用时所在的对象。
-由于箭头函数没有自己的this，函数对象中的call、apply、bind三个方法，无法"覆盖"箭头函数中的this值。
-箭头函数没有原本(传统)的函数有的隐藏arguments对象。
-箭头函数不能当作generators使用，使用yield会产生错误。
+- 箭头函数不属于普通的 function，所以没有独立的上下文。箭头函数体内的 this 对象，就是定义时所在的对象，而不是使用时所在的对象。
+- 由于箭头函数没有自己的 this，函数对象中的 call、apply、bind 三个方法，无法"覆盖"箭头函数中的 this 值。
+- 箭头函数没有原本(传统)的函数有的隐藏 arguments 对象。
+- 箭头函数不能当作 generators 使用，使用 yield 会产生错误。
 
 在以下场景中不要使用箭头函数去定义：
 
 - 定义对象方法、定义原型方法、定义构造函数、定义事件回调函数。
 - 箭头函数里不但没有 this，也没有 arguments, super ……
 
-#### Symbol，Map和Set
+#### Symbol，Map 和 Set
 
-Map 对象保存键值对。一个对象的键只能是字符串或者 Symbols，但一个 Map 的键可以是任意值。
-Set 对象允许你存储任何类型的唯一值，Set对象是值的集合，Set中的元素只会出现一次
-Symbol 是一种特殊的、不可变的数据类型，可以作为对象属性的标识符使用(Symbol([description]) )
+- Map 对象保存键值对。一个对象的键只能是字符串或者 Symbols，但一个 Map 的键可以是任意值。
+- Set 对象允许你存储任何类型的唯一值，Set 对象是值的集合，Set 中的元素只会出现一次
+- Symbol 是一种特殊的、不可变的数据类型，可以作为对象属性的标识符使用(`Symbol([description])`)
 
 ```javascript
 let mySet = new Set()
@@ -717,70 +717,78 @@ mySet.add('hello')
 console.log(mySet.size);//2
 console.log(mySet);//Set {1,'hello'}
 
-//Map保存键值对也不能有重复的
+// Map 保存键值对也不能有重复的
 let myMap = new Map();
-let key1 = 'China',key2 = 'America';
-myMap.set(key1,'welcome')
-myMap.set(key2,'gold bless you')
-console.log(myMap);//Map { 'China' => 'welcome', 'America' => 'gold bless you' }
-console.log(myMap.get(key1));//welcome
-console.log(myMap.get(key2));//gold bless you
+let key1 = 'China', key2 = 'America';
+myMap.set(key1, 'welcome')
+myMap.set(key2, 'gold bless you')
+console.log(myMap); // Map { 'China' => 'welcome', 'America' => 'gold bless you' }
+console.log(myMap.get(key1)); // welcome
+console.log(myMap.get(key2)); // gold bless you
 
 let mySymbol = Symbol('symbol1');
 let mySymbol2 = Symbol('symbol1');
-console.log(mySymbol == mySymbol2);//false
-//Symbols 在 for...in 迭代中不可枚举。
+console.log(mySymbol == mySymbol2); // false
+// Symbols 在 for...in 迭代中不可枚举。
 let obj = {}
 obj['c'] = 'c'
 obj.d ='d'
 obj[Symbol('a')] = 'a'
 obj[Symbol.for('b')] = 'b'
-for(let k in obj){
-    console.log(k);//logs 'c' and 'd'
+for (let k in obj) {
+  console.log(k);//logs 'c' and 'd'
 }
 ```
 
-`for...of`可以用来遍历数组，类数组对象，argument，字符串，Map和Set，`for...in`用来遍历对象
+`for...of` 可以用来遍历数组，类数组对象，argument，字符串，Map 和 Set，`for...in` 用来遍历对象
 
 ### 跨域
 
-script、image、iframe的src都不受同源策略的影响。
+script、image、iframe 的 src 都不受同源策略的影响。
 
-1. JSONP,回调函数+数据就是 JSON With Padding，简单、易部署。（做法：动态插入script标签，设置其src属性指向提供JSONP服务的URL地址，查询字符串中加入 callback 指定回调函数，返回的 JSON 被包裹在回调函数中以字符串的形式被返回，需将script标签插入body底部）。缺点是只支持GET，不支持POST（原因是通过地址栏传参所以只能使用GET）
-2. document.domain 跨子域 （ 例如a.qq.com嵌套一个b.qq.com的iframe ，如果a.qq.com设置document.domain为qq.com 。b.qq.com设置document.domain为qq.com， 那么他俩就能互相通信了，不受跨域限制了。 注意：只能跨子域）
-3. window.name + iframe ==> `http://www.tuicool.com/articles/viMFbqV`，支持跨主域。不支持POST
-4. HTML5的postMessage()方法允许来自不同源的脚本采用异步方式进行有限的通信，可以实现跨文本档、多窗口、跨域消息传递。适用于不同窗口iframe之间的跨域
+1. JSONP, 回调函数 + 数据就是 JSON With Padding，简单、易部署。
+
+    做法：动态插入 script 标签，设置其 src 属性指向提供 JSONP 服务的 URL 地址，查询字符串中加入 callback 指定回调函数，返回的 JSON 被包裹在回调函数中以字符串的形式被返回，需将 script 标签插入 body 底部。缺点是只支持 GET，不支持 POST（原因是通过地址栏传参所以只能使用 GET）
+2. document.domain 跨子域
+
+    例如 `a.qq.com` 嵌套一个 `b.qq.com` 的 iframe ，如果 `a.qq.com` 设置 `document.domain` 为 `qq.com`。`b.qq.com` 设置 `document.domain` 为 `qq.com`， 那么他俩就能互相通信了，不受跨域限制了。 注意：只能跨子域
+3. window.name + iframe
+
+    支持跨主域，不支持 POST
+4. HTML5 的 `postMessage()`
+
+    允许来自不同源的脚本采用异步方式进行有限的通信，可以实现跨文本档、多窗口、跨域消息传递。适用于不同窗口 iframe 之间的跨域
 5. CORS（Cross Origin Resource Share）对方服务端设置响应头
 6. 服务端代理
-  在浏览器客户端不能跨域访问，而服务器端调用HTTP接口只是使用HTTP协议，不会执行JS脚本，不需要同源策略，也就没有跨越问题。简单地说，就是浏览器不能跨域，后台服务器可以跨域。（一种是通过http-proxy-middleware插件设置后端代理；另一种是通过使用http模块发出请求）
 
-CORS请求默认不发送Cookie和HTTP认证信息。如果要把Cookie发到服务器，一方面要服务器同意，指定`Access-Control-Allow-Credentials`字段。
+    在浏览器客户端不能跨域访问，而服务器端调用 HTTP 接口只是使用 HTTP 协议，不会执行 JS 脚本，不需要同源策略，也就没有跨越问题。简单地说，就是浏览器不能跨域，后台服务器可以跨域。（一种是通过 http-proxy-middleware 插件设置后端代理；另一种是通过使用 http 模块发出请求）
+
+CORS 请求默认不发送 Cookie 和 HTTP 认证信息。如果要把 Cookie 发到服务器，一方面要服务器同意，指定 `Access-Control-Allow-Credentials` 字段。
 
 ### 说说你对作用域链的理解
 
-作用域链的作用是保证执行环境里有权访问的变量和函数是有序的，作用域链的变量只能向上访问，变量访问到window对象即被终止，作用域链向下访问变量是不被允许的。
+作用域链的作用是保证执行环境里有权访问的变量和函数是有序的，作用域链的变量只能向上访问，变量访问到 window 对象即被终止，作用域链向下访问变量是不被允许的。
 
-### js继承方式及其优缺点
+### js 继承方式及其优缺点
 
 - 原型链继承的缺点
 
-一是字面量重写原型会中断关系，使用引用类型的原型，并且子类型还无法给超类型传递参数。
-
+  一是字面量重写原型会中断关系，使用引用类型的原型，并且子类型还无法给超类型传递参数。
 - 借用构造函数（类式继承）
 
-借用构造函数虽然解决了刚才两种问题，但没有原型，则复用无从谈起。所以我们需要原型链+借用构造函数的模式，这种模式称为组合继承
-
+  借用构造函数虽然解决了刚才两种问题，但没有原型，则复用无从谈起。所以我们需要原型链 + 借用构造函数的模式，这种模式称为组合继承
 - 组合式继承
 
-组合式继承是比较常用的一种继承方法，其背后的思路是 使用原型链实现对原型属性和方法的继承，而通过借用构造函数来实现对实例属性的继承。这样，既通过在原型上定义方法实现了函数复用，又保证每个实例都有它自己的属性。
+  组合式继承是比较常用的一种继承方法，其背后的思路是使用原型链实现对原型属性和方法的继承，而通过借用构造函数来实现对实例属性的继承。这样，既通过在原型上定义方法实现了函数复用，又保证每个实例都有它自己的属性。
 
->For detail：[JavaScript继承方式详解](https://segmentfault.com/a/1190000002440502)
+> For detail：[JavaScript继承方式详解](https://segmentfault.com/a/1190000002440502)
 
-### fetch和Ajax有什么不同
+### fetch 和 Ajax 有什么不同
 
 `XMLHttpRequest` 是一个设计粗糙的 API，不符合关注分离（Separation of Concerns）的原则，配置和调用方式非常混乱，而且基于事件的异步模型写起来也没有现代的 Promise，`generator/yield`，`async/await` 友好。
 
 fetch 是浏览器提供的一个新的 web API，它用来代替 Ajax（XMLHttpRequest），其提供了更优雅的接口，更灵活强大的功能。
+
 Fetch 优点主要有：
 
 - 语法简洁，更加语义化
@@ -792,125 +800,127 @@ fetch(url).then(response => response.json())
   .catch(e => console.log("Oops, error", e))
 ```
 
-### Cookie相关
+### Cookie 相关
 
-```javascript
+```
 Set-Cookie: value[; expires=date][; domain=domain][; path=path][; secure]
 ```
 
-如果想让cookie存在一段时间，就要为expires属性设置为未来的一个用毫秒数表示的过期日期或时间点，expires默认为设置的expires的当前时间。现在已经被max-age属性所取代，max-age用秒来设置cookie的生存期。如果max-age为0，则表示删除该cookie。
+如果想让 cookie 存在一段时间，就要为 expires 属性设置为未来的一个用毫秒数表示的过期日期或时间点，expires 默认为设置的 expires 的当前时间。现在已经被 max-age 属性所取代，max-age 用秒来设置 cookie 的生存期。如果 max-age 为 0，则表示删除该 cookie。
 
-cookie的属性：
+cookie 的属性：
 
-- HttpOnly属性告之浏览器该 cookie 绝不能通过 JavaScript 的 `document.cookie` 属性访问。
-- domain属性可以使多个web服务器共享cookie。
-- 只有path属性匹配向服务器发送的路径，Cookie 才会发送。必须是绝对路径
-- secure属性用来指定Cookie只能在加密协议HTTPS下发送到服务器。
-- max-age属性用来指定Cookie有效期
-- expires属性用于指定Cookie过期时间。它的格式采用Date.toUTCString()的格式。
+- HttpOnly 属性告之浏览器该 cookie 绝不能通过 JavaScript 的 `document.cookie` 属性访问。
+- domain 属性可以使多个 web 服务器共享 cookie。
+- 只有 path 属性匹配向服务器发送的路径，Cookie 才会发送。必须是绝对路径
+- secure 属性用来指定 Cookie 只能在加密协议 HTTPS 下发送到服务器。
+- max-age 属性用来指定 Cookie 有效期
+- expires 属性用于指定 Cookie 过期时间。它的格式采用 Date.toUTCString() 的格式。
 
-浏览器的同源政策规定，两个网址只要域名相同和端口相同，就可以共享Cookie。
+浏览器的同源政策规定，两个网址只要域名相同和端口相同，就可以共享 Cookie。
 
 ### 什么是同构
 
 同构(isomorphic/universal)就是使前后端运行同一套代码的意思，后端一般是指 NodeJS 环境。
 
-### http2.0和https
+### http2.0 和 https
 
-与HTTP/1相比，主要区别包括
+与 HTTP/1 相比，主要区别包括
 
-- HTTP/2采用二进制格式而非文本格式（二进制协议解析起来更高效）
-- HTTP/2是完全多路复用的，即一个TCP连接上同时跑多个HTTP请求
-- 使用报头压缩，HTTP/2降低了开销
-- HTTP/2让服务器可以将响应主动“推送”到客户端缓存中，支持服务端推送（就是服务器可以对一个客户端请求发送多个响应）
+- HTTP/2 采用二进制格式而非文本格式（二进制协议解析起来更高效）
+- HTTP/2 是完全多路复用的，即一个 TCP 连接上同时跑多个 HTTP 请求
+- 使用报头压缩，HTTP/2 降低了开销
+- HTTP/2 让服务器可以将响应主动“推送”到客户端缓存中，支持服务端推送（就是服务器可以对一个客户端请求发送多个响应）
 
-HTTPS协议是由SSL+HTTP协议构建的可进行加密传输、身份认证的网络协议，TLS/SSL中使用 了非对称加密，对称加密以及HASH算法。比http协议安全。
+HTTPS 协议是由 SSL + HTTP 协议构建的可进行加密传输、身份认证的网络协议，TLS/SSL 中使用了非对称加密，对称加密以及 HASH 算法。比 http 协议安全。
 
-- HTTPS的工作原理
+- HTTPS 的工作原理
 
-HTTPS 在传输数据之前需要客户端（浏览器）与服务端（网站）之间进行一次握手，在握手过程中将确立双方加密传输数据的密码信息
+  HTTPS 在传输数据之前需要客户端（浏览器）与服务端（网站）之间进行一次握手，在握手过程中将确立双方加密传输数据的密码信息
 
-- 什么是keep-alive模式 （持久连接，连接重用）
+- 什么是 keep-alive 模式（持久连接，连接重用）
 
-keep-alive使客户端到服务端的连接持久有效，当出现对服务器的后继请求时，keep-alive功能避免了建立或者重新连接
+  keep-alive 使客户端到服务端的连接持久有效，当出现对服务器的后继请求时，keep-alive 功能避免了建立或者重新连接
 
-不需要重新建立tcp的三次握手，就是说不释放连接
+  不需要重新建立 tcp 的三次握手，就是说不释放连接
 
-http1.0默认关闭，http1.1默认启用
+  http1.0 默认关闭，http1.1 默认启用
 
-优点：更高效，性能更高。因为避免了建立/释放连接的开销
+  优点：更高效，性能更高。因为避免了建立/释放连接的开销
 
-- http1.0和http1.1区别：
-    - 缓存处理，在HTTP1.0中主要使用header里的If-Modified-Since，Expires来做为缓存判断的标准，HTTP1.1则引入更多缓存控制策略，例如Entity tag,If-Match,If-None-Match等
-    - Http1.1支持长连接和请求的流水线（pipeline）处理，在一个TCP连接上可以传送多个HTTP请求和响应，减少了建立和关闭连接的消耗和延迟，默认开启Connection:keep-alive
+- http1.0 和 http1.1 区别：
+    - 缓存处理，在 HTTP1.0 中主要使用 header 里的 If-Modified-Since，Expires 来做为缓存判断的标准，HTTP1.1 则引入更多缓存控制策略，例如 Entity tag, If-Match, If-None-Match 等
+    - Http1.1 支持长连接和请求的流水线（pipeline）处理，在一个 TCP 连接上可以传送多个 HTTP 请求和响应，减少了建立和关闭连接的消耗和延迟，默认开启 Connection: keep-alive
 
-### async和defer
+### async 和 defer
 
 defer 与 async 的相同点是采用并行下载，在下载过程中不会产生阻塞。区别在于执行时机，async 是加载完成后自动执行，而 defer 需要等待页面完成后执行。
 
 ### 说说观察者模式
 
-JS里对观察者模式的实现是通过回调来实现的，，它定义了一种一对多的关系，让多个观察者对象同时监听某一个主题对象
+JS 对观察者模式的实现是通过回调来实现的，它定义了一种一对多的关系，让多个观察者对象同时监听某一个主题对象
 
-观察者模式：对程序中某一个对象的进行实时的观察，当该对象状态发生改变的时候 进行通知
+观察者模式：对程序中某一个对象的进行实时的观察，当该对象状态发生改变的时候进行通知
 
-我们为什么要用观察者模式呢，主要是可以实现松散耦合的代码，什么意思？就是
-主体和订阅者之间是相互独立的，其二者可以独立运行。
+我们为什么要用观察者模式呢，主要是可以实现松散耦合的代码，什么意思？就是主体和订阅者之间是相互独立的，其二者可以独立运行。
 
-### ES6 module和require/exports/module.exports的区别
+### ES6 module 和 require/exports/module.exports 的区别
 
 ES6 Module 中导入模块的属性或者方法是强绑定的，包括基础类型；而 CommonJS 则是普通的值传递或者引用传递。
 
-CommonJS模块是运行时的，导入导出是通过值的复制来达成的。ES6的模块是静态的，导入导出实际上是建立符号的映射
+CommonJS 模块是运行时的，导入导出是通过值的复制来达成的。ES6 的模块是静态的，导入导出实际上是建立符号的映射
 
-import必须放在文件最顶部，require不需要；import最终会被babel编译为require
+import 必须放在文件最顶部，require 不需要；import 最终会被 babel 编译为 require
 
-### GET,POST,PUT,Delete
+### GET, POST, PUT, Delete
 
-1. GET请求会向数据库获取信息，只是用来查询数据，不会修改，增加数据。使用URL传递参数，对所发送的数量有限制，一般在2000字符
-2. POST向服务器发送数据，会改变数据的种类等资源，就像insert操作一样，会创建新的内容，大小一般没有限制，POST安全性高，POST不会被缓存
-3. PUT请求就像数据库的update操作一样，用来修改数据内容，不会增加数据种类
-4. Delete用来删除操作
+1. GET 请求会向数据库获取信息，只是用来查询数据，不会修改，增加数据。使用 URL 传递参数，对所发送的数量有限制，一般在 2000 字符
+2. POST 向服务器发送数据，会改变数据的种类等资源，就像 insert 操作一样，会创建新的内容，大小一般没有限制，POST 安全性高，POST 不会被缓存
+3. PUT 请求就像数据库的 update 操作一样，用来修改数据内容，不会增加数据种类
+4. Delete 用来删除操作
 
-#### GET和POST的区别
+#### GET 和 POST 的区别
 
-1. GET使用URL或Cookie传参，而POST将数据放在BODY中，这个是因为HTTP协议用法的约定。并非它们的本身区别。
-2. GET方式提交的数据有长度限制，则POST的数据则可以非常大，这个是因为它们使用的操作系统和浏览器设置的不同引起的区别。也不是GET和POST本身的区别。
-3. POST比GET安全，因为数据在地址栏上不可见，这个说法没毛病，但依然不是GET和POST本身的区别。
+1. GET 使用 URL 或 Cookie 传参，而 POST 将数据放在 BODY 中，这个是因为 HTTP 协议用法的约定。并非它们的本身区别。
+2. GET 方式提交的数据有长度限制，而 POST 的数据则可以非常大，这个是因为它们使用的操作系统和浏览器设置的不同引起的区别。也不是 GET 和 POST 本身的区别。
+3. POST 比 GET 安全，因为数据在地址栏上不可见，这个说法没毛病，但依然不是 GET 和 POST 本身的区别。
 
-GET和POST最大的区别主要是GET请求是幂等性的，POST请求不是。（幂等性：对同一URL的多个请求应该返回同样的结果。）因为get请求是幂等的，在网络不好的隧道中会尝试重试。如果用get请求增数据，会有重复操作的风险，而这种重复操作可能会导致副作用
+GET 和 POST 最大的区别主要是 GET 请求是幂等性的，POST 请求不是。（幂等性：对同一 URL 的多个请求应该返回同样的结果）因为 get 请求是幂等的，在网络不好的隧道中会尝试重试。如果用 get 请求增数据，会有重复操作的风险，而这种重复操作可能会导致副作用
 
 ### 缓存相关
 
 1. 浏览器输入 url 之后敲下回车，刷新 F5 与强制刷新(Ctrl + F5)，又有什么区别？
+
     实际上浏览器输入 url 之后敲下回车就是先看本地 cache-control、expires 的情况，刷新(F5)就是忽略先看本地 cache-control、expires 的情况，带上条件 If-None-Match、If-Modified-Since，强制刷新(Ctrl + F5)就是不带条件的访问。
 2. etag，cache-control，last-modified
-    如果比较粗的说先后顺序应该是这样：
 
+    如果比较粗的说先后顺序应该是这样：
     - Cache-Control —— 请求服务器之前
     - Expires —— 请求服务器之前
     - If-None-Match (Etag) —— 请求服务器
     - If-Modified-Since (Last-Modified) —— 请求服务器
 
-需要注意的是 如果同时有 etag 和 last-modified 存在，在发送请求的时候会一次性的发送给服务器，没有优先级，服务器会比较这两个信息.
+需要注意的是如果同时有 etag 和 last-modified 存在，在发送请求的时候会一次性的发送给服务器，没有优先级，服务器会比较这两个信息
 
-如果expires和cache-control:max-age同时存在，expires会被cache-control 覆盖。
+如果 expires 和 cache-control: max-age 同时存在，expires 会被 cache-control 覆盖。
 
-其中Expires和cache-control属于强缓存，last-modified和etag属于协商缓存
+其中 expires 和 cache-control 属于强缓存，last-modified 和 etag 属于协商缓存
+
 强缓存与协商缓存区别：强缓存不发请求到服务器，协商缓存会发请求到服务器。
 
-### babel的原理
+### babel 的原理
 
-使用 babylon 解析器对输入的源代码字符串进行解析并生成初始 AST
-遍历 AST 树并应用各 transformers（plugin） 生成变换后的 AST 树
-利用 babel-generator 将 AST 树输出为转码后的代码字符串
+- 使用 babylon 解析器对输入的源代码字符串进行解析并生成初始 AST
+- 遍历 AST 树并应用各 transformers（plugin） 生成变换后的 AST 树
+- 利用 babel-generator 将 AST 树输出为转码后的代码字符串
+
 分为三个阶段：
 
-解析：将代码字符串解析成抽象语法树
-变换：对抽象语法树进行变换操作
-再建：根据变换后的抽象语法树再生成代码字符串
+- 解析：将代码字符串解析成抽象语法树
+- 变换：对抽象语法树进行变换操作
+- 再建：根据变换后的抽象语法树再生成代码字符串
 
-### ajax请求和原理
+### ajax 请求和原理
 
 ```js
 var xhr = new XMLHTTPRequest();
@@ -927,54 +937,59 @@ xhr.readyState
 xhr.responseText
 ```
 
-- AJAX的工作原理
+- AJAX 的工作原理
 
-Ajax的工作原理相当于在用户和服务器之间加了—个中间层(AJAX引擎),使用户操作与服务器响应异步化。　Ajax的原理简单来说通过XmlHttpRequest对象来向服务器发异步请求，从服务器获得数据，然后用javascript来操作DOM而更新页面。
+Ajax 的工作原理相当于在用户和服务器之间加了—个中间层(AJAX 引擎),使用户操作与服务器响应异步化。Ajax 的原理简单来说通过 XmlHttpRequest 对象来向服务器发异步请求，从服务器获得数据，然后用 javascript 来操作 DOM 而更新页面。
 
-- ajax优缺点
+- ajax 优缺点
 
-优点：无刷新更新数据
-异步与服务器通信
-前后端负载均衡
+优点：
+
+- 无刷新更新数据
+- 异步与服务器通信
+- 前后端负载均衡
 
 缺点：
 
-1. ajax干掉了Back和history功能，对浏览器机制的破坏
-2. 对搜索引擎支持较弱
-3. 违背了URI和资源定位的初衷
+- ajax 干掉了 Back 和 history 功能，对浏览器机制的破坏
+- 对搜索引擎支持较弱
+- 违背了 URI 和资源定位的初衷
 
 ### 有哪些多屏适配方案
 
 - media query + rem
 - flex
 - 弹性布局
-- flexiable 整体缩放（动态设置缩放系数的方式，让layout viewport与设计图对应，极大地方便了重构，同时也避免了1px的问题）
+- flexiable 整体缩放（动态设置缩放系数的方式，让 layout viewport 与设计图对应，极大地方便了重构，同时也避免了 1px 的问题）
 
-### 从输入URL到页面展现，发生了什么（HTTP请求的过程）
+### 从输入 URL 到页面展现，发生了什么（HTTP 请求的过程）
 
-HTTP是一个基于请求与响应，无状态的，应用层的协议，常基于TCP/IP协议传输数据。
+HTTP 是一个基于请求与响应，无状态的，应用层的协议，基于 TCP/IP 协议传输数据。
 
 1. 域名解析，查找缓存
-    - 查找浏览器缓存（DNS缓存）
-    - 查找操作系统缓存（如果浏览器缓存没有，浏览器会从hosts文件查找是否有DNS信息）
+    - 查找浏览器缓存（DNS 缓存）
+    - 查找操作系统缓存（如果浏览器缓存没有，浏览器会从 hosts 文件查找是否有 DNS 信息）
     - 查找路由器缓存
-    - 查找ISP缓存
-2. 浏览器获得对应的ip地址后，浏览器与远程`Web`服务器通过`TCP`三次握手协商来建立一个`TCP/IP`连接。
-3. TCP/IP连接建立起来后，浏览器就可以向服务器发送HTTP请求
-4. 服务器处理请求，返回资源（MVC设计模式）
+    - 查找 ISP 缓存
+2. 浏览器获得对应的 ip 地址后，浏览器与远程 `Web` 服务器通过 `TCP` 三次握手协商来建立一个 `TCP/IP` 连接。
+3. TCP/IP 连接建立起来后，浏览器就可以向服务器发送 HTTP 请求
+4. 服务器处理请求，返回资源（MVC 设计模式）
 5. 浏览器处理（加载，解析，渲染）
-    - HTML页面加载顺序从上而下
-    - 解析文档为有意义的结构，DOM树；解析css文件为样式表对象
-    - 渲染。将DOM树进行可视化表示
+    - HTML 页面加载顺序从上而下
+    - 解析文档为有意义的结构，DOM 树；解析 css 文件为样式表对象
+    - 渲染。将 DOM 树进行可视化表示
 6. 绘制网页
-    - 浏览器根据HTML和CSS计算得到渲染数，最终绘制到屏幕上
+    - 浏览器根据 HTML 和 CSS 计算得到渲染数，最终绘制到屏幕上
 
-一个完整HTTP请求的过程为：
+一个完整 HTTP 请求的过程为：
+
 DNS Resolving -> TCP handshake -> HTTP Request -> Server -> HTTP Response -> TCP shutdown
 
-### 缓存，存储相关（cookie，web storage和session）
+### 缓存，存储相关（cookie，web storage 和 session）
 
-cookie优点：
+cookie 优点：
+
+// 读到这里
 
 1. 可以解决HTTP无状态的问题，与服务器进行交互
 
