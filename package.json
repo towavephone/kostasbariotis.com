@@ -21,7 +21,7 @@
         "deploy:gitee": "gh-pages -d public -r git@gitee.com:towavephone/towavephone.github.io.git -b master",
         "bdg": "yarn build && yarn deploy:github",
         "bdc": "yarn build && yarn deploy:coding",
-        "dev": "NODE_OPTIONS='--max-old-space-size=4048' gatsby develop",
+        "dev": "cross-env NODE_OPTIONS=--max-old-space-size=4048 gatsby develop",
         "serve": "gatsby serve",
         "lint": "yarn lint:markdown",
         "lint:js": "eslint --fix src/**/*.js gatsby-config.js gatsby-browser.js gatsby-node.js",
@@ -31,6 +31,7 @@
         "cleanup": "rimraf -rf node_modules/gh-pages/.cache"
     },
     "devDependencies": {
+        "cross-env": "^7.0.3",
         "eslint": "^4.19.1",
         "eslint-config-prettier": "^2.9.0",
         "eslint-plugin-prettier": "^2.6.0",
@@ -78,7 +79,7 @@
         "gatsby-source-filesystem": "^1.5.36",
         "gatsby-transformer-remark": "^1.7.41",
         "gatsby-transformer-sharp": "^1.6.24",
-        "gitalk": "^1.5.0",
+        "gitalk": "^1.7.2",
         "instantsearch.css": "^7.1.0",
         "lodash": "^4.17.10",
         "pngquant-bin": "^6.0.0",
