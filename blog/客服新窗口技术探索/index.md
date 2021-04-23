@@ -3,7 +3,7 @@ title: 客服新窗口技术探索
 date: 2020-7-1 20:15:50
 categories:
 - 前端
-tags: 前端, 跨域通信, webpack
+tags: 前端, 跨域通信, webpack, 预研
 path: /new-window-technology-research/
 ---
 

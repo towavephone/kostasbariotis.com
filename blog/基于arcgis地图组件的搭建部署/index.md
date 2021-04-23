@@ -1,10 +1,9 @@
 ---
 title: 基于arcgis地图组件的搭建部署
 path: /arcgis-map-component-build-deploy/
-date: 2021-2-1 10:49:15
-tags: 前端, arcgis, 地图
+date: 2021-4-23 18:53:54
+tags: 前端, arcgis, 地图, 预研
 ---
-
 # 需求背景
 
 基于公司的要求，需要对地图组件做出选型，以支持在地图上展示线路轨迹
@@ -345,6 +344,205 @@ getGps({
 ```
 
 内网执行脚本刷新结果：共 `8493` 条数据，`2038` 条查不出结果(部分原因是命名不规范或者不存在这个站)，`6455` 条查出经纬度并完成入库
+
+### 脚本执行线程池化
+
+在以上的版本上，利用线程池的概念优化取数逻辑
+
+1. 请求接口线程池化
+2. 数据库数据更新线程池化
+3. 数据库批量更新数据
+
+#### 带有并发数限制的异步任务
+
+concurrentRun.js
+
+```js
+/**
+ * 执行多个异步任务
+ * @param {*} fnList 任务列表
+ * @param {*} max 最大并发数限制
+ * @param {*} taskName 任务名称
+ */
+ module.exports = async function concurrentRun(fnList = [], max = 5, taskName = "未命名") {
+  if (!fnList.length) return;
+
+  console.log(`开始执行多个异步任务，最大并发数： ${max}`);
+  const replyList = []; // 收集任务执行结果
+  const count = fnList.length; // 总任务数量
+  const startTime = new Date().getTime(); // 记录任务执行开始时间
+
+  let current = 0;
+  // 任务执行程序
+  const schedule = async (index) => {
+    return new Promise(async (resolve) => {
+      try {
+        const fn = fnList[index];
+        if (!fn) return resolve();
+  
+        // 执行当前异步任务
+        const reply = await fn();
+        replyList[index] = reply;
+      } catch (e) {
+        console.log(e);
+        // 报错了不管继续下一个
+        resolve();
+      }
+     
+      current++;
+      console.log(`${taskName} 事务进度，第 ${current} 个，共 ${count} 个，进度为 ${((current / count) * 100).toFixed(2)}% `);
+
+      // 执行完当前任务后，继续执行任务池的剩余任务
+      await schedule(index + max);
+      resolve();
+    });
+  };
+
+  // 任务池执行程序
+  const scheduleList = new Array(max)
+    .fill(0)
+    .map((_, index) => schedule(index));
+  // 使用 Promise.all 批量执行
+  const r = await Promise.all(scheduleList);
+
+  const cost = (new Date().getTime() - startTime) / 1000;
+  console.log(`执行完成，最大并发数： ${max}，耗时：${cost}s`);
+  return replyList;
+}
+```
+
+#### 请求接口并发执行/数据更新并发执行
+
+index.js
+
+```js
+const request = require('request')
+const lodash = require('lodash')
+
+const { sequelize } = require('./sequelize.js')
+const { targetTable } = require('./config.js')
+const concurrentRun = require('./concurrentRun.js')
+
+function getInfoByZm(keyword) {
+  const tianDiTuApiUrl = 'http://api.tianditu.gov.cn'
+    const token = 'ab61c4d11eab1728b7f6ff48639bc73e'
+    return new Promise((resolve, reject) => {
+      request({
+        method: 'GET',
+        url: encodeURI(`${tianDiTuApiUrl}/geocoder?ds={"keyWord":"${keyword}"}&tk=${token}`),
+        timeout: 10000
+      }, (error, response) => {
+        if (error) {
+          reject(error)
+        } else {
+          resolve(response.body)
+        }
+      })
+    })
+}
+
+async function updateDataBase(rsp) {
+  const zmdms = []
+  const lons = []
+  const lats = []
+  rsp.forEach((item) => {
+    const lon = lodash.get(item.response, 'location.lon')
+    const lat = lodash.get(item.response, 'location.lat')
+    zmdms.push(`'${item.zmdm}'`)
+    lons.push(`when '${item.zmdm}' then '${lon}'`)
+    lats.push(`when '${item.zmdm}' then '${lat}'`)
+  })
+
+  const sql = `
+    update ${targetTable} set 
+    lon = case zmdm ${lons.join(' ')} end,
+    lat = case zmdm ${lats.join(' ')} end 
+    where zmdm in (${zmdms.join(',')})
+  `
+
+  const rsp3 = await sequelize.query(sql, {
+    type: sequelize.QueryTypes.UPDATE
+  })
+}
+
+async function updateList(rsp, isUpdate) {
+  const requestFnList = rsp.map((item) => () => getInfoByZm(`${item.zm.trim()}火车站`));
+
+  const list = await concurrentRun(requestFnList, 100, '请求天地图');
+
+  const result = rsp.map((item, index) => {
+    try {
+      return {
+        ...item,
+        response: JSON.parse(list[index])
+      }
+    } catch (e) {
+      return item
+    }
+  })
+
+  if (isUpdate) {
+    // 每 100 个分隔成一组
+    const updateFnList = lodash.chunk(result, 100).map((item) => () => updateDataBase(item));
+
+    await concurrentRun(updateFnList, 5, '保存到数据库');
+  }
+  return list
+}
+
+// isUseApi: 是否使用 api 查询地理坐标
+// isUpdate: 是否同步到数据库
+// pageSize: 
+async function getGps(params = {}) {
+  const {
+    isUseApi,
+    isUpdate,
+    pageSize = 10, 
+    current = 1
+  } = params
+  const offset = (current - 1) * pageSize
+  const sql = `select * from ${targetTable} where lat is null or lon is null order by zmdm limit ${pageSize} offset ${offset}`
+  const rsp = await sequelize.query(sql, {
+    type: sequelize.QueryTypes.SELECT
+  })
+
+  if (isUseApi) {
+    return updateList(rsp, isUpdate)
+  }
+  return rsp
+}
+
+getGps({
+  isUseApi: true,
+  isUpdate: true,
+  current: 1,
+  pageSize: 9000
+}).then((rsp) => {
+  // console.log(rsp)
+  process.exit(0)
+})
+```
+
+#### 执行结果
+
+以 1000 个数据为例
+
+不带并行执行情况：
+
+```
+1000 个数据更新成功，0 个数据更新失败
+Done in 168.70s.
+```
+
+带并行执行情况：
+
+```
+开始执行多个异步任务，最大并发数： 100
+执行完成，最大并发数： 100，耗时：19.954s
+开始执行多个异步任务，最大并发数： 5
+执行完成，最大并发数： 5，耗时：0.289s
+Done in 21.41s.
+```
 
 ### 人工修复
 

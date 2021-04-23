@@ -2,7 +2,7 @@
 title: 移动端适配汇总
 path: /mobile-adaptation-summary/
 date: 2020-3-16 17:47:42
-tags: 前端, 移动端, 兼容性
+tags: 前端, 移动端, 兼容性, 预研
 ---
 
 # IOS fix 定位不准

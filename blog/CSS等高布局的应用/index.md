@@ -2,7 +2,7 @@
 title: CSS等高布局的应用
 date: 2019-6-20 15:45:59
 path: /css-equal-height/
-tags: 前端, CSS, 等高布局
+tags: 前端, CSS, 等高布局, 预研
 ---
 
 # 需求背景

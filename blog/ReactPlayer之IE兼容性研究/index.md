@@ -3,7 +3,7 @@ title: ReactPlayer之IE兼容性研究
 date: 2019-2-13 19:50:08
 categories:
 - 前端
-tags: 前端, ReactPlayer, IE兼容性
+tags: 前端, ReactPlayer, IE兼容性, 预研
 path: /reactplayer-ie-compatibility/
 ---
 

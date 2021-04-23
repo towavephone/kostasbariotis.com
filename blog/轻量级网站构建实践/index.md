@@ -2,7 +2,7 @@
 title: 轻量级网站构建实践
 path: /lightweight-website-construction/
 date: 2019-11-15 15:04:04
-tags: 前端, 轻量级网站
+tags: 前端, 轻量级网站, 预研
 ---
 
 # 需求背景

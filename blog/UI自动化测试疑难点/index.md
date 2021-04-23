@@ -3,7 +3,7 @@ title: UI自动化测试疑难点
 date: 2019-4-16 19:17:35
 categories:
 - 测试
-tags: 测试, UI自动化测试
+tags: 测试, UI自动化测试, 预研
 path: /ui-auto-test-note/
 ---
 

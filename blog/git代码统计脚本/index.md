@@ -3,7 +3,7 @@ title: git代码统计脚本
 categories:
   - 版本控制工具
 path: /git-code-statistics-script/
-tags: Git, git 代码统计
+tags: Git, git 代码统计, 预研
 date: 2020-4-24 11:17:09
 ---
 

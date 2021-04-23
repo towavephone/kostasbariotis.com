@@ -3,7 +3,7 @@ title: 微前端适配demo的实践
 date: 2020-4-1 09:59:12
 categories:
 - 前端
-tags: 前端, 微前端
+tags: 前端, 微前端, 预研
 path: /micro-front-end-demo-practice/
 ---
 

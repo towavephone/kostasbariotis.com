@@ -2,7 +2,7 @@
 title: 基于nodemon实现监听文件链接变化
 path: /nodemon-monitor-link-changes/
 date: 2021-1-5 10:02:54
-tags: 后端, nodejs, nodemon
+tags: 后端, nodejs, nodemon, 预研
 ---
 
 # 项目架构

@@ -3,7 +3,7 @@ title: 构建多平台轻量化组件的实践
 date: 2019-10-29 09:51:53
 categories:
 - 前端
-tags: 前端, 组件轻量化, webpack
+tags: 前端, 组件轻量化, webpack, 预研
 path: /building-platform-lightweight-components/
 ---
 
