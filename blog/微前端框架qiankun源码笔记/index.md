@@ -44,7 +44,7 @@ JS 沙箱简单点说就是，主应用有一套全局环境 window，子应用�
 
 快照沙箱就是在应用沙箱挂载和卸载的时候记录快照，在应用切换的时候依据快照恢复环境。
 
-#### 实现代码
+#### 实现
 
 ```js
 // snapshotSandbox.ts
@@ -115,7 +115,7 @@ Object.defineProperty 也能实现基本操作的拦截和自定义，那为什�
 - 删除或者增加对象属性无法监听到
 - 数组的变化无法监听到（vue2 正是使用的 Object.defineProperty 劫持属性，watch 中无法检测数组改变）
 
-#### 实现代码
+#### 实现
 
 ```js
 // proxySandbox.ts
@@ -210,3 +210,215 @@ proxyB.unmountProxySandbox();
   b = () => {} // 有效
   window.b = () => {} // 有效
   ```
+
+## css 样式隔离
+
+### 简介
+
+页面中有多个微应用时，要确保 A 应用的样式不会影响 B 应用的样式，就需要对应用的样式采取隔离。
+
+### 动态样式表（Dynamic Stylesheet）
+
+对应的 style 标签样式表切换
+
+### 工程化手段（BEM、CSS Modules、CSS in JS）
+
+通过一系列约束和编译时生成不同类名、JS 中处理 CSS 生成不同类名来解决隔离问题
+
+### Shadow DOM
+
+Shadow DOM 允许将隐藏的 DOM 树附加到常规的 DOM 树中——它以 shadow root 节点为起始根节点，在这个根节点的下方，可以是任意元素，和普通的 DOM 元素一样，隐藏的 DOM 样式和其余 DOM 是完全隔离的，类似于 iframe 的样式隔离效果。
+
+> 移动端框架 Ionic 的组件样式隔离就是采用的 Shadow DOM 方案，保证相同组件的样式不会冲突。
+
+#### 实现
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+  <body data-qiankun-A>
+    <h5>样式隔离：</h5>
+    <p class="title">一行文字</p>
+
+    <script src="scopedCSS.js"></script>
+    <script src="index.js"></script>
+  </body>
+</html>
+```
+
+```js
+// index.js
+var bodyNode = document.getElementsByTagName('body')[0];
+openShadow(bodyNode);
+```
+
+```js
+// scopedCss.js
+function openShadow(domNode) {
+  var shadow = domNode.attachShadow({ mode: 'open' });
+  shadow.innerHTML = domNode.innerHTML;
+  domNode.innerHTML = "";
+}
+```
+
+#### 优点
+
+完全隔离 CSS 样式
+
+#### 缺点
+
+在使用一些弹窗组件的时候（弹窗很多情况下都是默认添加到了 document.body）这个时候它就跳过了阴影边界，跑到了主应用里面，样式就丢了
+
+### 运行时转换样式（runtime css transformer）
+
+动态运行时地去改变 CSS，比如 A 应用的一个样式 `p.title`，转换后会变成 `div[data-qiankun-A] p.title`，`div[data-qiankun-A]` 是微应用最外层的容器节点，故保证 A 应用的样式只有在 `div[data-qiankun-A]` 下生效。
+
+#### 实现
+
+```html
+<!-- index.html -->
+<html lang="en">
+  <head>
+    <style>
+      p.title {
+        font-size: 20px;
+      }
+    </style>
+  </head>
+  <body data-qiankun-A>
+    <p class="title">一行文字</p>
+    
+    <script src="scopedCSS.js"></script>
+    <script>
+      var styleNode = document.getElementsByTagName('style')[0];
+      scopeCss(styleNode, 'body[data-qiankun-A]');
+    </script>
+  </body>
+</html>
+```
+
+```js
+// scopedCSS.js
+function scopeCss(styleNode, prefix) {
+  const css = ruleStyle(styleNode.sheet.cssRules[0], prefix);
+  styleNode.textContent = css;
+}
+
+function ruleStyle(rule, prefix) {
+  const rootSelectorRE = /((?:[^\w\-.#]|^)(body|html|:root))/gm;
+
+  let { cssText } = rule;
+
+  // 绑定选择器, a,span,p,div { ... }
+  cssText = cssText.replace(/^[\s\S]+{/, (selectors) =>
+    selectors.replace(/(^|,\n?)([^,]+)/g, (item, p, s) => {
+      // 绑定 div,body,span { ... }
+      if (rootSelectorRE.test(item)) {
+        return item.replace(rootSelectorRE, (m) => {
+          // 不要丢失有效字符 如 body,html or *:not(:root)
+          const whitePrevChars = [',', '('];
+
+          if (m && whitePrevChars.includes(m[0])) {
+            return `${m[0]}${prefix}`;
+          }
+
+          // 用前缀替换根选择器
+          return prefix;
+        });
+      }
+
+      return `${p}${prefix} ${s.replace(/^ */, '')}`;
+    }),
+  );
+
+  return cssText;
+}
+```
+
+#### 优点
+
+- 支持大部分样式隔离需求
+- 解决了 Shadow DOM 方案导致的丢失根节点问题
+
+#### 缺点
+
+运行时重新加载样式，会有一定性能损耗
+
+## 清除 js 副作用
+
+### 简介
+
+子应用在沙箱中使用 window.addEventListener、setInterval 这些 需异步监听的全局 api 时，要确保子应用在移除时也要移除对应的监听事件，否则会对其他应用造成副作用。
+
+### 实现
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+  <body>
+    <h5>清除window副作用：</h5>
+    <button onclick="mountSandbox()">挂载沙箱并开启副作用</button>
+    <button onclick="unmountSandbox(true)">卸载沙箱并关闭副作用</button>
+    <button onclick="unmountSandbox()">普通卸载沙箱</button>
+
+    <script src="proxySandbox.js"></script>
+    <script src="patchSideEffects.js"></script>
+    <script src="index.js"></script>
+  </body>
+</html>
+```
+
+```js
+// patchSideEffects.js
+const rawAddEventListener = window.addEventListener;
+const rawRemoveEventListener = window.removeEventListener;
+
+const rawWindowInterval = window.setInterval;
+const rawWindowClearInterval = window.clearInterval;
+
+function patch(global) {
+  const listenerMap = new Map();
+  let intervals = [];
+
+  global.addEventListener = (type, listener, options) => {
+    const listeners = listenerMap.get(type) || [];
+    listenerMap.set(type, [...listeners, listener]);
+    return rawAddEventListener.call(window, type, listener, options);
+  };
+
+  global.removeEventListener = (type, listener, options) => {
+    const storedTypeListeners = listenerMap.get(type);
+    if (storedTypeListeners && storedTypeListeners.length && storedTypeListeners.indexOf(listener) !== -1) {
+      storedTypeListeners.splice(storedTypeListeners.indexOf(listener), 1);
+    }
+    return rawRemoveEventListener.call(window, type, listener, options);
+  };
+
+  global.clearInterval = (intervalId) => {
+    intervals = intervals.filter((id) => id !== intervalId);
+    return rawWindowClearInterval(intervalId);
+  };
+
+  global.setInterval = (handler, timeout, ...args) => {
+    const intervalId = rawWindowInterval(handler, timeout, ...args);
+    intervals = [...intervals, intervalId];
+    return intervalId;
+  };
+
+  return function free() {
+    listenerMap.forEach((listeners, type) =>
+      [...listeners].forEach((listener) => global.removeEventListener(type, listener)),
+    );
+    global.addEventListener = rawAddEventListener;
+    global.removeEventListener = rawRemoveEventListener;
+
+    intervals.forEach((id) => global.clearInterval(id));
+    global.setInterval = rawWindowInterval;
+    global.clearInterval = rawWindowClearInterval;
+  };
+}
+
+function patchSideEffects(global) {
+  return patch(global);
+}
+```
