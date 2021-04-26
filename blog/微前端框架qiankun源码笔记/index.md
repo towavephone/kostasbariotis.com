@@ -26,4 +26,187 @@ qiankun（乾坤） 就是一款由蚂蚁金服推出的比较成熟的微前端
 9. 子应用嵌套: 微前端如何嵌套微前端
 10. 子应用并行: 多个微前端同时存在
 
-# 初始化全局配置 - start(opts)
+# 核心
+
+1. js 沙箱
+2. css 样式隔离
+3. 应用 html 入口接入
+4. 应用通信
+5. 应用路由
+
+# 技术介绍
+
+## js 沙箱
+
+JS 沙箱简单点说就是，主应用有一套全局环境 window，子应用有一套私有的全局环境 fakeWindow，子应用所有操作都只在新的全局上下文中生效，这样的子应用好比被一个个箱子装起来与主应用隔离，因此主应用加载子应用便不会造成 JS 变量的相互污染、JS 副作用、CSS 样式被覆盖等，每个子应用的全局上下文都是独立的。
+
+### 快照沙箱（snapshotSandbox）
+
+快照沙箱就是在应用沙箱挂载和卸载的时候记录快照，在应用切换的时候依据快照恢复环境。
+
+#### 实现代码
+
+```js
+// snapshotSandbox.ts
+// 遍历对象key并将key传给回调函数执行
+function iter(obj: object, callbackFn: (prop: any) => void) {
+  for (const prop in obj) {
+    if (obj.hasOwnProperty(prop)) {
+      callbackFn(prop);
+    }
+  }
+}
+
+// 挂载快照沙箱
+mountSnapshotSandbox() {
+  // 记录当前快照
+  this.windowSnapshot = {} as Window;
+  iter(window, (prop) => {
+    this.windowSnapshot[prop] = window[prop];
+  });
+
+  // 恢复之前的变更
+  Object.keys(this.modifyPropsMap).forEach((p: any) => {
+    window[p] = this.modifyPropsMap[p];
+  });
+}
+// 卸载快照沙箱  
+unmountSnapshotSandbox() {
+  // 记录当前快照上改动的属性
+  this.modifyPropsMap = {};
+
+  iter(window, (prop) => {
+    if (window[prop] !== this.windowSnapshot[prop]) {
+      // 记录变更，恢复环境
+      this.modifyPropsMap[prop] = window[prop];
+      window[prop] = this.windowSnapshot[prop];
+    }
+  });
+}
+
+// 子应用A
+mountSnapshotSandbox();
+window.a = 123;
+console.log('快照沙箱挂载后的a:', window.a); // 123
+unmountSnapshotSandbox();
+console.log('快照沙箱卸载后的a:', window.a); // undefined
+mountSnapshotSandbox();
+console.log('快照沙箱再次挂载后的a:', window.a); // 123
+```
+
+#### 优点
+
+兼容几乎所有浏览器
+
+#### 缺点
+
+无法同时有多个运行时快照沙箱，否则在 window 上修改的记录会混乱，一个页面只能运行一个单实例微应用
+
+### 代理沙箱（proxySandbox）
+
+当有多个实例的时候，比如有 A、B 两个应用，A 应用就活在 A 应用的沙箱里面，B 应用就活在 B 应用的沙箱里面，A 和 B 无法互相干扰，这样的沙箱就是代理沙箱，这个沙箱的实现思路其实也是通过 ES6 的 proxy，通过代理特性实现的。
+
+Proxy 对象用于创建一个对象的代理，从而实现基本操作的拦截和自定义（如属性查找、赋值、枚举、函数调用等）。简单来说就是，可以在对目标对象设置一层拦截。无论对目标对象进行什么操作，都要经过这层拦截
+
+#### Proxy vs Object.defineProperty
+
+Object.defineProperty 也能实现基本操作的拦截和自定义，那为什么用 Proxy 呢？因为 Proxy 能解决以下问题：
+
+- 删除或者增加对象属性无法监听到
+- 数组的变化无法监听到（vue2 正是使用的 Object.defineProperty 劫持属性，watch 中无法检测数组改变）
+
+#### 实现代码
+
+```js
+// proxySandbox.ts
+function CreateProxySandbox(fakeWindow = {}) {
+  const _this = this;
+  _this.proxy = new Proxy(fakeWindow, {
+    set(target, p, value) {
+      if (_this.sandboxRunning) {
+        target[p] = value;
+      }
+
+      return true;
+    },
+    get(target, p) {
+      if (_this.sandboxRunning) {
+        return target[p];
+      }
+      return undefined;
+    },
+  });
+
+  _this.mountProxySandbox = () => {
+    _this.sandboxRunning = true;
+  }
+
+  _this.unmountProxySandbox = () => {
+    _this.sandboxRunning = false;
+  }
+}
+
+const proxyA = new CreateProxySandbox({});
+const proxyB = new CreateProxySandbox({});
+
+proxyA.mountProxySandbox();
+proxyB.mountProxySandbox();
+
+(function(window) {
+  window.a = 'this is a';
+  console.log('代理沙箱 a:', window.a); // this is a
+})(proxyA.proxy);
+
+(function(window) {
+  window.b = 'this is b';
+  console.log('代理沙箱 b:', window.b); // this is b
+})(proxyB.proxy);
+
+proxyA.unmountProxySandbox();
+proxyB.unmountProxySandbox();
+
+(function(window) {
+  console.log('代理沙箱 a:', window.a); // undefined
+})(proxyA.proxy);
+
+(function(window) {
+  console.log('代理沙箱 b:', window.b); // undefined
+})(proxyB.proxy);
+```
+
+#### 优点
+
+- 可同时运行多个沙箱
+- 不会污染 window 环境
+
+#### 缺点
+
+- 不兼容 ie
+- 在全局作用域上通过 var 或 function 声明的变量和函数无法被代理沙箱劫持，因为代理对象 Proxy 只能识别在该对象上存在的属性，通过 var 或 function 声明声明的变量是开辟了新的地址，自然无法被 Proxy 劫持，比如
+
+  ```js
+  const proxy1 = new CreateProxySandbox({});
+  proxy1.mountProxySandbox();
+  (function(window) {
+    var a = 'this is proxySandbox1';
+    function b() {};
+    console.log('代理沙箱1挂载后的a, b:', window.a, window.b); // undefined undefined
+  })(proxy1.proxy)
+
+  proxy1.unmountProxySandbox();
+  (function(window) {
+    console.log('代理沙箱1卸载后的a, b:', window.a, window.b); // undefined undefined
+  })(proxy1.proxy)
+  ```
+
+  一种解决方案是不用 var 和 function 声明全局变量和全局函数，比如
+
+  ```js
+  var a = 1; // 失效
+  a = 1; // 有效
+  window.a = 1; // 有效
+
+  function b() {} // 失效
+  b = () => {} // 有效
+  window.b = () => {} // 有效
+  ```
