@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+  <style>
+    html,
+    body {
+      background-color: white;
+      margin: 0;
+    }
+  </style>
+</head>
+<body>
+  <div id="console"></div>
+  <script>
+    function log(...args) {
+      const element = document.createElement('div');
+      element.innerHTML = args.join('');
+      document.querySelector('#console').appendChild(element);
+    }
+
+    function CreateProxySandbox(fakeWindow = {}) {
+      const _this = this;
+      _this.proxy = new Proxy(fakeWindow, {
+        set(target, p, value) {
+          if (_this.sandboxRunning) {
+            target[p] = value;
+          }
+
+          return true;
+        },
+        get(target, p) {
+          if (_this.sandboxRunning) {
+            return target[p];
+          }
+          return undefined;
+        },
+      });
+
+      _this.mountProxySandbox = () => {
+        _this.sandboxRunning = true;
+      }
+
+      _this.unmountProxySandbox = () => {
+        _this.sandboxRunning = false;
+      }
+    }
+
+    function logProxy() {
+      (function(window) {
+        window.a = 'this is a';
+        log('代理沙箱 a:', window.a); // this is a
+      })(proxyA.proxy);
+
+      (function(window) {
+        window.b = 'this is b';
+        log('代理沙箱 b:', window.b); // this is b
+      })(proxyB.proxy);
+    }
+
+    const proxyA = new CreateProxySandbox({});
+    const proxyB = new CreateProxySandbox({});
+
+    proxyA.mountProxySandbox();
+    proxyB.mountProxySandbox();
+
+    logProxy();
+
+    proxyA.unmountProxySandbox();
+    proxyB.unmountProxySandbox();
+
+    logProxy();
+
+    proxyA.mountProxySandbox();
+    proxyB.mountProxySandbox();
+
+    logProxy();
+  </script>
+</body>
+</html>

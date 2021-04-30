@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+  <style>
+    html,
+    body {
+      background-color: white;
+      margin: 0;
+    }
+  </style>
+</head>
+<body>
+  <h5>清除window副作用：</h5>
+  <button onclick="mountSandbox()">挂载沙箱并开启副作用</button>
+  <button onclick="unmountSandbox(true)">卸载沙箱并关闭副作用</button>
+  <button onclick="unmountSandbox()">普通卸载沙箱</button>
+  <div id="console"></div>
+  <script>
+    function log(...args) {
+      const element = document.createElement('div');
+      element.innerHTML = args.join('');
+      document.querySelector('#console').appendChild(element);
+    }
+
+    let mountingFreer;
+
+    function CreateProxySandbox(fakeWindow = {}) {
+      const _this = this;
+      _this.proxy = new Proxy(fakeWindow, {
+        set(target, p, value) {
+          if (_this.sandboxRunning) {
+            target[p] = value;
+          }
+
+          return true;
+        },
+        get(target, p) {
+          if (_this.sandboxRunning) {
+            return target[p];
+          }
+          return undefined;
+        },
+      });
+
+      _this.mountProxySandbox = () => {
+        _this.sandboxRunning = true;
+      }
+
+      _this.unmountProxySandbox = () => {
+        _this.sandboxRunning = false;
+      }
+    }
+
+    const proxy2 = new CreateProxySandbox({});
+
+    function mountSandbox() {
+      proxy2.mountProxySandbox();
+
+      // 在沙箱环境中执行的代码
+      (function(window, self) {
+        with(window) {
+          // 记录副作用
+          mountingFreer = patchSideEffects(window);
+          window.a = 'this is proxySandbox2';
+          log('代理沙箱2挂载后的a:', window.a); // undefined
+
+          // 设置屏幕变化监听
+          window.addEventListener('resize', () => {
+            log('resize');
+          });
+
+          // 定时输出字符串
+          setInterval(() => {
+            log('Interval');
+          }, 500);
+        }
+      }).bind(proxy2.proxy)(proxy2.proxy, proxy2.proxy);
+    }
+
+    /**
+    * @param isPatch 是否关闭副作用
+    */
+    function unmountSandbox(isPatch = false) {
+      proxy2.mountProxySandbox();
+      log('代理沙箱2卸载后的a:', window.a); // undefined
+      if (isPatch) {
+        mountingFreer();
+      }
+    }
+  </script>
+  <script>
+    const rawAddEventListener = window.addEventListener;
+    const rawRemoveEventListener = window.removeEventListener;
+
+    const rawWindowInterval = window.setInterval;
+    const rawWindowClearInterval = window.clearInterval;
+
+    function patch(global) {
+      const listenerMap = new Map();
+      let intervals = [];
+
+      global.addEventListener = (type, listener, options) => {
+        const listeners = listenerMap.get(type) || [];
+        listenerMap.set(type, [...listeners, listener]);
+        return rawAddEventListener.call(window, type, listener, options);
+      };
+
+      global.removeEventListener = (type, listener, options) => {
+        const storedTypeListeners = listenerMap.get(type);
+        if (storedTypeListeners && storedTypeListeners.length && storedTypeListeners.indexOf(listener) !== -1) {
+          storedTypeListeners.splice(storedTypeListeners.indexOf(listener), 1);
+        }
+        return rawRemoveEventListener.call(window, type, listener, options);
+      };
+
+      global.clearInterval = (intervalId) => {
+        intervals = intervals.filter((id) => id !== intervalId);
+        return rawWindowClearInterval(intervalId);
+      };
+
+      global.setInterval = (handler, timeout, ...args) => {
+        const intervalId = rawWindowInterval(handler, timeout, ...args);
+        intervals = [...intervals, intervalId];
+        return intervalId;
+      };
+
+      return function free() {
+        listenerMap.forEach((listeners, type) =>
+          [...listeners].forEach((listener) => global.removeEventListener(type, listener)),
+        );
+        global.addEventListener = rawAddEventListener;
+        global.removeEventListener = rawRemoveEventListener;
+
+        intervals.forEach((id) => global.clearInterval(id));
+        global.setInterval = rawWindowInterval;
+        global.clearInterval = rawWindowClearInterval;
+      };
+    }
+
+    function patchSideEffects(global) {
+      return patch(global);
+    }
+  </script>
+</body>
+</html>

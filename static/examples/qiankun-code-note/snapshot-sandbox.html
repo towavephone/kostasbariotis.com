@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+  <style>
+    html,
+    body {
+      background-color: white;
+      margin: 0;
+    }
+  </style>
+</head>
+<body>
+  <div id="console"></div>
+  <script>
+    function log(...args) {
+      const element = document.createElement('div');
+      element.innerHTML = args.join('');
+      document.querySelector('#console').appendChild(element);
+    }
+
+    // 遍历对象key并将key传给回调函数执行
+    function iter(obj, callbackFn) {
+      for (const prop in obj) {
+        if (obj.hasOwnProperty(prop)) {
+          callbackFn(prop);
+        }
+      }
+    }
+
+    this.modifyPropsMap = {}
+
+    // 挂载快照沙箱
+    function mountSnapshotSandbox() {
+      // 记录当前快照
+      this.windowSnapshot = {};
+      iter(window, (prop) => {
+        this.windowSnapshot[prop] = window[prop];
+      });
+
+      // 恢复之前的变更
+      Object.keys(this.modifyPropsMap).forEach((p) => {
+        window[p] = this.modifyPropsMap[p];
+      });
+      console.log(window)
+    }
+
+    // 卸载快照沙箱
+    function unmountSnapshotSandbox() {
+      // 记录当前快照上改动的属性
+      this.modifyPropsMap = {};
+      iter(window, (prop) => {
+        if (window[prop] !== this.windowSnapshot[prop]) {
+          // 记录变更，恢复环境
+          this.modifyPropsMap[prop] = window[prop];
+          window[prop] = this.windowSnapshot[prop];
+        }
+      });
+    }
+
+    // 子应用A
+    mountSnapshotSandbox();
+    window.a = 123;
+    log('快照沙箱挂载后的a:', window.a); // 123
+
+    unmountSnapshotSandbox();
+    log('快照沙箱卸载后的a:', window.a); // undefined
+
+    mountSnapshotSandbox();
+    log('快照沙箱再次挂载后的a:', window.a); // 123
+  </script>
+</body>
+</html>

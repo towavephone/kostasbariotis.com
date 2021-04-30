@@ -46,53 +46,9 @@ JS 沙箱简单点说就是，主应用有一套全局环境 window，子应用�
 
 #### 实现
 
-```js
-// snapshotSandbox.ts
-// 遍历对象key并将key传给回调函数执行
-function iter(obj: object, callbackFn: (prop: any) => void) {
-  for (const prop in obj) {
-    if (obj.hasOwnProperty(prop)) {
-      callbackFn(prop);
-    }
-  }
-}
+<iframe src="/examples/qiankun-code-note/snapshot-sandbox.html" width="400" height="100"></iframe>
 
-// 挂载快照沙箱
-mountSnapshotSandbox() {
-  // 记录当前快照
-  this.windowSnapshot = {} as Window;
-  iter(window, (prop) => {
-    this.windowSnapshot[prop] = window[prop];
-  });
-
-  // 恢复之前的变更
-  Object.keys(this.modifyPropsMap).forEach((p: any) => {
-    window[p] = this.modifyPropsMap[p];
-  });
-}
-// 卸载快照沙箱  
-unmountSnapshotSandbox() {
-  // 记录当前快照上改动的属性
-  this.modifyPropsMap = {};
-
-  iter(window, (prop) => {
-    if (window[prop] !== this.windowSnapshot[prop]) {
-      // 记录变更，恢复环境
-      this.modifyPropsMap[prop] = window[prop];
-      window[prop] = this.windowSnapshot[prop];
-    }
-  });
-}
-
-// 子应用A
-mountSnapshotSandbox();
-window.a = 123;
-console.log('快照沙箱挂载后的a:', window.a); // 123
-unmountSnapshotSandbox();
-console.log('快照沙箱卸载后的a:', window.a); // undefined
-mountSnapshotSandbox();
-console.log('快照沙箱再次挂载后的a:', window.a); // 123
-```
+`embed:qiankun-code-note/snapshot-sandbox.html`
 
 #### 优点
 
@@ -117,62 +73,9 @@ Object.defineProperty 也能实现基本操作的拦截和自定义，那为什�
 
 #### 实现
 
-```js
-// proxySandbox.ts
-function CreateProxySandbox(fakeWindow = {}) {
-  const _this = this;
-  _this.proxy = new Proxy(fakeWindow, {
-    set(target, p, value) {
-      if (_this.sandboxRunning) {
-        target[p] = value;
-      }
+<iframe src="/examples/qiankun-code-note/proxy-sandbox.html" width="400" height="100"></iframe>
 
-      return true;
-    },
-    get(target, p) {
-      if (_this.sandboxRunning) {
-        return target[p];
-      }
-      return undefined;
-    },
-  });
-
-  _this.mountProxySandbox = () => {
-    _this.sandboxRunning = true;
-  }
-
-  _this.unmountProxySandbox = () => {
-    _this.sandboxRunning = false;
-  }
-}
-
-const proxyA = new CreateProxySandbox({});
-const proxyB = new CreateProxySandbox({});
-
-proxyA.mountProxySandbox();
-proxyB.mountProxySandbox();
-
-(function(window) {
-  window.a = 'this is a';
-  console.log('代理沙箱 a:', window.a); // this is a
-})(proxyA.proxy);
-
-(function(window) {
-  window.b = 'this is b';
-  console.log('代理沙箱 b:', window.b); // this is b
-})(proxyB.proxy);
-
-proxyA.unmountProxySandbox();
-proxyB.unmountProxySandbox();
-
-(function(window) {
-  console.log('代理沙箱 a:', window.a); // undefined
-})(proxyA.proxy);
-
-(function(window) {
-  console.log('代理沙箱 b:', window.b); // undefined
-})(proxyB.proxy);
-```
+`embed:qiankun-code-note/proxy-sandbox.html`
 
 #### 优点
 
@@ -233,33 +136,9 @@ Shadow DOM 允许将隐藏的 DOM 树附加到常规的 DOM 树中——它以 s
 
 #### 实现
 
-```html
-<!DOCTYPE html>
-<html lang="en">
-  <body data-qiankun-A>
-    <h5>样式隔离：</h5>
-    <p class="title">一行文字</p>
+<iframe src="/examples/qiankun-code-note/shadow-dom.html" width="400" height="100"></iframe>
 
-    <script src="scopedCSS.js"></script>
-    <script src="index.js"></script>
-  </body>
-</html>
-```
-
-```js
-// index.js
-var bodyNode = document.getElementsByTagName('body')[0];
-openShadow(bodyNode);
-```
-
-```js
-// scopedCss.js
-function openShadow(domNode) {
-  var shadow = domNode.attachShadow({ mode: 'open' });
-  shadow.innerHTML = domNode.innerHTML;
-  domNode.innerHTML = "";
-}
-```
+`embed:qiankun-code-note/shadow-dom.html`
 
 #### 优点
 
@@ -275,65 +154,9 @@ function openShadow(domNode) {
 
 #### 实现
 
-```html
-<!-- index.html -->
-<html lang="en">
-  <head>
-    <style>
-      p.title {
-        font-size: 20px;
-      }
-    </style>
-  </head>
-  <body data-qiankun-A>
-    <p class="title">一行文字</p>
-    
-    <script src="scopedCSS.js"></script>
-    <script>
-      var styleNode = document.getElementsByTagName('style')[0];
-      scopeCss(styleNode, 'body[data-qiankun-A]');
-    </script>
-  </body>
-</html>
-```
+<iframe src="/examples/qiankun-code-note/runtime-css-transformer.html" width="400" height="100"></iframe>
 
-```js
-// scopedCSS.js
-function scopeCss(styleNode, prefix) {
-  const css = ruleStyle(styleNode.sheet.cssRules[0], prefix);
-  styleNode.textContent = css;
-}
-
-function ruleStyle(rule, prefix) {
-  const rootSelectorRE = /((?:[^\w\-.#]|^)(body|html|:root))/gm;
-
-  let { cssText } = rule;
-
-  // 绑定选择器, a,span,p,div { ... }
-  cssText = cssText.replace(/^[\s\S]+{/, (selectors) =>
-    selectors.replace(/(^|,\n?)([^,]+)/g, (item, p, s) => {
-      // 绑定 div,body,span { ... }
-      if (rootSelectorRE.test(item)) {
-        return item.replace(rootSelectorRE, (m) => {
-          // 不要丢失有效字符 如 body,html or *:not(:root)
-          const whitePrevChars = [',', '('];
-
-          if (m && whitePrevChars.includes(m[0])) {
-            return `${m[0]}${prefix}`;
-          }
-
-          // 用前缀替换根选择器
-          return prefix;
-        });
-      }
-
-      return `${p}${prefix} ${s.replace(/^ */, '')}`;
-    }),
-  );
-
-  return cssText;
-}
-```
+`embed:qiankun-code-note/runtime-css-transformer.html`
 
 #### 优点
 
@@ -348,77 +171,10 @@ function ruleStyle(rule, prefix) {
 
 ### 简介
 
-子应用在沙箱中使用 window.addEventListener、setInterval 这些 需异步监听的全局 api 时，要确保子应用在移除时也要移除对应的监听事件，否则会对其他应用造成副作用。
+子应用在沙箱中使用 window.addEventListener、setInterval 这些需异步监听的全局 api 时，要确保子应用在移除时也要移除对应的监听事件，否则会对其他应用造成副作用。
 
 ### 实现
 
-```html
-<!DOCTYPE html>
-<html lang="en">
-  <body>
-    <h5>清除window副作用：</h5>
-    <button onclick="mountSandbox()">挂载沙箱并开启副作用</button>
-    <button onclick="unmountSandbox(true)">卸载沙箱并关闭副作用</button>
-    <button onclick="unmountSandbox()">普通卸载沙箱</button>
+<iframe src="/examples/qiankun-code-note/remove-js-side-effect.html" width="400" height="100"></iframe>
 
-    <script src="proxySandbox.js"></script>
-    <script src="patchSideEffects.js"></script>
-    <script src="index.js"></script>
-  </body>
-</html>
-```
-
-```js
-// patchSideEffects.js
-const rawAddEventListener = window.addEventListener;
-const rawRemoveEventListener = window.removeEventListener;
-
-const rawWindowInterval = window.setInterval;
-const rawWindowClearInterval = window.clearInterval;
-
-function patch(global) {
-  const listenerMap = new Map();
-  let intervals = [];
-
-  global.addEventListener = (type, listener, options) => {
-    const listeners = listenerMap.get(type) || [];
-    listenerMap.set(type, [...listeners, listener]);
-    return rawAddEventListener.call(window, type, listener, options);
-  };
-
-  global.removeEventListener = (type, listener, options) => {
-    const storedTypeListeners = listenerMap.get(type);
-    if (storedTypeListeners && storedTypeListeners.length && storedTypeListeners.indexOf(listener) !== -1) {
-      storedTypeListeners.splice(storedTypeListeners.indexOf(listener), 1);
-    }
-    return rawRemoveEventListener.call(window, type, listener, options);
-  };
-
-  global.clearInterval = (intervalId) => {
-    intervals = intervals.filter((id) => id !== intervalId);
-    return rawWindowClearInterval(intervalId);
-  };
-
-  global.setInterval = (handler, timeout, ...args) => {
-    const intervalId = rawWindowInterval(handler, timeout, ...args);
-    intervals = [...intervals, intervalId];
-    return intervalId;
-  };
-
-  return function free() {
-    listenerMap.forEach((listeners, type) =>
-      [...listeners].forEach((listener) => global.removeEventListener(type, listener)),
-    );
-    global.addEventListener = rawAddEventListener;
-    global.removeEventListener = rawRemoveEventListener;
-
-    intervals.forEach((id) => global.clearInterval(id));
-    global.setInterval = rawWindowInterval;
-    global.clearInterval = rawWindowClearInterval;
-  };
-}
-
-function patchSideEffects(global) {
-  return patch(global);
-}
-```
+`embed:qiankun-code-note/remove-js-side-effect.html`

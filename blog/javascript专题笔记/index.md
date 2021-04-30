@@ -2271,15 +2271,11 @@ function deepEq(a, b, aStack, bStack) {
 
     while (length--) {
         key = keys[length]
-
-        console.log(a[key], b[key], aStack, bStack)
-        debugger
         if (!eq(a[key], b[key], aStack, bStack)) return false;
     }
 
     // aStack.pop();
     // bStack.pop();
-    debugger
     return true;
 
 }
