@@ -11,7 +11,7 @@ date: 2021-4-26 18:36:06
 
 `微前端`是一种类似于微服务的架构，它将微服务的理念应用于浏览器端，即将单页面前端应用由单一的单体应用转变为多个小型前端应用聚合为一的应用。各个前端应用还可以独立开发、独立部署。同时，它们也可以在共享组件的同时进行并行开发——这些组件可以通过 NPM 或者 Git Tag、Git Submodule 来管理。
 
-qiankun（乾坤） 就是一款由蚂蚁金服推出的比较成熟的微前端框架，基于 single-spa 进行二次开发，用于将 Web 应用由单一的单体应用转变为多个小型前端应用聚合为一的应用。（见下图）
+qiankun（乾坤）就是一款由蚂蚁金服推出的比较成熟的微前端框架，基于 single-spa 进行二次开发，用于将 Web 应用由单一的单体应用转变为多个小型前端应用聚合为一的应用。（见下图）
 
 # 目的
 
@@ -166,6 +166,140 @@ Shadow DOM 允许将隐藏的 DOM 树附加到常规的 DOM 树中——它以 s
 #### 缺点
 
 运行时重新加载样式，会有一定性能损耗
+
+## HTML Entry
+
+### html 解析
+
+当我们配置子应用的 entry 后，qiankun 会通过 fetch 获取到子应用的 html 字符串（这就是为什么需要子应用资源允许跨域）
+
+拿到 html 字符串后，会调用 [processTpl](https://github.com/kuitos/import-html-entry/blob/76df4b3737d54112f6bf2dfabcd01709079468e4/src/process-tpl.js#L58) 方法通过一大堆正则去匹配获取 html 中对应的 js（内联、外联）、css（内联、外联）、注释、入口脚本 entry 等等。processTpl 方法会返回我们加载子应用所需要的四个组成部分：
+
+- template：html 模板;
+- script：js 脚本（内联、外联）;
+- styles：css 样式表（内联、外联）;
+- entry：子应用入口 js 脚本文件，如果没有默认以解析后的最后一个 js 脚本代替;
+
+```js
+export default function processTpl(tpl, baseURI) {
+  // 省略详细代码，这里是对各种 css、js 等资源各种写法的预处理，用于规范后面对资源的统一处理
+
+  return {
+    template, // html 模板
+    scripts, // js 脚本（内联、外联）
+    styles, // css 样式表（内联、外联）
+    entry: entry || scripts[scripts.length - 1], // 子应用入口 js 脚本文件，如果没有默认以解析后的最后一个 js 脚本代替；
+  };
+}
+```
+
+### css 处理
+
+接下来在拿到子应用的依赖的各种资源关系后，会去通过 fetch 获取 css，并将 css 全部以内联形式嵌入 html 模板中，到此对 css 的处理大致就完成了。
+
+```js
+function getEmbedHTML(template, styles, opts = {}) {
+  const { fetch = defaultFetch } = opts;
+  let embedHTML = template;
+
+  // 获取 css 资源
+  // getExternalStyleSheets 同时处理了内联和外联 css 资源
+  // 其中内联资源会获取 css code，外联会先 fetch 到 css code 然后处理
+  return getExternalStyleSheets(styles, fetch).then((styleSheets) => {
+    embedHTML = styles.reduce((html, styleSrc, i) => {
+      // 内联处理全部的css资源
+      html = html.replace(
+        genLinkReplaceSymbol(styleSrc),
+        `<style>/* ${styleSrc} */${styleSheets[i]}</style>`
+      );
+      return html;
+    }, embedHTML);
+    return embedHTML;
+  });
+}
+```
+
+### js 处理
+
+接下来是对 js 的处理，这里 qiankun 和 icestack 的处理模式就不同了。
+
+首先简单说下 icestark，icestark 是在解析完 html 后拿到子应用的 js 依赖，通过动态创建 script 标签的形式去加载 js，因此在 icestark 是无视 js 跨域的（icestark 的 entry 模式和 url 模式均是如此，区别在于 entry 模式多了一步 fetch 拉 html 字符串并解析 js、css 依赖，而 url 模式只需要制定子应用的脚本和样式依赖即可）。
+
+而 qiankun 则采用了另一种办法，首先同理会先通过 fetch 获取外联的 js 字符串。
+
+```js
+export function getExternalScripts(
+  scripts,
+  fetch = defaultFetch,
+  errorCallback = () => {}
+) {
+  const fetchScript = (scriptUrl) => {
+    // 通过 fetch 获取 js 资源，如果有缓存从缓存拿
+    // 略
+  };
+
+  return Promise.all(
+    scripts.map((script) => {
+      if (typeof script === "string") {
+        if (isInlineCode(script)) {
+          // 获取内联的 js code
+          return getInlineCode(script);
+        } else {
+          // fetch 获取外联的 js code
+          return fetchScript(script);
+        }
+      } else {
+        // 上面说过了，processTpl 方法会处理各种 js css 资源，其中对于需要异步执行的 js 资源会打上 async 标识
+        // 打上 async 标识的 js 资源，会使用 requestIdleCallback 延迟执行
+        const { src, async } = script;
+        if (async) {
+          return {
+            src,
+            async: true,
+            content: new Promise((resolve, reject) =>
+              requestIdleCallback(() => fetchScript(src).then(resolve, reject))
+            ),
+          };
+        }
+
+        return fetchScript(src);
+      }
+    })
+  );
+}
+```
+
+接下来会创建一个匿名自执行函数包裹住获取到的 js 字符串，最后通过 eval 去创建一个执行上下文执行 js 代码。
+
+```js
+function getExecutableScript(scriptSrc, scriptText, proxy, strictGlobal) {
+  const sourceUrl = isInlineCode(scriptSrc)
+    ? ""
+    : `//# sourceURL=${scriptSrc}\n`;
+
+  window.proxy = proxy;
+  return strictGlobal
+    ? `;(function(window, self){with(window){;${scriptText}\n${sourceUrl}}}).bind(window.proxy)(window.proxy, window.proxy);`
+    : `;(function(window, self){;${scriptText}\n${sourceUrl}}).bind(window.proxy)(window.proxy, window.proxy);`;
+}
+```
+
+默认不会通过 with 劫持 window 对象的作用域，我们通过 webpack 打包后的 bundle 是会带着 with 劫持 window 对象的，qiankun 的 sandbox 实现原理是通过 Proxy 代理劫持 window 去做的，那么就会出现一个问题，window.xxx 这样形式的属性会被劫持掉，但是直接声明的全局对象不会被劫持。
+
+因为 qiankun 是创建自己的执行上下文执行子应用的 js，因此在加载后的子应用中是看不到 js 资源引用的，仅有一个资源被执行替换的标识。
+
+在 qiankun 中，通过调用 import-html-entry 导出的 execScript 函数，可以获取到子应用导出的生命周期勾子。
+
+```js
+// get the lifecycle hooks from module exports
+// 上面说过的 eval 包裹 js 代码返回可执行的 bundle 就是 execScripts 主要做的事
+const scriptExports: any = await execScripts(global, !singular);
+const { bootstrap, mount, unmount, update } = getLifecyclesFromExports(
+  scriptExports,
+  appName,
+  global
+);
+```
 
 ## 清除 js 副作用
 
