@@ -689,6 +689,25 @@ var foo = 1;
 
 这是因为在进入执行上下文时，首先会处理函数声明，其次会处理变量声明，如果如果变量名称跟已经声明的形式参数或函数相同，则变量声明不会干扰已经存在的这类属性。
 
+其中优先级的大小关系为：函数声明 > 形式参数 > 变量声明，验证如下
+
+```js
+// 函数声明
+function a(b, c){function b(){};var b;console.log(a, b, c);}
+a(1,2);
+// 运行结果：ƒ a(b, c){function b(){};var b;console.log(a, b, c);} ƒ b(){} 2
+
+// 形式参数
+function a(b, c){var b;console.log(a, b, c);}
+a(1,2);
+// 运行结果：ƒ a(b, c){var b;console.log(a, b, c);} 1 2
+
+// 变量声明
+function a(b, c){var d;console.log(a, b, d);}
+a(1,2);
+// 运行结果：ƒ a(b, c){var d;console.log(a, b, d);} 1 undefined
+```
+
 # 作用域链
 
 ## 前言
@@ -868,7 +887,7 @@ checkscope();
 
 > Types are further subclassified into ECMAScript language types and specification types.
 
-> An ECMAScript language type corresponds to values that are directly manipulated by an ECMAScript programmer using the ECMAScript language. The ECMAScript language types are Undefined, Null, Boolean, String, Number, and Object.
+> An ECMAScript language type corresponds to values that are directly manipulated by an ECMAScript programmer using the ECMAScript language. The ECMAScript language types are Undefined, Null, Boolean, String, Number and Object.
 
 > A specification type corresponds to meta-values that are used within algorithms to describe the semantics of ECMAScript language constructs and ECMAScript language types. The specification types are Reference, List, Completion, Property Descriptor, Property Identifier, Lexical Environment, and Environment Record.
 
@@ -876,9 +895,9 @@ checkscope();
 
 ECMAScript 的类型分为语言类型和规范类型。
 
-ECMAScript 语言类型是开发者直接使用 ECMAScript 可以操作的，其实就是我们常说的Undefined, Null, Boolean, String, Number, 和 Object。
+ECMAScript 语言类型是开发者直接使用 ECMAScript 可以操作的，其实就是我们常说的Undefined, Null, Boolean, String, Number 和 Object。
 
-而规范类型相当于 meta-values，是用来用算法描述 ECMAScript 语言结构和 ECMAScript 语言类型的。规范类型包括：Reference, List, Completion, Property Descriptor, Property Identifier, Lexical Environment 和 Environment Record。
+而规范类型相当于 meta-values，是用算法描述 ECMAScript 语言结构和 ECMAScript 语言类型的。规范类型包括：Reference, List, Completion, Property Descriptor, Property Identifier, Lexical Environment 和 Environment Record。
 
 没懂？没关系，我们只要知道在 ECMAScript 规范中还有一种只存在于规范中的类型，它们的作用是用来描述语言底层行为逻辑。
 
@@ -2234,7 +2253,7 @@ Function.prototype.bind2 = function(context) {
         // 这个时候的 arguments 是指 bind 返回的函数传入的参数
         var bindArgs = Array.prototype.slice.call(arguments);
         // 当作为构造函数时，this 指向实例，此时结果为 true，将绑定函数的 this 指向该实例，可以让实例获得来自绑定函数的值
-        // 以上面的是 demo 为例，如果改成 `this instanceof fn ? null : context`，实例只是一个空对象，将 null 改成 this ，实例会具有 habit 属性
+        // 以上面的 demo 为例，如果改成 `this instanceof fn ? null : context`，实例只是一个空对象，将 null 改成 this ，实例会具有 habit 属性
         // 当作为普通函数时，this 指向 window，此时结果为 false，将绑定函数的 this 指向 context
         return self.apply(this instanceof fn ? this : context, args.concat(bindArgs));
     }
@@ -2364,7 +2383,7 @@ Function.prototype.bind2 = function (context) {
 
 ```js
 // Otaku 御宅族，简称宅
-function Otaku (name, age) {
+function Otaku(name, age) {
     this.name = name;
     this.age = age;
 
@@ -2409,8 +2428,6 @@ var person = objectFactory(Otaku, ……)
 
 ## 初步实现
 
-分析：
-
 因为 new 的结果是一个新对象，所以在模拟实现的时候，我们也要建立一个新对象，假设这个对象叫 obj，因为 obj 会具有 Otaku 构造函数里的属性，想想经典继承的例子，我们可以使用 Otaku.apply(obj, arguments)来给 obj 添加新的属性。
 
 在 JavaScript 深入系列第一篇中，我们便讲了原型与原型链，我们知道实例的 `__proto__` 属性会指向构造函数的 prototype，也正是因为建立起这样的关系，实例可以访问原型上的属性。
@@ -2439,7 +2456,7 @@ function objectFactory() {
 复制以下的代码，到浏览器中，我们可以做一下测试：
 
 ```js
-function Otaku (name, age) {
+function Otaku(name, age) {
     this.name = name;
     this.age = age;
 
@@ -2474,7 +2491,7 @@ person.sayYourName(); // I am Kevin
 接下来我们再来看一种情况，假如构造函数有返回值，举个例子：
 
 ```js
-function Otaku (name, age) {
+function Otaku(name, age) {
     this.strength = 60;
     this.age = age;
 
@@ -2499,7 +2516,7 @@ console.log(person.age) // undefined
 再举个例子：
 
 ```js
-function Otaku (name, age) {
+function Otaku(name, age) {
     this.strength = 60;
     this.age = age;
 
