@@ -455,8 +455,8 @@ function throttle(func, wait) {
 
 那我们设置个 options 作为第三个参数，然后根据传的值判断到底哪种效果，我们约定:
 
-leading：false 表示禁用第一次执行
-trailing: false 表示禁用停止触发的回调
+- leading：false 表示禁用第一次执行
+- trailing: false 表示禁用停止触发的回调
 
 我们来改一下代码：
 
