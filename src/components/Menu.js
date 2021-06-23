@@ -16,9 +16,10 @@ class Menu extends React.Component {
     });
   }
 
-  openLink=()=>{
+  openLink() {
     this.handleClick();
   }
+
   render() {
     return (
       <nav className="navbar navbar-default">
@@ -42,7 +43,7 @@ class Menu extends React.Component {
               id="main-menu"
             >
               <ul className="nav navbar-nav navbar-right">
-                <li onClick={() => this.openLink()}>
+                <li onClick={() => this.openLink.bind(this)}>
                   <GatsbyLink
                     exact
                     activeStyle={{
@@ -53,7 +54,7 @@ class Menu extends React.Component {
                     首页
                   </GatsbyLink>
                 </li>
-                <li onClick={() => this.openLink()}>
+                <li onClick={() => this.openLink.bind(this)}>
                   <GatsbyLink
                     exact
                     activeStyle={{
@@ -64,7 +65,7 @@ class Menu extends React.Component {
                     标签
                   </GatsbyLink>
                 </li>
-                <li onClick={() => this.openLink()}>
+                <li onClick={() => this.openLink.bind(this)}>
                   <GatsbyLink
                     exact
                     activeStyle={{
@@ -75,7 +76,7 @@ class Menu extends React.Component {
                     关于
                   </GatsbyLink>
                 </li>
-                <li onClick={() => this.openLink()}>
+                <li onClick={() => this.openLink.bind(this)}>
                   <GatsbyLink
                     exact
                     activeStyle={{
@@ -86,19 +87,19 @@ class Menu extends React.Component {
                     搜索
                   </GatsbyLink>
                 </li>
-                {
-                    !this.props.isProduction?<li onClick={() => this.openLink()}>
-                        <GatsbyLink
-                            exact
-                            activeStyle={{
-                            color: '#d23669',
-                            }}
-                            to="/drafts"
-                        >
-                            草稿
-                        </GatsbyLink>
-                    </li>:null
-                }
+                {!this.props.isProduction ? (
+                  <li onClick={() => this.openLink.bind(this)}>
+                    <GatsbyLink
+                      exact
+                      activeStyle={{
+                        color: '#d23669',
+                      }}
+                      to="/drafts"
+                    >
+                      草稿
+                    </GatsbyLink>
+                  </li>
+                ) : null}
               </ul>
             </div>
           </div>

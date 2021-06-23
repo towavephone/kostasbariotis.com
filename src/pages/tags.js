@@ -46,7 +46,7 @@ export default function Tags({ data }) {
         <div className="medium-8 medium-offset-2 large-10 large-offset-1 post-meta">
           <header className="header">
             <div className="row text-center">
-              <h1>文章标签</h1>
+              <h3>文章标签</h3>
             </div>
           </header>
           <Separator />

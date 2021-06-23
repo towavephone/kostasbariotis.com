@@ -27,7 +27,6 @@
     <textarea class="log-output log-output-1" readonly></textarea>
     <script>
       function log1(str) {
-        console.log(str);
         var logEl = document.querySelector(".log-output-1");
         logEl.value += (logEl.value ? "\n" : "") + str;
       }

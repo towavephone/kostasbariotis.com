@@ -20,7 +20,7 @@ export default function Search({ data }) {
         <div className="medium-8 medium-offset-2 large-10 large-offset-1">
           <header className="header">
             <div className="row text-center">
-              <h1>文章搜索</h1>
+              <h3>文章搜索</h3>
             </div>
           </header>
           <Separator />

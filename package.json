@@ -22,6 +22,7 @@
         "bdg": "yarn build && yarn deploy:github",
         "bdc": "yarn build && yarn deploy:coding",
         "dev": "cross-env NODE_OPTIONS=--max-old-space-size=4048 gatsby develop",
+        "dev:lan": "cross-env NODE_OPTIONS=--max-old-space-size=4048 gatsby develop -H 0.0.0.0",
         "serve": "gatsby serve",
         "lint": "yarn lint:markdown",
         "lint:js": "eslint --fix src/**/*.js gatsby-config.js gatsby-browser.js gatsby-node.js",

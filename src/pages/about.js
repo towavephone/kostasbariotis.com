@@ -23,7 +23,7 @@ export default function About({ data }) {
           <header className="header">
             <div className="row text-center">
               <Img sizes={data.file.childImageSharp.sizes} className="header-avatar" />
-              <h1>我是女王控，欢迎来到我的小站</h1>
+              <h3>我是女王控，欢迎来到我的小站</h3>
             </div>
           </header>
           <Separator />
