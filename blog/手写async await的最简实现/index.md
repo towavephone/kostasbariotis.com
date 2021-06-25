@@ -1,8 +1,8 @@
 ---
-title: 手写async await的最简实现
+title: 手写 async await 的最简实现
 date: 2021-1-10 11:30:16
 categories:
-- 前端
+  - 前端
 tags: 前端, JS, 高级前端
 path: /async-await-simplest-implementation/
 ---
@@ -10,101 +10,101 @@ path: /async-await-simplest-implementation/
 # 示例
 
 ```js
-const getData = () => new Promise(resolve => setTimeout(() => resolve("data"), 1000))
+const getData = () =>
+  new Promise(resolve => setTimeout(() => resolve("data"), 1000));
 
 async function test() {
-  const data = await getData()
-  console.log('data: ', data);
-  const data2 = await getData()
-  console.log('data2: ', data2);
-  return 'success'
+  const data = await getData();
+  console.log("data: ", data);
+  const data2 = await getData();
+  console.log("data2: ", data2);
+  return "success";
 }
 
 // 这样的一个函数 应该再1秒后打印data 再过一秒打印data2 最后打印success
-test().then(res => console.log(res))
+test().then(res => console.log(res));
 ```
 
 # 思路
 
-对于这个简单的案例来说，如果我们把它用generator函数表达，会是怎么样的呢？
+对于这个简单的案例来说，如果我们把它用 generator 函数表达，会是怎么样的呢？
 
 ```js
 function* testG() {
   // await被编译成了yield
-  const data = yield getData()
-  console.log('data: ', data);
-  const data2 = yield getData()
-  console.log('data2: ', data2);
-  return 'success'
+  const data = yield getData();
+  console.log("data: ", data);
+  const data2 = yield getData();
+  console.log("data2: ", data2);
+  return "success";
 }
 ```
 
-我们知道，generator函数是不会自动执行的，每一次调用它的next方法，会停留在下一个yield的位置。
+我们知道，generator 函数是不会自动执行的，每一次调用它的 next 方法，会停留在下一个 yield 的位置。
 
-利用这个特性，我们只要编写一个自动执行的函数，就可以让这个generator函数完全实现async函数的功能。
+利用这个特性，我们只要编写一个自动执行的函数，就可以让这个 generator 函数完全实现 async 函数的功能。
 
 ```js
-const getData = () => new Promise(resolve => setTimeout(() => resolve("data"), 1000))
-  
-var test = asyncToGenerator(
-    function* testG() {
-      // await被编译成了yield
-      const data = yield getData()
-      console.log('data: ', data);
-      const data2 = yield getData()
-      console.log('data2: ', data2);
-      return 'success'
-    }
-)
+const getData = () =>
+  new Promise(resolve => setTimeout(() => resolve("data"), 1000));
 
-test().then(res => console.log(res))
+var test = asyncToGenerator(function* testG() {
+  // await被编译成了yield
+  const data = yield getData();
+  console.log("data: ", data);
+  const data2 = yield getData();
+  console.log("data2: ", data2);
+  return "success";
+});
+
+test().then(res => console.log(res));
 ```
 
-那么大体上的思路已经确定了，asyncToGenerator接受一个generator函数，返回一个promise，
+那么大体上的思路已经确定了，asyncToGenerator 接受一个 generator 函数，返回一个 promise，
 
-关键就在于，里面用yield来划分的异步流程，应该如何自动执行。
+关键就在于，里面用 yield 来划分的异步流程，应该如何自动执行。
 
 # 如果是手动执行
 
-在编写这个函数之前，我们先模拟手动去调用这个generator函数去一步步的把流程走完，有助于后面的思考。
+在编写这个函数之前，我们先模拟手动去调用这个 generator 函数去一步步的把流程走完，有助于后面的思考。
 
 ```js
 function* testG() {
   // await被编译成了yield
-  const data = yield getData()
-  console.log('data: ', data);
-  const data2 = yield getData()
-  console.log('data2: ', data2);
-  return 'success'
+  const data = yield getData();
+  console.log("data: ", data);
+  const data2 = yield getData();
+  console.log("data2: ", data2);
+  return "success";
 }
 ```
 
-我们先调用testG生成一个迭代器
+我们先调用 testG 生成一个迭代器
 
 ```js
 // 返回了一个迭代器
-var gen = testG()
+var gen = testG();
 ```
 
-然后开始执行第一次next
+然后开始执行第一次 next
 
 ```js
 // 第一次调用next 停留在第一个yield的位置
 // 返回的promise里 包含了data需要的数据
-var dataPromise = gen.next()
+var dataPromise = gen.next();
 ```
 
-这里返回了一个promise，就是第一次getData()所返回的promise，注意
+这里返回了一个 promise，就是第一次 getData()所返回的 promise，注意
 
 ```js
 const data = yield getData()
 ```
 
-这段代码要切割成左右两部分来看，第一次调用next，其实只是停留在了yield getData()这里，data的值并没有被确定。
+这段代码要切割成左右两部分来看，第一次调用 next，其实只是停留在了 yield getData()这里，data 的值并没有被确定。
 
-那么什么时候data的值会被确定呢？
+那么什么时候 data 的值会被确定呢？
 
-下一次调用next的时候，传的参数会被作为上一个yield前面接受的值，也就是说，我们再次调用gen.next('这个参数才会被赋给data变量')的时候，data的值才会被确定为'这个参数才会被赋给data变量'
+下一次调用 next 的时候，传的参数会被作为上一个 yield 前面接受的值，也就是说，我们再次调用 gen.next('这个参数才会被赋给 data 变量')的时候，data 的值才会被确定为'这个参数才会被赋给 data 变量'
 
 ```js
 gen.next('这个参数才会被赋给data变量')
@@ -119,44 +119,44 @@ console.log('data: ', data);
 const data2 = yield getData()
 ```
 
-然后往下执行，直到遇到下一个yield，继续这样的流程...
+然后往下执行，直到遇到下一个 yield，继续这样的流程...
 
-这是generator函数设计的一个比较难理解的点，但是为了实现我们的目标，还是得去学习它~
+这是 generator 函数设计的一个比较难理解的点，但是为了实现我们的目标，还是得去学习它~
 
-借助这个特性，如果我们这样去控制yield的流程，是不是就能实现异步串行了？
+借助这个特性，如果我们这样去控制 yield 的流程，是不是就能实现异步串行了？
 
 ```js
 function* testG() {
   // await被编译成了yield
-  const data = yield getData()
-  console.log('data: ', data);
-  const data2 = yield getData()
-  console.log('data2: ', data2);
-  return 'success'
+  const data = yield getData();
+  console.log("data: ", data);
+  const data2 = yield getData();
+  console.log("data2: ", data2);
+  return "success";
 }
 
-var gen = testG()
+var gen = testG();
 
-var dataPromise = gen.next()
+var dataPromise = gen.next();
 
-dataPromise.then((value1) => {
-    // data1的value被拿到了 继续调用next并且传递给data
-    var data2Promise = gen.next(value1)
-    
-    // console.log('data: ', data);
-    // 此时就会打印出data
-    
-    data2Promise.value.then((value2) => {
-        // data2的value拿到了 继续调用next并且传递value2
-         gen.next(value2)
-         
-        // console.log('data2: ', data2);
-        // 此时就会打印出data2
-    })
-})
+dataPromise.then(value1 => {
+  // data1的value被拿到了 继续调用next并且传递给data
+  var data2Promise = gen.next(value1);
+
+  // console.log('data: ', data);
+  // 此时就会打印出data
+
+  data2Promise.value.then(value2 => {
+    // data2的value拿到了 继续调用next并且传递value2
+    gen.next(value2);
+
+    // console.log('data2: ', data2);
+    // 此时就会打印出data2
+  });
+});
 ```
 
-这样的一个看着像callback hell的调用，就可以让我们的generator函数把异步安排的明明白白。
+这样的一个看着像 callback hell 的调用，就可以让我们的 generator 函数把异步安排的明明白白。
 
 # 实现
 
@@ -166,39 +166,37 @@ dataPromise.then((value1) => {
 function asyncToGenerator(generatorFunc) {
   // 返回的是一个新的函数
   return function() {
-  
     // 先调用 generator 函数 生成迭代器
     // 对应 var gen = testG()
-    const gen = generatorFunc.apply(this, arguments)
+    const gen = generatorFunc.apply(this, arguments);
 
     // 返回一个 promise 因为外部是用 .then 的方式 或者 await 的方式去使用这个函数的返回值的
     // var test = asyncToGenerator(testG)
     // test().then(res => console.log(res))
     return new Promise((resolve, reject) => {
-    
       // 内部定义一个 step 函数，用来一步一步的跨过 yield 的阻碍
       // key 有 next 和 throw 两种取值，分别对应了 gen 的 next 和 throw 方法
       // arg 参数则是用来把 promise resolve 出来的值交给下一个 yield
       function step(key, arg) {
-        let generatorResult
-        
+        let generatorResult;
+
         // 这个方法需要包裹在 try catch 中
         // 如果报错了 就把 promise 给 reject 掉 外部通过 .catch 可以获取到错误
         try {
-          generatorResult = gen[key](arg)
+          generatorResult = gen[key](arg);
         } catch (error) {
-          return reject(error)
+          return reject(error);
         }
 
         // gen.next() 得到的结果是一个 { value, done } 的结构
-        const { value, done } = generatorResult
+        const { value, done } = generatorResult;
 
         if (done) {
           // 如果已经完成了，就直接 resolve 这个 promise
           // 这个 done 是在最后一次调用 next 后才会为 true
           // 以本文的例子来说，此时的结果是 { done: true, value: 'success' }
           // 这个 value 也就是 generator 函数最后的返回值
-          return resolve(value)
+          return resolve(value);
         } else {
           // 除了最后结束的时候外，每次调用 gen.next()
           // 其实是返回 { value: Promise, done: false } 的结构
@@ -212,26 +210,26 @@ function asyncToGenerator(generatorFunc) {
             // 并且只要 done 不是 true 的时候，就会递归的往下解开 promise，对应
             // gen.next().value.then(value => {
             //    gen.next(value).value.then(value2 => {
-            //       gen.next() 
+            //       gen.next()
             //
-            //      // 此时 done 为 true 了，整个 promise 被 resolve 了 
+            //      // 此时 done 为 true 了，整个 promise 被 resolve 了
             //      // 最外部的 test().then(res => console.log(res)) 的 then 就开始执行了
             //    })
             // })
             function onResolve(val) {
-              step("next", val)
+              step("next", val);
             },
             // 如果 promise 被 reject 了，就再次进入 step 函数
             // 不同的是，这次的 try catch 中调用的是 gen.throw(err)
             // 那么自然就被 catch 到，然后把 promise 给 reject 掉啦
             function onReject(err) {
-              step("throw", err)
-            },
-          )
+              step("throw", err);
+            }
+          );
         }
       }
-      step("next")
-    })
-  }
+      step("next");
+    });
+  };
 }
 ```
