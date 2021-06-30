@@ -9,7 +9,7 @@ tags: 后端, nodejs
 
 ## 简述
 
-与前端 Js 不同, 后端方面除了SSR/爬虫之外很少会接触 DOM, 所以关于 DOM 方面的各种知识基本不会讨论.浏览器端除了图形业务外很少碰到内存问题, 但是后端几乎是直面服务器内存的, 更加偏向内存方面, 对于一些更基础的问题也会更加关注.
+与前端 Js 不同, 后端方面除了 SSR/爬虫之外很少会接触 DOM, 所以关于 DOM 方面的各种知识基本不会讨论.浏览器端除了图形业务外很少碰到内存问题, 但是后端几乎是直面服务器内存的, 更加偏向内存方面, 对于一些更基础的问题也会更加关注.
 
 ## 类型判断
 
@@ -17,7 +17,7 @@ tags: 后端, nodejs
 
 ## 作用域
 
-看 《你不知道的js》
+看 《你不知道的 js》
 
 ## 引用传递
 
@@ -39,30 +39,27 @@ tags: 后端, nodejs
 
 引用类型是在没有引用之后, 通过 v8 的 GC 自动回收, 值类型如果是处于闭包的情况下, 要等闭包没有引用才会被 GC 回收, 非闭包的情况下等待 v8 的新生代 (new space) 切换的时候回收.
 
-与前端 Js 不同, 2年以上经验的 Node.js 一定要开始注意内存了, 不说对 v8 的 GC 有多了解, 基础的内存释放一定有概念了, 并且要开始注意内存泄漏的问题了.
+与前端 Js 不同, 2 年以上经验的 Node.js 一定要开始注意内存了, 不说对 v8 的 GC 有多了解, 基础的内存释放一定有概念了, 并且要开始注意内存泄漏的问题了.
 
 你需要了解哪些操作一定会导致内存泄漏, 或者可以崩掉内存. 比如如下代码能否爆掉 V8 的内存?
 
 ```js
 let arr = [];
-while(true)
-  arr.push(1);
+while (true) arr.push(1);
 ```
 
 然后上述代码与下方的情况有什么区别?
 
 ```js
 let arr = [];
-while(true)
-  arr.push();
+while (true) arr.push();
 ```
 
 如果 push 的是 Buffer 情况又会有什么区别?
 
 ```js
 let arr = [];
-while(true)
-  arr.push(new Buffer(1000));
+while (true) arr.push(new Buffer(1000));
 ```
 
 思考完之后可以尝试找找别的情况如何爆掉 V8 的内存. 以及来聊聊内存泄漏?
@@ -70,9 +67,9 @@ while(true)
 ```js
 function out() {
   const bigData = new Buffer(100);
-  inner = function () {
+  inner = function() {
     void bigData;
-  }
+  };
 }
 ```
 
@@ -141,12 +138,12 @@ function require(...) {
 
 ```js
 // b.js
-(function (exports, require, module, __filename, __dirname) {
+(function(exports, require, module, __filename, __dirname) {
   t = 111;
 })();
 
 // a.js
-(function (exports, require, module, __filename, __dirname) {
+(function(exports, require, module, __filename, __dirname) {
   // ...
   console.log(t); // 111
 })();
@@ -156,13 +153,13 @@ function require(...) {
 
 不会, 先执行的导出其未完成的副本, 通过导出工厂函数让对方从函数去拿比较好避免. 模块在导出的只是 var module = { exports: {...} }; 中的 exports, 以从 a.js 启动为例, a.js 还没执行完会返回一个 a.js 的 exports 对象的未完成的副本给 b.js 模块。 然后 b.js 完成加载，并将 exports 对象提供给 a.js 模块。
 
-另外还有非常基础和常见的问题, 比如 module.exports 和 exports 的区别这里也能一并解决了 exports 只是 module.exports 的一个引用. 
+另外还有非常基础和常见的问题, 比如 module.exports 和 exports 的区别这里也能一并解决了 exports 只是 module.exports 的一个引用.
 
 再晋级一点, 众所周知, node 的模块机制是基于 CommonJS 规范的. 对于从前端转 node 的同学, 如果面试官想问的难一点会考查关于 CommonJS 的一些问题. 比如比较 AMD（提前执行、依赖前置）, CMD（延迟执行、依赖就近）, CommonJS 三者的区别, 包括询问关于 node 中 require 的实现原理等.
 
 > node 中 require 的实现原理
 
-require 命令是 CommonJS 规范之中，用来加载其他模块的命令。它其实不是一个全局命令，而是指向当前模块的 module.require 命令，而后者又调用 Node 的内部命令 Module._load。
+require 命令是 CommonJS 规范之中，用来加载其他模块的命令。它其实不是一个全局命令，而是指向当前模块的 module.require 命令，而后者又调用 Node 的内部命令 Module.\_load。
 
 ```js
 Module._load = function(request, parent, isMain) {
@@ -198,7 +195,7 @@ Module.prototype._compile = function(content, filename) {
 一旦 require 函数准备完毕，整个所要加载的脚本内容，就被放到一个新的函数之中，这样可以避免污染全局环境。该函数的参数包括 require、module、exports，以及其他一些参数。
 
 ```js
-(function (exports, require, module, __filename, __dirname) {
+(function(exports, require, module, __filename, __dirname) {
   // YOUR CODE INJECTED HERE!
 });
 ```
@@ -226,11 +223,10 @@ Module.prototype._compile = function(content, filename) {
 而目前的 Node.js 将 VM 的接口暴露了出来, 可以让你自己创建一个新的 js 上下文, 这一点上跟前端 js 还是区别挺大的. 在执行外部代码的时候, 通过创建新的上下文沙盒 (sandbox) 可以避免上下文被污染:
 
 ```js
-'use strict';
-const vm = require('vm');
+"use strict";
+const vm = require("vm");
 
-let code =
-`(function(require) {
+let code = `(function(require) {
 
   const http = require('http');
 
@@ -247,11 +243,11 @@ vm.runInThisContext(code)(require);
 
 这种执行方式与 eval 和 Function 有明显的区别. 关于 VM 更多的一些接口可以先阅读官方文档 VM (虚拟机)
 
-讲完这个知识点, 这里留下一个简单的问题, 既然可以通过新的上下文来避免污染, 那么为什么 Node.js 不给每一个 .js 文件以独立的上下文来避免作用域被污染? 
+讲完这个知识点, 这里留下一个简单的问题, 既然可以通过新的上下文来避免污染, 那么为什么 Node.js 不给每一个 .js 文件以独立的上下文来避免作用域被污染?
 
 > 为什么 Node.js 不给每一个 .js 文件以独立的上下文来避免作用域被污染?
- 
-node 中 require 的实现原理里面有说明，_compile 函数有调用 vm.runInThisContext 函数，即 Node.js 模块正常情况对作用域不会造成污染，意外创建全局变量是一种例外
+
+node 中 require 的实现原理里面有说明，\_compile 函数有调用 vm.runInThisContext 函数，即 Node.js 模块正常情况对作用域不会造成污染，意外创建全局变量是一种例外
 
 # 事件/异步
 
@@ -264,17 +260,22 @@ node 中 require 的实现原理里面有说明，_compile 函数有调用 vm.ru
 > Promise 中 .then 的第二参数与 .catch 有什么区别?
 
 ```js
-somePromise().then(function () {
-  throw new Error('oh noes');
-}).catch(function (err) {
-  // I caught your error! :)
-});
+somePromise()
+  .then(function() {
+    throw new Error("oh noes");
+  })
+  .catch(function(err) {
+    // I caught your error! :)
+  });
 
-somePromise().then(function () {
-  throw new Error('oh noes');
-}, function (err) {
-  // I didn't catch your error! :(
-});
+somePromise().then(
+  function() {
+    throw new Error("oh noes");
+  },
+  function(err) {
+    // I didn't catch your error! :(
+  }
+);
 ```
 
 建议使用 catch
@@ -283,12 +284,12 @@ somePromise().then(function () {
 
 ```js
 let doSth = new Promise((resolve, reject) => {
-  console.log('hello');
+  console.log("hello");
   resolve();
 });
 
 doSth.then(() => {
-  console.log('over');
+  console.log("over");
 });
 ```
 
@@ -305,14 +306,14 @@ over
 
 ```js
 let doSth = new Promise((resolve, reject) => {
-  console.log('hello');
+  console.log("hello");
   resolve();
 });
 
 setTimeout(() => {
   doSth.then(() => {
-    console.log('over');
-  })
+    console.log("over");
+  });
 }, 10000);
 ```
 
@@ -320,11 +321,11 @@ setTimeout(() => {
 
 ```js
 setTimeout(function() {
-  console.log(1)
+  console.log(1);
 }, 0);
 new Promise(function executor(resolve) {
   console.log(2);
-  for( var i=0 ; i<10000 ; i++ ) {
+  for (var i = 0; i < 10000; i++) {
     i == 9999 && resolve();
   }
   console.log(3);
@@ -350,24 +351,24 @@ Events 是 Node.js 中一个非常重要的 core 模块, 在 node 中有许多�
 
 > Eventemitter 的 emit 是同步还是异步?
 
-Node.js 中 Eventemitter 的 emit 是同步的. 
+Node.js 中 Eventemitter 的 emit 是同步的.
 
 另外, 可以讨论如下的执行结果是输出 `hi 1` 还是 `hi 2`?
 
 ```js
-const EventEmitter = require('events');
+const EventEmitter = require("events");
 
 let emitter = new EventEmitter();
 
-emitter.on('myEvent', () => {
-  console.log('hi 1');
+emitter.on("myEvent", () => {
+  console.log("hi 1");
 });
 
-emitter.on('myEvent', () => {
-  console.log('hi 2');
+emitter.on("myEvent", () => {
+  console.log("hi 2");
 });
 
-emitter.emit('myEvent');
+emitter.emit("myEvent");
 ```
 
 ```
@@ -378,31 +379,31 @@ hi 2
 或者如下情况是否会死循环?（会出现）
 
 ```js
-const EventEmitter = require('events');
+const EventEmitter = require("events");
 
 let emitter = new EventEmitter();
 
-emitter.on('myEvent', () => {
-  console.log('hi');
-  emitter.emit('myEvent');
+emitter.on("myEvent", () => {
+  console.log("hi");
+  emitter.emit("myEvent");
 });
 
-emitter.emit('myEvent');
+emitter.emit("myEvent");
 ```
 
 以及这样会不会死循环?（不会出现，只是多了一个监听）
 
 ```js
-const EventEmitter = require('events');
+const EventEmitter = require("events");
 
 let emitter = new EventEmitter();
 
-emitter.on('myEvent', function sth () {
-  emitter.on('myEvent', sth);
-  console.log('hi');
+emitter.on("myEvent", function sth() {
+  emitter.on("myEvent", sth);
+  console.log("hi");
 });
 
-emitter.emit('myEvent');
+emitter.emit("myEvent");
 ```
 
 使用 emitter 处理问题可以处理比较复杂的状态场景, 比如 TCP 的复杂状态机, 做多项异步操作的时候每一步都可能报错, 这个时候 .emit 错误并且执行某些 .once 的操作可以将你从泥沼中拯救出来.
@@ -429,8 +430,9 @@ Node.js 中执行 js 代码的过程是单线程的. 只有当前代码都执行
 
 ```js
 function sleep(ms) {
-  var start = Date.now(), expire = start + ms;
-  while (Date.now() < expire) ;
+  var start = Date.now(),
+    expire = start + ms;
+  while (Date.now() < expire);
   return;
 }
 ```
@@ -446,14 +448,14 @@ function sleep(ms) {
 ```js
 // 当 await memo 不是最先出现时，所有的 sleep 并行执行，因为 await memo 使得函数等待上一个函数完成后执行
 // utility function for sleeping
-const sleep = (n) => new Promise((res) => setTimeout(res, n));
+const sleep = n => new Promise(res => setTimeout(res, n));
 
 const arr = [1, 2, 3];
 const startTime = new Date().getTime();
 const asyncRes = await arr.reduce(async (memo, e) => {
- await sleep(2000);
- console.log(e)
- return (await memo) + e;
+  await sleep(2000);
+  console.log(e);
+  return (await memo) + e;
 }, 0);
 
 console.log(asyncRes, `Took ${new Date().getTime() - startTime} ms`);
@@ -468,16 +470,16 @@ console.log(asyncRes, `Took ${new Date().getTime() - startTime} ms`);
 
 ```js
 // 当 await memo 最先出现时，这些函数按顺序运行，所有的 sleep 串行执行
-const sleep = (n) => new Promise((res) => setTimeout(res, n));
+const sleep = n => new Promise(res => setTimeout(res, n));
 const arr = [1, 2, 3];
 
 const startTime = new Date().getTime();
 
 const asyncRes = await arr.reduce(async (memo, e) => {
- await memo;
- await sleep(2000);
-  console.log(e)
- return (await memo) + e;
+  await memo;
+  await sleep(2000);
+  console.log(e);
+  return (await memo) + e;
 }, 0);
 
 console.log(asyncRes, `Took ${new Date().getTime() - startTime} ms`);
@@ -496,7 +498,7 @@ console.log(asyncRes, `Took ${new Date().getTime() - startTime} ms`);
 
 硬异步是指由于 IO 操作或者外部调用走 libuv 而需要异步的情况. 当然, 也存在 readFileSync, execSync 等例外情况, 不过 node 由于是单线程的, 所以如果常规业务在普通时段执行可能比较耗时同步的 IO 操作会使得其执行过程中其他的所有操作都不能响应, 有点作死的感觉. 不过在启动/初始化以及一些工具脚本的应用场景下是完全没问题的. 而一般的场景下 IO 操作都是需要异步的.
 
-软异步是指, 通过 setTimeout 等方式来实现的异步. 
+软异步是指, 通过 setTimeout 等方式来实现的异步.
 
 > 关于 nextTick, setTimeout 以及 setImmediate 三者的区别
 
@@ -556,16 +558,16 @@ Node.js 通过事件循环来挨个抽取事件队列中的一个个 Task 执行
 
 关于 Process, 我们需要讨论的是两个概念：操作系统的进程、Node.js 中的 Process 对象. 操作进程对于服务端而言, 好比 html 之于前端一样基础. 想做服务端编程是不可能绕过 Unix/Linux 的. 在 Linux/Unix/Mac 系统中运行 ps -ef 命令可以看到当前系统中运行的进程. 各个参数如下:
 
-|列名称|意义|
-|-----|---|
-|UID|执行该进程的用户ID|
-|PID|进程编号|
-|PPID|该进程的父进程编号|
-|C|该进程所在的CPU利用率|
-|STIME|进程执行时间|
-|TTY|进程相关的终端类型|
-|TIME|进程所占用的CPU时间|
-|CMD|创建该进程的指令|
+| 列名称 | 意义                    |
+| ------ | ----------------------- |
+| UID    | 执行该进程的用户 ID     |
+| PID    | 进程编号                |
+| PPID   | 该进程的父进程编号      |
+| C      | 该进程所在的 CPU 利用率 |
+| STIME  | 进程执行时间            |
+| TTY    | 进程相关的终端类型      |
+| TIME   | 进程所占用的 CPU 时间   |
+| CMD    | 创建该进程的指令        |
 
 关于进程以及操作系统一些更深入的细节推荐阅读 APUE, 即《Unix 高级编程》等书籍来了解.
 
@@ -607,10 +609,10 @@ Node.js 通过事件循环来挨个抽取事件队列中的一个个 Task 执行
    └───────────────────────┘
 ```
 
-process.nextTick 并不属于 Event loop 中的某一个阶段, 而是在 Event loop 的每一个阶段结束后, 直接执行 nextTickQueue 中插入的 "Tick", 并且直到整个 Queue 处理完. 所以面试时又有可以问的问题了, 递归调用 process.nextTick 会怎么样? 
+process.nextTick 并不属于 Event loop 中的某一个阶段, 而是在 Event loop 的每一个阶段结束后, 直接执行 nextTickQueue 中插入的 "Tick", 并且直到整个 Queue 处理完. 所以面试时又有可以问的问题了, 递归调用 process.nextTick 会怎么样?
 
 ```js
-function test() { 
+function test() {
   process.nextTick(() => test());
 }
 ```
@@ -620,7 +622,7 @@ function test() {
 这种情况与以下情况, 有什么区别? 为什么?
 
 ```js
-function test() { 
+function test() {
   setTimeout(() => test(), 0);
 }
 ```
@@ -680,35 +682,42 @@ Node.js 的 child_process.fork() 在 Unix 上的实现最终调用了 POSIX [for
 
 > 父进程或子进程的死亡是否会影响对方? 什么是孤儿进程?
 
-子进程死亡不会影响父进程, 不过子进程死亡时（线程组的最后一个线程，通常是“领头”线程死亡时），会向它的父进程发送死亡信号. 反之父进程死亡, 一般情况下子进程也会随之死亡, 但如果此时子进程处于可运行态、僵死状态等等的话, 子进程将被进程1（init 进程）收养，从而成为孤儿进程. 另外, 子进程死亡的时候（处于“终止状态”），父进程没有及时调用 wait() 或 waitpid() 来返回死亡进程的相关信息，此时子进程还有一个 PCB 残留在进程表中，被称作僵尸进程.
+子进程死亡不会影响父进程, 不过子进程死亡时（线程组的最后一个线程，通常是“领头”线程死亡时），会向它的父进程发送死亡信号. 反之父进程死亡, 一般情况下子进程也会随之死亡, 但如果此时子进程处于可运行态、僵死状态等等的话, 子进程将被进程 1（init 进程）收养，从而成为孤儿进程. 另外, 子进程死亡的时候（处于“终止状态”），父进程没有及时调用 wait() 或 waitpid() 来返回死亡进程的相关信息，此时子进程还有一个 PCB 残留在进程表中，被称作僵尸进程.
 
 ## Cluster
 
 Cluster 是常见的 Node.js 利用多核的办法. 它是基于 child_process.fork() 实现的, 所以 cluster 产生的进程之间是通过 IPC 来通信的, 并且它也没有拷贝父进程的空间, 而是通过加入 cluster.isMaster 这个标识, 来区分父进程以及子进程, 达到类似 POSIX 的 fork 的效果.
 
 ```js
-const cluster = require('cluster');            // | | 
-const http = require('http');                  // | | 
-const numCPUs = require('os').cpus().length;   // | |    都执行了
-                                               // | | 
-if (cluster.isMaster) {                        // |-|-----------------
-  // Fork workers.                             //   | 
-  for (var i = 0; i < numCPUs; i++) {          //   | 
-    cluster.fork();                            //   | 
-  }                                            //   | 仅父进程执行 (a.js)
-  cluster.on('exit', (worker) => {             //   | 
-    console.log(`${worker.process.pid} died`); //   | 
-  });                                          //   |
-} else {                                       // |-------------------
-  // Workers can share any TCP connection      // | 
-  // In this case it is an HTTP server         // | 
-  http.createServer((req, res) => {            // | 
-    res.writeHead(200);                        // |   仅子进程执行 (b.js)
-    res.end('hello world\n');                  // | 
-  }).listen(8000);                             // | 
-}                                              // |-------------------
-                                               // | |
-console.log('hello');                          // | |    都执行了
+const cluster = require("cluster"); // | |
+const http = require("http"); // | |
+const numCPUs = require("os").cpus().length; // | |    都执行了
+// | |
+if (cluster.isMaster) {
+  // |-|-----------------
+  // Fork workers.                             //   |
+  for (var i = 0; i < numCPUs; i++) {
+    //   |
+    cluster.fork(); //   |
+  } //   | 仅父进程执行 (a.js)
+  cluster.on("exit", worker => {
+    //   |
+    console.log(`${worker.process.pid} died`); //   |
+  }); //   |
+} else {
+  // |-------------------
+  // Workers can share any TCP connection      // |
+  // In this case it is an HTTP server         // |
+  http
+    .createServer((req, res) => {
+      // |
+      res.writeHead(200); // |   仅子进程执行 (b.js)
+      res.end("hello world\n"); // |
+    })
+    .listen(8000); // |
+} // |-------------------
+// | |
+console.log("hello"); // | |    都执行了
 ```
 
 在上述代码中 numCPUs 虽然是全局变量但是, 在父进程中修改它, 子进程中并不会改变, 因为父进程与子进程是完全独立的两个空间. 他们所谓的共有仅仅只是都执行了, 并不是同一份.
@@ -731,17 +740,17 @@ cluster 模块提供了两种分发连接的方式.
 
 IPC (Inter-process communication) 进程间通信技术. 常见的进程间通信技术列表如下:
 
-类型|无连接|可靠|流控制|优先级
----|-----|----|-----|-----
-普通PIPE|N|Y|Y|N
-命名PIPE|N|Y|Y|N
-消息队列|N|Y|Y|N
-信号量|N|Y|Y|Y
-共享存储|N|Y|Y|Y
-UNIX流SOCKET|N|Y|Y|N
-UNIX数据包SOCKET|Y|Y|N|N
+| 类型               | 无连接 | 可靠 | 流控制 | 优先级 |
+| ------------------ | ------ | ---- | ------ | ------ |
+| 普通 PIPE          | N      | Y    | Y      | N      |
+| 命名 PIPE          | N      | Y    | Y      | N      |
+| 消息队列           | N      | Y    | Y      | N      |
+| 信号量             | N      | Y    | Y      | Y      |
+| 共享存储           | N      | Y    | Y      | Y      |
+| UNIX 流 SOCKET     | N      | Y    | Y      | N      |
+| UNIX 数据包 SOCKET | Y      | Y    | N      | N      |
 
-Node.js 中的 IPC 通信是由 libuv 通过管道技术实现的, 在 windows 下由命名管道（named pipe）实现也就是上表中的最后第二个, *nix 系统则采用 UDS (Unix Domain Socket) 实现.
+Node.js 中的 IPC 通信是由 libuv 通过管道技术实现的, 在 windows 下由命名管道（named pipe）实现也就是上表中的最后第二个, \*nix 系统则采用 UDS (Unix Domain Socket) 实现.
 
 普通的 socket 是为网络通讯设计的, 而网络本身是不可靠的, 而为 IPC 设计的 socket 则不然, 因为默认本地的网络环境是可靠的, 所以可以简化大量不必要的 encode/decode 以及计算校验等, 得到效率更高的 UDS 通信.
 
@@ -795,12 +804,12 @@ void init_daemon()
 ```
 
 ```js
-var spawn = require('child_process').spawn;
-var process = require('process');
+var spawn = require("child_process").spawn;
+var process = require("process");
 
-var p = spawn('node',['b.js'],{
-        detached : true
-    });
+var p = spawn("node", ["b.js"], {
+  detached: true
+});
 console.log(process.pid, p.pid);
 process.exit(0);
 ```
@@ -817,11 +826,11 @@ Buffer 是 Node.js 中用于处理二进制数据的类, 其中与 IO 相关的�
 
 在 Node.js v6.x 之后 new Buffer() 接口开始被废弃, 理由是参数类型不同会返回不同类型的 Buffer 对象, 所以当开发者没有正确校验参数或没有正确初始化 Buffer 对象的内容时, 以及不了解的情况下初始化 就会在不经意间向代码中引入安全性和可靠性问题.
 
-接口|用途
----|---
-Buffer.from()|根据已有数据生成一个 Buffer 对象
-Buffer.alloc()|创建一个初始化后的 Buffer 对象
-Buffer.allocUnsafe()|创建一个未初始化的 Buffer 对象
+| 接口                 | 用途                             |
+| -------------------- | -------------------------------- |
+| Buffer.from()        | 根据已有数据生成一个 Buffer 对象 |
+| Buffer.alloc()       | 创建一个初始化后的 Buffer 对象   |
+| Buffer.allocUnsafe() | 创建一个未初始化的 Buffer 对象   |
 
 ### TypedArray
 
@@ -854,25 +863,25 @@ console.log(buf2);
 字符串解码器 (String Decoder) 是一个用于将 Buffer 拿来 decode 到 string 的模块, 是作为 Buffer.toString 的一个补充, 它支持多字节 UTF-8 和 UTF-16 字符. 例如
 
 ```js
-const StringDecoder = require('string_decoder').StringDecoder;
-const decoder = new StringDecoder('utf8');
+const StringDecoder = require("string_decoder").StringDecoder;
+const decoder = new StringDecoder("utf8");
 
-const cent = Buffer.from([0xC2, 0xA2]);
+const cent = Buffer.from([0xc2, 0xa2]);
 console.log(decoder.write(cent)); // ¢
 
-const euro = Buffer.from([0xE2, 0x82, 0xAC]);
+const euro = Buffer.from([0xe2, 0x82, 0xac]);
 console.log(decoder.write(euro)); // €
 ```
 
 stringDecoder.write 会确保返回的字符串不包含 Buffer 末尾残缺的多字节字符，残缺的多字节字符会被保存在一个内部的 buffer 中用于下次调用 stringDecoder.write() 或 stringDecoder.end()。
 
 ```js
-const StringDecoder = require('string_decoder').StringDecoder;
-const decoder = new StringDecoder('utf8');
+const StringDecoder = require("string_decoder").StringDecoder;
+const decoder = new StringDecoder("utf8");
 
-decoder.write(Buffer.from([0xE2]));
+decoder.write(Buffer.from([0xe2]));
 decoder.write(Buffer.from([0x82]));
-console.log(decoder.end(Buffer.from([0xAC])));  // €
+console.log(decoder.end(Buffer.from([0xac]))); // €
 ```
 
 ## Stream
@@ -900,7 +909,7 @@ int copy(const char *src, const char *dest)
         fclose(fpSrc);
         return FAILURE;
     }
-    
+
     // 从 src 中读取 BUF_SIZE 长的数据到 buf 中
     while ((lenSrc = fread(buf, 1, BUF_SIZE, fpSrc)) > 0)
     {
@@ -915,7 +924,7 @@ int copy(const char *src, const char *dest)
         // 写入成功后清空 buf
         memset(buf, 0, BUF_SIZE);
     }
-  
+
     // 关闭文件
     fclose(fpSrc);
     fclose(fpDest);
@@ -929,12 +938,12 @@ int copy(const char *src, const char *dest)
 
 ### Stream 的类型
 
-类|使用场景|重写方法
----|---|---
-[Readable](https://github.com/substack/stream-handbook#readable-streams)|只读|_read
-[Writable](https://github.com/substack/stream-handbook#writable-streams)|只写|_write
-[Duplex](https://github.com/substack/stream-handbook#duplex)|读写|_read, _write
-[Transform](https://github.com/substack/stream-handbook#transform)|操作被写入数据, 然后读出结果|_transform, _flush
+| 类                                                                       | 使用场景                     | 重写方法             |
+| ------------------------------------------------------------------------ | ---------------------------- | -------------------- |
+| [Readable](https://github.com/substack/stream-handbook#readable-streams) | 只读                         | \_read               |
+| [Writable](https://github.com/substack/stream-handbook#writable-streams) | 只写                         | \_write              |
+| [Duplex](https://github.com/substack/stream-handbook#duplex)             | 读写                         | \_read, \_write      |
+| [Transform](https://github.com/substack/stream-handbook#transform)       | 操作被写入数据, 然后读出结果 | \_transform, \_flush |
 
 ### 对象模式
 
@@ -977,7 +986,7 @@ function writeOneMillionTimes(writer, data, encoding, callback) {
     if (i > 0) {
       // had to stop early!
       // write some more once it drains
-      writer.once('drain', write);
+      writer.once("drain", write);
     }
   }
 }
@@ -1009,9 +1018,9 @@ Console.prototype.log = function(...args) {
 自己实现一个 console.log 可以参考如下代码:
 
 ```js
-let print = (str) => process.stdout.write(str + '\n');
+let print = str => process.stdout.write(str + "\n");
 
-print('hello world');
+print("hello world");
 ```
 
 注意: 该代码并没有处理多参数, 也没有处理占位符 (即 util.format 的功能).
@@ -1039,8 +1048,6 @@ function Console(stdout, stderr) {
 Node.js 封装了标准 POSIX 文件 I/O 操作的集合. 通过 require('fs') 可以加载该模块. 该模块中的所有方法都有异步执行和同步执行两个版本. 你可以通过 fs.open 获得一个文件的文件描述符.
 
 ### 编码
-
-// TODO
 
 UTF8, GBK, es6 中对编码的支持, 如何计算一个汉字的长度
 
@@ -1110,41 +1117,45 @@ console.log(process.stderr.fd); // 2
  * http://stackoverflow.com/questions/3430939/node-js-readsync-from-stdin
  * @mklement0
  */
-var fs = require('fs');
+var fs = require("fs");
 
 var BUFSIZE = 256;
 var buf = new Buffer(BUFSIZE);
 var bytesRead;
 
 module.exports = function() {
-  var fd = ('win32' === process.platform) ? process.stdin.fd : fs.openSync('/dev/stdin', 'rs');
+  var fd =
+    "win32" === process.platform
+      ? process.stdin.fd
+      : fs.openSync("/dev/stdin", "rs");
   bytesRead = 0;
 
   try {
     bytesRead = fs.readSync(fd, buf, 0, BUFSIZE);
   } catch (e) {
-    if (e.code === 'EAGAIN') { // 'resource temporarily unavailable'
+    if (e.code === "EAGAIN") {
+      // 'resource temporarily unavailable'
       // Happens on OS X 10.8.3 (not Windows 7!), if there's no
       // stdin input - typically when invoking a script without any
       // input (for interactive stdin input).
       // If you were to just continue, you'd create a tight loop.
-      console.error('ERROR: interactive stdin input not supported.');
+      console.error("ERROR: interactive stdin input not supported.");
       process.exit(1);
-    } else if (e.code === 'EOF') {
+    } else if (e.code === "EOF") {
       // Happens on Windows 7, but not OS X 10.8.3:
       // simply signals the end of *piped* stdin input.
-      return '';
+      return "";
     }
     throw e; // unexpected exception
   }
 
   if (bytesRead === 0) {
     // No more stdin input available.
-    // OS X 10.8.3: regardless of input method, this is how the end 
+    // OS X 10.8.3: regardless of input method, this is how the end
     //   of input is signaled.
     // Windows 7: this is how the end of input is signaled for
     //   *interactive* stdin input.
-    return '';
+    return "";
   }
   // Process the chunk read.
 
@@ -1159,21 +1170,21 @@ module.exports = function() {
 `readline` 模块提供了一个用于从 Readble 的 stream (例如 process.stdin) 中一次读取一行的接口. 当然你也可以用来读取文件或者 net, http 的 stream, 比如:
 
 ```javascript
-const readline = require('readline');
-const fs = require('fs');
+const readline = require("readline");
+const fs = require("fs");
 
 const rl = readline.createInterface({
-  input: fs.createReadStream('sample.txt')
+  input: fs.createReadStream("sample.txt")
 });
 
-rl.on('line', (line) => {
+rl.on("line", line => {
   console.log(`Line from file: ${line}`);
 });
 ```
 
 实现上, realine 在读取 TTY 的数据时, 是通过 `input.on('keypress', onkeypress)` 时发现用户按下了回车键来判断是新的 line 的, 而读取一般的 stream 时, 则是通过缓存数据然后用正则 .test 来判断是否为 new line 的.
 
-PS: 打个广告, 如果在编写脚本时, 不习惯这样异步获取输入, 想要同步获取同步的用户输入可以看一看这个 Node.js 版本类 C语言使用的 [scanf](https://github.com/Lellansin/node-scanf/) 模块 (支持 ts).
+PS: 打个广告, 如果在编写脚本时, 不习惯这样异步获取输入, 想要同步获取同步的用户输入可以看一看这个 Node.js 版本类 C 语言使用的 [scanf](https://github.com/Lellansin/node-scanf/) 模块 (支持 ts).
 
 ## REPL
 
@@ -1183,7 +1194,7 @@ Read-Eval-Print-Loop (REPL)
 
 ## Net
 
-目前互联化的核心是建立在 TCP/IP 协议的基础上的, 这些协议将数据分割成小的数据包进行传输, 并且解决传输过程中各种各样复杂的问题. 关于协议的具体细节推荐阅读 W.Richard Stevens 的[《TCP/IP 详解 卷1：协议》](https://www.amazon.cn/TCP-IP%E8%AF%A6%E8%A7%A3%E5%8D%B71-%E5%8D%8F%E8%AE%AE-W-Richard-Stevens/dp/B00116OTVS/), 本文不做赘述, 只是列举一些常见的知识点, 新人推荐看[《图解TCP/IP》](https://www.amazon.cn/%E5%9B%BE%E4%B9%A6/dp/B00DMS9990/), 抓包工具推荐看[《Wireshark网络分析就这么简单》](https://www.amazon.cn/%E5%9B%BE%E4%B9%A6/dp/B00PB5QQ84/).
+目前互联化的核心是建立在 TCP/IP 协议的基础上的, 这些协议将数据分割成小的数据包进行传输, 并且解决传输过程中各种各样复杂的问题. 关于协议的具体细节推荐阅读 W.Richard Stevens 的[《TCP/IP 详解 卷 1：协议》](https://www.amazon.cn/TCP-IP%E8%AF%A6%E8%A7%A3%E5%8D%B71-%E5%8D%8F%E8%AE%AE-W-Richard-Stevens/dp/B00116OTVS/), 本文不做赘述, 只是列举一些常见的知识点, 新人推荐看[《图解 TCP/IP》](https://www.amazon.cn/%E5%9B%BE%E4%B9%A6/dp/B00DMS9990/), 抓包工具推荐看[《Wireshark 网络分析就这么简单》](https://www.amazon.cn/%E5%9B%BE%E4%B9%A6/dp/B00PB5QQ84/).
 
 ### 粘包
 
@@ -1193,22 +1204,22 @@ Read-Eval-Print-Loop (REPL)
 
 可以参见网上流传比较广的一个例子, 连续调用两次 send 分别发送两段数据 data1 和 data2, 在接收端有以下几种常见的情况:
 
-* A. 先接收到 data1, 然后接收到 data2 .
-* B. 先接收到 data1 的部分数据, 然后接收到 data1 余下的部分以及 data2 的全部.
-* C. 先接收到了 data1 的全部数据和 data2 的部分数据, 然后接收到了 data2 的余下的数据.
-* D. 一次性接收到了 data1 和 data2 的全部数据.
+- A. 先接收到 data1, 然后接收到 data2 .
+- B. 先接收到 data1 的部分数据, 然后接收到 data1 余下的部分以及 data2 的全部.
+- C. 先接收到了 data1 的全部数据和 data2 的部分数据, 然后接收到了 data2 的余下的数据.
+- D. 一次性接收到了 data1 和 data2 的全部数据.
 
 其中的 BCD 就是我们常见的粘包的情况. 而对于处理粘包的问题, 常见的解决方案有:
 
-* 1. 多次发送之前间隔一个等待时间
-* 2. 关闭 Nagle 算法
-* 3. 进行封包/拆包
+- 1. 多次发送之前间隔一个等待时间
+- 2. 关闭 Nagle 算法
+- 3. 进行封包/拆包
 
-***方案1***
+**_方案 1_**
 
 只需要等上一段时间再进行下一次 send 就好, 适用于交互频率特别低的场景. 缺点也很明显, 对于比较频繁的场景而言传输效率实在太低. 不过几乎不用做什么处理.
 
-***方案2***
+**_方案 2_**
 
 关闭 Nagle 算法, 在 Node.js 中你可以通过 [`socket.setNoDelay()`](https://nodejs.org/dist/latest-v6.x/docs/api/net.html#net_socket_setnodelay_nodelay) 方法来关闭 Nagle 算法, 让每一次 send 都不缓冲直接发送.
 
@@ -1216,17 +1227,17 @@ Read-Eval-Print-Loop (REPL)
 
 另外, 该方法不适用于网络较差的情况, 因为 Nagle 算法是在服务端进行的包合并情况, 但是如果短时间内客户端的网络情况不好, 或者应用层由于某些原因不能及时将 TCP 的数据 recv, 就会造成多个包在客户端缓冲从而粘包的情况. (如果是在稳定的机房内部通信那么这个概率是比较小可以选择忽略的)
 
-***方案3***
+**_方案 3_**
 
 封包/拆包是目前业内常见的解决方案了. 即给每个数据包在发送之前, 于其前/后放一些有特征的数据, 然后收到数据的时候根据特征数据分割出来各个数据包.
 
 ### 可靠传输
 
-为每一个发送的数据包分配一个序列号(SYN, Synchronize packet), 每一个包在对方收到后要返回一个对应的应答数据包(ACK, Acknowledgement), 发送方如果发现某个包没有被对方 ACK, 则会选择重发. 接收方通过 SYN 序号来保证数据的不会乱序(reordering), 发送方通过 ACK 来保证数据不缺漏, 以此参考决定是否重传. 关于具体的序号计算, 丢包时的重传机制等可以参见阅读陈皓的 [《TCP的那些事儿（上）》](http://coolshell.cn/articles/11564.html) 此处不做赘述.
+为每一个发送的数据包分配一个序列号(SYN, Synchronize packet), 每一个包在对方收到后要返回一个对应的应答数据包(ACK, Acknowledgement), 发送方如果发现某个包没有被对方 ACK, 则会选择重发. 接收方通过 SYN 序号来保证数据的不会乱序(reordering), 发送方通过 ACK 来保证数据不缺漏, 以此参考决定是否重传. 关于具体的序号计算, 丢包时的重传机制等可以参见阅读陈皓的 [《TCP 的那些事儿（上）》](http://coolshell.cn/articles/11564.html) 此处不做赘述.
 
 ### window
 
-TCP 头里有一个 Window 字段, 是接收端告诉发送端自己还有多少缓冲区可以接收数据的. 发送端就可以根据接收端的处理能力来发送数据, 从而避免接收端处理不过来. 详细参见陈皓的 [《TCP的那些事儿（下）》](http://coolshell.cn/articles/11609.html)
+TCP 头里有一个 Window 字段, 是接收端告诉发送端自己还有多少缓冲区可以接收数据的. 发送端就可以根据接收端的处理能力来发送数据, 从而避免接收端处理不过来. 详细参见陈皓的 [《TCP 的那些事儿（下）》](http://coolshell.cn/articles/11609.html)
 
 > window 是否设置的越大越好?
 
@@ -1250,19 +1261,19 @@ backlog 用于设置客户端与服务端 `ESTABLISHED` 之后等待 accept 的�
 
 关于网络连接的建立以及断开, 存在着一个复杂的状态转换机制, 完整的状态表参见 [《The TCP/IP Guide》](http://www.tcpipguide.com/free/t_TCPOperationalOverviewandtheTCPFiniteStateMachineF-2.htm
 
-state|简述
------|---
-CLOSED|连接关闭, 所有连接的初始状态
-LISTEN|监听状态, 等待客户端发送 SYN
-SYN-SENT|客户端发送了 SYN, 等待服务端回复
-SYN-RECEIVED|双方都收到了 SYN, 等待 ACK
-ESTABLISHED| SYN-RECEIVED 收到 ACK 之后, 状态切换为连接已建立.
-CLOSE-WAIT|被动方收到了关闭请求(FIN)后, 发送 ACK, 如果有数据要发送, 则发送数据, 无数据发送则回复 FIN. 状态切换到 LAST-ACK
-LAST-ACK|等待对方 ACK 当前设备的 CLOSE-WAIT 时发送的 FIN, 等到则切换 CLOSED
-FIN-WAIT-1|主动方发送 FIN, 等待 ACK
-FIN-WAIT-2|主动方收到被动方的 ACK, 等待 FIN
-CLOSING|主动方收到了FIN, 却没收到 FIN-WAIT-1 时发的 ACK, 此时等待那个 ACK
-TIME-WAIT|主动方收到 FIN, 返回收到对方 FIN 的 ACK, 等待对方是否真的收到了 ACK, 如果过一会又来一个 FIN, 表示对方没收到, 这时要再 ACK 一次
+| state        | 简述                                                                                                                           |
+| ------------ | ------------------------------------------------------------------------------------------------------------------------------ |
+| CLOSED       | 连接关闭, 所有连接的初始状态                                                                                                   |
+| LISTEN       | 监听状态, 等待客户端发送 SYN                                                                                                   |
+| SYN-SENT     | 客户端发送了 SYN, 等待服务端回复                                                                                               |
+| SYN-RECEIVED | 双方都收到了 SYN, 等待 ACK                                                                                                     |
+| ESTABLISHED  | SYN-RECEIVED 收到 ACK 之后, 状态切换为连接已建立.                                                                              |
+| CLOSE-WAIT   | 被动方收到了关闭请求(FIN)后, 发送 ACK, 如果有数据要发送, 则发送数据, 无数据发送则回复 FIN. 状态切换到 LAST-ACK                 |
+| LAST-ACK     | 等待对方 ACK 当前设备的 CLOSE-WAIT 时发送的 FIN, 等到则切换 CLOSED                                                             |
+| FIN-WAIT-1   | 主动方发送 FIN, 等待 ACK                                                                                                       |
+| FIN-WAIT-2   | 主动方收到被动方的 ACK, 等待 FIN                                                                                               |
+| CLOSING      | 主动方收到了 FIN, 却没收到 FIN-WAIT-1 时发的 ACK, 此时等待那个 ACK                                                             |
+| TIME-WAIT    | 主动方收到 FIN, 返回收到对方 FIN 的 ACK, 等待对方是否真的收到了 ACK, 如果过一会又来一个 FIN, 表示对方没收到, 这时要再 ACK 一次 |
 
 > `TIME_WAIT` 是什么情况? 出现过多的 `TIME_WAIT` 可能是什么原因?
 
@@ -1274,10 +1285,10 @@ TIME-WAIT|主动方收到 FIN, 返回收到对方 FIN 的 ACK, 等待对方是�
 
 > TCP/UDP 的区别? UDP 有粘包吗?
 
-协议|连接性|双工性|可靠性|有序性|有界性|拥塞控制|传输速度|量级|头部大小
----|---|---|---|---|---|---|---|---|---
-TCP|面向连接<br>(Connection oriented)|全双工(1:1)|可靠<br>(重传机制)|有序<br>(通过SYN排序)|无, 有[粘包情况](#粘包)|有|慢|低|20~60字节
-UDP|无连接<br>(Connection less)|n:m|不可靠<br>(丢包后数据丢失)|无序|有消息边界, **无粘包**|无|快|高|8字节
+| 协议 | 连接性                            | 双工性      | 可靠性                     | 有序性                  | 有界性                  | 拥塞控制 | 传输速度 | 量级 | 头部大小   |
+| ---- | --------------------------------- | ----------- | -------------------------- | ----------------------- | ----------------------- | -------- | -------- | ---- | ---------- |
+| TCP  | 面向连接<br>(Connection oriented) | 全双工(1:1) | 可靠<br>(重传机制)         | 有序<br>(通过 SYN 排序) | 无, 有[粘包情况](#粘包) | 有       | 慢       | 低   | 20~60 字节 |
+| UDP  | 无连接<br>(Connection less)       | n:m         | 不可靠<br>(丢包后数据丢失) | 无序                    | 有消息边界, **无粘包**  | 无       | 快       | 高   | 8 字节     |
 
 UDP socket 支持 n 对 m 的连接状态, 在[官方文档](https://nodejs.org/dist/latest-v6.x/docs/api/dgram.html)中有写到在 `dgram.createSocket(options[, callback])` 中的 option 可以指定 `reuseAddr` 即 `SO_REUSEADDR` 标志. 通过 `SO_REUSEADDR` 可以简单的实现 n 对 m 的多播特性 (不过仅在支持多播的系统上才有).
 
@@ -1303,7 +1314,7 @@ UDP socket 支持 n 对 m 的连接状态, 在[官方文档](https://nodejs.org/
 
 ## HTTP
 
-目前世界上运行最良好的分布式集群, 莫过于当前的万维网 (http servers) 了. 目前前端工程师也都是靠 HTTP 协议吃饭的, 所以 2-3 年的前端同学都应该对 HTTP 有比较深的理解了, 所以这里不做太多的赘述. 推荐书籍[《图解HTTP》](https://www.amazon.cn/%E5%9B%BE%E4%B9%A6/dp/B00JTQK1L4/), 博客[HTTP 协议入门](http://www.ruanyifeng.com/blog/2016/08/http.html).
+目前世界上运行最良好的分布式集群, 莫过于当前的万维网 (http servers) 了. 目前前端工程师也都是靠 HTTP 协议吃饭的, 所以 2-3 年的前端同学都应该对 HTTP 有比较深的理解了, 所以这里不做太多的赘述. 推荐书籍[《图解 HTTP》](https://www.amazon.cn/%E5%9B%BE%E4%B9%A6/dp/B00JTQK1L4/), 博客[HTTP 协议入门](http://www.ruanyifeng.com/blog/2016/08/http.html).
 
 另外最近几年开始大家对 HTTP 的面试的考察也渐渐偏向[理解 RESTful 架构](http://www.ruanyifeng.com/blog/2011/09/restful.html). 简单的说, RESTful 是把每个 URI 当做资源 (Resources), 通过 method 作为动词来对资源做不同的动作, 然后服务器返回 status 来得知资源状态的变化 (State Transfer);
 
@@ -1312,7 +1323,7 @@ UDP socket 支持 n 对 m 的连接状态, 在[官方文档](https://nodejs.org/
 因为 HTTP 的方法 (method) 与状态码 (status) 讲解太常见, 你可以使用如下代码打印出来自己看 Node.js 官方定义的, 完整的就不列举了.
 
 ```javascript
-const http = require('http');
+const http = require("http");
 
 console.log(http.METHODS);
 console.log(http.STATUS_CODES);
@@ -1320,13 +1331,13 @@ console.log(http.STATUS_CODES);
 
 一个常见的 method 列表, 关于这些 method 在 RESTful 中的一些应用的详细可以参见[Using HTTP Methods for RESTful Services](http://www.restapitutorial.com/lessons/httpmethods.html)
 
-methods|CRUD|幂等|缓存
----|---|---|---
-GET|Read|✓|✓
-POST|Create||
-PUT|Update/Replace|✓
-PATCH|Update/Modify||
-DELETE|Delete|✓
+| methods | CRUD           | 幂等 | 缓存 |
+| ------- | -------------- | ---- | ---- |
+| GET     | Read           | ✓    | ✓    |
+| POST    | Create         |      |
+| PUT     | Update/Replace | ✓    |
+| PATCH   | Update/Modify  |      |
+| DELETE  | Delete         | ✓    |
 
 > GET 和 POST 有什么区别?
 
@@ -1342,8 +1353,8 @@ POST 是新建 (create) 资源, 非幂等, 同一个请求如果重复 POST 会�
 
 HTTP headers 是在进行 HTTP 请求的交互过程中互相支会对方一些信息的主要字段. 比如请求 (Request) 的时候告诉服务端自己能接受的各项参数, 以及之前就存在本地的一些数据等. 详细各位可以参见 wikipedia:
 
-* [Request fields](https://en.wikipedia.org/wiki/List_of_HTTP_header_fields#Request_fields)
-* [Response fields](https://en.wikipedia.org/wiki/List_of_HTTP_header_fields#Response_fields)
+- [Request fields](https://en.wikipedia.org/wiki/List_of_HTTP_header_fields#Request_fields)
+- [Response fields](https://en.wikipedia.org/wiki/List_of_HTTP_header_fields#Response_fields)
 
 > cookie 与 session 的区别? 服务端如何清除 cookie?
 
@@ -1378,15 +1389,14 @@ location ~* ^/(?:v1|_) {
 
 详见 [JavaScript Script Error.](https://sentry.io/answers/javascript-script-error/)
 
-
 ### Agent
 
 Node.js 中的 `http.Agent` 用于池化 HTTP 客户端请求的 socket (pooling sockets used in HTTP client requests). 也就是复用 HTTP 请求时候的 socket. 如果你没有指定 Agent 的话, 默认用的是 `http.globalAgent`.
 
 另外, 目前在 Node.js 的 6.8.1（包括）到 6.10（不包括）版本中发现一个问题:
 
-* 1. 你将 keepAlive 设置为 `true` 时, socket 有复用
-* 2. 即使 keepAlive 没有设置成 `true` 但是长时间内有大量请求时, 同样有复用 socket (复用情况参见[@zcs19871221](https://github.com/zcs19871221)的[解析](https://github.com/zcs19871221/mydoc/blob/master/nodejsAgent.md))
+- 1. 你将 keepAlive 设置为 `true` 时, socket 有复用
+- 2. 即使 keepAlive 没有设置成 `true` 但是长时间内有大量请求时, 同样有复用 socket (复用情况参见[@zcs19871221](https://github.com/zcs19871221)的[解析](https://github.com/zcs19871221/mydoc/blob/master/nodejsAgent.md))
 
 1 和 2 这两种情况下, 一旦设置了 request timeout, 由于 socket 一直未销毁, 如果你在请求完成以后没有注意清除该事件, 会导致事件重复监听, 且该事件闭包引用了 req, 会导致内存泄漏.
 
@@ -1411,30 +1421,28 @@ function socketCloseListener() {
   // NOTE: It's important to get parser here, because it could be freed by
   // the `socketOnData`.
   var parser = socket.parser;
-  req.emit('close');
+  req.emit("close");
   if (req.res && req.res.readable) {
     // Socket closed before we emitted 'end' below.
-    req.res.emit('aborted');
+    req.res.emit("aborted");
     var res = req.res;
-    res.on('end', function() {
-      res.emit('close');
+    res.on("end", function() {
+      res.emit("close");
     });
     res.push(null);
   } else if (!req.res && !req.socket._hadError) {
     // This socket error fired before we started to
     // receive a response. The error needs to
     // fire on the request.
-    req.emit('error', createHangUpError());  // <------------------- socket hang up
+    req.emit("error", createHangUpError()); // <------------------- socket hang up
     req.socket._hadError = true;
   }
 
   // Too bad.  That output wasn't getting written.
   // This is pretty terrible that it doesn't raise an error.
   // Fixed better in v0.10
-  if (req.output)
-    req.output.length = 0;
-  if (req.outputEncodings)
-    req.outputEncodings.length = 0;
+  if (req.output) req.output.length = 0;
+  if (req.outputEncodings) req.outputEncodings.length = 0;
 
   if (parser) {
     parser.finish();
@@ -1453,10 +1461,10 @@ function socketCloseListener() {
 
 DNS 服务主要基于 UDP, 这里简单介绍 Node.js 实现的接口中的两个方法:
 
-方法|功能|同步|网络请求|速度
----|---|---|---|---
-.lookup(hostname[, options], cb)|通过系统自带的 DNS 缓存 (如 `/etc/hosts`)|同步|无|快
-.resolve(hostname[, rrtype], cb)|通过系统配置的 DNS 服务器指定的记录 (rrtype指定)|异步|有|慢
+| 方法                             | 功能                                              | 同步 | 网络请求 | 速度 |
+| -------------------------------- | ------------------------------------------------- | ---- | -------- | ---- |
+| .lookup(hostname[, options], cb) | 通过系统自带的 DNS 缓存 (如 `/etc/hosts`)         | 同步 | 无       | 快   |
+| .resolve(hostname[, rrtype], cb) | 通过系统配置的 DNS 服务器指定的记录 (rrtype 指定) | 异步 | 有       | 慢   |
 
 > DNS 模块中 .lookup 与 .resolve 的区别?
 
@@ -1466,7 +1474,7 @@ DNS 服务主要基于 UDP, 这里简单介绍 Node.js 实现的接口中的两�
 
 > hosts 文件是什么? 什么叫 DNS 本地解析?
 
-hosts 文件是个没有扩展名的系统文件, 其作用就是将网址域名与其对应的 IP 地址建立一个关联“数据库”, 当用户在浏览器中输入一个需要登录的网址时, 系统会首先自动从 hosts 文件中寻找对应的IP地址. 
+hosts 文件是个没有扩展名的系统文件, 其作用就是将网址域名与其对应的 IP 地址建立一个关联“数据库”, 当用户在浏览器中输入一个需要登录的网址时, 系统会首先自动从 hosts 文件中寻找对应的 IP 地址.
 
 当我们访问一个域名时, 实际上需要的是访问对应的 IP 地址. 这时候, 获取 IP 地址的方式, 先是读取浏览器缓存, 如果未命中 => 接着读取本地 hosts 文件, 如果还是未命中 => 则向 DNS 服务器发送请求获取. 在向 DNS 服务器获取 IP 地址之前的行为, 叫做 DNS 本地解析.
 
@@ -1474,21 +1482,19 @@ hosts 文件是个没有扩展名的系统文件, 其作用就是将网址域名
 
 在网络传输过程中, 如果网速稳定的情况下, 对数据进行压缩, 压缩比率越大, 那么传输的效率就越高等同于速度越快了. zlib 模块提供了 Gzip/Gunzip, Deflate/Inflate 和 DeflateRaw/InflateRaw 等压缩方法的类, 这些类接收相同的参数, 都属于可读写的 Stream 实例.
 
-TODO
-
 ## RPC
 
 RPC (Remote Procedure Call Protocol) 基于 TCP/IP 来实现调用远程服务器的方法, 与 http 同属应用层. 常用于构建集群, 以及微服务 (推荐一本[《Node.js 微服务》](https://www.amazon.cn/%E5%9B%BE%E4%B9%A6/dp/B01MXY8ARP)<del>虽然我还没看完</del>)
 
 常见的 RPC 方式:
 
-* [Thrift](http://thrift.apache.org/)
-* HTTP
-* MQ
+- [Thrift](http://thrift.apache.org/)
+- HTTP
+- MQ
 
 ### Thrift
 
-> **Thrift**是一种[接口描述语言](https://zh.wikipedia.org/wiki/%E6%8E%A5%E5%8F%A3%E6%8F%8F%E8%BF%B0%E8%AF%AD%E8%A8%80 "接口描述语言")和二进制通讯协议，它被用来定义和创建跨语言的服务。它被当作一个[远程过程调用](https://zh.wikipedia.org/wiki/%E8%BF%9C%E7%A8%8B%E8%BF%87%E7%A8%8B%E8%B0%83%E7%94%A8 "远程过程调用")（RPC）框架来使用，是由[Facebook](https://zh.wikipedia.org/wiki/Facebook "Facebook")为“大规模跨语言服务开发”而开发的。它通过一个代码生成引擎联合了一个软件栈，来创建不同程度的、无缝的[跨平台](https://zh.wikipedia.org/wiki/%E8%B7%A8%E5%B9%B3%E5%8F%B0 "跨平台")高效服务，可以使用[C#](https://zh.wikipedia.org/wiki/C%E2%99%AF "C♯")、[C++](https://zh.wikipedia.org/wiki/C%2B%2B "C++")（基于[POSIX](https://zh.wikipedia.org/wiki/POSIX "POSIX")兼容系统）、Cappuccino、[Cocoa](https://zh.wikipedia.org/wiki/Cocoa "Cocoa")、[Delphi](https://zh.wikipedia.org/wiki/Delphi "Delphi")、[Erlang](https://zh.wikipedia.org/wiki/Erlang "Erlang")、[Go](https://zh.wikipedia.org/wiki/Go "Go")、[Haskell](https://zh.wikipedia.org/wiki/Haskell "Haskell")、[Java](https://zh.wikipedia.org/wiki/Java "Java")、[Node.js](https://zh.wikipedia.org/wiki/Node.js "Node.js")、[OCaml](https://zh.wikipedia.org/wiki/OCaml "OCaml")、[Perl](https://zh.wikipedia.org/wiki/Perl "Perl")、[PHP](https://zh.wikipedia.org/wiki/PHP "PHP")、[Python](https://zh.wikipedia.org/wiki/Python "Python")、[Ruby](https://zh.wikipedia.org/wiki/Ruby "Ruby")和[Smalltalk](https://zh.wikipedia.org/wiki/Smalltalk "Smalltalk")。虽然它以前是由Facebook开发的，但它现在是[Apache软件基金会](https://zh.wikipedia.org/wiki/Apache%E8%BD%AF%E4%BB%B6%E5%9F%BA%E9%87%91%E4%BC%9A "Apache软件基金会")的[开源](https://zh.wikipedia.org/wiki/%E5%BC%80%E6%BA%90 "开源")项目了。该实现被描述在2007年4月的一篇由Facebook发表的技术论文中，该论文现由Apache掌管。
+> **Thrift**是一种[接口描述语言](https://zh.wikipedia.org/wiki/%E6%8E%A5%E5%8F%A3%E6%8F%8F%E8%BF%B0%E8%AF%AD%E8%A8%80 "接口描述语言")和二进制通讯协议，它被用来定义和创建跨语言的服务。它被当作一个[远程过程调用](https://zh.wikipedia.org/wiki/%E8%BF%9C%E7%A8%8B%E8%BF%87%E7%A8%8B%E8%B0%83%E7%94%A8 "远程过程调用")（RPC）框架来使用，是由[Facebook](https://zh.wikipedia.org/wiki/Facebook "Facebook")为“大规模跨语言服务开发”而开发的。它通过一个代码生成引擎联合了一个软件栈，来创建不同程度的、无缝的[跨平台](https://zh.wikipedia.org/wiki/%E8%B7%A8%E5%B9%B3%E5%8F%B0 "跨平台")高效服务，可以使用[C#](https://zh.wikipedia.org/wiki/C%E2%99%AF "C♯")、[C++](https://zh.wikipedia.org/wiki/C%2B%2B "C++")（基于[POSIX](https://zh.wikipedia.org/wiki/POSIX "POSIX")兼容系统）、Cappuccino、[Cocoa](https://zh.wikipedia.org/wiki/Cocoa "Cocoa")、[Delphi](https://zh.wikipedia.org/wiki/Delphi "Delphi")、[Erlang](https://zh.wikipedia.org/wiki/Erlang "Erlang")、[Go](https://zh.wikipedia.org/wiki/Go "Go")、[Haskell](https://zh.wikipedia.org/wiki/Haskell "Haskell")、[Java](https://zh.wikipedia.org/wiki/Java "Java")、[Node.js](https://zh.wikipedia.org/wiki/Node.js "Node.js")、[OCaml](https://zh.wikipedia.org/wiki/OCaml "OCaml")、[Perl](https://zh.wikipedia.org/wiki/Perl "Perl")、[PHP](https://zh.wikipedia.org/wiki/PHP "PHP")、[Python](https://zh.wikipedia.org/wiki/Python "Python")、[Ruby](https://zh.wikipedia.org/wiki/Ruby "Ruby")和[Smalltalk](https://zh.wikipedia.org/wiki/Smalltalk "Smalltalk")。虽然它以前是由 Facebook 开发的，但它现在是[Apache 软件基金会](https://zh.wikipedia.org/wiki/Apache%E8%BD%AF%E4%BB%B6%E5%9F%BA%E9%87%91%E4%BC%9A "Apache软件基金会")的[开源](https://zh.wikipedia.org/wiki/%E5%BC%80%E6%BA%90 "开源")项目了。该实现被描述在 2007 年 4 月的一篇由 Facebook 发表的技术论文中，该论文现由 Apache 掌管。
 
 ### HTTP
 
@@ -1499,8 +1505,6 @@ RPC (Remote Procedure Call Protocol) 基于 TCP/IP 来实现调用远程服务�
 ### MQ
 
 使用消息队列 (Message Queue) 来进行 RPC 调用 (RPC over mq) 在业内有不少例子, 比较适合业务解耦/广播/限流等场景.
-
-TODO
 
 # OS
 
@@ -1547,25 +1551,25 @@ false
 
 通过 OS 模块可以获取到当前系统一些基础信息的辅助函数.
 
-|属性|描述|
-|---|---|
-|os.EOL|根据当前系统, 返回当前系统的 `End Of Line`|
-|os.arch()|返回当前系统的 CPU 架构, 如 `'x86'` 和 `'x64'`|
-|os.constants|返回系统常量|
-|os.cpus()|返回 CPU 每个核的信息|
-|os.endianness()|返回 CPU 字节序, 如果是大端字节序返回 `BE`, 小端字节序则 `LE`|
-|os.freemem()|返回系统空闲内存的大小, 单位是字节|
-|os.homedir()|返回当前用户的根目录|
-|os.hostname()|返回当前系统的主机名|
-|os.loadavg()|返回负载信息|
-|os.networkInterfaces()|返回网卡信息 (类似 `ifconfig`)|
-|os.platform()|返回编译时指定的平台信息, 如 `win32`, `linux`, 同 `process.platform()`|
-|os.release()|返回操作系统的分发版本号|
-|os.tmpdir()|返回系统默认的临时文件夹|
-|os.totalmem()|返回总内存大小(同内存条大小)|
-|os.type()|根据 `[uname](https://en.wikipedia.org/wiki/Uname#Examples)` 返回系统的名称|
-|os.uptime()|返回系统的运行时间，单位是秒|
-|os.userInfo([options])|返回当前用户信息|
+| 属性                   | 描述                                                                        |
+| ---------------------- | --------------------------------------------------------------------------- |
+| os.EOL                 | 根据当前系统, 返回当前系统的 `End Of Line`                                  |
+| os.arch()              | 返回当前系统的 CPU 架构, 如 `'x86'` 和 `'x64'`                              |
+| os.constants           | 返回系统常量                                                                |
+| os.cpus()              | 返回 CPU 每个核的信息                                                       |
+| os.endianness()        | 返回 CPU 字节序, 如果是大端字节序返回 `BE`, 小端字节序则 `LE`               |
+| os.freemem()           | 返回系统空闲内存的大小, 单位是字节                                          |
+| os.homedir()           | 返回当前用户的根目录                                                        |
+| os.hostname()          | 返回当前系统的主机名                                                        |
+| os.loadavg()           | 返回负载信息                                                                |
+| os.networkInterfaces() | 返回网卡信息 (类似 `ifconfig`)                                              |
+| os.platform()          | 返回编译时指定的平台信息, 如 `win32`, `linux`, 同 `process.platform()`      |
+| os.release()           | 返回操作系统的分发版本号                                                    |
+| os.tmpdir()            | 返回系统默认的临时文件夹                                                    |
+| os.totalmem()          | 返回总内存大小(同内存条大小)                                                |
+| os.type()              | 根据 `[uname](https://en.wikipedia.org/wiki/Uname#Examples)` 返回系统的名称 |
+| os.uptime()            | 返回系统的运行时间，单位是秒                                                |
+| os.userInfo([options]) | 返回当前用户信息                                                            |
 
 > 不同操作系统的换行符 (EOL) 有什么区别?
 
@@ -1573,20 +1577,20 @@ end of line (EOL) 同 newline, line ending, 以及 line break.
 
 通常由 line feed (LF, `\n`) 和 carriage return (CR, `\r`) 组成. 常见的情况:
 
-|符号|系统|
-|---|---|
-|LF|在 Unix 或 Unix 相容系统 (GNU/Linux, AIX, Xenix, Mac OS X, ...)、BeOS、Amiga、RISC OS|
-|CR+LF|MS-DOS、微软视窗操作系统 (Microsoft Windows)、大部分非 Unix 的系统|
-|CR|Apple II 家族, Mac OS 至版本9|
+| 符号  | 系统                                                                                  |
+| ----- | ------------------------------------------------------------------------------------- |
+| LF    | 在 Unix 或 Unix 相容系统 (GNU/Linux, AIX, Xenix, Mac OS X, ...)、BeOS、Amiga、RISC OS |
+| CR+LF | MS-DOS、微软视窗操作系统 (Microsoft Windows)、大部分非 Unix 的系统                    |
+| CR    | Apple II 家族, Mac OS 至版本 9                                                        |
 
 如果不了解 EOL 跨系统的兼容情况, 那么在处理文件的行分割/行统计等情况时可能会被坑.
 
 ### OS 常量
 
-* 信号常量 (Signal Constants), 如 `SIGHUP`, `SIGKILL` 等.
-* POSIX 错误常量 (POSIX Error Constants), 如 `EACCES`, `EADDRINUSE` 等.
-* Windows 错误常量 (Windows Specific Error Constants), 如 `WSAEACCES`, `WSAEBADF` 等.
-* libuv 常量 (libuv Constants), 仅 `UV_UDP_REUSEADDR`.
+- 信号常量 (Signal Constants), 如 `SIGHUP`, `SIGKILL` 等.
+- POSIX 错误常量 (POSIX Error Constants), 如 `EACCES`, `EADDRINUSE` 等.
+- Windows 错误常量 (Windows Specific Error Constants), 如 `WSAEACCES`, `WSAEBADF` 等.
+- libuv 常量 (libuv Constants), 仅 `UV_UDP_REUSEADDR`.
 
 ## Path
 
@@ -1594,22 +1598,22 @@ Node.js 内置的 path 是用于处理路径问题的模块. 不过众所周知,
 
 ### Windows vs. POSIX
 
-|POSIX|值|Windows|值|
-|---|---|---|---|
-|path.posix.sep|`'/'`|path.win32.sep|`'\\'`|
-|path.posix.normalize('/foo/bar//baz/asdf/quux/..')|`'/foo/bar/baz/asdf'`|path.win32.normalize('C:\\temp\\\\foo\\bar\\..\\')|`'C:\\temp\\foo\\'`|
-|path.posix.basename('/tmp/myfile.html')|`'myfile.html'`|path.win32.basename('C:\\temp\\myfile.html')|`'myfile.html'`|
-|path.posix.join('/asdf', '/test.html')|`'/asdf/test.html'`|path.win32.join('/asdf', '/test.html')|`'\\asdf\\test.html'`|
-|path.posix.relative('/root/a', '/root/b')|`'../b'`|path.win32.relative('C:\\a', 'c:\\b')|`'..\\b'`
-|path.posix.isAbsolute('/baz/..')|`true`|path.win32.isAbsolute('C:\\foo\\..')|`true`|
-|path.posix.delimiter|`':'`|path.win32.delimiter|`','`|
-|process.env.PATH|`'/usr/bin:/bin'`|process.env.PATH|`C:\Windows\system32;C:\Program Files\node\'`|
-|PATH.split(path.posix.delimiter)|`['/usr/bin', '/bin']`|PATH.split(path.win32.delimiter)|`['C:\\Windows\\system32', 'C:\\Program Files\\node\\']`|
+| POSIX                                              | 值                     | Windows                                            | 值                                                       |
+| -------------------------------------------------- | ---------------------- | -------------------------------------------------- | -------------------------------------------------------- |
+| path.posix.sep                                     | `'/'`                  | path.win32.sep                                     | `'\\'`                                                   |
+| path.posix.normalize('/foo/bar//baz/asdf/quux/..') | `'/foo/bar/baz/asdf'`  | path.win32.normalize('C:\\temp\\\\foo\\bar\\..\\') | `'C:\\temp\\foo\\'`                                      |
+| path.posix.basename('/tmp/myfile.html')            | `'myfile.html'`        | path.win32.basename('C:\\temp\\myfile.html')       | `'myfile.html'`                                          |
+| path.posix.join('/asdf', '/test.html')             | `'/asdf/test.html'`    | path.win32.join('/asdf', '/test.html')             | `'\\asdf\\test.html'`                                    |
+| path.posix.relative('/root/a', '/root/b')          | `'../b'`               | path.win32.relative('C:\\a', 'c:\\b')              | `'..\\b'`                                                |
+| path.posix.isAbsolute('/baz/..')                   | `true`                 | path.win32.isAbsolute('C:\\foo\\..')               | `true`                                                   |
+| path.posix.delimiter                               | `':'`                  | path.win32.delimiter                               | `','`                                                    |
+| process.env.PATH                                   | `'/usr/bin:/bin'`      | process.env.PATH                                   | `C:\Windows\system32;C:\Program Files\node\'`            |
+| PATH.split(path.posix.delimiter)                   | `['/usr/bin', '/bin']` | PATH.split(path.win32.delimiter)                   | `['C:\\Windows\\system32', 'C:\\Program Files\\node\\']` |
 
 看了上表之后, 你应该了解到当你处于某个平台之下的时候, 所使用的 `path` 模块的方法其实就是对应的平台的方法, 例如笔者这里用的是 mac, 所以:
 
 ```javascript
-const path = require('path');
+const path = require("path");
 console.log(path.basename === path.posix.basename); // true
 ```
 
@@ -1620,7 +1624,7 @@ console.log(path.basename === path.posix.basename); // true
 on POSIX:
 
 ```javascript
-path.parse('/home/user/dir/file.txt')
+path.parse("/home/user/dir/file.txt");
 // Returns:
 // {
 //    root : "/",
@@ -1643,7 +1647,7 @@ path.parse('/home/user/dir/file.txt')
 on Windows:
 
 ```javascript
-path.parse('C:\\path\\dir\\file.txt')
+path.parse("C:\\path\\dir\\file.txt");
 // Returns:
 // {
 //    root : "C:\\",
@@ -1665,62 +1669,62 @@ path.parse('C:\\path\\dir\\file.txt')
 
 ### path.extname(path)
 
-|case|return|
-|---|---|
-|path.extname('index.html')|`'.html'`|
-|path.extname('index.coffee.md')|`'.md'`|
-|path.extname('index.')|`'.'`|
-|path.extname('index')|`''`|
-|path.extname('.index')|`''`|
+| case                            | return    |
+| ------------------------------- | --------- |
+| path.extname('index.html')      | `'.html'` |
+| path.extname('index.coffee.md') | `'.md'`   |
+| path.extname('index.')          | `'.'`     |
+| path.extname('index')           | `''`      |
+| path.extname('.index')          | `''`      |
 
 ## 命令行参数
 
 命令行参数 (Command Line Options), 即对 CLI 使用上的一些文档. 关于 CLI 主要有 4 种使用方式:
 
-* node [options] [v8 options] [script.js | -e "script"] [arguments]
-* node debug [script.js | -e "script" | `<host>:<port>`] …
-* node --v8-options
-* 无参数直接启动 REPL 环境
+- node [options][v8 options] [script.js | -e "script"][arguments]
+- node debug [script.js | -e "script" | `<host>:<port>`] …
+- node --v8-options
+- 无参数直接启动 REPL 环境
 
 ### Options
 
-|参数|简介|
-|---|---|
-|-v, --version|查看当前 node 版本|
-|-h, --help|查看帮助文档|
-|-e, --eval "script"|将参数字符串当做代码执行
-|-p, --print "script"|打印 `-e` 的返回值
-|-c, --check|检查语法并不执行
-|-i, --interactive|即使 stdin 不是终端也打开 REPL 模式
-|-r, --require module|在启动前预先 `require` 指定模块
-|--no-deprecation|关闭废弃模块警告
-|--trace-deprecation|打印废弃模块的堆栈跟踪信息
-|--throw-deprecation|执行废弃模块时抛出错误
-|--no-warnings|无视报警（包括废弃警告）
-|--trace-warnings|打印警告的 stack （包括废弃模块）
-|--trace-sync-io|只要检测到异步 I/O 出于 Event loop 的开头就打印 stack trace
-|--zero-fill-buffers|自动初始化(zero-fill) **Buffer** 和 **SlowBuffer**
-|--preserve-symlinks|在解析和缓存模块时指示模块加载程序保存符号链接
-|--track-heap-objects|为堆快照跟踪堆对象的分配情况
-|--prof-process|使用 v8 选项 `--prof` 生成 Profilling 报告
-|--v8-options|显示 v8 命令行选项
-|--tls-cipher-list=list|指明替代的默认 TLS 加密器列表
-|--enable-fips|在启动时开启 FIPS-compliant crypto
-|--force-fips|在启动时强制实施 FIPS-compliant
-|--openssl-config=file|启动时加载 OpenSSL 配置文件
-|--icu-data-dir=file|指定ICU数据加载路径
+| 参数                   | 简介                                                        |
+| ---------------------- | ----------------------------------------------------------- |
+| -v, --version          | 查看当前 node 版本                                          |
+| -h, --help             | 查看帮助文档                                                |
+| -e, --eval "script"    | 将参数字符串当做代码执行                                    |
+| -p, --print "script"   | 打印 `-e` 的返回值                                          |
+| -c, --check            | 检查语法并不执行                                            |
+| -i, --interactive      | 即使 stdin 不是终端也打开 REPL 模式                         |
+| -r, --require module   | 在启动前预先 `require` 指定模块                             |
+| --no-deprecation       | 关闭废弃模块警告                                            |
+| --trace-deprecation    | 打印废弃模块的堆栈跟踪信息                                  |
+| --throw-deprecation    | 执行废弃模块时抛出错误                                      |
+| --no-warnings          | 无视报警（包括废弃警告）                                    |
+| --trace-warnings       | 打印警告的 stack （包括废弃模块）                           |
+| --trace-sync-io        | 只要检测到异步 I/O 出于 Event loop 的开头就打印 stack trace |
+| --zero-fill-buffers    | 自动初始化(zero-fill) **Buffer** 和 **SlowBuffer**          |
+| --preserve-symlinks    | 在解析和缓存模块时指示模块加载程序保存符号链接              |
+| --track-heap-objects   | 为堆快照跟踪堆对象的分配情况                                |
+| --prof-process         | 使用 v8 选项 `--prof` 生成 Profilling 报告                  |
+| --v8-options           | 显示 v8 命令行选项                                          |
+| --tls-cipher-list=list | 指明替代的默认 TLS 加密器列表                               |
+| --enable-fips          | 在启动时开启 FIPS-compliant crypto                          |
+| --force-fips           | 在启动时强制实施 FIPS-compliant                             |
+| --openssl-config=file  | 启动时加载 OpenSSL 配置文件                                 |
+| --icu-data-dir=file    | 指定 ICU 数据加载路径                                       |
 
 ### 环境变量
 
-|环境变量|简介|
-|----|----|
-|`NODE_DEBUG=module[,…]`|指定要打印调试信息的核心模块列表
-|`NODE_PATH=path[:…]`|指定搜索目录模块路径的前缀列表
-|`NODE_DISABLE_COLORS=1`|关闭 REPL 的颜色显示
-|`NODE_ICU_DATA=file`|ICU (Intl object) 数据路径
-|`NODE_REPL_HISTORY=file`|持久化存储REPL历史文件的路径
-|`NODE_TTY_UNSAFE_ASYNC=1`|设置为1时, 将同步操作 stdio (如 console.log 变成同步)
-|`NODE_EXTRA_CA_CERTS=file`|指定 CA (如 VeriSign) 的额外证书路径
+| 环境变量                   | 简介                                                    |
+| -------------------------- | ------------------------------------------------------- |
+| `NODE_DEBUG=module[,…]`    | 指定要打印调试信息的核心模块列表                        |
+| `NODE_PATH=path[:…]`       | 指定搜索目录模块路径的前缀列表                          |
+| `NODE_DISABLE_COLORS=1`    | 关闭 REPL 的颜色显示                                    |
+| `NODE_ICU_DATA=file`       | ICU (Intl object) 数据路径                              |
+| `NODE_REPL_HISTORY=file`   | 持久化存储 REPL 历史文件的路径                          |
+| `NODE_TTY_UNSAFE_ASYNC=1`  | 设置为 1 时, 将同步操作 stdio (如 console.log 变成同步) |
+| `NODE_EXTRA_CA_CERTS=file` | 指定 CA (如 VeriSign) 的额外证书路径                    |
 
 ## 负载
 
@@ -1742,7 +1746,7 @@ load average: 0.09, 0.05, 0.01
 
 ## CheckList
 
-> 有一个醉汉半夜在路灯下徘徊，路过的人奇怪地问他：“你在路灯下找什么？”醉汉回答：“我在找我的KEY”,路人更奇怪了：“找钥匙为什么在路灯下?”，醉汉说：“因为这里最亮！”。
+> 有一个醉汉半夜在路灯下徘徊，路过的人奇怪地问他：“你在路灯下找什么？”醉汉回答：“我在找我的 KEY”,路人更奇怪了：“找钥匙为什么在路灯下?”，醉汉说：“因为这里最亮！”。
 
 很多服务端的同学在说到检查服务器状态时只知道使用 `top` 命令, 其实情况就和上面的笑话一样, 因为对于他们而言 `top` 是最亮的那盏路灯.
 
@@ -1871,26 +1875,26 @@ file locks                      (-x) unlimited
 
 在 Node.js 中的错误主要有以下四种类型：
 
-|错误|名称|触发|
-|---|---|---|
-|Standard JavaScript errors|标准 JavaScript 错误|由错误代码触发|
-|System errors|系统错误|由操作系统触发|
-|User-specified errors|用户自定义错误|通过 throw 抛出|
-|Assertion errors|断言错误|由 `assert` 模块触发|
+| 错误                       | 名称                 | 触发                 |
+| -------------------------- | -------------------- | -------------------- |
+| Standard JavaScript errors | 标准 JavaScript 错误 | 由错误代码触发       |
+| System errors              | 系统错误             | 由操作系统触发       |
+| User-specified errors      | 用户自定义错误       | 通过 throw 抛出      |
+| Assertion errors           | 断言错误             | 由 `assert` 模块触发 |
 
 其中标准的 JavaScript 错误常见有：
 
-* [EvalError](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/EvalError): 调用 eval() 出现错误时抛出该错误
-* [SyntaxError](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/SyntaxError): 代码不符合 JavaScript 语法规范时抛出该错误
-* [RangeError](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RangeError): 数组越界时抛出该错误
-* [ReferenceError](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/ReferenceError): 引用未定义的变量时抛出该错误
-* [TypeError](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/TypeError): 参数类型错误时抛出该错误
-* [URIError](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/URIError): 误用全局的 URI 处理函数时抛出该错误
+- [EvalError](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/EvalError): 调用 eval() 出现错误时抛出该错误
+- [SyntaxError](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/SyntaxError): 代码不符合 JavaScript 语法规范时抛出该错误
+- [RangeError](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RangeError): 数组越界时抛出该错误
+- [ReferenceError](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/ReferenceError): 引用未定义的变量时抛出该错误
+- [TypeError](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/TypeError): 参数类型错误时抛出该错误
+- [URIError](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/URIError): 误用全局的 URI 处理函数时抛出该错误
 
 而常见的系统错误列表可以通过 Node.js 的 os 对象常看列表：
 
 ```javascript
-const os = require('os');
+const os = require("os");
 
 console.log(os.constants.errno);
 ```
@@ -1905,32 +1909,30 @@ console.log(os.constants.errno);
 
 在 Node.js 中错误处理主要有一下几种方法:
 
-* callback(err, data) 回调约定
-* throw / try / catch 
-* EventEmitter 的 error 事件
+- callback(err, data) 回调约定
+- throw / try / catch
+- EventEmitter 的 error 事件
 
 callback(err, data) 这种形式的错误处理起来繁琐, 并不具备强制性, 目前已经处于仅需要了解, 不推荐使用的情况. 而 domain 模块则是半只脚踏进棺材了.
 
-1) 感谢 [co](https://github.com/visionmedia/co) 的先河, 现在的你已经简单的使用 try/catch 保护关键的位置, 以 koa 为例, 可以通过中间件的形式来进行错误处理, 详见 [Koa error handling](https://github.com/koajs/koa/wiki/Error-Handling). 之后的 async/await 均属于这种模式.
+1. 感谢 [co](https://github.com/visionmedia/co) 的先河, 现在的你已经简单的使用 try/catch 保护关键的位置, 以 koa 为例, 可以通过中间件的形式来进行错误处理, 详见 [Koa error handling](https://github.com/koajs/koa/wiki/Error-Handling). 之后的 async/await 均属于这种模式.
 
-2) 通过 EventEmitter 的错误监听形式为各大关键的对象加上错误监听的回调. 例如监听 http server, tcp server 等对象的 `error` 事件以及 process 对象提供的 `uncaughtException` 和 `unhandledRejection` 等等.
+2. 通过 EventEmitter 的错误监听形式为各大关键的对象加上错误监听的回调. 例如监听 http server, tcp server 等对象的 `error` 事件以及 process 对象提供的 `uncaughtException` 和 `unhandledRejection` 等等.
 
-3) 使用 Promise 来封装异步, 并通过 Promise 的错误处理来 handle 错误.
+3. 使用 Promise 来封装异步, 并通过 Promise 的错误处理来 handle 错误.
 
-4) 如果上述办法不能起到良好的作用, 那么你需要学习如何优雅的 [Let It Crash](http://wiki.c2.com/?LetItCrash)
+4. 如果上述办法不能起到良好的作用, 那么你需要学习如何优雅的 [Let It Crash](http://wiki.c2.com/?LetItCrash)
 
 > 为什么要在 cb 的第一参数传 error? 为什么有的 cb 第一个参数不是 error, 例如 http.createServer?
-
-TODO
 
 ### 错误栈丢失
 
 ```javascript
 function test() {
-  throw new Error('test error');
+  throw new Error("test error");
 }
 
-function main() {  
+function main() {
   test();
 }
 
@@ -1963,15 +1965,14 @@ Error: test error
 
 ```javascript
 function test() {
-  throw new Error('test error');
+  throw new Error("test error");
 }
 
-function main() {  
+function main() {
   setImmediate(() => test());
 }
 
 main();
-
 ```
 
 我们发现
@@ -2008,17 +2009,17 @@ Error: test error
 当异常没有被捕获一路冒泡到 Event Loop 时就会触发该事件 process 对象上的 `uncaughtException` 事件. 默认情况下, Node.js 对于此类异常会直接将其堆栈跟踪信息输出给 `stderr` 并结束进程, 而为 `uncaughtException` 事件添加监听可以覆盖该默认行为, 不会直接结束进程.
 
 ```javascript
-process.on('uncaughtException', (err) => {
+process.on("uncaughtException", err => {
   console.log(`Caught exception: ${err}`);
 });
 
 setTimeout(() => {
-  console.log('This will still run.');
+  console.log("This will still run.");
 }, 500);
 
 // Intentionally cause an exception, but don't catch it.
 nonexistentFunc();
-console.log('This will not run.');
+console.log("This will not run.");
 ```
 
 #### 合理使用 uncaughtException
@@ -2029,7 +2030,7 @@ console.log('This will not run.');
 
 如果在 `.on` 指定的监听回调中报错不会被捕获, Node.js 的进程会直接终断并返回一个非零的退出码, 最后输出相应的堆栈信息. 否则, 会出现无限递归. 除此之外, 内存崩溃/底层报错等情况也不会被捕获, **目前猜测**是 v8/C++ 那边撂担子不干了, Node.js 完全插不上话导致的 (TODO 整理到这里才想起来这个念头尚未验证, 如果有空的朋友帮忙验证下).
 
-所以官方建议的使用 `uncaughtException` 的正确姿势是在结束进程前使用同步的方式清理已使用的资源 (文件描述符、句柄等) 然后 process.exit. 
+所以官方建议的使用 `uncaughtException` 的正确姿势是在结束进程前使用同步的方式清理已使用的资源 (文件描述符、句柄等) 然后 process.exit.
 
 在 uncaughtException 事件之后执行普通的恢复操作并不安全. 官方建议是另外在专门准备一个 monitor 进程来做健康检查并通过 monitor 来管理恢复情况, 并在必要的时候重启 (所以官方是含蓄的提醒各位用 pm2 之类的工具).
 
@@ -2039,18 +2040,18 @@ console.log('This will not run.');
 
 该事件的回调函数接收以下参数：
 
-* `reason` [`<Error>`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Error) | `<any>` 该 Promise 被 reject 的对象 (通常为 Error 对象)
-* `p` 被 reject 的 Promise 本身
+- `reason` [`<Error>`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Error) | `<any>` 该 Promise 被 reject 的对象 (通常为 Error 对象)
+- `p` 被 reject 的 Promise 本身
 
 例如
 
 ```javascript
-process.on('unhandledRejection', (reason, p) => {
-  console.log('Unhandled Rejection at: Promise', p, 'reason:', reason);
+process.on("unhandledRejection", (reason, p) => {
+  console.log("Unhandled Rejection at: Promise", p, "reason:", reason);
   // application specific logging, throwing an error, or other logic here
 });
 
-somePromise.then((res) => {
+somePromise.then(res => {
   return reportToUser(JSON.pasre(res)); // note the typo (`pasre`)
 }); // no `.catch` or `.then`
 ```
@@ -2060,7 +2061,7 @@ somePromise.then((res) => {
 ```javascript
 function SomeResource() {
   // Initially set the loaded status to a rejected promise
-  this.loaded = Promise.reject(new Error('Resource not yet loaded!'));
+  this.loaded = Promise.reject(new Error("Resource not yet loaded!"));
 }
 
 var resource = new SomeResource();
@@ -2073,7 +2074,7 @@ var resource = new SomeResource();
 
 Node.js 早期, try/catch 无法捕获异步的错误, 而错误优先的 callback 仅仅是一种约定并没有强制性并且写起来十分繁琐. 所以为了能够很好的捕获异常, Node.js 从 v0.8 开始引入 domain 这个模块.
 
-domain 本身是一个 EventEmitter 对象, 其中文意思是 "域" 的意思, 捕获异步异常的基本思路是创建一个域, cb 函数会在定义时会继承上一层的域, 报错通过当前域的 `.emit('error', err)` 方法触发错误事件将错误传递上去, 从而使得异步错误可以被强制捕获. (更多内容详见 [Node.js 异步异常的处理与domain模块解析](https://cnodejs.org/topic/516b64596d38277306407936))
+domain 本身是一个 EventEmitter 对象, 其中文意思是 "域" 的意思, 捕获异步异常的基本思路是创建一个域, cb 函数会在定义时会继承上一层的域, 报错通过当前域的 `.emit('error', err)` 方法触发错误事件将错误传递上去, 从而使得异步错误可以被强制捕获. (更多内容详见 [Node.js 异步异常的处理与 domain 模块解析](https://cnodejs.org/topic/516b64596d38277306407936))
 
 但是 domain 的引入也带来了更多新的问题. 比如依赖的模块无法继承你定义的 domain, 导致你写的 domain 无法 cover 依赖模块报错. 而且, 很多人 (特别是新人) 由于不了解 Node.js 的内存/异步流程等问题, 在使用 domain 处理报错的时候, 没有做到完善的处理并盲目的让代码继续走下去, 这很可能导致**项目完全无法维护** (可能出现的问题真是不胜枚举, 各种梦魇...)
 
@@ -2097,11 +2098,11 @@ domain 本身是一个 EventEmitter 对象, 其中文意思是 "域" 的意思, 
 
 这里并不是介绍 V8, 而是介绍 Node.js 中的 V8 这个模块. 该模块用于开放 Node.js 内建的 V8 引擎的事件和接口. 这些接口由 V8 底层决定, 所以无法保证绝对的稳定性.
 
-|接口|描述|
-|---|---|
-|v8.getHeapStatistics()|获取 heap 信息|
-|v8.getHeapSpaceStatistics()|获取 heap space 信息|
-|v8.setFlagsFromString(string)|动态设置 V8 options|
+| 接口                          | 描述                 |
+| ----------------------------- | -------------------- |
+| v8.getHeapStatistics()        | 获取 heap 信息       |
+| v8.getHeapSpaceStatistics()   | 获取 heap space 信息 |
+| v8.setFlagsFromString(string) | 动态设置 V8 options  |
 
 ### v8.setFlagsFromString(string)
 
@@ -2113,9 +2114,11 @@ domain 本身是一个 EventEmitter 对象, 其中文意思是 "域" 的意思, 
 
 ```javascript
 // Print GC events to stdout for one minute.
-const v8 = require('v8');
-v8.setFlagsFromString('--trace_gc');
-setTimeout(function() { v8.setFlagsFromString('--notrace_gc'); }, 60e3);
+const v8 = require("v8");
+v8.setFlagsFromString("--trace_gc");
+setTimeout(function() {
+  v8.setFlagsFromString("--notrace_gc");
+}, 60e3);
 ```
 
 ## 内存快照
@@ -2134,7 +2137,7 @@ CPU profiling (剖析) 常用于性能优化. 有许多用于做 profiling 的�
 node --prof app.js
 ```
 
-程序运行之后会生成一个 `isolate-0xnnnnnnnnnnnn-v8.log` 在当前运行目录. 
+程序运行之后会生成一个 `isolate-0xnnnnnnnnnnnn-v8.log` 在当前运行目录.
 
 你可以使用 `--prof-process` 来生成报告查看
 
@@ -2211,11 +2214,11 @@ Statistical profiling result from isolate-0x103001200-v8.log, (12042 ticks, 2634
 	 ...
 ```
 
-|字段|描述|
-|---|---|
-|ticks|时间片|
-|total|当前操作执行的时间占总时间的比率|
-|nonlib|当前非 System library 执行时间比率|
+| 字段   | 描述                               |
+| ------ | ---------------------------------- |
+| ticks  | 时间片                             |
+| total  | 当前操作执行的时间占总时间的比率   |
+| nonlib | 当前非 System library 执行时间比率 |
 
 # util
 
@@ -2239,54 +2242,55 @@ Statistical profiling result from isolate-0x103001200-v8.log, (12042 ticks, 2634
 
 常见的需要转义的字符列表:
 
-|字符|encodeURI|
-|---|---|
-|`' '`|`'%20'`|
-|`<`|`'%3C'`|
-|`>`|`'%3E'`|
-|`"`|`'%22'`|
-|\`|`'%60'`|
-|`\r`|`'%0D'`|
-|`\n`|`'%0A'`|
-|`\t`|`'%09'`|
-|`{`|`'%7B'`|
-|`}`|`'%7D'`|
-|`|`|`'%7C'`|
-|`\\`|`'%5C'`|
-|`^`|`'%5E'`|
-|`'`|`'%27'`|
+| 字符  | encodeURI |
+| ----- | --------- |
+| `' '` | `'%20'`   |
+| `<`   | `'%3C'`   |
+| `>`   | `'%3E'`   |
+| `"`   | `'%22'`   |
+| \`    | `'%60'`   |
+| `\r`  | `'%0D'`   |
+| `\n`  | `'%0A'`   |
+| `\t`  | `'%09'`   |
+| `{`   | `'%7B'`   |
+| `}`   | `'%7D'`   |
+| `|`   | `'%7C'`   |
+| `\\`  | `'%5C'`   |
+| `^`   | `'%5E'`   |
+| `'`   | `'%27'`   |
 
 想了解更多? 你可以这样:
 
 ```javascript
-Array(range).fill(0)
+Array(range)
+  .fill(0)
   .map((_, i) => String.fromCharCode(i))
-  .map(encodeURI)
+  .map(encodeURI);
 ```
 
 ## Query Strings
 
 query string 属于 URL 的一部分, 见上方 URL 的表. 在 Node.js 中有内置提供一个 `querystring` 的模块.
 
-|方法|描述|
-|---|---|
-|.parse(str[, sep[, eq[, options]]])|将一个 query string 解析为 json 对象|
-|.unescape(str)|供 .parse 调用的内置解转义方法, 暴露出来以供用户自行替代|
-|.stringify(obj[, sep[, eq[, options]]])|将一个 json 对象转换成 query string|
-|.escape(str)|供 .stringify 调用的内置转义方法, 暴露出来以供用户自行替代|
+| 方法                                    | 描述                                                       |
+| --------------------------------------- | ---------------------------------------------------------- |
+| .parse(str[, sep[, eq[, options]]])     | 将一个 query string 解析为 json 对象                       |
+| .unescape(str)                          | 供 .parse 调用的内置解转义方法, 暴露出来以供用户自行替代   |
+| .stringify(obj[, sep[, eq[, options]]]) | 将一个 json 对象转换成 query string                        |
+| .escape(str)                            | 供 .stringify 调用的内置转义方法, 暴露出来以供用户自行替代 |
 
 Node.js 内置的 querystring 目前对于有深度的结构尚不支持. 见如下:
 
 ```javascript
-const qs = require('qs'); // 第三方
-const querystring = require('querystring'); // Node.js 内置
+const qs = require("qs"); // 第三方
+const querystring = require("querystring"); // Node.js 内置
 
 let obj = { a: { b: { c: 1 } } };
 
 console.log(qs.stringify(obj)); // 'a%5Bb%5D%5Bc%5D=1'
 console.log(querystring.stringify(obj)); // 'a='
 
-let str = 'a%5Bb%5D%5Bc%5D=1';
+let str = "a%5Bb%5D%5Bc%5D=1";
 
 console.log(qs.parse(str)); // { a: { b: { c: '1' } } }
 console.log(querystring.parse(str)); // { 'a[b][c]': '1' }
@@ -2295,10 +2299,10 @@ console.log(querystring.parse(str)); // { 'a[b][c]': '1' }
 > <a name="q-get-param"></a> HTTP 如何通过 GET 方法 (URL) 传递 let arr = [1,2,3,4] 给服务器?
 
 ```javascript
-const qs = require('qs');
+const qs = require("qs");
 
-let arr = [1,2,3,4];
-let str = qs.stringify({arr});
+let arr = [1, 2, 3, 4];
+let str = qs.stringify({ arr });
 
 console.log(str); // arr%5B0%5D=1&arr%5B1%5D=2&arr%5B2%5D=3&arr%5B3%5D=4
 console.log(decodeURI(str)); // 'arr[0]=1&arr[1]=2&arr[2]=3&arr[3]=4'
@@ -2308,30 +2312,30 @@ console.log(qs.parse(str)); // { arr: [ '1', '2', '3', '4' ] }
 通过 `https://your.host/api/?arr[0]=1&arr[1]=2&arr[2]=3&arr[3]=4` 即可传递把 arr 数组传递给服务器
 
 ## util
- 
-util.is*() 从 v4.0.0 开始被不建议使用即将废弃 (deprecated). 大概的废弃原因, 笔者个人认为是维护这些功能吃力不讨好, 而且现在流行的轮子那么多. 那么一下是具体列表:
 
-* util.debug(string)
-* util.error([...strings])
-* util.isArray(object)
-* util.isBoolean(object)
-* util.isBuffer(object)
-* util.isDate(object)
-* util.isError(object)
-* util.isFunction(object)
-* util.isNull(object)
-* util.isNullOrUndefined(object)
-* util.isNumber(object)
-* util.isObject(object)
-* util.isPrimitive(object)
-* util.isRegExp(object)
-* util.isString(object)
-* util.isSymbol(object)
-* util.isUndefined(object)
-* util.log(string)
-* util.print([...strings])
-* util.puts([...strings])
-* util._extend(target, source)
+util.is\*() 从 v4.0.0 开始被不建议使用即将废弃 (deprecated). 大概的废弃原因, 笔者个人认为是维护这些功能吃力不讨好, 而且现在流行的轮子那么多. 那么一下是具体列表:
+
+- util.debug(string)
+- util.error([...strings])
+- util.isArray(object)
+- util.isBoolean(object)
+- util.isBuffer(object)
+- util.isDate(object)
+- util.isError(object)
+- util.isFunction(object)
+- util.isNull(object)
+- util.isNullOrUndefined(object)
+- util.isNumber(object)
+- util.isObject(object)
+- util.isPrimitive(object)
+- util.isRegExp(object)
+- util.isString(object)
+- util.isSymbol(object)
+- util.isUndefined(object)
+- util.log(string)
+- util.print([...strings])
+- util.puts([...strings])
+- util.\_extend(target, source)
 
 其中大部分都可以作为面试题来问如何实现.
 
@@ -2358,18 +2362,20 @@ https://github.com/nodejs/node/blob/v7.6.0/lib/util.js#L960
  *     the super constructor lacks a prototype.
  */
 exports.inherits = function(ctor, superCtor) {
-
   if (ctor === undefined || ctor === null)
-    throw new TypeError('The constructor to "inherits" must not be ' +
-                        'null or undefined');
+    throw new TypeError(
+      'The constructor to "inherits" must not be ' + "null or undefined"
+    );
 
   if (superCtor === undefined || superCtor === null)
-    throw new TypeError('The super constructor to "inherits" must not ' +
-                        'be null or undefined');
+    throw new TypeError(
+      'The super constructor to "inherits" must not ' + "be null or undefined"
+    );
 
   if (superCtor.prototype === undefined)
-    throw new TypeError('The super constructor to "inherits" must ' +
-                        'have a prototype');
+    throw new TypeError(
+      'The super constructor to "inherits" must ' + "have a prototype"
+    );
 
   ctor.super_ = superCtor;
   Object.setPrototypeOf(ctor.prototype, superCtor.prototype);
@@ -2392,37 +2398,38 @@ exports.inherits = function(ctor, superCtor) {
 一个简单的例子:
 
 ```javascript
-const fs = require('fs');
-const path = require('path');
+const fs = require("fs");
+const path = require("path");
 
 function traversal(dir) {
-  let res = []
+  let res = [];
   for (let item of fs.readdirSync(dir)) {
     let filepath = path.join(dir, item);
     try {
-      let fd = fs.openSync(filepath, 'r');
+      let fd = fs.openSync(filepath, "r");
       let flag = fs.fstatSync(fd).isDirectory();
-      fs.close(fd); // TODO
+      fs.close(fd);
       if (flag) {
         res.push(...traversal(filepath));
       } else {
         res.push(filepath);
       }
-    } catch(err) {
-      if (err.code === 'ENOENT' && // link 文件打不开
-          !!fs.readlinkSync(filepath)) { // 判断是否 link 文件
+    } catch (err) {
+      if (
+        err.code === "ENOENT" && // link 文件打不开
+        !!fs.readlinkSync(filepath)
+      ) {
+        // 判断是否 link 文件
         res.push(filepath);
       } else {
-        console.error('err', err);
+        console.error("err", err);
       }
-    } 
+    }
   }
-  return res.map((file) => path.basename(file));
+  return res.map(file => path.basename(file));
 }
 
-console.log(traversal('.'));
-
-
+console.log(traversal("."));
 ```
 
 当然也可以 Oh my [glob](https://github.com/isaacs/node-glob):
@@ -2434,8 +2441,8 @@ glob("**/*.js", (err, files) => {
   if (err) {
     throw new Error(err);
   }
-  files.map((filename) => {
-    console.log('Here you are:', filename);
+  files.map(filename => {
+    console.log("Here you are:", filename);
   });
 });
 ```
@@ -2452,40 +2459,40 @@ SQL (Structured Query Language) 是[关系式数据库管理系统](https://en.w
 
 ### 存储引擎
 
-|attr|MyISAM|InnoDB|
-|----|----|----|
-|Locking|Table-level|Row-level|
-|designed for|need of speed|high volume of data|
-|foreign keys | × (DBMS) | ✓ (RDBMS)|
-|transaction | × | ✓ |
-|fulltext search | ✓ | × |
-|scene| lots of select | lots of insert/update |
-|count rows| fast | slow |
-|auto_increment | fast | slow |
+| attr            | MyISAM         | InnoDB                |
+| --------------- | -------------- | --------------------- |
+| Locking         | Table-level    | Row-level             |
+| designed for    | need of speed  | high volume of data   |
+| foreign keys    | × (DBMS)       | ✓ (RDBMS)             |
+| transaction     | ×              | ✓                     |
+| fulltext search | ✓              | ×                     |
+| scene           | lots of select | lots of insert/update |
+| count rows      | fast           | slow                  |
+| auto_increment  | fast           | slow                  |
 
-* 你的数据库有外键吗？
-* 你需要事务支持吗？
-* 你需要全文索引吗？
-* 你经常使用什么样的查询模式？
-* 你的数据有多大？
+- 你的数据库有外键吗？
+- 你需要事务支持吗？
+- 你需要全文索引吗？
+- 你经常使用什么样的查询模式？
+- 你的数据有多大？
 
 参见 [MYSQL: INNODB 还是 MYISAM?](http://coolshell.cn/articles/652.html)
 
 ### 索引
 
-索引是用空间换时间的一种优化策略. 推荐阅读: [mysql索引类型](http://www.cnblogs.com/cq-home/p/3482101.html) 以及 [主键与唯一索引的区别](http://blog.mimvp.com/2015/03/the-difference-between-primary-key-and-unique-index/)
+索引是用空间换时间的一种优化策略. 推荐阅读: [mysql 索引类型](http://www.cnblogs.com/cq-home/p/3482101.html) 以及 [主键与唯一索引的区别](http://blog.mimvp.com/2015/03/the-difference-between-primary-key-and-unique-index/)
 
 ## Mongodb
 
 > Monogdb 连接问题(超时/断开等)有可能是什么问题导致的?
 
-* 网络问题
-* 任务跑不完, 超过了 driver 的默认链接超时时间 (如 30s)
-* Monogdb 宕机了
-* 超过了连接空闲时间 (connection idle time) 被断开
-* fd 不够用 (ulimit 设置)
-* mongodb 最大连接数不够用 (可能是连接未复用导致)
-* etc...
+- 网络问题
+- 任务跑不完, 超过了 driver 的默认链接超时时间 (如 30s)
+- Monogdb 宕机了
+- 超过了连接空闲时间 (connection idle time) 被断开
+- fd 不够用 (ulimit 设置)
+- mongodb 最大连接数不够用 (可能是连接未复用导致)
+- etc...
 
 ### other
 
@@ -2507,9 +2514,9 @@ Cursor
 
 ![](res/2021-03-23-13-51-02.png)
 
-图片出处：Google App Engine 的 co-founder Ryan Barrett 在 2009 年的 google i/o 上的演讲 [《Transaction Across DataCenter》](http://snarfed.org/transactions_across_datacenters_io.html)（视频： http://www.youtube.com/watch?v=srOgpXECblk） 
+图片出处：Google App Engine 的 co-founder Ryan Barrett 在 2009 年的 google i/o 上的演讲 [《Transaction Across DataCenter》](http://snarfed.org/transactions_across_datacenters_io.html)（视频： http://www.youtube.com/watch?v=srOgpXECblk）
 
-根据上图, 我们可以知道  Master/Slave 与 Master/Master 的关系.
+根据上图, 我们可以知道 Master/Slave 与 Master/Master 的关系.
 
 <table>
   <tr><th>attr</th><th>Master/Slave</th><th>Master/Master</th></tr>
@@ -2533,22 +2540,22 @@ Cursor
 
 > 什么情况下数据会出现脏数据? 如何避免?
 
-* 从 A 帐号中把余额读出来
-* 对 A 帐号做减法操作
-* 把结果写回 A 帐号中
-* 从 B 帐号中把余额读出来
-* 对 B 帐号做加法操作
-* 把结果写回 B 帐号中
+- 从 A 帐号中把余额读出来
+- 对 A 帐号做减法操作
+- 把结果写回 A 帐号中
+- 从 B 帐号中把余额读出来
+- 对 B 帐号做加法操作
+- 把结果写回 B 帐号中
 
-为了数据的一致性, 这6件事, 要么都成功做完, 要么都不成功, 而且这个操作的过程中, 对A、B帐号的其它访问必需锁死, 所谓锁死就是要排除其它的读写操作, 否则就会出现脏数据 ---- 即数据一致性的问题.
+为了数据的一致性, 这 6 件事, 要么都成功做完, 要么都不成功, 而且这个操作的过程中, 对 A、B 帐号的其它访问必需锁死, 所谓锁死就是要排除其它的读写操作, 否则就会出现脏数据 ---- 即数据一致性的问题.
 
 这个问题并不仅仅出现在数据库操作中, 普通的并发以及并行操作都可能导致出现脏数据. 避免出现脏数据通常是从架构上避免或者采用事务的思想处理.
 
 ### 矛盾
 
-* 1）要想让数据有高可用性，就得写多份数据
-* 2）写多份的问题会导致数据一致性的问题
-* 3）数据一致性的问题又会引发性能问题
+- 1）要想让数据有高可用性，就得写多份数据
+- 2）写多份的问题会导致数据一致性的问题
+- 3）数据一致性的问题又会引发性能问题
 
 强一致性必然导致性能短板, 而弱一致性则有很好的性能但是存在数据安全(灾备数据丢失)/一致性(脏读/脏写等)的问题.
 
@@ -2560,42 +2567,42 @@ Cursor
 
 第一阶段：
 
-* 协调者会问所有的参与者结点，是否可以执行提交操作。 
-* 各个参与者开始事务执行的准备工作：如：为资源上锁，预留资源，写undo/redo log…… 
-* 参与者响应协调者，如果事务的准备工作成功，则回应“可以提交”，否则回应“拒绝提交”。 
+- 协调者会问所有的参与者结点，是否可以执行提交操作。
+- 各个参与者开始事务执行的准备工作：如：为资源上锁，预留资源，写 undo/redo log……
+- 参与者响应协调者，如果事务的准备工作成功，则回应“可以提交”，否则回应“拒绝提交”。
 
 第二阶段：
 
-* 如果所有的参与者都回应“可以提交”，那么，协调者向所有的参与者发送“正式提交”的命令。参与者完成正式提交，并释放所有资源，然后回应“完成”，协调者收集各结点的“完成”回应后结束这个Global Transaction。 
-* 如果有一个参与者回应“拒绝提交”，那么，协调者向所有的参与者发送“回滚操作”，并释放所有资源，然后回应“回滚完成”，协调者收集各结点的“回滚”回应后，取消这个Global Transaction。 
+- 如果所有的参与者都回应“可以提交”，那么，协调者向所有的参与者发送“正式提交”的命令。参与者完成正式提交，并释放所有资源，然后回应“完成”，协调者收集各结点的“完成”回应后结束这个 Global Transaction。
+- 如果有一个参与者回应“拒绝提交”，那么，协调者向所有的参与者发送“回滚操作”，并释放所有资源，然后回应“回滚完成”，协调者收集各结点的“回滚”回应后，取消这个 Global Transaction。
 
 异常:
 
-* 如果第一阶段中，参与者没有收到询问请求，或是参与者的回应没有到达协调者。那么，需要协调者做超时处理，一旦超时，可以当作失败，也可以重试。
-* 如果第二阶段中，正式提交发出后，如果有的参与者没有收到，或是参与者提交/回滚后的确认信息没有返回，一旦参与者的回应超时，要么重试，要么把那个参与者标记为问题结点剔除整个集群，这样可以保证服务结点都是数据一致性的。
-* 第二阶段中，如果参与者收不到协调者的commit/fallback指令，参与者将处于“状态未知”阶段，参与者完全不知道要怎么办。
+- 如果第一阶段中，参与者没有收到询问请求，或是参与者的回应没有到达协调者。那么，需要协调者做超时处理，一旦超时，可以当作失败，也可以重试。
+- 如果第二阶段中，正式提交发出后，如果有的参与者没有收到，或是参与者提交/回滚后的确认信息没有返回，一旦参与者的回应超时，要么重试，要么把那个参与者标记为问题结点剔除整个集群，这样可以保证服务结点都是数据一致性的。
+- 第二阶段中，如果参与者收不到协调者的 commit/fallback 指令，参与者将处于“状态未知”阶段，参与者完全不知道要怎么办。
 
 ## 缓存
 
 > redis 与 memcached 的区别?
 
-|attr|memcached|redis|
-|----|----|----|
-|struct|key/value|key/value + list, set, hash etc. |
-|backup | × | ✓ |
-|Persistence | × | ✓ |
-|transcations | × | ✓ |
-|consistency | strong (by cas) | weak |
-|thread | multi | single |
-|memory | physical | physical & swap |
+| attr         | memcached       | redis                            |
+| ------------ | --------------- | -------------------------------- |
+| struct       | key/value       | key/value + list, set, hash etc. |
+| backup       | ×               | ✓                                |
+| Persistence  | ×               | ✓                                |
+| transcations | ×               | ✓                                |
+| consistency  | strong (by cas) | weak                             |
+| thread       | multi           | single                           |
+| memory       | physical        | physical & swap                  |
 
 ## 其他
 
-* zookeeper
-* kafka
-* storm
-* hadoop
-* spark
+- zookeeper
+- kafka
+- storm
+- hadoop
+- spark
 
 # 安全
 
@@ -2619,17 +2626,17 @@ Node.js 的加密貌似有点问题, 某些算法算出来跟别的语言 (比�
 
 存在三个特性:
 
-* 机密性：SSL协议使用密钥加密通信数据
-* 可靠性：服务器和客户都会被认证, 客户的认证是可选的
-* 完整性：SSL协议会对传送的数据进行完整性检查
+- 机密性：SSL 协议使用密钥加密通信数据
+- 可靠性：服务器和客户都会被认证, 客户的认证是可选的
+- 完整性：SSL 协议会对传送的数据进行完整性检查
 
-1999年, SSL 因为应用广泛, 已经成为互联网上的事实标准. IETF 就在那年把 SSL 标准化/强化. 标准化之后的名称改为传输层安全协议 (Transport Layer Security, TLS). 很多相关的文章都把这两者并列称呼 (TLS/SSL), 因为这两者可以视作同一个东西的不同阶段.
+1999 年, SSL 因为应用广泛, 已经成为互联网上的事实标准. IETF 就在那年把 SSL 标准化/强化. 标准化之后的名称改为传输层安全协议 (Transport Layer Security, TLS). 很多相关的文章都把这两者并列称呼 (TLS/SSL), 因为这两者可以视作同一个东西的不同阶段.
 
 ## HTTPS
 
 在网络上, 每个网站都在各自的服务器上, 想要确保你访问的是一个正确的网站, 并且访问到这个网站正确的数据 (没有被劫持/篡改), 除了需要传输安全之外, 还需要安全的认证, 认证不能由目标网站进行, 否则恶意/钓鱼网站也可以自己说自己是对的, 所以为了能在网络上维护网络之间的基本信任, 早期的大厂们合力推动了一项名为 PKI 的基础设施, 通过第三方来认证网站.
 
-公钥基础设施 (Public Key Infrastructure, PKI) 是一种遵循标准的, 利用公钥加密技术为电子商务的开展提供一套安全基础平台的技术和规范. 其基础建置包含认证中心 (Certification Authority, CA) 、注册中心 (Register Authority, RA) 、目录服务 (Directory Service, DS) 服务器. 
+公钥基础设施 (Public Key Infrastructure, PKI) 是一种遵循标准的, 利用公钥加密技术为电子商务的开展提供一套安全基础平台的技术和规范. 其基础建置包含认证中心 (Certification Authority, CA) 、注册中心 (Register Authority, RA) 、目录服务 (Directory Service, DS) 服务器.
 
 由 RA 统筹、审核用户的证书申请, 将证书申请送至 CA 处理后发出证书, 并将证书公告至 DS 中. 在使用证书的过程中, 除了对证书的信任关系与证书本身的正确性做检查外, 并透过产生和发布证书废止列表 (Certificate Revocation List, CRL) 对证书的状态做确认检查, 了解证书是否因某种原因而遭废弃. 证书就像是个人的身分证, 其内容包括证书序号、用户名称、公开金钥 (Public Key) 、证书有效期限等.
 
@@ -2650,21 +2657,25 @@ Node.js 的加密貌似有点问题, 某些算法算出来跟别的语言 (比�
 用户除了上传
 
 ```html
-<script>alert('xss');</script>
+<script>
+  alert("xss");
+</script>
 ```
 
 还可以使用图片 url 等方式来上传脚本进行攻击
 
 ```html
 <table background="javascript:alert(/xss/)"></table>
-<img src="javascript:alert('xss')">
+<img src="javascript:alert('xss')" />
 ```
 
 还可以使用各种方式来回避检查, 例如空格, 回车, Tab
 
 ```html
-<img src="javas cript:
-alert('xss')">
+<img
+  src="javas cript:
+alert('xss')"
+/>
 ```
 
 还可以通过各种编码转换 (URL 编码, Unicode 编码, HTML 编码, ESCAPE 等) 来绕过检查
@@ -2676,15 +2687,22 @@ alert('xss')">
 
 ### CSP 策略
 
-在百般无奈, 没有统一解决方案的情况下, 厂商们推出了 CSP 策略. 
+在百般无奈, 没有统一解决方案的情况下, 厂商们推出了 CSP 策略.
 
 以 Node.js 为例, 计算脚本的 hashes 值:
 
 ```js
-const crypto = require('crypto');
+const crypto = require("crypto");
 
-function getHashByCode(code, algorithm = 'sha256') {
-  return algorithm + '-' + crypto.createHash(algorithm).update(code, 'utf8').digest("base64");
+function getHashByCode(code, algorithm = "sha256") {
+  return (
+    algorithm +
+    "-" +
+    crypto
+      .createHash(algorithm)
+      .update(code, "utf8")
+      .digest("base64")
+  );
 }
 
 getHashByCode('console.log("hello world");'); // 'sha256-wxWy1+9LmiuOeDwtQyZNmWpT0jqCUikqaqVlJdtdh/0='
@@ -2697,8 +2715,14 @@ content-security-policy: script-src 'sha256-wxWy1+9LmiuOeDwtQyZNmWpT0jqCUikqaqVl
 ```
 
 ```html
-<script>console.log('hello geemo')</script> <!-- 不执行 -->
-<script>console.log('hello world');</script> <!-- 执行 -->
+<script>
+  console.log("hello geemo");
+</script>
+<!-- 不执行 -->
+<script>
+  console.log("hello world");
+</script>
+<!-- 执行 -->
 ```
 
 策略指令可以参见 [CSP Policy Directives](https://developer.mozilla.org/en-US/docs/Web/Security/CSP/CSP_policy_directives)以及[阮一峰的博文](http://www.ruanyifeng.com/blog/2016/09/csp.html), [屈大神的博文](https://imququ.com/post/content-security-policy-reference.html)
@@ -2707,7 +2731,7 @@ content-security-policy: script-src 'sha256-wxWy1+9LmiuOeDwtQyZNmWpT0jqCUikqaqVl
 
 跨站请求伪造 `(Cross-Site Request Forgery, CSRF, https://www.owasp.org/index.php/Cross-Site_Request_Forgery_(CSRF)_Prevention_Cheat_Sheet)` 是一种伪造跨站请求的攻击方式. 例如利用你在 A 站 (攻击目标) 的 cookie / 权限等, 在 B 站 (恶意/钓鱼网站) 拼装 A 站的请求.
 
-比如 Q 君是某论坛管理员. 已知这个论坛 A 删除的接口是 post 到某个地址, 并指定一个帖子的 id.  那么我可以在自己的博客 B 上组织一个 CSRF 请求. 然后诱使 Q 君来访问我的博客. 就可以在 Q 君不知情的情况下删除掉我想删的某个帖子.
+比如 Q 君是某论坛管理员. 已知这个论坛 A 删除的接口是 post 到某个地址, 并指定一个帖子的 id. 那么我可以在自己的博客 B 上组织一个 CSRF 请求. 然后诱使 Q 君来访问我的博客. 就可以在 Q 君不知情的情况下删除掉我想删的某个帖子.
 
 钓鱼方式包括但不限于公开网站 (xss), 攻击者的恶意网站, email 邮件, 微博, 微信, 短信等及时消息.
 
@@ -2729,14 +2753,14 @@ c.public.com
 1. A 站 (预防站) 检查 http 请求的 header 确认其 origin
 2. 检查 CSRF token
 
-### 1.同源检查 
+### 1.同源检查
 
 通过检查来过滤简单的 CSRF 攻击, 主要检查一下两个 header:
 
-* Origin Header
-* Referer Header
+- Origin Header
+- Referer Header
 
-### 2.CSRF token 
+### 2.CSRF token
 
 简单来说, 对需要预防的请求, 通过特别的算法生成 token 存在 session 中, 然后将 token 隐藏在正确的界面表单中, 正式请求时带上该 token 在服务端验证, 避免跨站请求.
 
@@ -2770,23 +2794,24 @@ SELECT * FROM users WHERE usernae = 'myName' AND password = ''; DROP TABLE users
 
 其能实现的功能, 包括但不限于删除数据 (经济损失), 篡改数据 (密码等), 窃取数据 (网站管理权限, 用户数据) 等. 防治手段常见于:
 
-* 给表名/字段名加前缀 (避免被猜到)
-* 报错隐藏表信息 (避免被看到, 12306 早期就出现过的问题)
-* 过滤可以拼接 SQL 的关键字符
-* 对用户输入进行转义
-* 验证用户输入的类型 (避免 limit, order by 等注入)
+- 给表名/字段名加前缀 (避免被猜到)
+- 报错隐藏表信息 (避免被看到, 12306 早期就出现过的问题)
+- 过滤可以拼接 SQL 的关键字符
+- 对用户输入进行转义
+- 验证用户输入的类型 (避免 limit, order by 等注入)
 
 ### NoSQL
 
 看个简单的情况:
 
 ```js
-let {user, pass, age} = ctx.query;
+let { user, pass, age } = ctx.query;
 
 db.collection.find({
-  user, pass,
+  user,
+  pass,
   $where: `this.age >= ${age}`
-})
+});
 ```
 
 那么这里的 age 就可以注入了. 另外 GET/POST 还可以传递深层结构 (比如 `?name[0]=alan` 传递上来), 通过 qs 之类的模块解析后导致注入, 如 [cnodejs 遭遇 mongodb 注入](https://github.com/cnodejs/nodeclub/commit/0f6cc14f6bcbbe6b4de3199c6896efaec637693e).
