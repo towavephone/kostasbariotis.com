@@ -9,7 +9,7 @@ path: /browser-working-principle-v8/
 
 # 栈空间和堆空间：数据是如何存储的
 
-对于前端开发者来说，JavaScript 的内存机制是一个不被经常提及的概念 ，因此很容易被忽视。特别是一些非计算机专业的同学，对内存机制可能没有非常清晰的认识，甚至有些同学根本就不知道 JavaScript 的内存机制是什么
+对于前端开发者来说，JavaScript 的内存机制是一个不被经常提及的概念，因此很容易被忽视。特别是一些非计算机专业的同学，对内存机制可能没有非常清晰的认识，甚至有些同学根本就不知道 JavaScript 的内存机制是什么。
 
 但是如果你想成为行业专家，并打造高性能前端应用，那么你就必须要搞清楚 JavaScript 的内存机制了。
 
@@ -47,7 +47,7 @@ foo();
 
 执行第一段代码，打印出来 a 的值是 2，b 的值是 1，这没什么难以理解的。
 
-接着，再执行第二段代码，你会发现，仅仅改变了 a 中 name 的属性值，但是最终 a 和 b 打印出来的值都是{name:"极客邦"}。这就和我们预期的不一致了，因为我们想改变的仅仅是 a 的内容，但 b 的内容也同时被改变了。
+接着，再执行第二段代码，你会发现，仅仅改变了 a 中 name 的属性值，但是最终 a 和 b 打印出来的值都是 `{name: "极客邦"}`。这就和我们预期的不一致了，因为我们想改变的仅仅是 a 的内容，但 b 的内容也同时被改变了。
 
 要彻底弄清楚这个问题，我们就得先从“JavaScript 是什么类型的语言”讲起。
 
@@ -65,7 +65,7 @@ int main()
 }
 ```
 
-上述代码声明变量的特点是：在声明变量之前需要先定义变量类型。我们把这种在使用之前就需要确认其变量数据类型的称为静态语言。
+上述代码声明变量的特点是：在声明变量之前需要先定义变量类型，我们把这种在使用之前就需要确认其变量数据类型的称为静态语言。
 
 相反地，我们把在运行过程中需要检查数据类型的语言称为动态语言。比如我们所讲的 JavaScript 就是动态语言，因为在声明变量之前并不需要确认其数据类型。
 
@@ -93,10 +93,10 @@ c = a
 ```js
 var bar;
 bar = 12;
-bar = ' 极客时间 ';
+bar = '极客时间';
 bar = true;
 bar = null;
-bar = { name: ' 极客时间 ' };
+bar = { name: '极客时间' };
 ```
 
 从上述代码中你可以看出，我们声明了一个 bar 变量，然后可以使用各种类型的数据值赋予给该变量。
@@ -108,13 +108,13 @@ var bar;
 console.log(typeof bar); //undefined
 bar = 12;
 console.log(typeof bar); //number
-bar = ' 极客时间 ';
+bar = '极客时间';
 console.log(typeof bar); //string
 bar = true;
 console.log(typeof bar); //boolean
 bar = null;
 console.log(typeof bar); //object
-bar = { name: ' 极客时间 ' };
+bar = { name: '极客时间' };
 console.log(typeof bar); //object
 ```
 
@@ -132,8 +132,8 @@ console.log(typeof bar); //object
 
 ```js
 let myObj = {
-  name:'极客时间',
-  update:function(){....}
+  name: '极客时间',
+  update: function(){....}
 }
 ```
 
@@ -157,9 +157,9 @@ let myObj = {
 
 ```js
 function foo() {
-  var a = ' 极客时间 ';
+  var a = '极客时间';
   var b = a;
-  var c = { name: ' 极客时间 ' };
+  var c = { name: '极客时间' };
   var d = c;
 }
 foo();
@@ -201,7 +201,7 @@ foo();
 
 ```js
 function foo() {
-  var myName = ' 极客时间 ';
+  var myName = '极客时间';
   let test1 = 1;
   const test2 = 2;
   var innerBar = {
@@ -216,7 +216,7 @@ function foo() {
   return innerBar;
 }
 var bar = foo();
-bar.setName(' 极客邦 ');
+bar.setName('极客邦');
 bar.getName();
 console.log(bar.getName());
 ```
@@ -248,7 +248,7 @@ console.log(bar.getName());
 
 然后我们分析了，在 JavaScript 中将一个原始类型的变量 a 赋值给 b，那么 a 和 b 会相互独立、互不影响；但是将引用类型的变量 a 赋值给变量 b，那会导致 a、b 两个变量都同时指向了堆中的同一块数据。
 
-最后，我们还站在内存模型的视角分析了闭包的产生过程
+最后，我们还站在内存模型的视角分析了闭包的产生过程。
 
 ## 思考时间
 
@@ -334,10 +334,10 @@ p = NULL；
 ```js
 function foo() {
   var a = 1;
-  var b = { name: ' 极客邦 ' };
+  var b = { name: '极客邦' };
   function showName() {
-    var c = ' 极客时间 ';
-    var d = { name: ' 极客时间 ' };
+    var c = '极客时间';
+    var d = { name: '极客时间' };
   }
   showName();
 }
@@ -518,7 +518,7 @@ foo();
 你可以结合下面这段代码来直观地感受下什么是 AST：
 
 ```js
-var myName = ' 极客时间 ';
+var myName = '极客时间';
 function foo() {
   return 23;
 }
