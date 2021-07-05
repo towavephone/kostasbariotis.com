@@ -6,6 +6,7 @@ path: /database-principle/
 tags: 面试, 数据库
 date: 2018-04-03 15:09:47
 ---
+
 # 一、事务
 
 ## 概念
@@ -68,9 +69,9 @@ T<sub>1</sub> 读取某个范围的数据，T<sub>2</sub> 在这个范围内插�
 
 产生并发不一致性问题主要原因是破坏了事务的隔离性，解决方法是通过并发控制来保证隔离性。
 
-在没有并发的情况下，事务以串行的方式执行，互不干扰，因此可以保证隔离性。在并发的情况下，如果能通过并发控制，让事务的执行结果和某一个串行执行的结果相同，就认为事务的执行结果满足隔离性要求，也就是说是正确的。把这种事务执行方式称为  **可串行化调度** 。
+在没有并发的情况下，事务以串行的方式执行，互不干扰，因此可以保证隔离性。在并发的情况下，如果能通过并发控制，让事务的执行结果和某一个串行执行的结果相同，就认为事务的执行结果满足隔离性要求，也就是说是正确的。把这种事务执行方式称为 **可串行化调度** 。
 
-**并发控制可以通过封锁来实现，但是封锁操作需要用户自己控制，相当复杂。数据库管理系统提供了事务的隔离级别，让用户以一种更轻松的方式处理并发一致性问题。** 
+**并发控制可以通过封锁来实现，但是封锁操作需要用户自己控制，相当复杂。数据库管理系统提供了事务的隔离级别，让用户以一种更轻松的方式处理并发一致性问题。**
 
 # 三、封锁
 
@@ -98,10 +99,10 @@ MySQL 中提供了两种封锁粒度：行级锁以及表级锁。
 
 锁的兼容关系如下：
 
-| - | X | S |
-| :--: | :--: | :--: |
-|X|No|No|
-|S|No|Yes|
+|  -  |  X  |  S  |
+| :-: | :-: | :-: |
+|  X  | No  | No  |
+|  S  | No  | Yes |
 
 ### 2. 意向锁
 
@@ -114,79 +115,79 @@ MySQL 中提供了两种封锁粒度：行级锁以及表级锁。
 
 各种锁的兼容关系如下：
 
-| - | X | IX | S | IS |
-| :--: | :--: | :--: | :--: | :--: |
-|X    |No    |No |No | No|
-|IX    |No    |Yes|No | Yes|
-|S    |No    |No    |Yes| Yes|
-|IS    |No    |Yes|Yes| Yes|
+|  -  |  X  | IX  |  S  | IS  |
+| :-: | :-: | :-: | :-: | :-: |
+|  X  | No  | No  | No  | No  |
+| IX  | No  | Yes | No  | Yes |
+|  S  | No  | No  | Yes | Yes |
+| IS  | No  | Yes | Yes | Yes |
 
 ## 封锁协议
 
 ### 1. 三级封锁协议
 
-**一级封锁协议** 
+**一级封锁协议**
 
 事务 T 要修改数据 A 时必须加 X 锁，直到 T 结束才释放锁。
 
 可以解决丢失修改问题，因为不能同时有两个事务对同一个数据进行修改，那么一个事务的修改就不会被覆盖。
 
 | T<sub>1</sub> | T<sub>1</sub> |
-| :--: | :--: |
-| lock-x(A) | |
-| read A=20 | |
-| | lock-x(A) |
-|  | wait |
-| write A=19 | |
-| commit | |
-| unlock-x(A) | |
-| | obtain |
-| | read A=19 |
-| | write A=21 |
-| | commit |
-| | unlock-x(A)|
+| :-----------: | :-----------: |
+|   lock-x(A)   |               |
+|   read A=20   |               |
+|               |   lock-x(A)   |
+|               |     wait      |
+|  write A=19   |               |
+|    commit     |               |
+|  unlock-x(A)  |               |
+|               |    obtain     |
+|               |   read A=19   |
+|               |  write A=21   |
+|               |    commit     |
+|               |  unlock-x(A)  |
 
-**二级封锁协议** 
+**二级封锁协议**
 
 在一级的基础上，要求读取数据 A 时必须加 S 锁，读取完马上释放 S 锁。
 
 可以解决读脏数据问题，因为如果一个事务在对数据 A 进行修改，根据 1 级封锁协议，会加 X 锁，那么就不能再加 S 锁了，也就是不会读入数据。
 
 | T<sub>1</sub> | T<sub>1</sub> |
-| :--: | :--: |
-| lock-x(A) | |
-| read A=20 | |
-| write A=19 | |
-| | lock-s(A) |
-|  | wait |
-| rollback | |
-| A=20 | |
-| unlock-x(A) | |
-| | obtain |
-| | read A=20 |
-| | commit |
-| | unlock-s(A)|
+| :-----------: | :-----------: |
+|   lock-x(A)   |               |
+|   read A=20   |               |
+|  write A=19   |               |
+|               |   lock-s(A)   |
+|               |     wait      |
+|   rollback    |               |
+|     A=20      |               |
+|  unlock-x(A)  |               |
+|               |    obtain     |
+|               |   read A=20   |
+|               |    commit     |
+|               |  unlock-s(A)  |
 
-**三级封锁协议** 
+**三级封锁协议**
 
 在二级的基础上，要求读取数据 A 时必须加 S 锁，直到事务结束了才能释放 S 锁。
 
 可以解决不可重复读的问题，因为读 A 时，其它事务不能对 A 加 X 锁，从而避免了在读的期间数据发生改变。
 
 | T<sub>1</sub> | T<sub>1</sub> |
-| :--: | :--: |
-| lock-s(A) | |
-| read A=20 | |
-|  |lock-x(A) |
-| | wait |
-|  read A=20|  |
-| commit | |
-| unlock-s(A) | |
-| | obtain |
-| | read A=20 |
-| | write A=19|
-| | commit |
-| | unlock-X(A)|
+| :-----------: | :-----------: |
+|   lock-s(A)   |               |
+|   read A=20   |               |
+|               |   lock-x(A)   |
+|               |     wait      |
+|   read A=20   |               |
+|    commit     |               |
+|  unlock-s(A)  |               |
+|               |    obtain     |
+|               |   read A=20   |
+|               |  write A=19   |
+|               |    commit     |
+|               |  unlock-X(A)  |
 
 ### 2. 两段锁协议
 
@@ -206,30 +207,30 @@ lock-x(A)...unlock(A)...lock-s(B)...unlock(B)...lock-s(c)...unlock(C)...
 
 # 四、隔离级别
 
-<font size=4>  **1. 未提交读（READ UNCOMMITTED）** </font> </br>
+<font size=4> **1. 未提交读（READ UNCOMMITTED）** </font> </br>
 
 事务中的修改，即使没有提交，对其它事务也是可见的。
 
-<font size=4>  **2. 提交读（READ COMMITTED）** </font> </br>
+<font size=4> **2. 提交读（READ COMMITTED）** </font> </br>
 
 一个事务只能读取已经提交的事务所做的修改。换句话说，一个事务所做的修改在提交之前对其它事务是不可见的。
 
-<font size=4>  **3. 可重复读（REPEATABLE READ）** </font> </br>
+<font size=4> **3. 可重复读（REPEATABLE READ）** </font> </br>
 
 保证在同一个事务中多次读取同样数据的结果是一样的。
 
-<font size=4>  **4. 可串行化（SERIALIXABLE）** </font> </br>
+<font size=4> **4. 可串行化（SERIALIXABLE）** </font> </br>
 
 强制事务串行执行。
 
-<font size=4>  **四个隔离级别的对比** </font> </br>
+<font size=4> **四个隔离级别的对比** </font> </br>
 
 | 隔离级别 | 脏读 | 不可重复读 | 幻影读 |
-| :---: | :---: | :---:| :---: |
-| 未提交读 | YES | YES | YES |
-| 提交读 | NO | YES | YES |
-| 可重复读 | NO | NO | YES |
-| 可串行化 | NO | NO | NO |
+| :------: | :--: | :--------: | :----: |
+| 未提交读 | YES  |    YES     |  YES   |
+|  提交读  |  NO  |    YES     |  YES   |
+| 可重复读 |  NO  |     NO     |  YES   |
+| 可串行化 |  NO  |     NO     |   NO   |
 
 # 五、多版本并发控制
 
@@ -301,8 +302,6 @@ update ;
 delete;
 ```
 
-
-
 # 六、Next-Key Locks
 
 Next-Key Locks 也是 MySQL 的 InnoDB 存储引擎的一种锁实现。MVCC 不能解决幻读的问题，Next-Key Locks 就是为了解决这个问题而存在的。在可重复读隔离级别下，MVCC + Next-Key Locks，就可以防止幻读的出现。
@@ -359,11 +358,11 @@ SELECT c FROM t WHERE c BETWEEN 10 and 20 FOR UPDATE;
 
 以下的学生课程关系的函数依赖为 Sno, Cname -> Sname, Sdept, Mname, Grade，键码为 {Sno, Cname}。也就是说，确定学生和课程之后，就能确定其它信息。
 
-| Sno | Sname | Sdept | Mname | Cname | Grade |
-| :---: | :---: | :---: | :---: | :---: |:---:|
-| 1 | 学生-1 | 学院-1 | 院长-1 | 课程-1 | 90 |
-| 2 | 学生-2 | 学院-2 | 院长-2 | 课程-2 | 80 |
-| 2 | 学生-2 | 学院-2 | 院长-2 | 课程-1 | 100 |
+| Sno | Sname  | Sdept  | Mname  | Cname  | Grade |
+| :-: | :----: | :----: | :----: | :----: | :---: |
+|  1  | 学生-1 | 学院-1 | 院长-1 | 课程-1 |  90   |
+|  2  | 学生-2 | 学院-2 | 院长-2 | 课程-2 |  80   |
+|  2  | 学生-2 | 学院-2 | 院长-2 | 课程-1 |  100  |
 
 不符合范式的关系，会产生很多异常，主要有以下四种异常：
 
@@ -390,11 +389,11 @@ SELECT c FROM t WHERE c BETWEEN 10 and 20 FOR UPDATE;
 
 <font size=4> **分解前** </font><br>
 
-| Sno | Sname | Sdept | Mname | Cname | Grade |
-| :---: | :---: | :---: | :---: | :---: |:---:|
-| 1 | 学生-1 | 学院-1 | 院长-1 | 课程-1 | 90 |
-| 2 | 学生-2 | 学院-2 | 院长-2 | 课程-2 | 80 |
-| 2 | 学生-2 | 学院-2 | 院长-2 | 课程-1 | 100 |
+| Sno | Sname  | Sdept  | Mname  | Cname  | Grade |
+| :-: | :----: | :----: | :----: | :----: | :---: |
+|  1  | 学生-1 | 学院-1 | 院长-1 | 课程-1 |  90   |
+|  2  | 学生-2 | 学院-2 | 院长-2 | 课程-2 |  80   |
+|  2  | 学生-2 | 学院-2 | 院长-2 | 课程-1 |  100  |
 
 以上学生课程关系中，{Sno, Cname} 为键码，有如下函数依赖：
 
@@ -412,10 +411,10 @@ Sname, Sdept 和 Manme 都函数依赖于 Sno，而部分依赖于键码。当�
 
 关系-1
 
-| Sno | Sname | Sdept | Mname |
-| :---: | :---: | :---: | :---: |
-| 1 | 学生-1 | 学院-1 | 院长-1 |
-| 2 | 学生-2 | 学院-2 | 院长-2 |
+| Sno | Sname  | Sdept  | Mname  |
+| :-: | :----: | :----: | :----: |
+|  1  | 学生-1 | 学院-1 | 院长-1 |
+|  2  | 学生-2 | 学院-2 | 院长-2 |
 
 有以下函数依赖：
 
@@ -424,15 +423,15 @@ Sname, Sdept 和 Manme 都函数依赖于 Sno，而部分依赖于键码。当�
 
 关系-2
 
-| Sno | Cname | Grade |
-| :---: | :---: |:---:|
-| 1 | 课程-1 | 90 |
-| 2 | 课程-2 | 80 |
-| 2 | 课程-1 | 100 |
+| Sno | Cname  | Grade |
+| :-: | :----: | :---: |
+|  1  | 课程-1 |  90   |
+|  2  | 课程-2 |  80   |
+|  2  | 课程-1 |  100  |
 
 有以下函数依赖：
 
-- Sno, Cname ->  Grade
+- Sno, Cname -> Grade
 
 ### 3. 第三范式 (3NF)
 
@@ -442,15 +441,15 @@ Sname, Sdept 和 Manme 都函数依赖于 Sno，而部分依赖于键码。当�
 
 关系-11
 
-| Sno | Sname | Sdept |
-| :---: | :---: | :---: |
-| 1 | 学生-1 | 学院-1 |
-| 2 | 学生-2 | 学院-2 |
+| Sno | Sname  | Sdept  |
+| :-: | :----: | :----: |
+|  1  | 学生-1 | 学院-1 |
+|  2  | 学生-2 | 学院-2 |
 
 关系-12
 
-| Sdept | Mname |
-| :---: | :---: |
+| Sdept  | Mname  |
+| :----: | :----: |
 | 学院-1 | 院长-1 |
 | 学院-2 | 院长-2 |
 
@@ -577,7 +576,7 @@ Entity-Relationship，有三个组成部分：实体、属性、联系。
 # 参考资料
 
 - 史嘉权. 数据库系统概论[M]. 清华大学出版社有限公司, 2006.
-- 施瓦茨. 高性能 MYSQL(第3版) [M]. 电子工业出版社, 2013.
+- 施瓦茨. 高性能 MYSQL(第 3 版) [M]. 电子工业出版社, 2013.
 - [The InnoDB Storage Engine](https://dev.mysql.com/doc/refman/5.7/en/innodb-storage-engine.html)
 - [Transaction isolation levels](https://www.slideshare.net/ErnestoHernandezRodriguez/transaction-isolation-levels)
 - [Concurrency Control](http://scanftree.com/dbms/2-phase-locking-protocol)

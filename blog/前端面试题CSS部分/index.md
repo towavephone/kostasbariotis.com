@@ -24,19 +24,19 @@ date: 2018-4-12 17:44:07
 
 **参考**
 
-* <https://www.smashingmagazine.com/2007/07/css-specificity-things-you-should-know/>
-* <https://www.sitepoint.com/web-foundations/specificity/>
+- <https://www.smashingmagazine.com/2007/07/css-specificity-things-you-should-know/>
+- <https://www.sitepoint.com/web-foundations/specificity/>
 
 # 重置（resetting）CSS 和 标准化（normalizing）CSS 的区别是什么？你会选择哪种方式，为什么？
 
-* **重置（Resetting）**： 重置意味着除去所有的浏览器默认样式。对于页面所有的元素，像`margin`、`padding`、`font-size`这些样式全部置成一样。你将必须重新定义各种元素的样式。
-* **标准化（Normalizing）**： 标准化没有去掉所有的默认样式，而是保留了有用的一部分，同时还纠正了一些常见错误。
+- **重置（Resetting）**： 重置意味着除去所有的浏览器默认样式。对于页面所有的元素，像`margin`、`padding`、`font-size`这些样式全部置成一样。你将必须重新定义各种元素的样式。
+- **标准化（Normalizing）**： 标准化没有去掉所有的默认样式，而是保留了有用的一部分，同时还纠正了一些常见错误。
 
 当需要实现非常个性化的网页设计时，我会选择重置的方式，因为我要写很多自定义的样式以满足设计需求，这时候就不再需要标准化的默认样式了。
 
 **参考**
 
-* <https://stackoverflow.com/questions/6887336/what-is-the-difference-between-normalize-css-and-reset-css>
+- <https://stackoverflow.com/questions/6887336/what-is-the-difference-between-normalize-css-and-reset-css>
 
 # 请阐述 Float 定位的工作原理。
 
@@ -51,67 +51,72 @@ CSS 的`clear`属性通过使用`left`、`right`、`both`，让该元素向下�
 ## 原始版
 
 ```css
-.clearfix:after{
-    content:"."; //设置内容为空
-    visibility:hidden; //将元素隐藏
-    display:block; //将文本转为块级元素
-    height:0; //高度为0
-    clear:both; //清除浮动
+.clearfix:after {
+  content: '.'; //设置内容为空
+  visibility: hidden; //将元素隐藏
+  display: block; //将文本转为块级元素
+  height: 0; //高度为0
+  clear: both; //清除浮动
 }
 
-.clearfix{
-    zoom:1;//为了兼容IE
+.clearfix {
+  zoom: 1; //为了兼容IE
 }
 ```
 
 1. display:block 使生成的元素以块级元素显示,占满剩余空间；
 2. height:0 避免生成内容破坏原有布局的高度；
 3. visibility:hidden 使生成的内容不可见，并允许可能被生成内容盖住的内容可以进行点击和交互；
-4. 通过 content:"."生成内容作为最后一个元素，至于content里面是点还是其他都是可以的，例如oocss里面就有经典的 content:"XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",有些版本可能content 里面内容为空,一丝冰凉是不推荐这样做的,firefox直到7.0 content:"" 仍然会产生额外的空隙； 
-5. zoom：1 触发IE hasLayout。
+4. 通过 content:"."生成内容作为最后一个元素，至于 content 里面是点还是其他都是可以的，例如 oocss 里面就有经典的 content:"XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",有些版本可能 content 里面内容为空,一丝冰凉是不推荐这样做的,firefox 直到 7.0 content:"" 仍然会产生额外的空隙；
+5. zoom：1 触发 IE hasLayout。
 
-通过分析发现，除了clear：both用来清除浮动的，其他代码无非都是为了隐藏掉content生成的内容，这也就是其他版本的闭合浮动为什么会有font-size：0，line-height：0。 
+通过分析发现，除了 clear：both 用来清除浮动的，其他代码无非都是为了隐藏掉 content 生成的内容，这也就是其他版本的闭合浮动为什么会有 font-size：0，line-height：0。
 
 ## 终极版一
 
-相对于空标签闭合浮动的方法代码似乎还是有些冗余，通过查询发现Unicode字符里有一个“零宽度空格”，也就是U+200B ，这个字符本身是不可见的，所以我们完全可以省略掉 visibility:hidden了 
+相对于空标签闭合浮动的方法代码似乎还是有些冗余，通过查询发现 Unicode 字符里有一个“零宽度空格”，也就是 U+200B ，这个字符本身是不可见的，所以我们完全可以省略掉 visibility:hidden 了
 
 ```css
-.clearfix:after { 
-    content:"\200B";
-    display:block; 
-    height:0; 
-    clear:both; 
-} 
-.clearfix {*zoom:1;}/*IE/7/6*/
+.clearfix:after {
+  content: '\200B';
+  display: block;
+  height: 0;
+  clear: both;
+}
+.clearfix {
+  *zoom: 1;
+} /*IE/7/6*/
 ```
 
 ## 终极版二
 
-由 Nicolas Gallagher 大湿提出来的,原文:A new micro clearfix hack，该方法也不存在firefox中空隙的问题。 
+由 Nicolas Gallagher 大湿提出来的,原文:A new micro clearfix hack，该方法也不存在 firefox 中空隙的问题。
 
 ```css
-.clearfix:before,.clearfix:after{ 
-    content:""; 
-    display:table; // BFC清除浮动
-} 
-.clearfix:after{clear:both;} 
-.clearfix{ 
-    *zoom:1;/*IE/7/6*/
+.clearfix:before,
+.clearfix:after {
+  content: '';
+  display: table; // BFC清除浮动
+}
+.clearfix:after {
+  clear: both;
+}
+.clearfix {
+  *zoom: 1; /*IE/7/6*/
 }
 ```
 
-## 总结 
+## 总结
 
-上面的方法用到了:before伪元素，很多人对这个有些迷惑，到底我什么时候需要用before呢？为什么方案一没有呢？其实它是用来处理margin边距重叠的，由于内部元素 float 创建了BFC，导致内部元素的margin-top和上一个盒子的margin-bottom 发生叠加。如果这不是你所希望的，那么就可以加上before，如果只是单纯的闭合浮动，after就够了！并不是如同大漠《Clear Float》一文所说的：但只使用clearfix:after时在跨浏览器兼容问题会存在一个垂直边距叠加的bug，这不是bug，是BFC应该有的特性。 
+上面的方法用到了:before 伪元素，很多人对这个有些迷惑，到底我什么时候需要用 before 呢？为什么方案一没有呢？其实它是用来处理 margin 边距重叠的，由于内部元素 float 创建了 BFC，导致内部元素的 margin-top 和上一个盒子的 margin-bottom 发生叠加。如果这不是你所希望的，那么就可以加上 before，如果只是单纯的闭合浮动，after 就够了！并不是如同大漠《Clear Float》一文所说的：但只使用 clearfix:after 时在跨浏览器兼容问题会存在一个垂直边距叠加的 bug，这不是 bug，是 BFC 应该有的特性。
 
-在实际开发中，终极版一由于存在Unicode字符不适合内嵌CSS的GB2312编码的页面，使用原始版完全可以解决我们的需求了，终极版二等待大家的进一步实践。其他方案通过overflow闭合浮动，实际上已经创建了新的块级格式化上下文，这将导致其布局和相对于浮动的行为等发生一系列的变化，清除浮动只不过是一系列变化中的一个作用而已。所以为了闭合浮动去改变全局特性，这是不明智的，带来的风险就是一系列的bug，比如firefox 早期版本产生 focus，截断绝对定位的层等等。始终要明白，如果单单只是需要闭合浮动，overflow就不要使用，而不是某些文章所说的“慎用”。 
+在实际开发中，终极版一由于存在 Unicode 字符不适合内嵌 CSS 的 GB2312 编码的页面，使用原始版完全可以解决我们的需求了，终极版二等待大家的进一步实践。其他方案通过 overflow 闭合浮动，实际上已经创建了新的块级格式化上下文，这将导致其布局和相对于浮动的行为等发生一系列的变化，清除浮动只不过是一系列变化中的一个作用而已。所以为了闭合浮动去改变全局特性，这是不明智的，带来的风险就是一系列的 bug，比如 firefox 早期版本产生 focus，截断绝对定位的层等等。始终要明白，如果单单只是需要闭合浮动，overflow 就不要使用，而不是某些文章所说的“慎用”。
 
 值得一提的是，把父元素属性设置为`overflow: auto`或`overflow: hidden`，会使其内部的子元素形成块格式化上下文（Block Formatting Context），并且父元素会扩张自己，使其能够包围它的子元素。
 
 **参考**
 
-* <https://css-tricks.com/all-about-floats/>
+- <https://css-tricks.com/all-about-floats/>
 
 # 请阐述 z-index 属性，并说明如何形成层叠上下文（stacking context）。
 
@@ -125,52 +130,52 @@ CSS 中的`z-index`属性控制重叠元素的垂直叠加顺序。`z-index`只�
 
 **参考**
 
-* <https://css-tricks.com/almanac/properties/z/z-index/>
-* <https://philipwalton.com/articles/what-no-one-told-you-about-z-index/>
-* <https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Positioning/Understanding_z_index/The_stacking_context>
+- <https://css-tricks.com/almanac/properties/z/z-index/>
+- <https://philipwalton.com/articles/what-no-one-told-you-about-z-index/>
+- <https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Positioning/Understanding_z_index/The_stacking_context>
 
 # 请阐述块格式化上下文（Block Formatting Context）及其工作原理。
 
 块格式上下文（BFC）是 Web 页面的可视化 CSS 渲染的部分，是块级盒布局发生的区域，也是浮动元素与其他元素交互的区域。
 
-## BFC布局规则
+## BFC 布局规则
 
-1. 内部的Box会在垂直方向，一个接一个地放置。
-2. Box垂直方向的距离由margin决定。属于同一个BFC的两个相邻Box的margin会发生重叠
-3. 每个元素的margin box的左边， 与包含块border box的左边相接触(对于从左往右的格式化，否则相反)。即使存在浮动也是如此。
-4. BFC的区域不会与float box重叠。
-5. BFC就是页面上的一个隔离的独立容器，容器里面的子元素不会影响到外面的元素。反之也如此。
-6. 计算BFC的高度时，浮动元素也参与计算
+1. 内部的 Box 会在垂直方向，一个接一个地放置。
+2. Box 垂直方向的距离由 margin 决定。属于同一个 BFC 的两个相邻 Box 的 margin 会发生重叠
+3. 每个元素的 margin box 的左边， 与包含块 border box 的左边相接触(对于从左往右的格式化，否则相反)。即使存在浮动也是如此。
+4. BFC 的区域不会与 float box 重叠。
+5. BFC 就是页面上的一个隔离的独立容器，容器里面的子元素不会影响到外面的元素。反之也如此。
+6. 计算 BFC 的高度时，浮动元素也参与计算
 
 一个 HTML 盒（Box）满足以下任意一条，会创建块格式化上下文：
 
-* `float`的值不是`none`。
-* `position`的值不是`static`或`relative`。
-* `display`的值是`table-cell`、`table-caption`、`inline-block`、`flex`、或`inline-flex`。
-* `overflow`的值不是`visible`。
+- `float`的值不是`none`。
+- `position`的值不是`static`或`relative`。
+- `display`的值是`table-cell`、`table-caption`、`inline-block`、`flex`、或`inline-flex`。
+- `overflow`的值不是`visible`。
 
-在同一个BFC中两个相邻的块级盒在垂直方向上的边距会发生合并（collapse）。更多内容请参考[边距合并（margin collapsing）](https://www.sitepoint.com/web-foundations/collapsing-margins/)。
+在同一个 BFC 中两个相邻的块级盒在垂直方向上的边距会发生合并（collapse）。更多内容请参考[边距合并（margin collapsing）](https://www.sitepoint.com/web-foundations/collapsing-margins/)。
 
 ## 用途
 
-1. 同一个 BFC 下外边距会发生折叠，需包含在不同的BFC中
+1. 同一个 BFC 下外边距会发生折叠，需包含在不同的 BFC 中
 2. BFC 可以包含浮动的元素（清除浮动）
 3. BFC 可以阻止元素被浮动元素覆盖
 
 ## 总结
 
-BFC就是页面上的一个隔离的独立容器，容器里面的子元素不会影响到外面的元素。反之也如此。
+BFC 就是页面上的一个隔离的独立容器，容器里面的子元素不会影响到外面的元素。反之也如此。
 
 **参考**
 
-* <https://developer.mozilla.org/en-US/docs/Web/Guide/CSS/Block_formatting_context>
-* <https://www.sitepoint.com/understanding-block-formatting-contexts-in-css/>
+- <https://developer.mozilla.org/en-US/docs/Web/Guide/CSS/Block_formatting_context>
+- <https://www.sitepoint.com/understanding-block-formatting-contexts-in-css/>
 
 # 有哪些清除浮动的技术，都适用哪些情况？
 
-* 空`div`方法：`<div style="clear:both;"></div>`。
-* Clearfix 方法：上文使用`.clearfix`类已经提到。
-* `overflow: auto`或`overflow: hidden`方法：上文已经提到。
+- 空`div`方法：`<div style="clear:both;"></div>`。
+- Clearfix 方法：上文使用`.clearfix`类已经提到。
+- `overflow: auto`或`overflow: hidden`方法：上文已经提到。
 
 在大型项目中，我会使用 Clearfix 方法，在需要的地方使用`.clearfix`。设置`overflow: hidden`的方法可能使其子元素显示不完整，当子元素的高度大于父元素时。
 
@@ -184,46 +189,46 @@ BFC就是页面上的一个隔离的独立容器，容器里面的子元素不�
 
 好处：
 
-* 减少加载多张图片的 HTTP 请求数（一张雪碧图只需要一个请求）。但是对于 HTTP2 而言，加载多张图片不再是问题。
-* 提前加载资源，防止在需要时才在开始下载引发的问题，比如只出现在`:hover`伪类中的图片，不会出现闪烁。
+- 减少加载多张图片的 HTTP 请求数（一张雪碧图只需要一个请求）。但是对于 HTTP2 而言，加载多张图片不再是问题。
+- 提前加载资源，防止在需要时才在开始下载引发的问题，比如只出现在`:hover`伪类中的图片，不会出现闪烁。
 
 **参考**
 
-* <https://css-tricks.com/css-sprites/>
+- <https://css-tricks.com/css-sprites/>
 
 # 如何解决不同浏览器的样式兼容性问题？
 
-* 在确定问题原因和有问题的浏览器后，使用单独的样式表，仅供出现问题的浏览器加载。这种方法需要使用服务器端渲染。
-* 使用已经处理好此类问题的库，比如 Bootstrap。
-* 使用 `autoprefixer` 自动生成 CSS 属性前缀。
-* 使用 Reset CSS 或 Normalize.css。
+- 在确定问题原因和有问题的浏览器后，使用单独的样式表，仅供出现问题的浏览器加载。这种方法需要使用服务器端渲染。
+- 使用已经处理好此类问题的库，比如 Bootstrap。
+- 使用 `autoprefixer` 自动生成 CSS 属性前缀。
+- 使用 Reset CSS 或 Normalize.css。
 
 # 如何为功能受限的浏览器提供页面？ 使用什么样的技术和流程？
 
-* 优雅的降级：为现代浏览器构建应用，同时确保它在旧版浏览器中正常运行。
-* 渐进式增强：构建基于用户体验的应用，但在浏览器支持时添加新增功能。
-* 利用 [caniuse.com](https://caniuse.com/) 检查特性支持。
-* 使用 `autoprefixer` 自动生成 CSS 属性前缀。
-* 使用 [Modernizr](https://modernizr.com/)进行特性检测。
+- 优雅的降级：为现代浏览器构建应用，同时确保它在旧版浏览器中正常运行。
+- 渐进式增强：构建基于用户体验的应用，但在浏览器支持时添加新增功能。
+- 利用 [caniuse.com](https://caniuse.com/) 检查特性支持。
+- 使用 `autoprefixer` 自动生成 CSS 属性前缀。
+- 使用 [Modernizr](https://modernizr.com/)进行特性检测。
 
 # 有什么不同的方式可以隐藏内容（使其仅适用于屏幕阅读器）？
 
 这些方法与可访问性（a11y）有关。
 
-* `visibility: hidden`：元素仍然在页面流中，并占用空间。
-* `width: 0; height: 0`：使元素不占用屏幕上的任何空间，导致不显示它。
-* `position: absolute; left: -99999px`： 将它置于屏幕之外。
-* `text-indent: -9999px`：这只适用于`block`元素中的文本。
-* Metadata： 例如通过使用 Schema.org，RDF 和 JSON-LD。
-* WAI-ARIA：如何增加网页可访问性的 W3C 技术规范。
+- `visibility: hidden`：元素仍然在页面流中，并占用空间。
+- `width: 0; height: 0`：使元素不占用屏幕上的任何空间，导致不显示它。
+- `position: absolute; left: -99999px`： 将它置于屏幕之外。
+- `text-indent: -9999px`：这只适用于`block`元素中的文本。
+- Metadata： 例如通过使用 Schema.org，RDF 和 JSON-LD。
+- WAI-ARIA：如何增加网页可访问性的 W3C 技术规范。
 
 即使 WAI-ARIA 是理想的解决方案，我也会采用绝对定位方法，因为它具有最少的注意事项，适用于大多数元素，而且使用起来非常简单。
 
 **参考**
 
-* <https://www.w3.org/TR/wai-aria-1.1/>
-* <https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA>
-* <http://a11yproject.com/>
+- <https://www.w3.org/TR/wai-aria-1.1/>
+- <https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA>
+- <http://a11yproject.com/>
 
 # 你使用过栅格系统吗？偏爱哪一个？
 
@@ -237,7 +242,7 @@ BFC就是页面上的一个隔离的独立容器，容器里面的子元素不�
 
 不好意思，不熟悉。
 
-# 除了screen，你还能说出一个 @media 属性的例子吗？
+# 除了 screen，你还能说出一个 @media 属性的例子吗？
 
 # 编写高效的 CSS 应该注意什么？
 
@@ -249,35 +254,35 @@ BFC就是页面上的一个隔离的独立容器，容器里面的子元素不�
 
 **参考**
 
-* <https://developers.google.com/web/fundamentals/performance/rendering/>
-* <https://csstriggers.com/>
+- <https://developers.google.com/web/fundamentals/performance/rendering/>
+- <https://csstriggers.com/>
 
 # 使用 CSS 预处理的优缺点分别是什么？
 
 优点：
 
-* 提高 CSS 可维护性。
-* 易于编写嵌套选择器。
-* 引入变量，增添主题功能。可以在不同的项目中共享主题文件。
-* 通过混合（Mixins）生成重复的 CSS。
-* 将代码分割成多个文件。不进行预处理的 CSS，虽然也可以分割成多个文件，但需要建立多个 HTTP 请求加载这些文件。
+- 提高 CSS 可维护性。
+- 易于编写嵌套选择器。
+- 引入变量，增添主题功能。可以在不同的项目中共享主题文件。
+- 通过混合（Mixins）生成重复的 CSS。
+- 将代码分割成多个文件。不进行预处理的 CSS，虽然也可以分割成多个文件，但需要建立多个 HTTP 请求加载这些文件。
 
 缺点：
 
-* 需要预处理工具。
-* 重新编译的时间可能会很慢。
+- 需要预处理工具。
+- 重新编译的时间可能会很慢。
 
 # 对于你使用过的 CSS 预处理，说说喜欢和不喜欢的地方？
 
 喜欢：
 
-* 绝大部分优点上题以及提过。
-* Less 用 JavaScript 实现，与 NodeJS 高度结合。
+- 绝大部分优点上题以及提过。
+- Less 用 JavaScript 实现，与 NodeJS 高度结合。
 
 **Dislikes:**
 
-* 我通过`node-sass`使用 Sass，它用 C ++ 编写的 LibSass 绑定。在 Node 版本切换时，我必须经常重新编译。
-* Less 中，变量名称以`@`作为前缀，容易与 CSS 关键字混淆，如`@media`、`@import`和`@font-face`。
+- 我通过`node-sass`使用 Sass，它用 C ++ 编写的 LibSass 绑定。在 Node 版本切换时，我必须经常重新编译。
+- Less 中，变量名称以`@`作为前缀，容易与 CSS 关键字混淆，如`@media`、`@import`和`@font-face`。
 
 # 如何实现一个使用非标准字体的网页设计？
 
@@ -291,19 +296,19 @@ BFC就是页面上的一个隔离的独立容器，容器里面的子元素不�
 
 **参考**
 
-* <https://stackoverflow.com/questions/5797014/why-do-browsers-match-css-selectors-from-right-to-left>
+- <https://stackoverflow.com/questions/5797014/why-do-browsers-match-css-selectors-from-right-to-left>
 
 # 描述伪元素及其用途。
 
 CSS 伪元素是添加到选择器的关键字，去选择元素的特定部分。它们可以用于装饰（`:first-line`，`:first-letter`）或将元素添加到标记中（与 content:...组合），而不必修改标记（`:before`，`:after`）。
 
-* `:first-line`和`:first-letter`可以用来修饰文字。
-* 上面提到的`.clearfix`方法中，使用`clear: both`来添加不占空间的元素。
-* 使用`:before`和`after`展示提示中的三角箭头。鼓励关注点分离，因为三角被视为样式的一部分，而不是真正的 DOM。如果不使用额外的 HTML 元素，只用 CSS 样式绘制三角形是不太可能的。
+- `:first-line`和`:first-letter`可以用来修饰文字。
+- 上面提到的`.clearfix`方法中，使用`clear: both`来添加不占空间的元素。
+- 使用`:before`和`after`展示提示中的三角箭头。鼓励关注点分离，因为三角被视为样式的一部分，而不是真正的 DOM。如果不使用额外的 HTML 元素，只用 CSS 样式绘制三角形是不太可能的。
 
 **参考**
 
-* <https://css-tricks.com/almanac/selectors/a/after-and-before/>
+- <https://css-tricks.com/almanac/selectors/a/after-and-before/>
 
 # 说说你对盒模型的理解，以及如何告知浏览器使用不同的盒模型渲染布局。
 
@@ -311,67 +316,67 @@ CSS 盒模型描述了以文档树中的元素而生成的矩形框，并根据�
 
 CSS 盒模型负责计算：
 
-* 块级元素占用多少空间。
-* 边框是否重叠，边距是否合并。
-* 盒子的尺寸。
+- 块级元素占用多少空间。
+- 边框是否重叠，边距是否合并。
+- 盒子的尺寸。
 
 盒模型有以下规则：
 
-* 块级元素的大小由`width`、`height`、`padding`、`border`和`margin`决定。
-* 如果没有指定`height`，则块级元素的高度等于其包含子元素的内容高度加上`padding`（除非有浮动元素，请参阅下文）。
-* 如果没有指定`width`，则非浮动块级元素的宽度等于其父元素的宽度减去父元素的`padding`。
-* 元素的`height`是由内容的`height`来计算的。
-* 元素的`width`是由内容的`width`来计算的。
-* 默认情况下，`padding`和`border`不是元素`width`和`height`的组成部分。
+- 块级元素的大小由`width`、`height`、`padding`、`border`和`margin`决定。
+- 如果没有指定`height`，则块级元素的高度等于其包含子元素的内容高度加上`padding`（除非有浮动元素，请参阅下文）。
+- 如果没有指定`width`，则非浮动块级元素的宽度等于其父元素的宽度减去父元素的`padding`。
+- 元素的`height`是由内容的`height`来计算的。
+- 元素的`width`是由内容的`width`来计算的。
+- 默认情况下，`padding`和`border`不是元素`width`和`height`的组成部分。
 
 **参考**
 
-* <https://www.smashingmagazine.com/2010/06/the-principles-of-cross-browser-css-coding/#understand-the-css-box-model>
+- <https://www.smashingmagazine.com/2010/06/the-principles-of-cross-browser-css-coding/#understand-the-css-box-model>
 
-# * { box-sizing: border-box; }会产生怎样的效果？
+# \* { box-sizing: border-box; }会产生怎样的效果？
 
-* 元素默认应用了`box-sizing: content-box`，元素的宽高只会决定内容（content）的大小。
-* `box-sizing: border-box`改变计算元素`width`和`height`的方式，`border`和`padding`的大小也将计算在内。
-* 元素的`height` = 内容（content）的高度 + 垂直方向的`padding` + 垂直方向`border`的宽度
-* 元素的`width` = 内容（content）的宽度 + 水平方向的`padding` + 水平方向`border`的宽度
+- 元素默认应用了`box-sizing: content-box`，元素的宽高只会决定内容（content）的大小。
+- `box-sizing: border-box`改变计算元素`width`和`height`的方式，`border`和`padding`的大小也将计算在内。
+- 元素的`height` = 内容（content）的高度 + 垂直方向的`padding` + 垂直方向`border`的宽度
+- 元素的`width` = 内容（content）的宽度 + 水平方向的`padding` + 水平方向`border`的宽度
 
 # display 的属性值都有哪些？
 
-* `none`, `block`, `inline`, `inline-block`, `table`, `table-row`, `table-cell`, `list-item`.
+- `none`, `block`, `inline`, `inline-block`, `table`, `table-row`, `table-cell`, `list-item`.
 
 # inline 和 inline-block 有什么区别？
 
 我把`block`也加入其中，为了获得更好的比较。
 
-|                                 | `block`                                                     | `inline-block`                             | `inline`                                                                                                           |
-| :-------------------------------: | :-----------------------------------------------------------: | :------------------------------------------: | :------------------------------------------------------------------------------------------------------------------: |
-| 大小                            | 填充其父容器的宽度。                                        | 取决于内容。                               | 取决于内容。                                                                                                       |
-| 定位                            | 从新的一行开始，并且不允许旁边有 HTML 元素（除非是`float`） | 与其他内容一起流动，并允许旁边有其他元素。 | 与其他内容一起流动，并允许旁边有其他元素。                                                                         |
-| 能否设置`width`和`height`       | 能                                                          | 能                                         | 不能。 设置会被忽略。                                                                                              |
-| 可以使用`vertical-align`对齐    | 不可以                                                      | 可以                                       | 可以                                                                                                               |
-| 边距（margin）和填充（padding） | 各个方向都存在                                              | 各个方向都存在                             | 只有水平方向存在。垂直方向会被忽略。 尽管`border`和`padding`在`content`周围，但垂直方向上的空间取决于'line-height' |
-| 浮动（float）                   | -                                                           | -                                          | 就像一个`block`元素，可以设置垂直边距和填充。                                                                      |
+|  | `block` | `inline-block` | `inline` |
+| :-: | :-: | :-: | :-: |
+| 大小 | 填充其父容器的宽度。 | 取决于内容。 | 取决于内容。 |
+| 定位 | 从新的一行开始，并且不允许旁边有 HTML 元素（除非是`float`） | 与其他内容一起流动，并允许旁边有其他元素。 | 与其他内容一起流动，并允许旁边有其他元素。 |
+| 能否设置`width`和`height` | 能 | 能 | 不能。 设置会被忽略。 |
+| 可以使用`vertical-align`对齐 | 不可以 | 可以 | 可以 |
+| 边距（margin）和填充（padding） | 各个方向都存在 | 各个方向都存在 | 只有水平方向存在。垂直方向会被忽略。 尽管`border`和`padding`在`content`周围，但垂直方向上的空间取决于'line-height' |
+| 浮动（float） | - | - | 就像一个`block`元素，可以设置垂直边距和填充。 |
 
 # relative、fixed、absolute 和 static 四种定位有什么区别？
 
 经过定位的元素，其`position`属性值必然是`relative`、`absolute`、`fixed`或`sticky`。
 
-* `static`：默认定位属性值。该关键字指定元素使用正常的布局行为，即元素在文档常规流中当前的布局位置。此时 top, right, bottom, left 和 z-index 属性无效。
-* `relative`：该关键字下，元素先放置在未添加定位时的位置，再在不改变页面布局的前提下调整元素位置（因此会在此元素未添加定位时所在位置留下空白）。
-* `absolute`：不为元素预留空间，通过指定元素相对于最近的非 static 定位祖先元素的偏移，来确定元素位置。绝对定位的元素可以设置外边距（margins），且不会与其他边距合并。
-* `fixed`：不为元素预留空间，而是通过指定元素相对于屏幕视口（viewport）的位置来指定元素位置。元素的位置在屏幕滚动时不会改变。打印时，元素会出现在的每页的固定位置。fixed 属性会创建新的层叠上下文。当元素祖先的 transform 属性非 none 时，容器由视口改为该祖先。
-* `sticky`：盒位置根据正常流计算(这称为正常流动中的位置)，然后相对于该元素在流中的 flow root（BFC）和 containing block（最近的块级祖先元素）定位。在所有情况下（即便被定位元素为 `table` 时），该元素定位均不对后续元素造成影响。当元素 B 被粘性定位时，后续元素的位置仍按照 B 未定位时的位置来确定。`position: sticky` 对 `table` 元素的效果与 `position: relative` 相同。
-* 粘性定位是相对定位和固定定位的混合。元素在跨越特定阈值前为相对定位，之后为固定定位。
+- `static`：默认定位属性值。该关键字指定元素使用正常的布局行为，即元素在文档常规流中当前的布局位置。此时 top, right, bottom, left 和 z-index 属性无效。
+- `relative`：该关键字下，元素先放置在未添加定位时的位置，再在不改变页面布局的前提下调整元素位置（因此会在此元素未添加定位时所在位置留下空白）。
+- `absolute`：不为元素预留空间，通过指定元素相对于最近的非 static 定位祖先元素的偏移，来确定元素位置。绝对定位的元素可以设置外边距（margins），且不会与其他边距合并。
+- `fixed`：不为元素预留空间，而是通过指定元素相对于屏幕视口（viewport）的位置来指定元素位置。元素的位置在屏幕滚动时不会改变。打印时，元素会出现在的每页的固定位置。fixed 属性会创建新的层叠上下文。当元素祖先的 transform 属性非 none 时，容器由视口改为该祖先。
+- `sticky`：盒位置根据正常流计算(这称为正常流动中的位置)，然后相对于该元素在流中的 flow root（BFC）和 containing block（最近的块级祖先元素）定位。在所有情况下（即便被定位元素为 `table` 时），该元素定位均不对后续元素造成影响。当元素 B 被粘性定位时，后续元素的位置仍按照 B 未定位时的位置来确定。`position: sticky` 对 `table` 元素的效果与 `position: relative` 相同。
+- 粘性定位是相对定位和固定定位的混合。元素在跨越特定阈值前为相对定位，之后为固定定位。
 
 **参考**
 
-* <https://developer.mozilla.org/en/docs/Web/CSS/position>
+- <https://developer.mozilla.org/en/docs/Web/CSS/position>
 
 # 你使用过哪些现有的 CSS 框架？你是如何改进它们的？
 
-* **Bootstrap**： 更新周期缓慢。Bootstrap 4 已经处于 alpha 版本将近两年了。添加了在页面中广泛使用的微调按钮组件。
-* **Semantic UI**：源代码结构使得自定义主题很难理解。非常规主题系统的使用体验很差。外部库的路径需要硬编码（hard code）配置。变量重新赋值没有 Bootstrap 设计得好。
-* **Bulma**： 需要很多非语义的类和标记，显得很多余。不向后兼容，以至于升级版本后，会破坏应用的正常运行。
+- **Bootstrap**： 更新周期缓慢。Bootstrap 4 已经处于 alpha 版本将近两年了。添加了在页面中广泛使用的微调按钮组件。
+- **Semantic UI**：源代码结构使得自定义主题很难理解。非常规主题系统的使用体验很差。外部库的路径需要硬编码（hard code）配置。变量重新赋值没有 Bootstrap 设计得好。
+- **Bulma**： 需要很多非语义的类和标记，显得很多余。不向后兼容，以至于升级版本后，会破坏应用的正常运行。
 
 # 你了解 CSS Flexbox 和 Grid 吗？
 
@@ -383,7 +388,7 @@ Grid 创建基于栅格的布局，是迄今为止最直观的方法（最好是
 
 **参考**
 
-* <https://philipwalton.github.io/solved-by-flexbox/>
+- <https://philipwalton.github.io/solved-by-flexbox/>
 
 # 请解释在编写网站时，响应式与移动优先的区别。
 
@@ -397,9 +402,9 @@ Grid 创建基于栅格的布局，是迄今为止最直观的方法（最好是
 
 **参考**
 
-* <https://developer.mozilla.org/en-US/docs/Archive/Apps/Design/UI_layout_basics/Responsive_design_versus_adaptive_design>
-* <http://mediumwell.com/responsive-adaptive-mobile/>
-* <https://css-tricks.com/the-difference-between-responsive-and-adaptive-design/>
+- <https://developer.mozilla.org/en-US/docs/Archive/Apps/Design/UI_layout_basics/Responsive_design_versus_adaptive_design>
+- <http://mediumwell.com/responsive-adaptive-mobile/>
+- <https://css-tricks.com/the-difference-between-responsive-and-adaptive-design/>
 
 # 你有没有使用过视网膜分辨率的图形？当中使用什么技术？
 
@@ -411,7 +416,7 @@ Grid 创建基于栅格的布局，是迄今为止最直观的方法（最好是
 
 **参考**
 
-* <https://www.sitepoint.com/css-techniques-for-retina-displays/>
+- <https://www.sitepoint.com/css-techniques-for-retina-displays/>
 
 # 什么情况下，用 translate() 而不用绝对定位？什么时候，情况相反。
 
@@ -421,10 +426,10 @@ Grid 创建基于栅格的布局，是迄今为止最直观的方法（最好是
 
 **参考**
 
-* <https://www.paulirish.com/2012/why-moving-elements-with-translate-is-better-than-posabs-topleft/>
+- <https://www.paulirish.com/2012/why-moving-elements-with-translate-is-better-than-posabs-topleft/>
 
 # 其他答案
 
-* <https://neal.codes/blog/front-end-interview-css-questions>
-* <https://quizlet.com/28293152/front-end-interview-questions-css-flash-cards/>
-* <http://peterdoes.it/2015/12/03/a-personal-exercise-front-end-job-interview-questions-and-my-answers-all/>
+- <https://neal.codes/blog/front-end-interview-css-questions>
+- <https://quizlet.com/28293152/front-end-interview-questions-css-flash-cards/>
+- <http://peterdoes.it/2015/12/03/a-personal-exercise-front-end-job-interview-questions-and-my-answers-all/>

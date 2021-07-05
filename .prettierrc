@@ -1,0 +1,16 @@
+{
+  "singleQuote": true,
+  "printWidth": 120,
+  "semi": true,
+  "trailingComma": "none",
+  "proseWrap": "never",
+  "arrowParens": "always",
+  "jsxSingleQuote": true,
+  "endOfLine": "lf",
+  "overrides": [
+    {
+      "files": ".prettierrc",
+      "options": { "parser": "json" }
+    }
+  ]
+}

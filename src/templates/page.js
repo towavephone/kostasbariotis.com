@@ -12,22 +12,22 @@ export default function Pages({ pathContext, data }) {
   const { description, siteUrl } = data.site.siteMetadata;
   const { posts, page, pagesSum, prevPath, nextPath, length } = pathContext;
   return (
-    <section className="main-content">
+    <section className='main-content'>
       <MetaTags
         title={`第 ${page} 页`}
         path={`/page/${page}`}
         siteUrl={siteUrl}
-        tags="webdev, programming, javascript"
+        tags='webdev, programming, javascript'
         description={description}
         noIndex={false}
       />
-      <section className="blog container">
-        <div className="medium-8 medium-offset-2 large-10 large-offset-1 tags-collection">
-          <header className="header">
-            <h1 className="tag-title tag-page-title">全部</h1>
+      <section className='blog container'>
+        <div className='medium-8 medium-offset-2 large-10 large-offset-1 tags-collection'>
+          <header className='header'>
+            <h1 className='tag-title tag-page-title'>全部</h1>
           </header>
-          <section className="tag-meta">共 {length} 篇文章</section>
-          <div className="posts">
+          <section className='tag-meta'>共 {length} 篇文章</section>
+          <div className='posts'>
             <Pagination page={page} pagesSum={pagesSum} prevPath={prevPath} nextPath={nextPath} />
             <Separator />
             <Posts posts={posts} />
@@ -42,7 +42,7 @@ export default function Pages({ pathContext, data }) {
 
 Pages.propTypes = {
   pathContext: PropTypes.object,
-  data: PropTypes.object,
+  data: PropTypes.object
 };
 
 export const pagesQuery = graphql`

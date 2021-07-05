@@ -2,7 +2,7 @@
 title: 构建多平台轻量化组件的实践
 date: 2019-10-29 09:51:53
 categories:
-- 前端
+  - 前端
 tags: 前端, 组件轻量化, webpack, 预研
 path: /building-platform-lightweight-components/
 ---
@@ -11,11 +11,11 @@ path: /building-platform-lightweight-components/
 
 需求背景接上文 [记一次组件打包为链接的实践](/components-pack-as-library/)
 
-框架搭建接上文 [Webpack脚手架搭建笔记——记一次新项目搭建](/webpack-template-new-project/)
+框架搭建接上文 [Webpack 脚手架搭建笔记——记一次新项目搭建](/webpack-template-new-project/)
 
 ## 组件轻量化
 
-在将客服组件上线后，由于未考虑到加载的组件包的大小，尤其是初始加载的包比较大，即使是压缩过初始加载也有600多k，严重影响首页加载，导致加载此脚本的网站需要很长时间才能响应，所以有了这次的优化任务
+在将客服组件上线后，由于未考虑到加载的组件包的大小，尤其是初始加载的包比较大，即使是压缩过初始加载也有 600 多 k，严重影响首页加载，导致加载此脚本的网站需要很长时间才能响应，所以有了这次的优化任务
 
 ## 移动端适配
 
@@ -34,27 +34,27 @@ path: /building-platform-lightweight-components/
 
 ## 组件异步加载
 
-需要修改 webpack 配置，由于之前是在 webpack2 上开发，不能很完美的做到异步加载。此时将框架升级到和本文 [Webpack脚手架搭建笔记——记一次新项目搭建](/webpack-template-new-project/) 的同一版本，具体修改如下：
+需要修改 webpack 配置，由于之前是在 webpack2 上开发，不能很完美的做到异步加载。此时将框架升级到和本文 [Webpack 脚手架搭建笔记——记一次新项目搭建](/webpack-template-new-project/) 的同一版本，具体修改如下：
 
 1. 去除 mini-css-extract-plugin，防止 css 单独抽离
 2. 聚合初始加载脚本到一个文件，异步加载的在其他文件，且对异步加载的做 hash 处理
-  
-      boot\internals\webpack\webpack.prod.babel.js
 
-      ```js
-      entry: {
-        bundle: ['runtime/polyfill', path.join(process.cwd(), buildMap.indexEntry)],
-      },
+   boot\internals\webpack\webpack.prod.babel.js
 
-      output: {
-        filename: '[name].js',
-        chunkFilename: '[name].[chunkhash].chunk.js',
-      },
+   ```js
+   entry: {
+     bundle: ['runtime/polyfill', path.join(process.cwd(), buildMap.indexEntry)],
+   },
 
-      // 关闭代码切割，防止首页产生除 bundle.js 外的其他文件
-      // runtimeChunk: 'single',
-      splitChunks: false,
-      ```
+   output: {
+     filename: '[name].js',
+     chunkFilename: '[name].[chunkhash].chunk.js',
+   },
+
+   // 关闭代码切割，防止首页产生除 bundle.js 外的其他文件
+   // runtimeChunk: 'single',
+   splitChunks: false,
+   ```
 
 生成构建文件如下：
 
@@ -64,7 +64,7 @@ path: /building-platform-lightweight-components/
 
 首页只会引入 bundle.js 文件，且异步组件在其他文件
 
-## 较大组件预加载 
+## 较大组件预加载
 
 这里为了打开聊天组件时不会卡顿，使用了预加载，一定要注意要在主入口加载完成，也就是请求加载完成后在进行预加载，否则同样会造成首页加载时间过长
 
@@ -156,7 +156,7 @@ package.json
 
 之前的项目用到 antd，这里采用了和 antd 一样的引用方式。
 
-作用：有利于代码分割，不会将 antd 的组件代码分割到主入口，antd-mobile同理。
+作用：有利于代码分割，不会将 antd 的组件代码分割到主入口，antd-mobile 同理。
 
 .babelrc
 
@@ -211,12 +211,12 @@ const globalVars = globalJSON.runtime[varsEnv];
 
 const RESOLVE_MODULES_MAP = {
   pc: ['src/common', 'src/pc', 'node_modules'],
-  mobile: ['src/common', 'src/mobile', 'node_modules'],
+  mobile: ['src/common', 'src/mobile', 'node_modules']
 };
 
 const OUTPUT_PATH_MAP = {
   pc: 'build/pc',
-  mobile: 'build/mobile',
+  mobile: 'build/mobile'
 };
 
 const resolveModules = RESOLVE_MODULES_MAP[prodEnv];
@@ -224,12 +224,12 @@ const outputPath = OUTPUT_PATH_MAP[prodEnv];
 
 const INDEX_ENTRY_MAP = {
   pc: 'src/pc/index.js',
-  mobile: 'src/mobile/index.js',
+  mobile: 'src/mobile/index.js'
 };
 
 const INDEX_HTML_MAP = {
   pc: 'src/pc/index.html',
-  mobile: 'src/mobile/index.html',
+  mobile: 'src/mobile/index.html'
 };
 
 const indexEntry = INDEX_ENTRY_MAP[prodEnv];
@@ -240,7 +240,7 @@ module.exports = {
   outputPath,
   indexEntry,
   indexHtml,
-  globalVars,
+  globalVars
 };
 ```
 
@@ -326,15 +326,7 @@ const $_NODE_ENV = argv.env || 'production';
 const $_PROD_ENV = argv.prod || 'pc';
 
 shelljs.exec(
-  `rimraf ./build/${
-    $_PROD_ENV
-  }/* && cross-env NODE_ENV=${
-    $_NODE_ENV
-  } SERVER=${
-    $_SERVER
-  } PROD_ENV=${
-    $_PROD_ENV
-  } webpack --config boot/internals/webpack/webpack.prod.babel.js --color --progress`,
+  `rimraf ./build/${$_PROD_ENV}/* && cross-env NODE_ENV=${$_NODE_ENV} SERVER=${$_SERVER} PROD_ENV=${$_PROD_ENV} webpack --config boot/internals/webpack/webpack.prod.babel.js --color --progress`,
   { stdio: 'inherit' }
 );
 ```
@@ -369,10 +361,7 @@ const cmd = APPS.map((APP) => `"node boot/scripts/build --server=${$_SERVER} --p
 // 进度输出刷屏，待优化
 // https://github.com/kimmobrunfeldt/concurrently/issues/188
 // https://github.com/kimmobrunfeldt/concurrently/issues/85
-shelljs.exec(
-  `concurrently ${cmd.join(' ')}`,
-  { stdio: 'inherit' }
-);
+shelljs.exec(`concurrently ${cmd.join(' ')}`, { stdio: 'inherit' });
 ```
 
 这里调用会并行编译 pc、mobile 两个平台的代码
@@ -385,7 +374,7 @@ package.json
 }
 ```
 
-编译速度：2个平台同时编译的情况下第一次 30~40s，第二次 8~10s
+编译速度：2 个平台同时编译的情况下第一次 30~40s，第二次 8~10s
 
 ## 分离打包的 nginx 配置
 
@@ -467,7 +456,7 @@ class TitleMessage {
     this.alertPlayer.play();
     // 网页提示
     utils.showNotification(msg, {
-      icon: tungeeLogo,
+      icon: tungeeLogo
     });
     this.stop();
     this.timer = setInterval(() => {
@@ -514,7 +503,7 @@ location ^~ /im {
 
 优化前包大小如下图，首页/全部加载大小都为 644.58kb。
 
-加载速度（不限速）540ms，3g low（限速120 kb/s）40.75s。
+加载速度（不限速）540ms，3g low（限速 120 kb/s）40.75s。
 
 ![](2019-10-29-10-25-53.png)
 
@@ -528,7 +517,7 @@ location ^~ /im {
 
 优化后，首页加载 107.08kb，全部加载 356.46kb。
 
-加载速度（不限速） 246ms，3g low （限速120 kb/s）7s。
+加载速度（不限速） 246ms，3g low （限速 120 kb/s）7s。
 
 ![](2019-10-29-14-38-30.png)
 
@@ -540,7 +529,7 @@ location ^~ /im {
 
 优化后，首页加载 105.89kb，全部加载 306.3kb。
 
-加载速度（不限速）236ms，3g low（限速120 kb/s）6.98s。
+加载速度（不限速）236ms，3g low（限速 120 kb/s）6.98s。
 
 ![](2019-10-29-15-40-29.png)
 
@@ -551,4 +540,3 @@ location ^~ /im {
 # 优化总结
 
 待优化的点：组件化复用做的不够好、以原生方式写客服组件体积会更小等等
-

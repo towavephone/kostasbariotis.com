@@ -2,7 +2,7 @@
 title: 基于SIP协议云端电话的实践
 date: 2019-6-10 11:44:03
 categories:
-- 前端
+  - 前端
 tags: 前端, SIP, webrtc, 预研
 path: /sip-protocol-practice/
 ---
@@ -13,7 +13,7 @@ path: /sip-protocol-practice/
 
 # 知识背景
 
-[SIP协议入门学习](/SIP-protocol-introduction-learning/)
+[SIP 协议入门学习](/SIP-protocol-introduction-learning/)
 
 # 核心思路
 
@@ -38,7 +38,8 @@ class Call {
     this.hasSignedIn = false;
     this.createElements();
 
-    window.onbeforeunload = () => { // eslint-disable-line
+    window.onbeforeunload = () => {
+      // eslint-disable-line
       this.signOut();
     };
   }
@@ -59,7 +60,7 @@ class Call {
         password: callInfo.agent_pwd,
         sipServer,
         sipPort,
-        wsType,
+        wsType
       };
       this.registerSip();
     });
@@ -67,18 +68,12 @@ class Call {
 
   // 注册分机（软电话）
   registerSip() {
-    const {
-      authorizationUser,
-      password,
-      sipServer,
-      sipPort,
-      wsType,
-    } = this.callInfo;
+    const { authorizationUser, password, sipServer, sipPort, wsType } = this.callInfo;
     const config = {
       // Replace this IP address with your FreeSWITCH IP address
       uri: `${authorizationUser}@${sipServer}:${sipPort}`,
       transportOptions: {
-        wsServers: [`${wsType}://${sipServer}:${sipPort}`],
+        wsServers: [`${wsType}://${sipServer}:${sipPort}`]
       },
       // Replace sipjs.com with your domain name
       // and replace the port with your FreeSWITCH wss port
@@ -93,9 +88,9 @@ class Call {
       sessionDescriptionHandlerFactoryOptions: {
         constraints: {
           audio: true,
-          video: false,
-        },
-      },
+          video: false
+        }
+      }
     };
 
     this.userAgent = new UA(config);
@@ -230,7 +225,7 @@ export default Call;
 
 # 疑难问题
 
-以上因为 freeswitch 第三方线路的失败回调导致挂断电话不能正常挂断，此时最佳的解决办法就是后端写 websocket 来推送给前端以做到实时更新，否则总是有些不成功的回调导致UI显示错误，现阶段主要采用轮询后端的方式来获取最新的状态。
+以上因为 freeswitch 第三方线路的失败回调导致挂断电话不能正常挂断，此时最佳的解决办法就是后端写 websocket 来推送给前端以做到实时更新，否则总是有些不成功的回调导致 UI 显示错误，现阶段主要采用轮询后端的方式来获取最新的状态。
 
 以上更新于`2019-6-10 20:20:52`
 

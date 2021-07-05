@@ -7,8 +7,7 @@ tags: 前端, TypeScript
 
 # 背景知识
 
-[TypeScript Handbook 入门教程](https://zhongsp.gitbooks.io/typescript-handbook/content/)
-[深入理解 TypeScript](https://jkchao.github.io/typescript-book-chinese/)
+[TypeScript Handbook 入门教程](https://zhongsp.gitbooks.io/typescript-handbook/content/) [深入理解 TypeScript](https://jkchao.github.io/typescript-book-chinese/)
 
 # 工具泛型的实现
 
@@ -42,8 +41,8 @@ type Obj =  {
 keyof 产生联合类型，in 则可以遍历枚举类型，所以他们经常一起使用，看下 Partial 源码
 
 ```js
-type Partial<T> = { 
-  [P in keyof T]?: T[P] 
+type Partial<T> = {
+  [P in keyof T]?: T[P]
 };
 ```
 
@@ -66,14 +65,14 @@ interface IUser {
 经过 Partial 类型转化后得到
 
 ```js
-type optional = Partial<IUser>
+type optional = Partial<IUser>;
 
 // optional的结果如下
 type optional = {
-  name?: string | undefined;
-  age?: number | undefined;
-  department?: string | undefined;
-}
+  name?: string | undefined,
+  age?: number | undefined,
+  department?: string | undefined
+};
 ```
 
 ## Required
@@ -81,8 +80,8 @@ type optional = {
 Required 的作用是将传入的属性变为必选项，源码如下
 
 ```js
-type Required<T> = { 
-  [P in keyof T]-?: T[P] 
+type Required<T> = {
+  [P in keyof T]-?: T[P]
 };
 ```
 
@@ -107,8 +106,8 @@ type Mutable<T> = {
 将传入的属性变为只读选项, 源码如下
 
 ```js
-type Readonly<T> = { 
-  readonly [P in keyof T]: T[P] 
+type Readonly<T> = {
+  readonly [P in keyof T]: T[P]
 };
 ```
 
@@ -116,8 +115,7 @@ type Readonly<T> = {
 
 ### 前置知识
 
-此处注意 K extends keyof T 和直接使用 K in keyof T 的区别，keyof T 仅仅代表键的字符串文字类型，
-而 extends keyof T 将返回该属性相同的类型
+此处注意 K extends keyof T 和直接使用 K in keyof T 的区别，keyof T 仅仅代表键的字符串文字类型，而 extends keyof T 将返回该属性相同的类型
 
 ```js
 function prop<T, K extends keyof T>(obj: T, key: K) {
@@ -142,8 +140,8 @@ let v2 = prop2(o, 'p1') // is number | string, no extra info is captured
 将 K 中所有的属性的值转化为 T 类型
 
 ```js
-type Record<K extends keyof any, T> = { 
-  [P in K]: T 
+type Record<K extends keyof any, T> = {
+  [P in K]: T
 };
 ```
 
@@ -152,7 +150,7 @@ type Record<K extends keyof any, T> = {
 从 T 中取出一系列 K 的属性
 
 ```js
-type Pick<T, K extends keyof T> = { 
+type Pick<T, K extends keyof T> = {
   [P in K]: T[P]
 };
 ```
@@ -190,7 +188,7 @@ type Exclude<T, U> = T extends U ? never : T;
 结合实例
 
 ```js
-type T = Exclude<1 | 2, 1 | 3> // -> 2
+type T = Exclude<1 | 2, 1 | 3>; // -> 2
 ```
 
 很轻松地得出结果 2，据代码和示例我们可以推断出 Exclude 的作用是从 T 中找出 U 中没有的元素，换种更加贴近语义的说法其实就是从 T 中排除 U
@@ -259,8 +257,8 @@ TypeScript 提供函数重载的功能，用来处理因函数参数不同而返
 declare function test(a: number): number;
 declare function test(a: string): string;
 
-const resS = test('Hello World');  // resS 被推断出类型为 string；
-const resN = test(1234);           // resN 被推断出类型为 number;
+const resS = test('Hello World'); // resS 被推断出类型为 string；
+const resN = test(1234); // resN 被推断出类型为 number;
 ```
 
 它也适用于参数不同，返回值类型相同的场景，我们只需要知道在哪种函数类型定义下能使用哪些参数即可。
@@ -282,7 +280,7 @@ declare function test(para: User | number, flag?: boolean): number;
 const user = {
   name: 'Jack',
   age: 666
-}
+};
 
 // 没有报错，但是与想法违背
 const res = test(user, false);
@@ -392,7 +390,7 @@ obj.moveBy(5, 5);
 
 ```js
 type FunctionPropertyNames<T> = {
-  [K in keyof T]: T[K] extends Function ? K : never 
+  [K in keyof T]: T[K] extends Function ? K : never
 }[keyof T];
 type FunctionProperties<T> = Pick<T, FunctionPropertyNames<T>>;
 
@@ -416,8 +414,8 @@ class SomeClass {
   value = [1, 2, 3];
 
   someMethod() {
-    this.value.find(/* ... */);  // ok
-    this.find(/* ... */);        // Error：SomeClass 没有 find 方法。
+    this.value.find(/* ... */); // ok
+    this.find(/* ... */); // Error：SomeClass 没有 find 方法。
   }
 }
 ```
@@ -549,7 +547,11 @@ printAnimalAbilities(animal); // animal has claws, animal can fly
 Decorator 早已不是什么新鲜事物，在 TypeScript 1.5 + 的版本中，我们可以利用内置类型 ClassDecorator、PropertyDecorator、MethodDecorator 与 ParameterDecorator 更快书写 Decorator，如 MethodDecorator：
 
 ```js
-declare type MethodDecorator = <T>(target: Object, propertyKey: string | symbol, descriptor: TypedPropertyDescriptor<T>) => TypedPropertyDescriptor<T> | void;
+declare type MethodDecorator = <T>(
+  target: Object,
+  propertyKey: string | symbol,
+  descriptor: TypedPropertyDescriptor<T>
+) => TypedPropertyDescriptor<T> | void;
 ```
 
 使用时，只需在相应地方加上类型注解，匿名函数的参数类型也就会被自动推导出来了。
@@ -566,17 +568,17 @@ function methodDecorator(): MethodDecorator {
 
 ```js
 function testAble(): ClassDecorator {
-  return target => {
-    target.prototype.someValue = true
-  }
+  return (target) => {
+    target.prototype.someValue = true;
+  };
 }
 
 @testAble()
 class SomeClass {}
 
-const someClass = new SomeClass()
+const someClass = new SomeClass();
 
-someClass.someValue() // Error: Property 'someValue' does not exist on type 'SomeClass'.
+someClass.someValue(); // Error: Property 'someValue' does not exist on type 'SomeClass'.
 ```
 
 这很常见，特别是当你想用 Decorator 来扩展一个类时。
@@ -615,41 +617,41 @@ x.mixinMethod3(); // Error
 
 - 显式赋值断言修饰符，即是在类里，明确说明某些属性存在于类上：
 
-    ```js
-    function testAble(): ClassDecorator {
-      return target => {
-        target.prototype.someValue = true
-      }
+  ```js
+  function testAble(): ClassDecorator {
+    return target => {
+      target.prototype.someValue = true
     }
+  }
 
-    @testAble()
-    class SomeClass {
-      public someValue!: boolean;
-    }
+  @testAble()
+  class SomeClass {
+    public someValue!: boolean;
+  }
 
-    const someClass = new SomeClass();
-    someClass.someValue // true
-    ```
+  const someClass = new SomeClass();
+  someClass.someValue // true
+  ```
 
 - 采用声明合并形式，单独定义一个 interface，把用 Decorator 扩展的属性的类型，放入 interface 中：
 
-    ```js
-    interface SomeClass {
-      someValue: boolean;
-    }
+  ```js
+  interface SomeClass {
+    someValue: boolean;
+  }
 
-    function testAble(): ClassDecorator {
-      return target => {
-        target.prototype.someValue = true
-      }
-    }
+  function testAble(): ClassDecorator {
+    return (target) => {
+      target.prototype.someValue = true;
+    };
+  }
 
-    @testAble()
-    class SomeClass {}
+  @testAble()
+  class SomeClass {}
 
-    const someClass = new SomeClass();
-    someClass.someValue // true
-    ```
+  const someClass = new SomeClass();
+  someClass.someValue; // true
+  ```
 
 ## Reflect Metadata
 
@@ -687,28 +689,27 @@ class SomeClass {
 
 ```js
 function classDecorator(): ClassDecorator {
-  return target => {
+  return (target) => {
     // 在类上定义元数据，key 为 `classMetaData`，value 为 `a`
     Reflect.defineMetadata('classMetaData', 'a', target);
-  }
+  };
 }
 
 function methodDecorator(): MethodDecorator {
   return (target, key, descriptor) => {
     // 在类的原型属性 'someMethod' 上定义元数据，key 为 `methodMetaData`，value 为 `b`
     Reflect.defineMetadata('methodMetaData', 'b', target, key);
-  }
+  };
 }
 
 @classDecorator()
 class SomeClass {
-
   @methodDecorator()
   someMethod() {}
-};
+}
 
-Reflect.getMetadata('classMetaData', SomeClass);                         // 'a'
-Reflect.getMetadata('methodMetaData', new SomeClass(), 'someMethod');    // 'b'
+Reflect.getMetadata('classMetaData', SomeClass); // 'a'
+Reflect.getMetadata('methodMetaData', new SomeClass(), 'someMethod'); // 'b'
 ```
 
 ### 用例
@@ -752,7 +753,6 @@ Factory(TestService).testMethod()   // 1
 ```js
 @Controller('/test')
 class SomeClass {
-
   @Get('/a')
   someGetMethod() {
     return 'hello world';
@@ -760,7 +760,7 @@ class SomeClass {
 
   @Post('/b')
   somePostMethod() {}
-};
+}
 ```
 
 它们也是基于 Reflect Metadata 实现，不同的是，这次我们将 metadataKey 定义在 descriptor 的 value 上（稍后解释），简单实现如下：
@@ -791,11 +791,12 @@ const Post = createMappingDecorator('POST');
 ```js
 function mapRoute(instance: Object) {
   const prototype = Object.getPrototypeOf(instance);
-  
+
   // 筛选出类的 methodName
-  const methodsNames = Object.getOwnPropertyNames(prototype)
-                              .filter(item => !isConstructor(item) && isFunction(prototype[item]));
-  return methodsNames.map(methodName => {
+  const methodsNames = Object.getOwnPropertyNames(prototype).filter(
+    (item) => !isConstructor(item) && isFunction(prototype[item])
+  );
+  return methodsNames.map((methodName) => {
     const fn = prototype[methodName];
 
     // 取出定义的 metadata
@@ -806,17 +807,17 @@ function mapRoute(instance: Object) {
       method,
       fn,
       methodName
-    }
-  })
-};
+    };
+  });
+}
 ```
 
 我们可以得到一些有用的信息：
 
 ```js
-Reflect.getMetadata(PATH_METADATA, SomeClass);  // '/test'
+Reflect.getMetadata(PATH_METADATA, SomeClass); // '/test'
 
-mapRoute(new SomeClass())
+mapRoute(new SomeClass());
 
 /**
  * [{
@@ -830,7 +831,7 @@ mapRoute(new SomeClass())
  *    fn: somePostMethod() { ... },
  *    methodName: 'somePostMethod'
  * }]
- * 
+ *
  */
 ```
 
@@ -849,7 +850,7 @@ const arr = [1];
 此时 TypeScript 将会推断 arr 类型为 number[]：
 
 ```js
-arr.push('1');  // Error
+arr.push('1'); // Error
 ```
 
 当数组元素具有其它类型时，可以通过类型注解的方式：
@@ -857,14 +858,14 @@ arr.push('1');  // Error
 ```js
 const arr: Array<string | number> = [1];
 
-arr.push('1');  // OK
-arr.push(true);  // Error
+arr.push('1'); // OK
+arr.push(true); // Error
 ```
 
 或者你也可以通过可选元组的方式：
 
 ```js
-const arr: [number, string?] = [1];  // arr 的成员类型可以是: number, string, undefined 
+const arr: [number, string?] = [1];  // arr 的成员类型可以是: number, string, undefined
 arr.push('1');   // OK
 arr.push(true);   // Error
 ```
@@ -872,8 +873,8 @@ arr.push(true);   // Error
 使用元组形式，还能提供指定位置的类型检查：
 
 ```js
-arr[0] = '1';   // Error
-arr[1] = 1;    // Error
+arr[0] = '1'; // Error
+arr[1] = 1; // Error
 ```
 
 ### 使用
@@ -890,9 +891,9 @@ interface B {
 }
 
 const [{ data: a }, { data: b }] = await Promise.all([
-  axios.get<A>('http://some.1'),
-  axios.get<B>('http://some.2')
-])
+  axios.get < A > 'http://some.1',
+  axios.get < B > 'http://some.2'
+]);
 ```
 
 此时，TypeScript 能推出 a 的类型是 A, b 的类型是 B。
@@ -931,15 +932,15 @@ const [
 如创建一个字符串字面量：
 
 ```js
-const a = 'hello';  // a 的类型是 'hello'
-a = 'world';   // Error
+const a = 'hello'; // a 的类型是 'hello'
+a = 'world'; // Error
 ```
 
 或者你也可以：
 
 ```js
-let a: 'hello' = 'hello';  // a 的类型是 'hello'
-a = 'world';     // Error
+let a: 'hello' = 'hello'; // a 的类型是 'hello'
+a = 'world'; // Error
 ```
 
 其它数据类型与此相似。
@@ -965,11 +966,11 @@ type D = A & B;
 
 ```js
 let someThing: { name: string };
-someThing = { name: 'hello' };              // ok
-someThing = { name: 'hello', age: 123 };    // Error, 对象字面量只能指定已知属性, { name: string } 类型中不存在 age 属性
+someThing = { name: 'hello' }; // ok
+someThing = { name: 'hello', age: 123 }; // Error, 对象字面量只能指定已知属性, { name: string } 类型中不存在 age 属性
 
 let otherThing = { name: 'hello', age: 123 };
-someThing = otherThing;                     // ok
+someThing = otherThing; // ok
 ```
 
 TypeScript 认为创建的每个对象字面量都是 `fresh` 状态；当一个 `fresh` 对象字面量赋值给一个变量时，如果对象的类型与变量类型不兼容时，会出现报错（如上例子中 someThine = { name: 'hello', age: 123 }; 的错误）；当对象字面量的类型变宽，对象字面量的 `fresh` 状态会消失（如上例子中 someThing = otherThing; ，赋值以后，someThing 的类型变宽）。
@@ -984,7 +985,7 @@ function logName(something: { name: string }) {
 const obj = {
   name: 'matt',
   job: 'being awesome'
-}
+};
 
 logName(obj); // ok
 logName({ name: 'matt' }); // ok
@@ -1003,16 +1004,16 @@ const TestDecorator = () => {
   return (
     target: Object,
     key: string | symbol,
-    descriptor: TypedPropertyDescriptor<() => number>   // 函数返回值必须是 number
+    descriptor: TypedPropertyDescriptor<() => number> // 函数返回值必须是 number
   ) => {
     // 其他代码
-  }
-}
+  };
+};
 
 class Test {
   @TestDecorator()
   testMethod() {
-    return '123';   // Error: Type 'string' is not assignable to type 'number'
+    return '123'; // Error: Type 'string' is not assignable to type 'number'
   }
 }
 ```
@@ -1021,19 +1022,15 @@ class Test {
 
 ```js
 const TestDecorator = <T>(para: T) => {
-  return (
-    target: Object,
-    key: string | symbol,
-    descriptor: TypedPropertyDescriptor<() => T>
-  ) => {
+  return (target: Object, key: string | symbol, descriptor: TypedPropertyDescriptor<() => T>) => {
     // 其他代码
-  }
-}
+  };
+};
 
 class Test {
   @TestDecorator('hello')
   testMethod() {
-    return 123;      // Error: Type 'number' is not assignable to type 'string'
+    return 123; // Error: Type 'number' is not assignable to type 'string'
   }
 }
 ```
@@ -1043,10 +1040,10 @@ class Test {
 在定义泛型后，有两种方式使用，一种是传入泛型类型，另一种使用类型推断，即编译器根据其他参数类型来推断泛型类型。简单示例如下：
 
 ```js
-declare function fn<T>(arg: T): T;      // 定义一个泛型函数
+declare function fn<T>(arg: T): T; // 定义一个泛型函数
 
-const fn1 = fn<string>('hello');        // 第一种方式，传入泛型类型 string
-const fn2 = fn(1);                      // 第二种方式，从参数 arg 传入的类型 number，来推断出泛型 T 的类型是 number
+const fn1 = fn < string > 'hello'; // 第一种方式，传入泛型类型 string
+const fn2 = fn(1); // 第二种方式，从参数 arg 传入的类型 number，来推断出泛型 T 的类型是 number
 ```
 
 它通常与映射类型一起使用，用来实现一些比较复杂的功能。
@@ -1074,7 +1071,7 @@ test 函数将传入参数的所有属性取出来，现在我们来一步一步
 ```js
 declare function test<T>(o: { data: Options<T> }): T;
 
-test({data: { name: 'Hello' }}).name     // string
+test({ data: { name: 'Hello' } }).name; // string
 ```
 
 当 data 对象里，含有函数时，它也能运作：
@@ -1084,12 +1081,12 @@ const param = {
   data: {
     name: 'Hello',
     someMethod() {
-      return 'hello world'
+      return 'hello world';
     }
   }
-}
+};
 
-test(param).someMethod()    // string
+test(param).someMethod(); // string
 ```
 
 接着，考虑一种特殊的函数情景，像 Vue 中 Computed 一样，不调用函数，也能取出函数的返回值类型。现在传入参数的形式变更为：
@@ -1104,7 +1101,7 @@ const param = {
       return 20;
     }
   }
-}
+};
 ```
 
 一个函数的类型可以简单的看成是 `() => T` 的形式，对象中的方法类型，可以看成 `a: () => T` 的形式，在反向推导时（由函数返回值，来推断类型 a 的类型）可以利用它，需要添加一个映射类型 `Computed<T>`，用来处理 computed 里的函数：
@@ -1180,9 +1177,9 @@ test(param).age     // number
 ```js
 // 转换前数据
 const arr = [
-  { id: 1, parentId: 0, name: 'test1'},
-  { id: 2, parentId: 1, name: 'test2'},
-  { id: 3, parentId: 0, name: 'test3'}
+  { id: 1, parentId: 0, name: 'test1' },
+  { id: 2, parentId: 1, name: 'test2' },
+  { id: 3, parentId: 0, name: 'test3' }
 ];
 
 // 转化后
@@ -1192,11 +1189,11 @@ const arr = [
     parentId: 0,
     name: 'test1',
     children: [
-      { 
-        id: 2, 
-        parentId: 1, 
-        name: 'test2', 
-        children: [] 
+      {
+        id: 2,
+        parentId: 1,
+        name: 'test2',
+        children: []
       }
     ]
   },
@@ -1206,7 +1203,7 @@ const arr = [
     name: 'test3',
     children: []
   }
-]
+];
 ```
 
 如果 children 字段名字不变，函数的类型并不难写，它大概是如下样子：
@@ -1222,7 +1219,7 @@ type TreeItem = Item & { children: TreeItem[] | [] };
 
 declare function listToTree(list: Item[]): TreeItem[];
 
-listToTree(arr).forEach(i => i.children)    // ok
+listToTree(arr).forEach((i) => i.children); // ok
 ```
 
 但是在很多时候，children 字段的名字并不固定，而是从参数中传进来：
@@ -1230,7 +1227,7 @@ listToTree(arr).forEach(i => i.children)    // ok
 ```js
 const options = {
   childrenKey: 'childrenList'
-}
+};
 
 listToTree(arr, options);
 ```
@@ -1243,9 +1240,7 @@ listToTree(arr, options);
     id: 1,
     parentId: 0,
     name: 'test1',
-    childrenList: [
-      { id: 2, parentId: 1, name: 'test2', childrenList: [] }
-    ]
+    childrenList: [{ id: 2, parentId: 1, name: 'test2', childrenList: [] }]
   },
   {
     id: 3,
@@ -1253,7 +1248,7 @@ listToTree(arr, options);
     name: 'test3',
     childrenList: []
   }
-]
+];
 ```
 
 实现的思路大致是前文所说的利用泛型的类型推断，从传入的 options 参数中，得到 childrenKey 的类型，然后再传给 TreeItem，如下：
@@ -1316,10 +1311,10 @@ interface User {
   age: number;
 }
 
-type Func = (user: User) => void
+type Func = (user: User) => void;
 
-type Param = ParamType<Func>;   // Param = User
-type AA = ParamType<string>;    // string
+type Param = ParamType<Func>; // Param = User
+type AA = ParamType<string>; // string
 ```
 
 ### 内置类型
@@ -1336,7 +1331,7 @@ type AA = ParamType<string>;    // string
 
   ```js
   type Func = () => User;
-  type Test = ReturnType<Func>;   // Test = User
+  type Test = ReturnType<Func>; // Test = User
   ```
 
 - 用于提取构造函数中参数（实例）类型：
@@ -1376,7 +1371,7 @@ type AA = ParamType<string>;    // string
 至此，相信你已经对 infer 已有基本了解，我们来看看一些使用它的「骚操作」：
 
 - tuple 转 union ，如：`[string, number] -> string | number`
-  
+
   解答之前，我们需要了解 tuple 类型在一定条件下，是可以赋值给数组类型：
 
   ```js
@@ -1405,7 +1400,7 @@ type AA = ParamType<string>;    // string
   ```
 
 - union 转 intersection，如：`string | number -> string & number`
-  
+
   这个可能要稍微麻烦一点，需要 infer 配合 `Distributive conditional types` 使用。
 
   `Distributive conditional types` 是由 `naked type parameter` 构成的条件类型。而 `naked type parameter` 表示没有被 Wrapped 的类型（如：`Array<T>`、`[T]`、`Promise<T>` 等都是不是 `naked type parameter`）。`Distributive conditional types` 主要用于拆分 extends 左边部分的联合类型，举个例子：在条件类型 `T extends U ? X : Y` 中，当 T 是 `A | B` 时，会拆分成 `A extends U ? X : Y | B extends U ? X : Y`；
@@ -1516,17 +1511,17 @@ type Connect = (module: Module) => {
 
 ```js
 distribute({
-    type: 'LOGIN',
-    email: string
-})
+  type: 'LOGIN',
+  email: string
+});
 ```
 
 这样的函数调用方式给简化为：
 
 ```js
 distribute('LOGIN', {
-    email: string
-})
+  email: string
+});
 ```
 
 ### 分布条件类型的真实用例
@@ -1556,34 +1551,34 @@ type Action =
 然后我们定义这个 dispatch 方法：
 
 ```js
-declare function dispatch(action: Action): void
+declare function dispatch(action: Action): void;
 
 // ok
 dispatch({
-  type: "INIT"
-})
+  type: 'INIT'
+});
 
 // ok
 dispatch({
-  type: "LOG_IN",
-  emailAddress: "david.sheldrick@artsy.net"
-})
+  type: 'LOG_IN',
+  emailAddress: 'david.sheldrick@artsy.net'
+});
 
 // ok
 dispatch({
-  type: "LOG_IN_SUCCESS",
-  accessToken: "038fh239h923908h"
-})
+  type: 'LOG_IN_SUCCESS',
+  accessToken: '038fh239h923908h'
+});
 ```
 
 这个 API 是类型安全的，当 TS 识别到 type 为 LOG_IN 的时候，它会要求你在参数中传入 emailAddress 这个参数，这样才能完全满足联合类型中的其中一项。
 
-等等，我们好像可以让这个api变得更简单一点：
+等等，我们好像可以让这个 api 变得更简单一点：
 
 ```js
-dispatch("LOG_IN_SUCCESS", {
-  accessToken: "038fh239h923908h"
-})
+dispatch('LOG_IN_SUCCESS', {
+  accessToken: '038fh239h923908h'
+});
 ```
 
 ### 参数简化实现
@@ -1619,7 +1614,7 @@ type ExtractActionParameters<A, T> = A extends { type: T } ? A : never
 来看看如何使用它：
 
 ```js
-type Test = ExtractActionParameters<Action, "LOG_IN">
+type Test = ExtractActionParameters<Action, 'LOG_IN'>;
 // => { type: "LOG_IN", emailAddress: string }
 ```
 
@@ -1635,7 +1630,7 @@ type ExcludeTypeField<A> = { [K in Exclude<keyof A, "type">]: A[K] }
 这里利用了 keyof 语法，并且利用内置类型 Exclude 把 type 这个 key 去掉，因此只会留下额外的参数。
 
 ```js
-type Test = ExcludeTypeField<{ type: "LOG_IN", emailAddress: string }>
+type Test = ExcludeTypeField<{ type: 'LOG_IN', emailAddress: string }>;
 // { emailAddress: string }
 ```
 
@@ -1643,8 +1638,7 @@ type Test = ExcludeTypeField<{ type: "LOG_IN", emailAddress: string }>
 
 ```js
 // 把参数对象中的type去掉
-type ExtractActionParametersWithoutType<A, T> =
-    ExcludeTypeField<ExtractActionParameters<A, T>>;
+type ExtractActionParametersWithoutType<A, T> = ExcludeTypeField<ExtractActionParameters<A, T>>;
 ```
 
 ```js
@@ -1659,9 +1653,9 @@ declare function dispatch<T extends ActionType>(
 ```js
 // ok
 dispatch({
-  type: "LOG_IN",
-  emailAddress: "david.sheldrick@artsy.net"
-})
+  type: 'LOG_IN',
+  emailAddress: 'david.sheldrick@artsy.net'
+});
 ```
 
 ### 利用重载进一步优化
@@ -1669,7 +1663,7 @@ dispatch({
 到了这一步为止，虽然带参数的 Action 可以完美支持了，但是对于 "INIT" 这种不需要传参的 Action，我们依然要写下面这样代码：
 
 ```js
-dispatch("INIT", {})
+dispatch('INIT', {});
 ```
 
 这肯定是不能接受的！所以我们要利用 TypeScript 的函数重载功能。
@@ -1693,7 +1687,7 @@ function dispatch(arg: any, payload?: any) {}
 SimpleActionType 顾名思义就是除了 type 以外不需要额外参数的 Action 类型
 
 ```js
-type SimpleAction = ExtractSimpleAction<Action>
+type SimpleAction = ExtractSimpleAction<Action>;
 ```
 
 我们如何定义这个 ExtractSimpleAction 条件类型？如果我们从这个 Action 中删除 type 字段，并且结果是一个空的接口，那么这就是一个 SimpleAction，所以我们可能会凭直觉写出这样的代码：
@@ -1835,7 +1829,7 @@ dispatch('LOG_IN', {
 ## Ref 类型从零实现
 
 ```js
-const count = ref(ref(ref(ref(2))))
+const count = ref(ref(ref(ref(2))));
 ```
 
 需要支持嵌套后解包，最后只会剩下 { value: number } 这个类型。
@@ -1845,9 +1839,9 @@ const count = ref(ref(ref(ref(2))))
 泛型的正向用法很多人都知道了。
 
 ```js
-type Value<T> = T
+type Value<T> = T;
 
-type NumberValue = Value<number>
+type NumberValue = Value<number>;
 ```
 
 这样，NumberValue 解析出的类型就是 number，其实就类似于类型系统里的传参。
@@ -1988,5 +1982,3 @@ number
 ```
 
 仔细看看，是不是有那么点感觉了，它就是对于 extends 后面未知的某些类型进行一个占位 infer R，后续就可以使用推断出来的 R 这个类型。
-
-

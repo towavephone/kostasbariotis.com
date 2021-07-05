@@ -2,7 +2,7 @@
 title: git 飞行规则
 date: 2018-11-9 10:09:28
 categories:
-- 版本控制工具
+  - 版本控制工具
 path: /git-flight-rules/
 tags: Git, git 飞行规则
 ---
@@ -168,13 +168,11 @@ $ git add -N filename.x
 
 然后, 你需要用 `e` 选项来手动选择需要添加的行，执行 `git diff --cached` 将会显示哪些行暂存了哪些行只是保存在本地了。
 
-
 <a href="stage-in-two-commits"></a>
 
 ### 我想把在一个文件里的变化 (changes) 加到两个提交 (commit) 里
 
 `git add` 会把整个文件加入到一个提交。`git add -p` 允许交互式的选择你想要提交的部分.
-
 
 ### 我想把暂存的内容变成未暂存，把未暂存的内容暂存起来
 
@@ -409,7 +407,6 @@ HEAD is now at a13b85e
 
 这时候, 这里可能会产生冲突， 参见[交互式 rebasing 章 ](#interactive-rebase) [--冲突节--](#merge-conflict) 解决冲突.
 
-
 再者， 我们为 bug #14 创建一个新的分支, 也基于`master`分支
 
 ```sh
@@ -423,7 +420,6 @@ HEAD is now at a13b85e
 ```sh
 (14)$ git cherry-pick 5ea5173
 ```
-
 
 ### 我想删除上游 (upstream) 分支被删除了的本地分支
 
@@ -521,7 +517,6 @@ README.md foo.txt
 ```sh
 (master)$ git branch -D my-branch
 ```
-
 
 ### 我想从别人正在工作的远程分支签出 (checkout) 一个分支
 
@@ -703,13 +698,13 @@ Newer, awesomer features
 如果你看到的是这样:
 
 ```js
-noop
+noop;
 ```
 
 这意味着你 rebase 的分支和当前分支在同一个提交 (commit) 上, 或者 -领先 (ahead)- 当前分支。 你可以尝试:
 
 - 检查确保主 (master) 分支没有问题
-- rebase  `HEAD~2` 或者更早
+- rebase `HEAD~2` 或者更早
 
 #### 有冲突的情况
 
@@ -823,7 +818,7 @@ $ git update-ref refs/tags/<tag_name> <hash>
 
 ### 我想给一些 Git 命令添加别名 (alias)
 
-在 OS X 和 Linux 下, 你的 Git 的配置文件储存在 ```~/.gitconfig```。我在```[alias]``` 部分添加了一些快捷别名 (和一些我容易拼写错误的)，如下:
+在 OS X 和 Linux 下, 你的 Git 的配置文件储存在 `~/.gitconfig`。我在`[alias]` 部分添加了一些快捷别名 (和一些我容易拼写错误的)，如下:
 
 ```vim
 [alias]

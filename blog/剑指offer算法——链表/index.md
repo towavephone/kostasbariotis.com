@@ -2,10 +2,11 @@
 title: 剑指offer算法题——链表
 date: 2018-2-21 11:04:04
 categories:
-- 面试
+  - 面试
 tags: 面试, 算法
 path: /offer-linked-list/
 ---
+
 ## 链表操作
 
 ### 链表末尾添加节点
@@ -36,8 +37,6 @@ void AddToTail(ListNode** pHead, int value)
     }
 }
 ```
-
-
 
 ### 删除含有某值的节点
 
@@ -77,7 +76,7 @@ void RemoveNode(ListNode** pHead, int value)
 
 ## 从尾到头打印链表
 
->题目描述：输入一个链表，从尾到头打印链表每个节点的值。
+> 题目描述：输入一个链表，从尾到头打印链表每个节点的值。
 
 ### 栈实现
 

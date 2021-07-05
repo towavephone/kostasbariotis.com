@@ -10,19 +10,18 @@ path: /async-await-simplest-implementation/
 # 示例
 
 ```js
-const getData = () =>
-  new Promise(resolve => setTimeout(() => resolve("data"), 1000));
+const getData = () => new Promise((resolve) => setTimeout(() => resolve('data'), 1000));
 
 async function test() {
   const data = await getData();
-  console.log("data: ", data);
+  console.log('data: ', data);
   const data2 = await getData();
-  console.log("data2: ", data2);
-  return "success";
+  console.log('data2: ', data2);
+  return 'success';
 }
 
 // 这样的一个函数 应该再1秒后打印data 再过一秒打印data2 最后打印success
-test().then(res => console.log(res));
+test().then((res) => console.log(res));
 ```
 
 # 思路
@@ -33,10 +32,10 @@ test().then(res => console.log(res));
 function* testG() {
   // await被编译成了yield
   const data = yield getData();
-  console.log("data: ", data);
+  console.log('data: ', data);
   const data2 = yield getData();
-  console.log("data2: ", data2);
-  return "success";
+  console.log('data2: ', data2);
+  return 'success';
 }
 ```
 
@@ -45,19 +44,18 @@ function* testG() {
 利用这个特性，我们只要编写一个自动执行的函数，就可以让这个 generator 函数完全实现 async 函数的功能。
 
 ```js
-const getData = () =>
-  new Promise(resolve => setTimeout(() => resolve("data"), 1000));
+const getData = () => new Promise((resolve) => setTimeout(() => resolve('data'), 1000));
 
 var test = asyncToGenerator(function* testG() {
   // await被编译成了yield
   const data = yield getData();
-  console.log("data: ", data);
+  console.log('data: ', data);
   const data2 = yield getData();
-  console.log("data2: ", data2);
-  return "success";
+  console.log('data2: ', data2);
+  return 'success';
 });
 
-test().then(res => console.log(res));
+test().then((res) => console.log(res));
 ```
 
 那么大体上的思路已经确定了，asyncToGenerator 接受一个 generator 函数，返回一个 promise，
@@ -72,10 +70,10 @@ test().then(res => console.log(res));
 function* testG() {
   // await被编译成了yield
   const data = yield getData();
-  console.log("data: ", data);
+  console.log('data: ', data);
   const data2 = yield getData();
-  console.log("data2: ", data2);
-  return "success";
+  console.log('data2: ', data2);
+  return 'success';
 }
 ```
 
@@ -129,24 +127,24 @@ const data2 = yield getData()
 function* testG() {
   // await被编译成了yield
   const data = yield getData();
-  console.log("data: ", data);
+  console.log('data: ', data);
   const data2 = yield getData();
-  console.log("data2: ", data2);
-  return "success";
+  console.log('data2: ', data2);
+  return 'success';
 }
 
 var gen = testG();
 
 var dataPromise = gen.next();
 
-dataPromise.then(value1 => {
+dataPromise.then((value1) => {
   // data1的value被拿到了 继续调用next并且传递给data
   var data2Promise = gen.next(value1);
 
   // console.log('data: ', data);
   // 此时就会打印出data
 
-  data2Promise.value.then(value2 => {
+  data2Promise.value.then((value2) => {
     // data2的value拿到了 继续调用next并且传递value2
     gen.next(value2);
 
@@ -217,18 +215,18 @@ function asyncToGenerator(generatorFunc) {
             //    })
             // })
             function onResolve(val) {
-              step("next", val);
+              step('next', val);
             },
             // 如果 promise 被 reject 了，就再次进入 step 函数
             // 不同的是，这次的 try catch 中调用的是 gen.throw(err)
             // 那么自然就被 catch 到，然后把 promise 给 reject 掉啦
             function onReject(err) {
-              step("throw", err);
+              step('throw', err);
             }
           );
         }
       }
-      step("next");
+      step('next');
     });
   };
 }

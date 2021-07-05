@@ -216,7 +216,7 @@ function example() {
             return 3;
 
           case 6:
-          case "end":
+          case 'end':
             return context$1$0.stop();
         }
     },
@@ -274,7 +274,7 @@ runtime.wrap = function(innerFn, outerFn, self, tryLocsList) {
 // Helper for defining the .next, .throw, and .return methods of the
 // Iterator interface in terms of a single ._invoke method.
 function defineIteratorMethods(prototype) {
-  ["next", "throw", "return"].forEach(function(method) {
+  ['next', 'throw', 'return'].forEach(function(method) {
     prototype[method] = function(arg) {
       return this._invoke(method, arg);
     };
@@ -302,9 +302,9 @@ var record = tryCatch(innerFn, self, context);
 ```js
 function tryCatch(fn, obj, arg) {
   try {
-    return { type: "normal", arg: fn.call(obj, arg) };
+    return { type: 'normal', arg: fn.call(obj, arg) };
   } catch (err) {
-    return { type: "throw", arg: err };
+    return { type: 'throw', arg: err };
   }
 }
 ```

@@ -3,7 +3,7 @@ title: 浏览器跨页面通信
 date: 2021-6-30 11:17:28
 categories:
   - 前端
-tags: 前端, JS, 高级前端
+tags: 前端, 浏览器, 高级前端
 path: /browser-cross-page-message/
 ---
 
@@ -26,7 +26,7 @@ BroadCast Channel 可以帮我们创建一个用于广播的通信频道，当�
 下面的方式就可以创建一个标识为 AlienZHOU 的频道：
 
 ```js
-const bc = new BroadcastChannel("AlienZHOU");
+const bc = new BroadcastChannel('AlienZHOU');
 ```
 
 各个页面可以通过 onmessage 来监听被广播的消息：
@@ -34,8 +34,8 @@ const bc = new BroadcastChannel("AlienZHOU");
 ```js
 bc.onmessage = function(e) {
   const data = e.data;
-  const text = "[receive] " + data.msg + " —— tab " + data.from;
-  console.log("[BroadcastChannel] receive message:", text);
+  const text = '[receive] ' + data.msg + ' —— tab ' + data.from;
+  console.log('[BroadcastChannel] receive message:', text);
 };
 ```
 
@@ -53,8 +53,8 @@ Service Worker 是一个可以长期运行在后台的 Worker，能够实现与�
 
 ```js
 /* 页面逻辑 */
-navigator.serviceWorker.register("../util.sw.js").then(function() {
-  console.log("Service Worker 注册成功");
+navigator.serviceWorker.register('../util.sw.js').then(function() {
+  console.log('Service Worker 注册成功');
 });
 ```
 
@@ -62,8 +62,8 @@ navigator.serviceWorker.register("../util.sw.js").then(function() {
 
 ```js
 /* ../util.sw.js Service Worker 逻辑 */
-self.addEventListener("message", function(e) {
-  console.log("service worker receive message", e.data);
+self.addEventListener('message', function(e) {
+  console.log('service worker receive message', e.data);
   e.waitUntil(
     self.clients.matchAll().then(function(clients) {
       if (!clients || clients.length === 0) {
@@ -83,10 +83,10 @@ self.addEventListener("message", function(e) {
 
 ```js
 /* 页面逻辑 */
-navigator.serviceWorker.addEventListener("message", function(e) {
+navigator.serviceWorker.addEventListener('message', function(e) {
   const data = e.data;
-  const text = "[receive] " + data.msg + " —— tab " + data.from;
-  console.log("[Service Worker] receive message:", text);
+  const text = '[receive] ' + data.msg + ' —— tab ' + data.from;
+  console.log('[Service Worker] receive message:', text);
 });
 ```
 
@@ -104,11 +104,11 @@ LocalStorage 作为前端最常用的本地存储，大家应该已经非常熟�
 当 LocalStorage 变化时，会触发 storage 事件。利用这个特性，我们可以在发送消息时，把消息写入到某个 LocalStorage 中；然后在各个页面内，通过监听 storage 事件即可收到通知。
 
 ```js
-window.addEventListener("storage", function(e) {
-  if (e.key === "ctc-msg") {
+window.addEventListener('storage', function(e) {
+  if (e.key === 'ctc-msg') {
     const data = JSON.parse(e.newValue);
-    const text = "[receive] " + data.msg + " —— tab " + data.from;
-    console.log("[Storage I] receive message:", text);
+    const text = '[receive] ' + data.msg + ' —— tab ' + data.from;
+    console.log('[Storage I] receive message:', text);
   }
 });
 ```
@@ -117,14 +117,14 @@ window.addEventListener("storage", function(e) {
 
 ```js
 mydata.st = +new Date();
-window.localStorage.setItem("ctc-msg", JSON.stringify(mydata));
+window.localStorage.setItem('ctc-msg', JSON.stringify(mydata));
 ```
 
 注意这里有一个细节：我们在 mydata 上添加了一个取当前毫秒时间戳的 .st 属性。这是因为 storage 事件只有在值真正改变时才会触发。举个例子：
 
 ```js
-window.localStorage.setItem("test", "123");
-window.localStorage.setItem("test", "123");
+window.localStorage.setItem('test', '123');
+window.localStorage.setItem('test', '123');
 ```
 
 由于第二次的值 123 与第一次的值相同，所以以上的代码只会在第一次 setItem 时触发 storage 事件。因此我们通过设置 st 来保证每次调用时一定会触发 storage 事件。
@@ -147,7 +147,7 @@ Shared Worker 在实现跨页面通信时的问题在于，它无法主动通知
 
 ```js
 // 构造函数的第二个参数是 Shared Worker 名称，也可以留空
-const sharedWorker = new SharedWorker("../util.shared.js", "ctc");
+const sharedWorker = new SharedWorker('../util.shared.js', 'ctc');
 ```
 
 然后，在该 Shared Worker 中支持 get 与 post 形式的消息：
@@ -155,12 +155,14 @@ const sharedWorker = new SharedWorker("../util.shared.js", "ctc");
 ```js
 /* ../util.shared.js: Shared Worker 代码 */
 let data = null;
-self.addEventListener("connect", function(e) {
+self.addEventListener('connect', function(e) {
   const port = e.ports[0];
-  port.addEventListener("message", function(event) {
-    if (event.data.get) { // get 指令则返回存储的消息数据
+  port.addEventListener('message', function(event) {
+    if (event.data.get) {
+      // get 指令则返回存储的消息数据
       data && port.postMessage(data);
-    } else { // 非 get 指令则存储该消息数据
+    } else {
+      // 非 get 指令则存储该消息数据
       data = event.data;
     }
   });
@@ -178,11 +180,11 @@ setInterval(function() {
 
 // 监听 get 消息的返回数据
 sharedWorker.port.addEventListener(
-  "message",
-  e => {
+  'message',
+  (e) => {
     const data = e.data;
-    const text = "[receive] " + data.msg + " —— tab " + data.from;
-    console.log("[Shared Worker] receive message:", text);
+    const text = '[receive] ' + data.msg + ' —— tab ' + data.from;
+    console.log('[Shared Worker] receive message:', text);
   },
   false
 );
@@ -209,19 +211,19 @@ sharedWorker.port.postMessage(mydata);
 
 ```js
 function openStore() {
-  const storeName = "ctc_aleinzhou";
+  const storeName = 'ctc_aleinzhou';
   return new Promise(function(resolve, reject) {
-    if (!("indexedDB" in window)) {
+    if (!('indexedDB' in window)) {
       return reject("don't support indexedDB");
     }
-    const request = indexedDB.open("CTC_DB", 1);
+    const request = indexedDB.open('CTC_DB', 1);
     request.onerror = reject;
-    request.onsuccess = e => resolve(e.target.result);
+    request.onsuccess = (e) => resolve(e.target.result);
     request.onupgradeneeded = function(e) {
       const db = e.srcElement.result;
       if (e.oldVersion === 0 && !db.objectStoreNames.contains(storeName)) {
-        const store = db.createObjectStore(storeName, { keyPath: "tag" });
-        store.createIndex(storeName + "Index", "tag", { unique: false });
+        const store = db.createObjectStore(storeName, { keyPath: 'tag' });
+        store.createIndex(storeName + 'Index', 'tag', { unique: false });
       }
     };
   });
@@ -233,10 +235,10 @@ function openStore() {
 ```js
 function saveData(db, data) {
   return new Promise(function(resolve, reject) {
-    const STORE_NAME = "ctc_aleinzhou";
-    const tx = db.transaction(STORE_NAME, "readwrite");
+    const STORE_NAME = 'ctc_aleinzhou';
+    const tx = db.transaction(STORE_NAME, 'readwrite');
     const store = tx.objectStore(STORE_NAME);
-    const request = store.put({ tag: "ctc_data", data });
+    const request = store.put({ tag: 'ctc_data', data });
     request.onsuccess = () => resolve(db);
     request.onerror = reject;
   });
@@ -247,13 +249,13 @@ function saveData(db, data) {
 
 ```js
 function query(db) {
-  const STORE_NAME = "ctc_aleinzhou";
+  const STORE_NAME = 'ctc_aleinzhou';
   return new Promise(function(resolve, reject) {
     try {
-      const tx = db.transaction(STORE_NAME, "readonly");
+      const tx = db.transaction(STORE_NAME, 'readonly');
       const store = tx.objectStore(STORE_NAME);
-      const dbRequest = store.get("ctc_data");
-      dbRequest.onsuccess = e => resolve(e.target.result);
+      const dbRequest = store.get('ctc_data');
+      dbRequest.onsuccess = (e) => resolve(e.target.result);
       dbRequest.onerror = reject;
     } catch (err) {
       reject(err);
@@ -265,14 +267,14 @@ function query(db) {
 剩下的工作就非常简单了。首先打开数据连接，并初始化数据：
 
 ```js
-openStore().then(db => saveData(db, null));
+openStore().then((db) => saveData(db, null));
 ```
 
 对于消息读取，可以在连接与初始化后轮询：
 
 ```js
 openStore()
-  .then(db => saveData(db, null))
+  .then((db) => saveData(db, null))
   .then(function(db) {
     setInterval(function() {
       query(db).then(function(res) {
@@ -280,8 +282,8 @@ openStore()
           return;
         }
         const data = res.data;
-        const text = "[receive] " + data.msg + " —— tab " + data.from;
-        console.log("[Storage I] receive message:", text);
+        const text = '[receive] ' + data.msg + ' —— tab ' + data.from;
+        console.log('[Storage I] receive message:', text);
       });
     }, 1000);
   });
@@ -291,7 +293,7 @@ openStore()
 
 ```js
 openStore()
-  .then(db => saveData(db, null))
+  .then((db) => saveData(db, null))
   .then(function(db) {
     // …… 省略上面的轮询代码
     // 触发 saveData 的方法可以放在用户操作的事件监听内
@@ -315,8 +317,8 @@ openStore()
 
 ```js
 let childWins = [];
-document.getElementById("btn").addEventListener("click", function() {
-  const win = window.open("./some/sample");
+document.getElementById('btn').addEventListener('click', function() {
+  const win = window.open('./some/sample');
   childWins.push(win);
 });
 ```
@@ -325,10 +327,10 @@ document.getElementById("btn").addEventListener("click", function() {
 
 ```js
 // 向下传递消息，打开的窗口传递消息给它打开的页面
-childWins = childWins.filter(w => !w.closed);
+childWins = childWins.filter((w) => !w.closed);
 if (childWins.length > 0) {
   mydata.fromOpenner = false;
-  childWins.forEach(w => w.postMessage(mydata));
+  childWins.forEach((w) => w.postMessage(mydata));
 }
 
 // 向上传递消息，打开的窗口传递消息给打开它的页面
@@ -345,20 +347,20 @@ if (window.opener && !window.opener.closed) {
 > 需要注意的是，我这里通过判断消息来源，避免将消息回传给发送方，防止消息在两者间死循环的传递。（该方案会有些其他小问题，实际中可以进一步优化）
 
 ```js
-window.addEventListener("message", function(e) {
+window.addEventListener('message', function(e) {
   const data = e.data;
-  const text = "[receive] " + data.msg + " —— tab " + data.from;
-  console.log("[Cross-document Messaging] receive message:", text);
+  const text = '[receive] ' + data.msg + ' —— tab ' + data.from;
+  console.log('[Cross-document Messaging] receive message:', text);
   // 向上传递消息，避免消息回传
   if (window.opener && !window.opener.closed && data.fromOpenner) {
     window.opener.postMessage(data);
   }
   // 过滤掉已经关闭的窗口
-  childWins = childWins.filter(w => !w.closed);
+  childWins = childWins.filter((w) => !w.closed);
   // 避免消息回传
   if (childWins && !data.fromOpenner) {
     // 向下传递消息
-    childWins.forEach(w => w.postMessage(data));
+    childWins.forEach((w) => w.postMessage(data));
   }
 });
 ```
@@ -381,7 +383,7 @@ window.addEventListener("message", function(e) {
 
 ```js
 /* 业务页面代码 */
-window.addEventListener("message", function(e) {
+window.addEventListener('message', function(e) {
   // …… do something
 });
 ```
@@ -390,16 +392,16 @@ window.addEventListener("message", function(e) {
 
 ```js
 /* 业务页面代码 */
-window.frames[0].window.postMessage(mydata, "*");
+window.frames[0].window.postMessage(mydata, '*');
 ```
 
 其中为了简便此处将 postMessage 的第二个参数设为了 \*，你也可以设为 iframe 的 URL。iframe 收到消息后，会使用某种跨页面消息通信技术在所有 iframe 间同步消息，例如下面使用的 Broadcast Channel：
 
 ```js
 /* iframe 内代码 */
-const bc = new BroadcastChannel("AlienZHOU");
+const bc = new BroadcastChannel('AlienZHOU');
 // 收到来自页面的消息后，在 iframe 间进行广播
-window.addEventListener("message", function(e) {
+window.addEventListener('message', function(e) {
   bc.postMessage(e.data);
 });
 ```
@@ -410,7 +412,7 @@ window.addEventListener("message", function(e) {
 /* iframe 内代码 */
 // 对于收到的（iframe）广播消息，通知给所属的业务页面
 bc.onmessage = function(e) {
-  window.parent.postMessage(e.data, "*");
+  window.parent.postMessage(e.data, '*');
 };
 ```
 

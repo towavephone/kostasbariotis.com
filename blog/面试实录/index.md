@@ -18,21 +18,21 @@ draft: true
 
 1. 简要介绍自己
 2. 客服系统采用什么架构？
-3. Ionic框架是做什么的？
-4. Ionic前身是解决什么问题的？
+3. Ionic 框架是做什么的？
+4. Ionic 前身是解决什么问题的？
 5. 客服系统为什么采用这个框架？
-6. websocket怎么实现的？还有什么别的方式来实现消息推送机制？
-7. 当时用的Angular的版本？双向绑定是怎么实现的？
-8. 301与302的区别？
-9. jquery中bind和on的用法？以及他们的区别？优缺点？
-10. 商家后台技术栈？react是什么东西？react虚拟dom算法的实现方式？虚拟dom是什么？
-11. 重绘与重排是什么？他们的区别？有一个动画怎样实现使它的dom的重排重绘改变最小？也就是更流畅？
-12. 什么是一级dom和二级dom？
+6. websocket 怎么实现的？还有什么别的方式来实现消息推送机制？
+7. 当时用的 Angular 的版本？双向绑定是怎么实现的？
+8. 301 与 302 的区别？
+9. jquery 中 bind 和 on 的用法？以及他们的区别？优缺点？
+10. 商家后台技术栈？react 是什么东西？react 虚拟 dom 算法的实现方式？虚拟 dom 是什么？
+11. 重绘与重排是什么？他们的区别？有一个动画怎样实现使它的 dom 的重排重绘改变最小？也就是更流畅？
+12. 什么是一级 dom 和二级 dom？
 13. 什么是事件委托？
-14. 跨域的几种实现方式？其中postMessage内部的实现方式？调用过程？伪装域名怎么解决？其中服务器端怎么实现Access-Control-Allow-Origin的跨域的（怎么拦截跨域的）？
+14. 跨域的几种实现方式？其中 postMessage 内部的实现方式？调用过程？伪装域名怎么解决？其中服务器端怎么实现 Access-Control-Allow-Origin 的跨域的（怎么拦截跨域的）？
 15. 浏览器事件规则的传递？
 16. 缓存的实现方式？
-17. dns的查询过程？
+17. dns 的查询过程？
 18. 你怎么称呼？
 19. 你主要做什么业务？
 20. 有没有涉及到后台运营一些业务？
@@ -105,7 +105,7 @@ draft: true
 ## 二面
 
 1. 项目介绍？
-2. 如果遇到UI和你的意见不一致你会怎么处理？
+2. 如果遇到 UI 和你的意见不一致你会怎么处理？
 3. 对方的技术栈？
 4. 对方的上线流程？
 5. 对方的架构工作？
@@ -123,13 +123,13 @@ draft: true
 
 1. 项目介绍？
 2. 浏览器缓存介绍？
-3. sw缓存怎么实现的？原理是什么？
-4. sw缓存机制是否有了解？如何更新sw缓存？
-5. https原理？中途被篡改的话该怎么预防？
-6. 代码劫持实现XMLHttpRequest Send方法，要求每个ajax请求把请求参数打印出来？
-7. 叙述一下js事件的处理机制？
+3. sw 缓存怎么实现的？原理是什么？
+4. sw 缓存机制是否有了解？如何更新 sw 缓存？
+5. https 原理？中途被篡改的话该怎么预防？
+6. 代码劫持实现 XMLHttpRequest Send 方法，要求每个 ajax 请求把请求参数打印出来？
+7. 叙述一下 js 事件的处理机制？
 8. 实现一段程序，检测括号是否成对出现？例如`(())()`
-9. 实现一个sum函数，要求：`sum(1, 2).result = 3;sum(1, 2)(3).result = 6;sum(1, 2)(3, 4).result = 10;sum(1, 2)(3, 4)(5).result = 15`
+9. 实现一个 sum 函数，要求：`sum(1, 2).result = 3;sum(1, 2)(3).result = 6;sum(1, 2)(3, 4).result = 10;sum(1, 2)(3, 4)(5).result = 15`
 10. 求字符串的最长公共前缀，例如输入：`["flower", "flow", "flight"]`，输出：`fl`
 
 以上更新于`2020-6-2 00:17:38`
@@ -141,14 +141,14 @@ draft: true
 ## 一面
 
 1. 冒泡排序与选择排序的区别？
-2. BFC与IFC？
-3. react生命周期？
+2. BFC 与 IFC？
+3. react 生命周期？
 4. 移动端适配的点？
 5. 移动端像素的适配做过没？rem 转 px 之类的方案？
 6. webpack pc/mobile 是怎么多渠道打包的？
 7. 怎么加速 webpack 的构建？
 8. 微前端有做过吗？讲下实践过程及原理？
-9. websocket做过吗？有自己写过的socket库吗？
+9. websocket 做过吗？有自己写过的 socket 库吗？
 
 ## 二面
 
@@ -191,36 +191,32 @@ draft: true
 
 1. 合并两个升序链表。比如：L1={1, 3, 5}, L2={2, 4}, L1.merge(L2)后，L1={1, 2, 3, 4, 5}
 
-    ```js
-    /**
-     * function LinkNode(val) {
-     *     this.val = val;
+   ```js
+   /**
+    * function LinkNode(val) {
+    *     this.val = val;
     *     this.next = null;
     * }
     *
     * @param {LinkNode} headL2
     */
-    LinkNode.prototype.merge = function (headL2) {
+   LinkNode.prototype.merge = function(headL2) {};
+   ```
 
-    }
-    ```
+2. 给定一个递增的循环数组，从里面找出最小的元素。比如：[50, 52, 63, 90, 3, 8, 15, 44]，最小元素为 3，要求时间复杂度尽可能小。
 
-2. 给定一个递增的循环数组，从里面找出最小的元素。比如：[50, 52, 63, 90, 3, 8, 15, 44]，最小元素为3，要求时间复杂度尽可能小。
-
-    ```js
-    /**
-     * @param {number[]} nums
+   ```js
+   /**
+    * @param {number[]} nums
     * @returns {number}
     */
-    const findmin = function (nums) {
+   const findmin = function(nums) {};
+   ```
 
-    }
-    ```
+3. 找出二叉排序树中第 3 大的节点，要求空间复杂度为 O(1)。
 
-3. 找出二叉排序树中第3大的节点，要求空间复杂度为O(1)。
-
-    ```js
-    /**
+   ```js
+   /**
     * function TreeNode(value) {
     *     this.value = value
     *     this.left = null
@@ -231,15 +227,13 @@ draft: true
     * @param {TreeNode} root
     * @returns {number}
     */
-    const find = function (root) {
+   const find = function(root) {};
+   ```
 
-    }
-    ```
+4. 完成函数 inherit，使得函数 Child 继承函数 Parent，这里的子类为什么能访问到父类中的变量 a？
 
-4. 完成函数inherit，使得函数Child继承函数Parent，这里的子类为什么能访问到父类中的变量a？
-
-    ```js
-    /**
+   ```js
+   /**
     * function Parent() {
     *     this.a = 'a'
     * }
@@ -251,15 +245,13 @@ draft: true
     *
     * inherit(Child, Parent)
     */
-    const inherit = function (a, b) {
-
-    }
-    ```
+   const inherit = function(a, b) {};
+   ```
 
 5. 将一个带 callback 参数的函数 promise 化
 
-    ```js
-    /**
+   ```js
+   /**
     * const callbackFunc = function (callback) {
     *     callback()
     * }
@@ -268,14 +260,12 @@ draft: true
     *     // after callback() called
     * })
     */
-    function promisify(original) {
-
-    }
-    ```
+   function promisify(original) {}
+   ```
 
 6. 项目难点介绍
 7. 微前端是什么？解决什么问题？
-8. https原理？如果中间人伪造了权威机构的 ca 证书的话，有什么办法解决？
+8. https 原理？如果中间人伪造了权威机构的 ca 证书的话，有什么办法解决？
 9. 兼容性平时怎么做的？做过一体化的解决方法没？
 10. 对方人员构成？
 11. 对方技术栈？
@@ -286,35 +276,36 @@ draft: true
 
 1. 写出执行结果
 
-    ```js
-    function a() {
-        console.log('a');
-        Promise.resolve().then(() => {
-          console.log('e');
-        });
-    }
+   ```js
+   function a() {
+     console.log('a');
+     Promise.resolve().then(() => {
+       console.log('e');
+     });
+   }
 
-    function b() {
-        console.log('b');
-    }
+   function b() {
+     console.log('b');
+   }
 
-    function c() {
-      console.log('c');
-    }
+   function c() {
+     console.log('c');
+   }
 
-    function d() {
-        setTimeout(a, 0);
-        var temp = Promise.resolve().then(b);
-        setTimeout(c, 0);
-        console.log('d');
-    }
-    d();
-    ```
+   function d() {
+     setTimeout(a, 0);
+     var temp = Promise.resolve().then(b);
+     setTimeout(c, 0);
+     console.log('d');
+   }
+   d();
+   ```
+
 2. 实现以下函数，失败时重试次数为 retryTime，延时执行的时间 delay
-    ```js
-    fetchTry(url, retryTime, delay)
-    ```
-3. 实现一个函数 add 3 个数相加， add(1, 2, 3), add(1)(2)(3), add(1, 2)(3), add(1)(2,3) 都返回6
+   ```js
+   fetchTry(url, retryTime, delay);
+   ```
+3. 实现一个函数 add 3 个数相加， add(1, 2, 3), add(1)(2)(3), add(1, 2)(3), add(1)(2,3) 都返回 6
 4. react fiber 架构，如何实现不影响 ui 主线程并顺序更新？
 5. async 如何实现 promise？
 6. redux 结构怎样？api 有哪些？写过 redux 中间件吗？connect 原理？

@@ -13,7 +13,7 @@ tags: 前端, JS, 高级前端
 
 ```js
 if (condition) {
-    var value = 1;
+  var value = 1;
 }
 console.log(value);
 ```
@@ -23,7 +23,7 @@ console.log(value);
 ```js
 var value;
 if (condition) {
-    value = 1;
+  value = 1;
 }
 console.log(value);
 ```
@@ -60,7 +60,7 @@ let 和 const 都是块级声明的一种。
 
 ```js
 if (false) {
-    let value = 1;
+  let value = 1;
 }
 console.log(value); // Uncaught ReferenceError: value is not defined
 ```
@@ -96,8 +96,8 @@ const 用于声明常量，其值一旦被设定不能再被修改，否则会�
 
 ```js
 const data = {
-    value: 1
-}
+  value: 1
+};
 
 // 没有问题
 data.value = 2;
@@ -123,21 +123,21 @@ let value = 1;
 看似很好理解，不保证你不犯错：
 
 ```js
-var value = "global";
+var value = 'global';
 
 // 例子1
 (function() {
-    console.log(value);
+  console.log(value);
 
-    let value = 'local';
-}());
+  let value = 'local';
+})();
 
 // 例子2
 {
-    console.log(value);
+  console.log(value);
 
-    const value = 'local';
-};
+  const value = 'local';
+}
 ```
 
 两个例子中，结果并不会打印 "global"，而是报错 Uncaught ReferenceError: value is not defined，就是因为 TDZ 的缘故。
@@ -147,9 +147,9 @@ var value = "global";
 ```js
 var funcs = [];
 for (var i = 0; i < 3; i++) {
-    funcs[i] = function () {
-        console.log(i);
-    };
+  funcs[i] = function() {
+    console.log(i);
+  };
 }
 funcs[0](); // 3
 ```
@@ -159,11 +159,11 @@ funcs[0](); // 3
 ```js
 var funcs = [];
 for (var i = 0; i < 3; i++) {
-    funcs[i] = (function(i){
-        return function() {
-            console.log(i);
-        }
-    }(i))
+  funcs[i] = (function(i) {
+    return function() {
+      console.log(i);
+    };
+  })(i);
 }
 funcs[0](); // 0
 ```
@@ -173,9 +173,9 @@ ES6 的 let 为这个问题提供了新的解决方法：
 ```js
 var funcs = [];
 for (let i = 0; i < 3; i++) {
-    funcs[i] = function () {
-        console.log(i);
-    };
+  funcs[i] = function() {
+    console.log(i);
+  };
 }
 funcs[0](); // 0
 ```
@@ -235,9 +235,9 @@ for (let i = 0; i < 3; i++) {
 ```js
 var funcs = [];
 for (let i = 0; i < 3; i++) {
-    funcs[i] = function () {
-        console.log(i);
-    };
+  funcs[i] = function() {
+    console.log(i);
+  };
 }
 funcs[0](); // 0
 ```
@@ -274,9 +274,9 @@ funcs[0](); // 0
 ```js
 var funcs = [];
 for (const i = 0; i < 10; i++) {
-    funcs[i] = function () {
-        console.log(i);
-    };
+  funcs[i] = function() {
+    console.log(i);
+  };
 }
 funcs[0](); // Uncaught TypeError: Assignment to constant variable.
 ```
@@ -288,14 +288,15 @@ funcs[0](); // Uncaught TypeError: Assignment to constant variable.
 那下面的结果是什么呢？
 
 ```js
-var funcs = [], object = {a: 1, b: 1, c: 1};
+var funcs = [],
+  object = { a: 1, b: 1, c: 1 };
 for (var key in object) {
-    funcs.push(function(){
-        console.log(key)
-    });
+  funcs.push(function() {
+    console.log(key);
+  });
 }
 
-funcs[0]()
+funcs[0]();
 ```
 
 结果是 'c';
@@ -324,7 +325,7 @@ var value = 1;
 
 ```js
 if (false) {
-    let value = 1;
+  let value = 1;
 }
 console.log(value); // Uncaught ReferenceError: value is not defined
 ```
@@ -333,7 +334,7 @@ console.log(value); // Uncaught ReferenceError: value is not defined
 
 ```js
 if (false) {
-    var _value = 1;
+  var _value = 1;
 }
 console.log(value);
 ```
@@ -343,7 +344,7 @@ console.log(value);
 ```js
 let value = 1;
 {
-    let value = 2;
+  let value = 2;
 }
 value = 3;
 ```
@@ -351,7 +352,7 @@ value = 3;
 ```js
 var value = 1;
 {
-    var _value = 2;
+  var _value = 2;
 }
 value = 3;
 ```
@@ -367,9 +368,9 @@ value = 3;
 ```js
 var funcs = [];
 for (let i = 0; i < 10; i++) {
-    funcs[i] = function () {
-        console.log(i);
-    };
+  funcs[i] = function() {
+    console.log(i);
+  };
 }
 funcs[0](); // 0
 ```
@@ -380,13 +381,13 @@ Babel 巧妙的编译成了：
 var funcs = [];
 
 var _loop = function _loop(i) {
-    funcs[i] = function () {
-        console.log(i);
-    };
+  funcs[i] = function() {
+    console.log(i);
+  };
 };
 
 for (var i = 0; i < 10; i++) {
-    _loop(i);
+  _loop(i);
 }
 funcs[0](); // 0
 ```
@@ -427,10 +428,11 @@ console.log(message);
 
 ## 嵌入变量
 
-模板字符串支持嵌入变量，只需要将变量名写在 ${} 之中，其实不止变量，任意的 JavaScript 表达式都是可以的：
+模板字符串支持嵌入变量，只需要将变量名写在 \${} 之中，其实不止变量，任意的 JavaScript 表达式都是可以的：
 
 ```js
-let x = 1, y = 2;
+let x = 1,
+  y = 2;
 let message = `<ul><li>${x}</li><li>${x + y}</li></ul>`;
 console.log(message); // <ul><li>1</li><li>3</li></ul>
 ```
@@ -438,14 +440,16 @@ console.log(message); // <ul><li>1</li><li>3</li></ul>
 值得一提的是，模板字符串支持嵌套:
 
 ```js
-let arr = [{value: 1}, {value: 2}];
+let arr = [{ value: 1 }, { value: 2 }];
 let message = `
   <ul>
-    ${arr.map((item) => {
-      return `
+    ${arr
+      .map((item) => {
+        return `
         <li>${item.value}</li>
-      `
-    }).join('')}
+      `;
+      })
+      .join('')}
   </ul>
 `;
 console.log(message);
@@ -456,7 +460,8 @@ console.log(message);
 模板标签是一个非常重要的能力，模板字符串可以紧跟在一个函数名后面，该函数将被调用来处理这个模板字符串，举个例子：
 
 ```js
-let x = 'Hi', y = 'Kevin';
+let x = 'Hi',
+  y = 'Kevin';
 var res = message`${x}, I am ${y}`;
 console.log(res);
 ```
@@ -495,8 +500,8 @@ function message(literals, ...values) {
 ```js
 function message(literals, ...values) {
   let result = literals.reduce((prev, next, i) => {
-      let value = values[i - 1];
-      return prev + value + next;
+    let value = values[i - 1];
+    return prev + value + next;
   });
 
   return result;
@@ -523,15 +528,15 @@ let message = `
 ```js
 // oneLine 第一版
 function oneLine(template, ...expressions) {
-    let result = template.reduce((prev, next, i) => {
-        let expression = expressions[i - 1];
-        return prev + expression + next;
-    });
+  let result = template.reduce((prev, next, i) => {
+    let expression = expressions[i - 1];
+    return prev + expression + next;
+  });
 
-    result = result.replace(/(\s+)/g, " ");
-    result = result.trim();
+  result = result.replace(/(\s+)/g, ' ');
+  result = result.trim();
 
-    return result;
+  return result;
 }
 ```
 
@@ -540,7 +545,7 @@ function oneLine(template, ...expressions) {
 使用如下：
 
 ```js
-let message = oneLine `
+let message = oneLine`
     Hi,
     Daisy!
     I am
@@ -563,7 +568,7 @@ let message = oneLine`
 我们可以再优化一下，我们想要的效果是将每行前面的多个空格替换成一个空格，其实应该匹配的是换行符以及换行符后面的多个空格，然后将其替换成一个空格，我们可以将正则改成：
 
 ```js
-result = result.replace(/(\n\s*)/g, " ");
+result = result.replace(/(\n\s*)/g, ' ');
 ```
 
 就可以正确的匹配代码，最终的代码如下：
@@ -571,15 +576,15 @@ result = result.replace(/(\n\s*)/g, " ");
 ```js
 // oneLine 第二版
 function oneLine(template, ...expressions) {
-    let result = template.reduce((prev, next, i) => {
-        let expression = expressions[i - 1];
-        return prev + expression + next;
-    });
+  let result = template.reduce((prev, next, i) => {
+    let expression = expressions[i - 1];
+    return prev + expression + next;
+  });
 
-    result = result.replace(/(\n\s*)/g, " ");
-    result = result.trim();
+  result = result.replace(/(\n\s*)/g, ' ');
+  result = result.trim();
 
-    return result;
+  return result;
 }
 ```
 
@@ -598,9 +603,12 @@ let html = `
 为了保持可读性，我希望最终输入的样式为：
 
 ```html
-<span>1<span>
-<span>2<span>
-<span>3<span>
+<span
+  >1<span>
+    <span
+      >2<span>
+        <span>3<span></span></span></span></span></span
+></span>
 ```
 
 其实就是匹配每行前面的空格，然后将其替换为空字符串。
@@ -608,16 +616,15 @@ let html = `
 ```js
 // stripIndents 第一版
 function stripIndents(template, ...expressions) {
-    let result = template.reduce((prev, next, i) => {
-        let expression = expressions[i - 1];
-        return prev + expression + next;
-    });
+  let result = template.reduce((prev, next, i) => {
+    let expression = expressions[i - 1];
+    return prev + expression + next;
+  });
 
+  result = result.replace(/\n[^\S\n]*/g, '\n');
+  result = result.trim();
 
-    result = result.replace(/\n[^\S\n]*/g, '\n');
-    result = result.trim();
-
-    return result;
+  return result;
 }
 ```
 
@@ -629,11 +636,11 @@ result = result.replace(/\n[^\S\n]*/g, '\n');
 
 \S 表示匹配一个非空白字符
 
-[^\S\n] 表示匹配非空白字符和换行符之外的字符，其实也就是空白字符去除换行符
+[^\s\n] 表示匹配非空白字符和换行符之外的字符，其实也就是空白字符去除换行符
 
-\n[^\S\n]* 表示匹配换行符以及换行符后的多个不包含换行符的空白字符
+\n[^\s\n]\* 表示匹配换行符以及换行符后的多个不包含换行符的空白字符
 
-replace(/\n[^\S\n]*/g, '\n') 表示将一个换行符以及换行符后的多个不包含换行符的空白字符替换成一个换行符，其实也就是将换行符后面的空白字符消掉的意思
+replace(/\n[^\s\n]\*/g, '\n') 表示将一个换行符以及换行符后的多个不包含换行符的空白字符替换成一个换行符，其实也就是将换行符后面的空白字符消掉的意思
 
 其实吧，不用写的这么麻烦，我们还可以这样写：
 
@@ -641,29 +648,28 @@ replace(/\n[^\S\n]*/g, '\n') 表示将一个换行符以及换行符后的多个
 result = result.replace(/^[^\S\n]+/gm, '');
 ```
 
-看似简单了一点，之所以能这样写，是因为匹配模式的缘故，你会发现，这次除了匹配全局之外，这次我们还匹配了多行，m 标志用于指定多行输入字符串时应该被视为多个行，而且如果使用 m 标志，^ 和 $ 匹配的开始或结束是输入字符串中的每一行，而不是整个字符串的开始或结束。
+看似简单了一点，之所以能这样写，是因为匹配模式的缘故，你会发现，这次除了匹配全局之外，这次我们还匹配了多行，m 标志用于指定多行输入字符串时应该被视为多个行，而且如果使用 m 标志，^ 和 \$ 匹配的开始或结束是输入字符串中的每一行，而不是整个字符串的开始或结束。
 
-[^\S\n] 表示匹配空白字符去除换行符
+[^\s\n] 表示匹配空白字符去除换行符
 
-^[^\S\n]+ 表示匹配以去除换行符的空白字符为开头的一个或者多个字符
+^[^\s\n]+ 表示匹配以去除换行符的空白字符为开头的一个或者多个字符
 
-result.replace(/^[^\S\n]+/gm, '') 表示将每行开头一个或多个去除换行符的空白字符替换成空字符串，也同样达到了目的。
+result.replace(/^[^\s\n]+/gm, '') 表示将每行开头一个或多个去除换行符的空白字符替换成空字符串，也同样达到了目的。
 
 最终的代码如下：
 
 ```js
 // stripIndents 第二版
 function stripIndents(template, ...expressions) {
-    let result = template.reduce((prev, next, i) => {
-        let expression = expressions[i - 1];
-        return prev + expression + next;
-    });
+  let result = template.reduce((prev, next, i) => {
+    let expression = expressions[i - 1];
+    return prev + expression + next;
+  });
 
+  result = result.replace(/^[^\S\n]+/gm, '');
+  result = result.trim();
 
-    result = result.replace(/^[^\S\n]+/gm, '');
-    result = result.trim();
-
-    return result;
+  return result;
 }
 ```
 
@@ -705,27 +711,27 @@ let html = `
 `;
 
 function stripIndent(template, ...expressions) {
-    let result = template.reduce((prev, next, i) => {
-        let expression = expressions[i - 1];
-        return prev + expression + next;
-    });
+  let result = template.reduce((prev, next, i) => {
+    let expression = expressions[i - 1];
+    return prev + expression + next;
+  });
 
-    const match = result.match(/^[^\S\n]*(?=\S)/gm);
-    console.log(match); // Array [ "    ", "        ", "        ", "        ", "    " ]
+  const match = result.match(/^[^\S\n]*(?=\S)/gm);
+  console.log(match); // Array [ "    ", "        ", "        ", "        ", "    " ]
 
-    const indent = match && Math.min(...match.map(el => el.length));
-    console.log(indent); // 4
+  const indent = match && Math.min(...match.map((el) => el.length));
+  console.log(indent); // 4
 
-    if (indent) {
-        const regexp = new RegExp(`^.{${indent}}`, 'gm');
-        console.log(regexp); // /^.{4}/gm
+  if (indent) {
+    const regexp = new RegExp(`^.{${indent}}`, 'gm');
+    console.log(regexp); // /^.{4}/gm
 
-        result =  result.replace(regexp, '');
-    }
+    result = result.replace(regexp, '');
+  }
 
-    result = result.trim();
+  result = result.trim();
 
-    return result;
+  return result;
 }
 ```
 
@@ -735,38 +741,40 @@ function stripIndent(template, ...expressions) {
 
 ```js
 function stripIndent(template, ...expressions) {
-    let result = template.reduce((prev, next, i) => {
-        let expression = expressions[i - 1];
-        return prev + expression + next;
-    });
+  let result = template.reduce((prev, next, i) => {
+    let expression = expressions[i - 1];
+    return prev + expression + next;
+  });
 
-    const match = result.match(/^[^\S\n]*(?=\S)/gm);
-    const indent = match && Math.min(...match.map(el => el.length));
+  const match = result.match(/^[^\S\n]*(?=\S)/gm);
+  const indent = match && Math.min(...match.map((el) => el.length));
 
-    if (indent) {
-        const regexp = new RegExp(`^.{${indent}}`, 'gm');
-        result =  result.replace(regexp, '');
-    }
+  if (indent) {
+    const regexp = new RegExp(`^.{${indent}}`, 'gm');
+    result = result.replace(regexp, '');
+  }
 
-    result = result.trim();
+  result = result.trim();
 
-    return result;
+  return result;
 }
 ```
 
 ## includeArrays
 
-前面我们讲到为了避免 ${} 表达式中返回一个数组，自动转换会导致多个逗号的问题，需要每次都将数组最后再 join('') 一下，再看一遍例子：
+前面我们讲到为了避免 \${} 表达式中返回一个数组，自动转换会导致多个逗号的问题，需要每次都将数组最后再 join('') 一下，再看一遍例子：
 
 ```js
-let arr = [{value: 1}, {value: 2}];
+let arr = [{ value: 1 }, { value: 2 }];
 let message = `
   <ul>
-    ${arr.map((item) => {
-      return `
+    ${arr
+      .map((item) => {
+        return `
         <li>${item.value}</li>
-      `
-    }).join('')}
+      `;
+      })
+      .join('')}
   </ul>
 `;
 console.log(message);
@@ -776,20 +784,19 @@ console.log(message);
 
 ```js
 function includeArrays(template, ...expressions) {
-    let result = template.reduce((prev, next, i) => {
+  let result = template.reduce((prev, next, i) => {
+    let expression = expressions[i - 1];
 
-        let expression = expressions[i - 1];
+    if (Array.isArray(expression)) {
+      expression = expression.join('');
+    }
 
-        if (Array.isArray(expression)) {
-            expression = expression.join('');
-        }
+    return prev + expression + next;
+  });
 
-        return prev + expression + next;
-    });
+  result = result.trim();
 
-    result = result.trim();
-
-    return result;
+  return result;
 }
 ```
 
@@ -804,14 +811,14 @@ function includeArrays(template, ...expressions) {
 ES6 增加了箭头函数：
 
 ```js
-let func = value => value;
+let func = (value) => value;
 ```
 
 相当于：
 
 ```js
-let func = function (value) {
-    return value;
+let func = function(value) {
+  return value;
 };
 ```
 
@@ -825,26 +832,26 @@ let func = (value, num) => value * num;
 
 ```js
 let func = (value, num) => {
-    return value * num
+  return value * num;
 };
 ```
 
 如果需要直接返回一个对象：
 
 ```js
-let func = (value, num) => ({total: value * num});
+let func = (value, num) => ({ total: value * num });
 ```
 
 与变量解构结合：
 
 ```js
-let func = ({value, num}) => ({total: value * num})
+let func = ({ value, num }) => ({ total: value * num });
 
 // 使用
 var result = func({
-    value: 10,
-    num: 10
-})
+  value: 10,
+  num: 10
+});
 
 console.log(result); // {total: 100}
 ```
@@ -854,8 +861,8 @@ console.log(result); // {total: 100}
 ```js
 handleEvent = () => {
   this.setState({
-    data: this.state.data.set("key", "value")
-  })
+    data: this.state.data.set('key', 'value')
+  });
 };
 ```
 
@@ -863,9 +870,9 @@ handleEvent = () => {
 
 ```js
 handleEvent = () => {
-  this.setState(({data}) => ({
-    data: data.set("key", "value")
-  }))
+  this.setState(({ data }) => ({
+    data: data.set('key', 'value')
+  }));
 };
 ```
 
@@ -889,7 +896,7 @@ handleEvent = () => {
 
 ```js
 // 传入元素 id 值即可绑定该元素点击时改变背景色的事件
-new Button("button")
+new Button('button');
 ```
 
 HTML 代码如下：
@@ -902,19 +909,19 @@ JavaScript 代码如下：
 
 ```js
 function Button(id) {
-    this.element = document.querySelector("#" + id);
-    this.bindEvent();
+  this.element = document.querySelector('#' + id);
+  this.bindEvent();
 }
 
 Button.prototype.bindEvent = function() {
-    this.element.addEventListener("click", this.setBgColor, false);
+  this.element.addEventListener('click', this.setBgColor, false);
 };
 
 Button.prototype.setBgColor = function() {
-    this.element.style.backgroundColor = '#1abc9c'
+  this.element.style.backgroundColor = '#1abc9c';
 };
 
-var button = new Button("button");
+var button = new Button('button');
 ```
 
 看着好像没有问题，结果却是报错 Uncaught TypeError: Cannot read property 'style' of undefined
@@ -927,7 +934,7 @@ var button = new Button("button");
 
 ```js
 Button.prototype.setBgColor = function() {
-    this.style.backgroundColor = '#1abc9c'
+  this.style.backgroundColor = '#1abc9c';
 };
 ```
 
@@ -937,8 +944,8 @@ Button.prototype.setBgColor = function() {
 
 ```js
 Button.prototype.setBgColor = function() {
-    this.setElementColor();
-    this.setOtherElementColor();
+  this.setElementColor();
+  this.setOtherElementColor();
 };
 ```
 
@@ -948,7 +955,7 @@ Button.prototype.setBgColor = function() {
 
 ```js
 Button.prototype.bindEvent = function() {
-    this.element.addEventListener("click", this.setBgColor.bind(this), false);
+  this.element.addEventListener('click', this.setBgColor.bind(this), false);
 };
 ```
 
@@ -958,7 +965,7 @@ Button.prototype.bindEvent = function() {
 
 ```js
 Button.prototype.bindEvent = function() {
-    this.element.addEventListener("click", event => this.setBgColor(event), false);
+  this.element.addEventListener('click', (event) => this.setBgColor(event), false);
 };
 ```
 
@@ -970,7 +977,7 @@ Button.prototype.bindEvent = function() {
 
 ```js
 var value = 1;
-var result = (() => this.value).bind({value: 2})();
+var result = (() => this.value).bind({ value: 2 })();
 console.log(result); // 1
 ```
 
@@ -980,7 +987,7 @@ console.log(result); // 1
 
 ```js
 function constant() {
-    return () => arguments[0]
+  return () => arguments[0];
 }
 
 var result = constant(1);
@@ -1033,7 +1040,7 @@ console.log(Foo.prototype); // undefined
 
 最后，关于箭头函数，引用 MDN 的介绍就是：
 
-箭头函数表达式的语法比函数表达式更短，并且不绑定自己的this，arguments，super或 new.target。这些函数表达式最适合用于非方法函数(non-method functions)，并且它们不能用作构造函数。
+箭头函数表达式的语法比函数表达式更短，并且不绑定自己的 this，arguments，super 或 new.target。这些函数表达式最适合用于非方法函数(non-method functions)，并且它们不能用作构造函数。
 
 那么什么是 non-method functions 呢？
 
@@ -1048,9 +1055,9 @@ var obj = {
   i: 10,
   b: () => console.log(this.i, this),
   c: function() {
-    console.log( this.i, this)
+    console.log(this.i, this);
   }
-}
+};
 obj.b();
 // undefined Window
 obj.c();
@@ -1062,25 +1069,25 @@ obj.c();
 自执行函数的形式为：
 
 ```js
-(function(){
-    console.log(1)
-})()
+(function() {
+  console.log(1);
+})();
 ```
 
 或者
 
 ```js
-(function(){
-    console.log(1)
-}())
+(function() {
+  console.log(1);
+})();
 ```
 
 利用箭头简化自执行函数的写法：
 
 ```js
 (() => {
-    console.log(1)
-})()
+  console.log(1);
+})();
 ```
 
 但是注意：使用以下这种写法却会报错：
@@ -1103,92 +1110,92 @@ ES6 引入了一种新的原始数据类型 Symbol，表示独一无二的值。
 
 1. Symbol 值通过 Symbol 函数生成，使用 typeof，结果为 "symbol"
 
-    ```js
-    var s = Symbol();
-    console.log(typeof s); // "symbol"
-    ```
+   ```js
+   var s = Symbol();
+   console.log(typeof s); // "symbol"
+   ```
 
 2. Symbol 函数前不能使用 new 命令，否则会报错。这是因为生成的 Symbol 是一个原始类型的值，不是对象。
 3. instanceof 的结果为 false
 
-    ```js
-    var s = Symbol('foo');
-    console.log(s instanceof Symbol); // false
-    ```
+   ```js
+   var s = Symbol('foo');
+   console.log(s instanceof Symbol); // false
+   ```
 
-4.  Symbol 函数可以接受一个字符串作为参数，表示对 Symbol 实例的描述，主要是为了在控制台显示，或者转为字符串时，比较容易区分。
+4. Symbol 函数可以接受一个字符串作为参数，表示对 Symbol 实例的描述，主要是为了在控制台显示，或者转为字符串时，比较容易区分。
 
-    ```js
-    var s1 = Symbol('foo');
-    console.log(s1); // Symbol(foo)
-    ```
+   ```js
+   var s1 = Symbol('foo');
+   console.log(s1); // Symbol(foo)
+   ```
 
 5. 如果 Symbol 的参数是一个对象，就会调用该对象的 toString 方法，将其转为字符串，然后才生成一个 Symbol 值
 
-    ```js
-    const obj = {
-      toString() {
-        return 'abc';
-      }
-    };
-    const sym = Symbol(obj);
-    console.log(sym); // Symbol(abc)
-    ```
+   ```js
+   const obj = {
+     toString() {
+       return 'abc';
+     }
+   };
+   const sym = Symbol(obj);
+   console.log(sym); // Symbol(abc)
+   ```
 
 6. Symbol 函数的参数只是表示对当前 Symbol 值的描述，相同参数的 Symbol 函数的返回值是不相等的。
 
-    ```js
-    // 没有参数的情况
-    var s1 = Symbol();
-    var s2 = Symbol();
+   ```js
+   // 没有参数的情况
+   var s1 = Symbol();
+   var s2 = Symbol();
 
-    console.log(s1 === s2); // false
+   console.log(s1 === s2); // false
 
-    // 有参数的情况
-    var s1 = Symbol('foo');
-    var s2 = Symbol('foo');
+   // 有参数的情况
+   var s1 = Symbol('foo');
+   var s2 = Symbol('foo');
 
-    console.log(s1 === s2); // false
-    ```
+   console.log(s1 === s2); // false
+   ```
 
 7. Symbol 值不能与其他类型的值进行运算，会报错。
 
-    ```js
-    var sym = Symbol('My symbol');
+   ```js
+   var sym = Symbol('My symbol');
 
-    console.log("your symbol is " + sym); // TypeError: can't convert symbol to string
-    ```
+   console.log('your symbol is ' + sym); // TypeError: can't convert symbol to string
+   ```
 
 8. Symbol 值可以显式转为字符串。
 
-    ```js
-    var sym = Symbol('My symbol');
+   ```js
+   var sym = Symbol('My symbol');
 
-    console.log(String(sym)); // 'Symbol(My symbol)'
-    console.log(sym.toString()); // 'Symbol(My symbol)'
-    ```
+   console.log(String(sym)); // 'Symbol(My symbol)'
+   console.log(sym.toString()); // 'Symbol(My symbol)'
+   ```
 
 9. Symbol 值可以作为标识符，用于对象的属性名，可以保证不会出现同名的属性。
 
-    ```js
-    var mySymbol = Symbol();
+   ```js
+   var mySymbol = Symbol();
 
-    // 第一种写法
-    var a = {};
-    a[mySymbol] = 'Hello!';
+   // 第一种写法
+   var a = {};
+   a[mySymbol] = 'Hello!';
 
-    // 第二种写法
-    var a = {
-      [mySymbol]: 'Hello';
-    };
+   // 第二种写法
+   var a = {
+     [mySymbol]: 'Hello';
+   };
 
-    // 第三种写法
-    var a = {};
-    Object.defineProperty(a, mySymbol, { value: 'Hello!' });
+   // 第三种写法
+   var a = {};
+   Object.defineProperty(a, mySymbol, { value: 'Hello!' });
 
-    // 以上写法都得到同样结果
-    console.log(a[mySymbol]); // "Hello!"
-    ```
+   // 以上写法都得到同样结果
+   console.log(a[mySymbol]); // "Hello!"
+   ```
 
 10. Symbol 作为属性名，该属性不会出现在 for...in、for...of 循环中，也不会被 Object.keys()、Object.getOwnPropertyNames()、JSON.stringify() 返回。但是，它也不是私有属性，有一个 Object.getOwnPropertySymbols 方法，可以获取指定对象的所有 Symbol 属性名。
 
@@ -1218,11 +1225,11 @@ ES6 引入了一种新的原始数据类型 Symbol，表示独一无二的值。
 12. Symbol.keyFor 方法返回一个已登记的 Symbol 类型值的 key。
 
     ```js
-    var s1 = Symbol.for("foo");
+    var s1 = Symbol.for('foo');
     console.log(Symbol.keyFor(s1)); // "foo"
 
-    var s2 = Symbol("foo");
-    console.log(Symbol.keyFor(s2) ); // undefined
+    var s2 = Symbol('foo');
+    console.log(Symbol.keyFor(s2)); // undefined
     ```
 
 ## 分析
@@ -1250,32 +1257,31 @@ ES6 引入了一种新的原始数据类型 Symbol，表示独一无二的值。
 ```js
 // 第一版
 (function() {
-    var root = this;
+  var root = this;
 
-    var SymbolPolyfill = function Symbol(description) {
+  var SymbolPolyfill = function Symbol(description) {
+    // 实现特性第 2 点：Symbol 函数前不能使用 new 命令
+    if (this instanceof SymbolPolyfill) throw new TypeError('Symbol is not a constructor');
 
-        // 实现特性第 2 点：Symbol 函数前不能使用 new 命令
-        if (this instanceof SymbolPolyfill) throw new TypeError('Symbol is not a constructor');
+    // 实现特性第 5 点：如果 Symbol 的参数是一个对象，就会调用该对象的 toString 方法，将其转为字符串，然后才生成一个 Symbol 值。
+    var descString = description === undefined ? undefined : String(description);
 
-        // 实现特性第 5 点：如果 Symbol 的参数是一个对象，就会调用该对象的 toString 方法，将其转为字符串，然后才生成一个 Symbol 值。
-        var descString = description === undefined ? undefined : String(description)
+    var symbol = Object.create(null);
 
-        var symbol = Object.create(null)
+    Object.defineProperties(symbol, {
+      __Description__: {
+        value: descString,
+        writable: false,
+        enumerable: false,
+        configurable: false
+      }
+    });
 
-        Object.defineProperties(symbol, {
-            '__Description__': {
-                value: descString,
-                writable: false,
-                enumerable: false,
-                configurable: false
-            }
-        });
+    // 实现特性第 6 点，因为调用该方法，返回的是一个新对象，两个对象之间，只要引用不同，就不会相同
+    return symbol;
+  };
 
-        // 实现特性第 6 点，因为调用该方法，返回的是一个新对象，两个对象之间，只要引用不同，就不会相同
-        return symbol;
-    }
-
-    root.SymbolPolyfill = SymbolPolyfill;
+  root.SymbolPolyfill = SymbolPolyfill;
 })();
 ```
 
@@ -1320,9 +1326,9 @@ console.log(sym.toString()); // 'Symbol(My symbol)'
 // 前面面代码相同 ……
 
 var symbol = Object.create({
-    toString: function() {
-        return 'Symbol(' + this.__Description__ + ')';
-    },
+  toString: function() {
+    return 'Symbol(' + this.__Description__ + ')';
+  }
 });
 
 // 后面代码相同 ……
@@ -1338,7 +1344,7 @@ var symbol = Object.create({
 var a = SymbolPolyfill('foo');
 var b = SymbolPolyfill('foo');
 
-console.log(a ===  b); // false
+console.log(a === b); // false
 
 var o = {};
 o[a] = 'hello';
@@ -1352,50 +1358,47 @@ console.log(o); // {Symbol(foo): 'hi'}
 ```js
 // 第三版
 (function() {
-    var root = this;
+  var root = this;
 
-    var generateName = (function(){
-        var postfix = 0;
-        return function(descString){
-            postfix++;
-            return '@@' + descString + '_' + postfix
-        }
-    })()
+  var generateName = (function() {
+    var postfix = 0;
+    return function(descString) {
+      postfix++;
+      return '@@' + descString + '_' + postfix;
+    };
+  })();
 
-    var SymbolPolyfill = function Symbol(description) {
+  var SymbolPolyfill = function Symbol(description) {
+    if (this instanceof SymbolPolyfill) throw new TypeError('Symbol is not a constructor');
 
-        if (this instanceof SymbolPolyfill) throw new TypeError('Symbol is not a constructor');
+    var descString = description === undefined ? undefined : String(description);
 
-        var descString = description === undefined ? undefined : String(description)
+    var symbol = Object.create({
+      toString: function() {
+        return this.__Name__;
+      }
+    });
 
-        var symbol = Object.create({
-            toString: function() {
-                return this.__Name__;
-            }
-        })
+    Object.defineProperties(symbol, {
+      __Description__: {
+        value: descString,
+        writable: false,
+        enumerable: false,
+        configurable: false
+      },
+      __Name__: {
+        value: generateName(descString),
+        writable: false,
+        enumerable: false,
+        configurable: false
+      }
+    });
 
-        Object.defineProperties(symbol, {
-            '__Description__': {
-                value: descString,
-                writable: false,
-                enumerable: false,
-                configurable: false
-            },
-            '__Name__': {
-                value: generateName(descString),
-                writable: false,
-                enumerable: false,
-                configurable: false
-            }
-        });
+    return symbol;
+  };
 
-        return symbol;
-    }
-
-
-    root.SymbolPolyfill = SymbolPolyfill;
-
-})()
+  root.SymbolPolyfill = SymbolPolyfill;
+})();
 ```
 
 此时再看下这个例子：
@@ -1404,7 +1407,7 @@ console.log(o); // {Symbol(foo): 'hi'}
 var a = SymbolPolyfill('foo');
 var b = SymbolPolyfill('foo');
 
-console.log(a ===  b); // false
+console.log(a === b); // false
 
 var o = {};
 o[a] = 'hello';
@@ -1423,10 +1426,10 @@ console.log(o); // Object { "@@foo_1": "hello", "@@foo_2": "hi" }
 
 ```js
 var symbol = Object.create({
-    valueOf: function() {
-        throw new Error('Cannot convert a Symbol value')
-    }
-})
+  valueOf: function() {
+    throw new Error('Cannot convert a Symbol value');
+  }
+});
 
 console.log('1' + symbol); // 报错
 ```
@@ -1434,7 +1437,7 @@ console.log('1' + symbol); // 报错
 看着很简单的解决了这个问题，可是如果我们是显式调用 valueOf 方法呢？对于一个原生的 Symbol 值：
 
 ```js
-var s1 = Symbol('foo')
+var s1 = Symbol('foo');
 console.log(s1.valueOf()); // Symbol(foo)
 ```
 
@@ -1447,12 +1450,12 @@ console.log(s1.valueOf()); // Symbol(foo)
 // 前面面代码相同 ……
 
 var symbol = Object.create({
-    toString: function() {
-        return this.__Name__;
-    },
-    valueOf: function() {
-        return this;
-    }
+  toString: function() {
+    return this.__Name__;
+  },
+  valueOf: function() {
+    return this;
+  }
 });
 // 后面代码相同 ……
 ```
@@ -1514,76 +1517,74 @@ Object.defineProperties(SymbolPolyfill, {
 
 ```js
 (function() {
-    var root = this;
+  var root = this;
 
-    var generateName = (function(){
-        var postfix = 0;
-        return function(descString){
-            postfix++;
-            return '@@' + descString + '_' + postfix
-        }
-    })()
+  var generateName = (function() {
+    var postfix = 0;
+    return function(descString) {
+      postfix++;
+      return '@@' + descString + '_' + postfix;
+    };
+  })();
 
-    var SymbolPolyfill = function Symbol(description) {
+  var SymbolPolyfill = function Symbol(description) {
+    if (this instanceof SymbolPolyfill) throw new TypeError('Symbol is not a constructor');
 
-        if (this instanceof SymbolPolyfill) throw new TypeError('Symbol is not a constructor');
+    var descString = description === undefined ? undefined : String(description);
 
-        var descString = description === undefined ? undefined : String(description)
-
-        var symbol = Object.create({
-            toString: function() {
-                return this.__Name__;
-            },
-            valueOf: function() {
-                return this;
-            }
-        })
-
-        Object.defineProperties(symbol, {
-            '__Description__': {
-                value: descString,
-                writable: false,
-                enumerable: false,
-                configurable: false
-            },
-            '__Name__': {
-                value: generateName(descString),
-                writable: false,
-                enumerable: false,
-                configurable: false
-            }
-        });
-
-        return symbol;
-    }
-
-    var forMap = {};
-
-    Object.defineProperties(SymbolPolyfill, {
-        'for': {
-            value: function(description) {
-                var descString = description === undefined ? undefined : String(description)
-                return forMap[descString] ? forMap[descString] : forMap[descString] = SymbolPolyfill(descString);
-            },
-            writable: true,
-            enumerable: false,
-            configurable: true
-        },
-        'keyFor': {
-            value: function(symbol) {
-                for (var key in forMap) {
-                    if (forMap[key] === symbol) return key;
-                }
-            },
-            writable: true,
-            enumerable: false,
-            configurable: true
-        }
+    var symbol = Object.create({
+      toString: function() {
+        return this.__Name__;
+      },
+      valueOf: function() {
+        return this;
+      }
     });
 
-    root.SymbolPolyfill = SymbolPolyfill;
+    Object.defineProperties(symbol, {
+      __Description__: {
+        value: descString,
+        writable: false,
+        enumerable: false,
+        configurable: false
+      },
+      __Name__: {
+        value: generateName(descString),
+        writable: false,
+        enumerable: false,
+        configurable: false
+      }
+    });
 
-})()
+    return symbol;
+  };
+
+  var forMap = {};
+
+  Object.defineProperties(SymbolPolyfill, {
+    for: {
+      value: function(description) {
+        var descString = description === undefined ? undefined : String(description);
+        return forMap[descString] ? forMap[descString] : (forMap[descString] = SymbolPolyfill(descString));
+      },
+      writable: true,
+      enumerable: false,
+      configurable: true
+    },
+    keyFor: {
+      value: function(symbol) {
+        for (var key in forMap) {
+          if (forMap[key] === symbol) return key;
+        }
+      },
+      writable: true,
+      enumerable: false,
+      configurable: true
+    }
+  });
+
+  root.SymbolPolyfill = SymbolPolyfill;
+})();
 ```
 
 # 迭代器与 for of
@@ -1591,10 +1592,10 @@ Object.defineProperties(SymbolPolyfill, {
 一段标准的 for 循环代码：
 
 ```js
-var colors = ["red", "green", "blue"];
+var colors = ['red', 'green', 'blue'];
 
 for (var i = 0, len = colors.length; i < len; i++) {
-    console.log(colors[i]);
+  console.log(colors[i]);
 }
 ```
 
@@ -1602,18 +1603,18 @@ for (var i = 0, len = colors.length; i < len; i++) {
 
 ```js
 function unique(array) {
-    var res = [];
-    for (var i = 0, arrayLen = array.length; i < arrayLen; i++) {
-        for (var j = 0, resLen = res.length; j < resLen; j++) {
-            if (array[i] === res[j]) {
-                break;
-            }
-        }
-        if (j === resLen) {
-            res.push(array[i]);
-        }
+  var res = [];
+  for (var i = 0, arrayLen = array.length; i < arrayLen; i++) {
+    for (var j = 0, resLen = res.length; j < resLen; j++) {
+      if (array[i] === res[j]) {
+        break;
+      }
     }
-    return res;
+    if (j === resLen) {
+      res.push(array[i]);
+    }
+  }
+  return res;
 }
 ```
 
@@ -1627,18 +1628,18 @@ function unique(array) {
 
 ```js
 function createIterator(items) {
-    var i = 0;
-    return {
-        next: function() {
-            var done = i >= items.length;
-            var value = !done ? items[i++] : undefined;
+  var i = 0;
+  return {
+    next: function() {
+      var done = i >= items.length;
+      var value = !done ? items[i++] : undefined;
 
-            return {
-                done: done,
-                value: value
-            };
-        }
-    };
+      return {
+        done: done,
+        value: value
+      };
+    }
+  };
 }
 
 // iterator 就是一个迭代器对象
@@ -1658,7 +1659,7 @@ console.log(iterator.next()); // { done: true, value: undefined }
 var iterator = createIterator([1, 2, 3]);
 
 for (let value of iterator) {
-    console.log(value);
+  console.log(value);
 }
 ```
 
@@ -1674,11 +1675,11 @@ ES6 规定，默认的 Iterator 接口部署在数据结构的 Symbol.iterator �
 
 ```js
 const obj = {
-    value: 1
+  value: 1
 };
 
 for (value of obj) {
-    console.log(value);
+  console.log(value);
 }
 
 // TypeError: iterator is not iterable
@@ -1688,15 +1689,15 @@ for (value of obj) {
 
 ```js
 const obj = {
-    value: 1
+  value: 1
 };
 
 obj[Symbol.iterator] = function() {
-    return createIterator([1, 2, 3]);
+  return createIterator([1, 2, 3]);
 };
 
 for (value of obj) {
-    console.log(value);
+  console.log(value);
 }
 
 // 1
@@ -1711,10 +1712,10 @@ for (value of obj) {
 然而如果我们直接遍历一个数组对象：
 
 ```js
-const colors = ["red", "green", "blue"];
+const colors = ['red', 'green', 'blue'];
 
 for (let color of colors) {
-    console.log(color);
+  console.log(color);
 }
 
 // red
@@ -1725,14 +1726,14 @@ for (let color of colors) {
 尽管我们没有手动添加 Symbol.iterator 属性，还是可以遍历成功，这是因为 ES6 默认部署了 Symbol.iterator 属性，当然我们也可以手动修改这个属性：
 
 ```js
-var colors = ["red", "green", "blue"];
+var colors = ['red', 'green', 'blue'];
 
 colors[Symbol.iterator] = function() {
-    return createIterator([1, 2, 3]);
+  return createIterator([1, 2, 3]);
 };
 
 for (let color of colors) {
-    console.log(color);
+  console.log(color);
 }
 
 // 1
@@ -1757,19 +1758,18 @@ for (let color of colors) {
 
 ```js
 function forOf(obj, cb) {
-    let iterable, result;
+  let iterable, result;
 
-    if (typeof obj[Symbol.iterator] !== "function")
-        throw new TypeError(result + " is not iterable");
-    if (typeof cb !== "function") throw new TypeError("cb must be callable");
+  if (typeof obj[Symbol.iterator] !== 'function') throw new TypeError(result + ' is not iterable');
+  if (typeof cb !== 'function') throw new TypeError('cb must be callable');
 
-    iterable = obj[Symbol.iterator]();
+  iterable = obj[Symbol.iterator]();
 
+  result = iterable.next();
+  while (!result.done) {
+    cb(result.value);
     result = iterable.next();
-    while (!result.done) {
-        cb(result.value);
-        result = iterable.next();
-    }
+  }
 }
 ```
 
@@ -1784,10 +1784,10 @@ function forOf(obj, cb) {
 以数组为例：
 
 ```js
-var colors = ["red", "green", "blue"];
+var colors = ['red', 'green', 'blue'];
 
 for (let index of colors.keys()) {
-    console.log(index);
+  console.log(index);
 }
 
 // 0
@@ -1795,7 +1795,7 @@ for (let index of colors.keys()) {
 // 2
 
 for (let color of colors.values()) {
-    console.log(color);
+  console.log(color);
 }
 
 // red
@@ -1803,7 +1803,7 @@ for (let color of colors.values()) {
 // blue
 
 for (let item of colors.entries()) {
-    console.log(item);
+  console.log(item);
 }
 
 // [ 0, "red" ]
@@ -1814,10 +1814,10 @@ for (let item of colors.entries()) {
 Map 类型与数组类似，但是对于 Set 类型需要注意以下：
 
 ```js
-var colors = new Set(["red", "green", "blue"]);
+var colors = new Set(['red', 'green', 'blue']);
 
 for (let index of colors.keys()) {
-    console.log(index);
+  console.log(index);
 }
 
 // red
@@ -1825,7 +1825,7 @@ for (let index of colors.keys()) {
 // blue
 
 for (let color of colors.values()) {
-    console.log(color);
+  console.log(color);
 }
 
 // red
@@ -1833,7 +1833,7 @@ for (let color of colors.values()) {
 // blue
 
 for (let item of colors.entries()) {
-    console.log(item);
+  console.log(item);
 }
 
 // [ "red", "red" ]
@@ -1851,16 +1851,16 @@ Set 类型的 keys() 和 values() 返回的是相同的迭代器，这也意味�
 const values = new Set([1, 2, 3]);
 
 for (let value of values) {
-    console.log(value);
+  console.log(value);
 }
 
 // 1
 // 2
 // 3
 
-const values = new Map([["key1", "value1"], ["key2", "value2"]]);
+const values = new Map([['key1', 'value1'], ['key2', 'value2']]);
 for (let value of values) {
-    console.log(value);
+  console.log(value);
 }
 
 // ["key1", "value1"]
@@ -1870,10 +1870,10 @@ for (let value of values) {
 遍历 Map 数据结构的时候可以顺便结合解构赋值：
 
 ```js
-const values = new Map([["key1", "value1"], ["key2", "value2"]]);
+const values = new Map([['key1', 'value1'], ['key2', 'value2']]);
 
 for (let [key, value] of values) {
-    console.log(key + ":" + value);
+  console.log(key + ':' + value);
 }
 
 // key1:value1
@@ -1885,47 +1885,47 @@ for (let [key, value] of values) {
 我们可以在 Babel 的 Try it out 中查看编译的结果：
 
 ```js
-const colors = new Set(["red", "green", "blue"]);
+const colors = new Set(['red', 'green', 'blue']);
 
 for (let color of colors) {
-    console.log(color);
+  console.log(color);
 }
 ```
 
 对于这样一段代码，编译的结果如下：
 
 ```js
-"use strict";
+'use strict';
 
-var colors = new Set(["red", "green", "blue"]);
+var colors = new Set(['red', 'green', 'blue']);
 
 var _iteratorNormalCompletion = true;
 var _didIteratorError = false;
 var _iteratorError = undefined;
 
 try {
-    for (
-        var _iterator = colors[Symbol.iterator](), _step;
-        !(_iteratorNormalCompletion = (_step = _iterator.next()).done);
-        _iteratorNormalCompletion = true
-    ) {
-        var color = _step.value;
+  for (
+    var _iterator = colors[Symbol.iterator](), _step;
+    !(_iteratorNormalCompletion = (_step = _iterator.next()).done);
+    _iteratorNormalCompletion = true
+  ) {
+    var color = _step.value;
 
-        console.log(color);
-    }
+    console.log(color);
+  }
 } catch (err) {
-    _didIteratorError = true;
-    _iteratorError = err;
+  _didIteratorError = true;
+  _iteratorError = err;
 } finally {
-    try {
-        if (!_iteratorNormalCompletion && _iterator.return) {
-            _iterator.return();
-        }
-    } finally {
-        if (_didIteratorError) {
-            throw _iteratorError;
-        }
+  try {
+    if (!_iteratorNormalCompletion && _iterator.return) {
+      _iterator.return();
     }
+  } finally {
+    if (_didIteratorError) {
+      throw _iteratorError;
+    }
+  }
 }
 ```
 
@@ -1935,12 +1935,12 @@ try {
 
 ```js
 for (
-    var _iterator = colors[Symbol.iterator](), _step;
-    !(_iteratorNormalCompletion = (_step = _iterator.next()).done);
-    _iteratorNormalCompletion = true
+  var _iterator = colors[Symbol.iterator](), _step;
+  !(_iteratorNormalCompletion = (_step = _iterator.next()).done);
+  _iteratorNormalCompletion = true
 ) {
-    var color = _step.value;
-    console.log(color);
+  var color = _step.value;
+  console.log(color);
 }
 ```
 
@@ -1957,8 +1957,8 @@ for 语句其实就相当于：
 ```js
 initialize;
 while (test) {
-    statement;
-    increment;
+  statement;
+  increment;
 }
 ```
 
@@ -1972,9 +1972,9 @@ while (test) {
 
 ```js
 var i = 0,
-    len = colors.length;
+  len = colors.length;
 for (; i < len; i++) {
-    console.log(colors[i]);
+  console.log(colors[i]);
 }
 ```
 
@@ -1982,9 +1982,9 @@ for (; i < len; i++) {
 
 ```js
 var i = 0,
-    len = colors.length;
+  len = colors.length;
 for (; i < len; ) {
-    i++;
+  i++;
 }
 ```
 
@@ -1992,12 +1992,12 @@ for (; i < len; ) {
 
 ```js
 for (
-    var _iterator = colors[Symbol.iterator](), _step;
-    !(_iteratorNormalCompletion = (_step = _iterator.next()).done);
-    _iteratorNormalCompletion = true
+  var _iterator = colors[Symbol.iterator](), _step;
+  !(_iteratorNormalCompletion = (_step = _iterator.next()).done);
+  _iteratorNormalCompletion = true
 ) {
-    var color = _step.value;
-    console.log(color);
+  var color = _step.value;
+  console.log(color);
 }
 ```
 
@@ -2005,15 +2005,15 @@ for (
 
 ```js
 var _iterator = colors[Symbol.iterator](),
-    _step;
+  _step;
 while (!(_iteratorNormalCompletion = (_step = _iterator.next()).done)) {
-    var color = _step.value;
-    console.log(color);
-    _iteratorNormalCompletion = true;
+  var color = _step.value;
+  console.log(color);
+  _iteratorNormalCompletion = true;
 }
 ```
 
-是不是就好懂了很多呢，然后你就会发现，其实 _iteratorNormalCompletion = true 这句是完全没有必要的……
+是不是就好懂了很多呢，然后你就会发现，其实 \_iteratorNormalCompletion = true 这句是完全没有必要的……
 
 另外一段稍微复杂的代码是:
 
@@ -2033,7 +2033,7 @@ try {
 }
 ```
 
-因为 _iteratorNormalCompletion = (_step = _iterator.next()).done，所以 _iteratorNormalCompletion 表示的就是是否完成了一次完整的迭代过程，如果没有正常的迭代完成，并且迭代器有 return 方法时，就会执行该方法。
+因为 \_iteratorNormalCompletion = (\_step = \_iterator.next()).done，所以 \_iteratorNormalCompletion 表示的就是是否完成了一次完整的迭代过程，如果没有正常的迭代完成，并且迭代器有 return 方法时，就会执行该方法。
 
 而之所以这么做，就要提到迭代器的 return 方法。
 
@@ -2047,38 +2047,38 @@ try {
 
 ```js
 function createIterator(items) {
-    var i = 0;
-    return {
-        next: function() {
-            var done = i >= items.length;
-            var value = !done ? items[i++] : undefined;
+  var i = 0;
+  return {
+    next: function() {
+      var done = i >= items.length;
+      var value = !done ? items[i++] : undefined;
 
-            return {
-                done: done,
-                value: value
-            };
-        },
-        return: function() {
-            console.log("执行了 return 方法");
-            return {
-                value: 23333,
-                done: true
-            };
-        }
-    };
+      return {
+        done: done,
+        value: value
+      };
+    },
+    return: function() {
+      console.log('执行了 return 方法');
+      return {
+        value: 23333,
+        done: true
+      };
+    }
+  };
 }
 
-var colors = ["red", "green", "blue"];
+var colors = ['red', 'green', 'blue'];
 
 var iterator = createIterator([1, 2, 3]);
 
 colors[Symbol.iterator] = function() {
-    return iterator;
+  return iterator;
 };
 
 for (let color of colors) {
-    if (color == 1) break;
-    console.log(color);
+  if (color == 1) break;
+  console.log(color);
 }
 // 执行了 return 方法
 ```
@@ -2096,4 +2096,3 @@ TypeError: Iterator result undefined is not an object
 总之如果是在浏览器中使用的话，return 函数的返回值其实并不生效 T^T
 
 // TODO es6 未完待续，下一篇地址 https://github.com/mqyqingfeng/Blog/issues/91
-

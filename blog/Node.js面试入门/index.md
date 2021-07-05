@@ -223,8 +223,8 @@ Module.prototype._compile = function(content, filename) {
 而目前的 Node.js 将 VM 的接口暴露了出来, 可以让你自己创建一个新的 js 上下文, 这一点上跟前端 js 还是区别挺大的. 在执行外部代码的时候, 通过创建新的上下文沙盒 (sandbox) 可以避免上下文被污染:
 
 ```js
-"use strict";
-const vm = require("vm");
+'use strict';
+const vm = require('vm');
 
 let code = `(function(require) {
 
@@ -262,7 +262,7 @@ node 中 require 的实现原理里面有说明，\_compile 函数有调用 vm.r
 ```js
 somePromise()
   .then(function() {
-    throw new Error("oh noes");
+    throw new Error('oh noes');
   })
   .catch(function(err) {
     // I caught your error! :)
@@ -270,7 +270,7 @@ somePromise()
 
 somePromise().then(
   function() {
-    throw new Error("oh noes");
+    throw new Error('oh noes');
   },
   function(err) {
     // I didn't catch your error! :(
@@ -284,12 +284,12 @@ somePromise().then(
 
 ```js
 let doSth = new Promise((resolve, reject) => {
-  console.log("hello");
+  console.log('hello');
   resolve();
 });
 
 doSth.then(() => {
-  console.log("over");
+  console.log('over');
 });
 ```
 
@@ -306,13 +306,13 @@ over
 
 ```js
 let doSth = new Promise((resolve, reject) => {
-  console.log("hello");
+  console.log('hello');
   resolve();
 });
 
 setTimeout(() => {
   doSth.then(() => {
-    console.log("over");
+    console.log('over');
   });
 }, 10000);
 ```
@@ -356,19 +356,19 @@ Node.js 中 Eventemitter 的 emit 是同步的.
 另外, 可以讨论如下的执行结果是输出 `hi 1` 还是 `hi 2`?
 
 ```js
-const EventEmitter = require("events");
+const EventEmitter = require('events');
 
 let emitter = new EventEmitter();
 
-emitter.on("myEvent", () => {
-  console.log("hi 1");
+emitter.on('myEvent', () => {
+  console.log('hi 1');
 });
 
-emitter.on("myEvent", () => {
-  console.log("hi 2");
+emitter.on('myEvent', () => {
+  console.log('hi 2');
 });
 
-emitter.emit("myEvent");
+emitter.emit('myEvent');
 ```
 
 ```
@@ -379,31 +379,31 @@ hi 2
 或者如下情况是否会死循环?（会出现）
 
 ```js
-const EventEmitter = require("events");
+const EventEmitter = require('events');
 
 let emitter = new EventEmitter();
 
-emitter.on("myEvent", () => {
-  console.log("hi");
-  emitter.emit("myEvent");
+emitter.on('myEvent', () => {
+  console.log('hi');
+  emitter.emit('myEvent');
 });
 
-emitter.emit("myEvent");
+emitter.emit('myEvent');
 ```
 
 以及这样会不会死循环?（不会出现，只是多了一个监听）
 
 ```js
-const EventEmitter = require("events");
+const EventEmitter = require('events');
 
 let emitter = new EventEmitter();
 
-emitter.on("myEvent", function sth() {
-  emitter.on("myEvent", sth);
-  console.log("hi");
+emitter.on('myEvent', function sth() {
+  emitter.on('myEvent', sth);
+  console.log('hi');
 });
 
-emitter.emit("myEvent");
+emitter.emit('myEvent');
 ```
 
 使用 emitter 处理问题可以处理比较复杂的状态场景, 比如 TCP 的复杂状态机, 做多项异步操作的时候每一步都可能报错, 这个时候 .emit 错误并且执行某些 .once 的操作可以将你从泥沼中拯救出来.
@@ -448,7 +448,7 @@ function sleep(ms) {
 ```js
 // 当 await memo 不是最先出现时，所有的 sleep 并行执行，因为 await memo 使得函数等待上一个函数完成后执行
 // utility function for sleeping
-const sleep = n => new Promise(res => setTimeout(res, n));
+const sleep = (n) => new Promise((res) => setTimeout(res, n));
 
 const arr = [1, 2, 3];
 const startTime = new Date().getTime();
@@ -470,7 +470,7 @@ console.log(asyncRes, `Took ${new Date().getTime() - startTime} ms`);
 
 ```js
 // 当 await memo 最先出现时，这些函数按顺序运行，所有的 sleep 串行执行
-const sleep = n => new Promise(res => setTimeout(res, n));
+const sleep = (n) => new Promise((res) => setTimeout(res, n));
 const arr = [1, 2, 3];
 
 const startTime = new Date().getTime();
@@ -689,9 +689,9 @@ Node.js 的 child_process.fork() 在 Unix 上的实现最终调用了 POSIX [for
 Cluster 是常见的 Node.js 利用多核的办法. 它是基于 child_process.fork() 实现的, 所以 cluster 产生的进程之间是通过 IPC 来通信的, 并且它也没有拷贝父进程的空间, 而是通过加入 cluster.isMaster 这个标识, 来区分父进程以及子进程, 达到类似 POSIX 的 fork 的效果.
 
 ```js
-const cluster = require("cluster"); // | |
-const http = require("http"); // | |
-const numCPUs = require("os").cpus().length; // | |    都执行了
+const cluster = require('cluster'); // | |
+const http = require('http'); // | |
+const numCPUs = require('os').cpus().length; // | |    都执行了
 // | |
 if (cluster.isMaster) {
   // |-|-----------------
@@ -700,7 +700,7 @@ if (cluster.isMaster) {
     //   |
     cluster.fork(); //   |
   } //   | 仅父进程执行 (a.js)
-  cluster.on("exit", worker => {
+  cluster.on('exit', (worker) => {
     //   |
     console.log(`${worker.process.pid} died`); //   |
   }); //   |
@@ -712,12 +712,12 @@ if (cluster.isMaster) {
     .createServer((req, res) => {
       // |
       res.writeHead(200); // |   仅子进程执行 (b.js)
-      res.end("hello world\n"); // |
+      res.end('hello world\n'); // |
     })
     .listen(8000); // |
 } // |-------------------
 // | |
-console.log("hello"); // | |    都执行了
+console.log('hello'); // | |    都执行了
 ```
 
 在上述代码中 numCPUs 虽然是全局变量但是, 在父进程中修改它, 子进程中并不会改变, 因为父进程与子进程是完全独立的两个空间. 他们所谓的共有仅仅只是都执行了, 并不是同一份.
@@ -804,10 +804,10 @@ void init_daemon()
 ```
 
 ```js
-var spawn = require("child_process").spawn;
-var process = require("process");
+var spawn = require('child_process').spawn;
+var process = require('process');
 
-var p = spawn("node", ["b.js"], {
+var p = spawn('node', ['b.js'], {
   detached: true
 });
 console.log(process.pid, p.pid);
@@ -863,8 +863,8 @@ console.log(buf2);
 字符串解码器 (String Decoder) 是一个用于将 Buffer 拿来 decode 到 string 的模块, 是作为 Buffer.toString 的一个补充, 它支持多字节 UTF-8 和 UTF-16 字符. 例如
 
 ```js
-const StringDecoder = require("string_decoder").StringDecoder;
-const decoder = new StringDecoder("utf8");
+const StringDecoder = require('string_decoder').StringDecoder;
+const decoder = new StringDecoder('utf8');
 
 const cent = Buffer.from([0xc2, 0xa2]);
 console.log(decoder.write(cent)); // ¢
@@ -876,8 +876,8 @@ console.log(decoder.write(euro)); // €
 stringDecoder.write 会确保返回的字符串不包含 Buffer 末尾残缺的多字节字符，残缺的多字节字符会被保存在一个内部的 buffer 中用于下次调用 stringDecoder.write() 或 stringDecoder.end()。
 
 ```js
-const StringDecoder = require("string_decoder").StringDecoder;
-const decoder = new StringDecoder("utf8");
+const StringDecoder = require('string_decoder').StringDecoder;
+const decoder = new StringDecoder('utf8');
 
 decoder.write(Buffer.from([0xe2]));
 decoder.write(Buffer.from([0x82]));
@@ -938,17 +938,16 @@ int copy(const char *src, const char *dest)
 
 ### Stream 的类型
 
-| 类                                                                       | 使用场景                     | 重写方法             |
-| ------------------------------------------------------------------------ | ---------------------------- | -------------------- |
-| [Readable](https://github.com/substack/stream-handbook#readable-streams) | 只读                         | \_read               |
-| [Writable](https://github.com/substack/stream-handbook#writable-streams) | 只写                         | \_write              |
-| [Duplex](https://github.com/substack/stream-handbook#duplex)             | 读写                         | \_read, \_write      |
-| [Transform](https://github.com/substack/stream-handbook#transform)       | 操作被写入数据, 然后读出结果 | \_transform, \_flush |
+| 类 | 使用场景 | 重写方法 |
+| --- | --- | --- |
+| [Readable](https://github.com/substack/stream-handbook#readable-streams) | 只读 | \_read |
+| [Writable](https://github.com/substack/stream-handbook#writable-streams) | 只写 | \_write |
+| [Duplex](https://github.com/substack/stream-handbook#duplex) | 读写 | \_read, \_write |
+| [Transform](https://github.com/substack/stream-handbook#transform) | 操作被写入数据, 然后读出结果 | \_transform, \_flush |
 
 ### 对象模式
 
-通过 Node API 创建的流, 只能够对字符串或者 buffer 对象进行操作. 但其实流的实现是可以基于其他的 JavaScript 类型(除了 null, 它在流中有特殊的含义)的. 这样的流就处在 "对象模式(objectMode)" 中.
-在创建流对象的时候, 可以通过提供 `objectMode` 参数来生成对象模式的流. 试图将现有的流转换为对象模式是不安全的
+通过 Node API 创建的流, 只能够对字符串或者 buffer 对象进行操作. 但其实流的实现是可以基于其他的 JavaScript 类型(除了 null, 它在流中有特殊的含义)的. 这样的流就处在 "对象模式(objectMode)" 中. 在创建流对象的时候, 可以通过提供 `objectMode` 参数来生成对象模式的流. 试图将现有的流转换为对象模式是不安全的
 
 ### 缓冲区
 
@@ -986,7 +985,7 @@ function writeOneMillionTimes(writer, data, encoding, callback) {
     if (i > 0) {
       // had to stop early!
       // write some more once it drains
-      writer.once("drain", write);
+      writer.once('drain', write);
     }
   }
 }
@@ -1018,9 +1017,9 @@ Console.prototype.log = function(...args) {
 自己实现一个 console.log 可以参考如下代码:
 
 ```js
-let print = str => process.stdout.write(str + "\n");
+let print = (str) => process.stdout.write(str + '\n');
 
-print("hello world");
+print('hello world');
 ```
 
 注意: 该代码并没有处理多参数, 也没有处理占位符 (即 util.format 的功能).
@@ -1117,34 +1116,31 @@ console.log(process.stderr.fd); // 2
  * http://stackoverflow.com/questions/3430939/node-js-readsync-from-stdin
  * @mklement0
  */
-var fs = require("fs");
+var fs = require('fs');
 
 var BUFSIZE = 256;
 var buf = new Buffer(BUFSIZE);
 var bytesRead;
 
 module.exports = function() {
-  var fd =
-    "win32" === process.platform
-      ? process.stdin.fd
-      : fs.openSync("/dev/stdin", "rs");
+  var fd = 'win32' === process.platform ? process.stdin.fd : fs.openSync('/dev/stdin', 'rs');
   bytesRead = 0;
 
   try {
     bytesRead = fs.readSync(fd, buf, 0, BUFSIZE);
   } catch (e) {
-    if (e.code === "EAGAIN") {
+    if (e.code === 'EAGAIN') {
       // 'resource temporarily unavailable'
       // Happens on OS X 10.8.3 (not Windows 7!), if there's no
       // stdin input - typically when invoking a script without any
       // input (for interactive stdin input).
       // If you were to just continue, you'd create a tight loop.
-      console.error("ERROR: interactive stdin input not supported.");
+      console.error('ERROR: interactive stdin input not supported.');
       process.exit(1);
-    } else if (e.code === "EOF") {
+    } else if (e.code === 'EOF') {
       // Happens on Windows 7, but not OS X 10.8.3:
       // simply signals the end of *piped* stdin input.
-      return "";
+      return '';
     }
     throw e; // unexpected exception
   }
@@ -1155,7 +1151,7 @@ module.exports = function() {
     //   of input is signaled.
     // Windows 7: this is how the end of input is signaled for
     //   *interactive* stdin input.
-    return "";
+    return '';
   }
   // Process the chunk read.
 
@@ -1170,14 +1166,14 @@ module.exports = function() {
 `readline` 模块提供了一个用于从 Readble 的 stream (例如 process.stdin) 中一次读取一行的接口. 当然你也可以用来读取文件或者 net, http 的 stream, 比如:
 
 ```javascript
-const readline = require("readline");
-const fs = require("fs");
+const readline = require('readline');
+const fs = require('fs');
 
 const rl = readline.createInterface({
-  input: fs.createReadStream("sample.txt")
+  input: fs.createReadStream('sample.txt')
 });
 
-rl.on("line", line => {
+rl.on('line', (line) => {
   console.log(`Line from file: ${line}`);
 });
 ```
@@ -1261,19 +1257,19 @@ backlog 用于设置客户端与服务端 `ESTABLISHED` 之后等待 accept 的�
 
 关于网络连接的建立以及断开, 存在着一个复杂的状态转换机制, 完整的状态表参见 [《The TCP/IP Guide》](http://www.tcpipguide.com/free/t_TCPOperationalOverviewandtheTCPFiniteStateMachineF-2.htm
 
-| state        | 简述                                                                                                                           |
-| ------------ | ------------------------------------------------------------------------------------------------------------------------------ |
-| CLOSED       | 连接关闭, 所有连接的初始状态                                                                                                   |
-| LISTEN       | 监听状态, 等待客户端发送 SYN                                                                                                   |
-| SYN-SENT     | 客户端发送了 SYN, 等待服务端回复                                                                                               |
-| SYN-RECEIVED | 双方都收到了 SYN, 等待 ACK                                                                                                     |
-| ESTABLISHED  | SYN-RECEIVED 收到 ACK 之后, 状态切换为连接已建立.                                                                              |
-| CLOSE-WAIT   | 被动方收到了关闭请求(FIN)后, 发送 ACK, 如果有数据要发送, 则发送数据, 无数据发送则回复 FIN. 状态切换到 LAST-ACK                 |
-| LAST-ACK     | 等待对方 ACK 当前设备的 CLOSE-WAIT 时发送的 FIN, 等到则切换 CLOSED                                                             |
-| FIN-WAIT-1   | 主动方发送 FIN, 等待 ACK                                                                                                       |
-| FIN-WAIT-2   | 主动方收到被动方的 ACK, 等待 FIN                                                                                               |
-| CLOSING      | 主动方收到了 FIN, 却没收到 FIN-WAIT-1 时发的 ACK, 此时等待那个 ACK                                                             |
-| TIME-WAIT    | 主动方收到 FIN, 返回收到对方 FIN 的 ACK, 等待对方是否真的收到了 ACK, 如果过一会又来一个 FIN, 表示对方没收到, 这时要再 ACK 一次 |
+| state | 简述 |
+| --- | --- |
+| CLOSED | 连接关闭, 所有连接的初始状态 |
+| LISTEN | 监听状态, 等待客户端发送 SYN |
+| SYN-SENT | 客户端发送了 SYN, 等待服务端回复 |
+| SYN-RECEIVED | 双方都收到了 SYN, 等待 ACK |
+| ESTABLISHED | SYN-RECEIVED 收到 ACK 之后, 状态切换为连接已建立. |
+| CLOSE-WAIT | 被动方收到了关闭请求(FIN)后, 发送 ACK, 如果有数据要发送, 则发送数据, 无数据发送则回复 FIN. 状态切换到 LAST-ACK |
+| LAST-ACK | 等待对方 ACK 当前设备的 CLOSE-WAIT 时发送的 FIN, 等到则切换 CLOSED |
+| FIN-WAIT-1 | 主动方发送 FIN, 等待 ACK |
+| FIN-WAIT-2 | 主动方收到被动方的 ACK, 等待 FIN |
+| CLOSING | 主动方收到了 FIN, 却没收到 FIN-WAIT-1 时发的 ACK, 此时等待那个 ACK |
+| TIME-WAIT | 主动方收到 FIN, 返回收到对方 FIN 的 ACK, 等待对方是否真的收到了 ACK, 如果过一会又来一个 FIN, 表示对方没收到, 这时要再 ACK 一次 |
 
 > `TIME_WAIT` 是什么情况? 出现过多的 `TIME_WAIT` 可能是什么原因?
 
@@ -1285,10 +1281,10 @@ backlog 用于设置客户端与服务端 `ESTABLISHED` 之后等待 accept 的�
 
 > TCP/UDP 的区别? UDP 有粘包吗?
 
-| 协议 | 连接性                            | 双工性      | 可靠性                     | 有序性                  | 有界性                  | 拥塞控制 | 传输速度 | 量级 | 头部大小   |
-| ---- | --------------------------------- | ----------- | -------------------------- | ----------------------- | ----------------------- | -------- | -------- | ---- | ---------- |
-| TCP  | 面向连接<br>(Connection oriented) | 全双工(1:1) | 可靠<br>(重传机制)         | 有序<br>(通过 SYN 排序) | 无, 有[粘包情况](#粘包) | 有       | 慢       | 低   | 20~60 字节 |
-| UDP  | 无连接<br>(Connection less)       | n:m         | 不可靠<br>(丢包后数据丢失) | 无序                    | 有消息边界, **无粘包**  | 无       | 快       | 高   | 8 字节     |
+| 协议 | 连接性 | 双工性 | 可靠性 | 有序性 | 有界性 | 拥塞控制 | 传输速度 | 量级 | 头部大小 |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| TCP | 面向连接<br>(Connection oriented) | 全双工(1:1) | 可靠<br>(重传机制) | 有序<br>(通过 SYN 排序) | 无, 有[粘包情况](#粘包) | 有 | 慢 | 低 | 20~60 字节 |
+| UDP | 无连接<br>(Connection less) | n:m | 不可靠<br>(丢包后数据丢失) | 无序 | 有消息边界, **无粘包** | 无 | 快 | 高 | 8 字节 |
 
 UDP socket 支持 n 对 m 的连接状态, 在[官方文档](https://nodejs.org/dist/latest-v6.x/docs/api/dgram.html)中有写到在 `dgram.createSocket(options[, callback])` 中的 option 可以指定 `reuseAddr` 即 `SO_REUSEADDR` 标志. 通过 `SO_REUSEADDR` 可以简单的实现 n 对 m 的多播特性 (不过仅在支持多播的系统上才有).
 
@@ -1323,7 +1319,7 @@ UDP socket 支持 n 对 m 的连接状态, 在[官方文档](https://nodejs.org/
 因为 HTTP 的方法 (method) 与状态码 (status) 讲解太常见, 你可以使用如下代码打印出来自己看 Node.js 官方定义的, 完整的就不列举了.
 
 ```javascript
-const http = require("http");
+const http = require('http');
 
 console.log(http.METHODS);
 console.log(http.STATUS_CODES);
@@ -1421,20 +1417,20 @@ function socketCloseListener() {
   // NOTE: It's important to get parser here, because it could be freed by
   // the `socketOnData`.
   var parser = socket.parser;
-  req.emit("close");
+  req.emit('close');
   if (req.res && req.res.readable) {
     // Socket closed before we emitted 'end' below.
-    req.res.emit("aborted");
+    req.res.emit('aborted');
     var res = req.res;
-    res.on("end", function() {
-      res.emit("close");
+    res.on('end', function() {
+      res.emit('close');
     });
     res.push(null);
   } else if (!req.res && !req.socket._hadError) {
     // This socket error fired before we started to
     // receive a response. The error needs to
     // fire on the request.
-    req.emit("error", createHangUpError()); // <------------------- socket hang up
+    req.emit('error', createHangUpError()); // <------------------- socket hang up
     req.socket._hadError = true;
   }
 
@@ -1494,7 +1490,7 @@ RPC (Remote Procedure Call Protocol) 基于 TCP/IP 来实现调用远程服务�
 
 ### Thrift
 
-> **Thrift**是一种[接口描述语言](https://zh.wikipedia.org/wiki/%E6%8E%A5%E5%8F%A3%E6%8F%8F%E8%BF%B0%E8%AF%AD%E8%A8%80 "接口描述语言")和二进制通讯协议，它被用来定义和创建跨语言的服务。它被当作一个[远程过程调用](https://zh.wikipedia.org/wiki/%E8%BF%9C%E7%A8%8B%E8%BF%87%E7%A8%8B%E8%B0%83%E7%94%A8 "远程过程调用")（RPC）框架来使用，是由[Facebook](https://zh.wikipedia.org/wiki/Facebook "Facebook")为“大规模跨语言服务开发”而开发的。它通过一个代码生成引擎联合了一个软件栈，来创建不同程度的、无缝的[跨平台](https://zh.wikipedia.org/wiki/%E8%B7%A8%E5%B9%B3%E5%8F%B0 "跨平台")高效服务，可以使用[C#](https://zh.wikipedia.org/wiki/C%E2%99%AF "C♯")、[C++](https://zh.wikipedia.org/wiki/C%2B%2B "C++")（基于[POSIX](https://zh.wikipedia.org/wiki/POSIX "POSIX")兼容系统）、Cappuccino、[Cocoa](https://zh.wikipedia.org/wiki/Cocoa "Cocoa")、[Delphi](https://zh.wikipedia.org/wiki/Delphi "Delphi")、[Erlang](https://zh.wikipedia.org/wiki/Erlang "Erlang")、[Go](https://zh.wikipedia.org/wiki/Go "Go")、[Haskell](https://zh.wikipedia.org/wiki/Haskell "Haskell")、[Java](https://zh.wikipedia.org/wiki/Java "Java")、[Node.js](https://zh.wikipedia.org/wiki/Node.js "Node.js")、[OCaml](https://zh.wikipedia.org/wiki/OCaml "OCaml")、[Perl](https://zh.wikipedia.org/wiki/Perl "Perl")、[PHP](https://zh.wikipedia.org/wiki/PHP "PHP")、[Python](https://zh.wikipedia.org/wiki/Python "Python")、[Ruby](https://zh.wikipedia.org/wiki/Ruby "Ruby")和[Smalltalk](https://zh.wikipedia.org/wiki/Smalltalk "Smalltalk")。虽然它以前是由 Facebook 开发的，但它现在是[Apache 软件基金会](https://zh.wikipedia.org/wiki/Apache%E8%BD%AF%E4%BB%B6%E5%9F%BA%E9%87%91%E4%BC%9A "Apache软件基金会")的[开源](https://zh.wikipedia.org/wiki/%E5%BC%80%E6%BA%90 "开源")项目了。该实现被描述在 2007 年 4 月的一篇由 Facebook 发表的技术论文中，该论文现由 Apache 掌管。
+> **Thrift**是一种[接口描述语言](https://zh.wikipedia.org/wiki/%E6%8E%A5%E5%8F%A3%E6%8F%8F%E8%BF%B0%E8%AF%AD%E8%A8%80 '接口描述语言')和二进制通讯协议，它被用来定义和创建跨语言的服务。它被当作一个[远程过程调用](https://zh.wikipedia.org/wiki/%E8%BF%9C%E7%A8%8B%E8%BF%87%E7%A8%8B%E8%B0%83%E7%94%A8 '远程过程调用')（RPC）框架来使用，是由[Facebook](https://zh.wikipedia.org/wiki/Facebook 'Facebook')为“大规模跨语言服务开发”而开发的。它通过一个代码生成引擎联合了一个软件栈，来创建不同程度的、无缝的[跨平台](https://zh.wikipedia.org/wiki/%E8%B7%A8%E5%B9%B3%E5%8F%B0 '跨平台')高效服务，可以使用[C#](https://zh.wikipedia.org/wiki/C%E2%99%AF 'C♯')、[C++](https://zh.wikipedia.org/wiki/C%2B%2B 'C++')（基于[POSIX](https://zh.wikipedia.org/wiki/POSIX 'POSIX')兼容系统）、Cappuccino、[Cocoa](https://zh.wikipedia.org/wiki/Cocoa 'Cocoa')、[Delphi](https://zh.wikipedia.org/wiki/Delphi 'Delphi')、[Erlang](https://zh.wikipedia.org/wiki/Erlang 'Erlang')、[Go](https://zh.wikipedia.org/wiki/Go 'Go')、[Haskell](https://zh.wikipedia.org/wiki/Haskell 'Haskell')、[Java](https://zh.wikipedia.org/wiki/Java 'Java')、[Node.js](https://zh.wikipedia.org/wiki/Node.js 'Node.js')、[OCaml](https://zh.wikipedia.org/wiki/OCaml 'OCaml')、[Perl](https://zh.wikipedia.org/wiki/Perl 'Perl')、[PHP](https://zh.wikipedia.org/wiki/PHP 'PHP')、[Python](https://zh.wikipedia.org/wiki/Python 'Python')、[Ruby](https://zh.wikipedia.org/wiki/Ruby 'Ruby')和[Smalltalk](https://zh.wikipedia.org/wiki/Smalltalk 'Smalltalk')。虽然它以前是由 Facebook 开发的，但它现在是[Apache 软件基金会](https://zh.wikipedia.org/wiki/Apache%E8%BD%AF%E4%BB%B6%E5%9F%BA%E9%87%91%E4%BC%9A 'Apache软件基金会')的[开源](https://zh.wikipedia.org/wiki/%E5%BC%80%E6%BA%90 '开源')项目了。该实现被描述在 2007 年 4 月的一篇由 Facebook 发表的技术论文中，该论文现由 Apache 掌管。
 
 ### HTTP
 
@@ -1598,22 +1594,22 @@ Node.js 内置的 path 是用于处理路径问题的模块. 不过众所周知,
 
 ### Windows vs. POSIX
 
-| POSIX                                              | 值                     | Windows                                            | 值                                                       |
-| -------------------------------------------------- | ---------------------- | -------------------------------------------------- | -------------------------------------------------------- |
-| path.posix.sep                                     | `'/'`                  | path.win32.sep                                     | `'\\'`                                                   |
-| path.posix.normalize('/foo/bar//baz/asdf/quux/..') | `'/foo/bar/baz/asdf'`  | path.win32.normalize('C:\\temp\\\\foo\\bar\\..\\') | `'C:\\temp\\foo\\'`                                      |
-| path.posix.basename('/tmp/myfile.html')            | `'myfile.html'`        | path.win32.basename('C:\\temp\\myfile.html')       | `'myfile.html'`                                          |
-| path.posix.join('/asdf', '/test.html')             | `'/asdf/test.html'`    | path.win32.join('/asdf', '/test.html')             | `'\\asdf\\test.html'`                                    |
-| path.posix.relative('/root/a', '/root/b')          | `'../b'`               | path.win32.relative('C:\\a', 'c:\\b')              | `'..\\b'`                                                |
-| path.posix.isAbsolute('/baz/..')                   | `true`                 | path.win32.isAbsolute('C:\\foo\\..')               | `true`                                                   |
-| path.posix.delimiter                               | `':'`                  | path.win32.delimiter                               | `','`                                                    |
-| process.env.PATH                                   | `'/usr/bin:/bin'`      | process.env.PATH                                   | `C:\Windows\system32;C:\Program Files\node\'`            |
-| PATH.split(path.posix.delimiter)                   | `['/usr/bin', '/bin']` | PATH.split(path.win32.delimiter)                   | `['C:\\Windows\\system32', 'C:\\Program Files\\node\\']` |
+| POSIX | 值 | Windows | 值 |
+| --- | --- | --- | --- |
+| path.posix.sep | `'/'` | path.win32.sep | `'\\'` |
+| path.posix.normalize('/foo/bar//baz/asdf/quux/..') | `'/foo/bar/baz/asdf'` | path.win32.normalize('C:\\temp\\\\foo\\bar\\..\\') | `'C:\\temp\\foo\\'` |
+| path.posix.basename('/tmp/myfile.html') | `'myfile.html'` | path.win32.basename('C:\\temp\\myfile.html') | `'myfile.html'` |
+| path.posix.join('/asdf', '/test.html') | `'/asdf/test.html'` | path.win32.join('/asdf', '/test.html') | `'\\asdf\\test.html'` |
+| path.posix.relative('/root/a', '/root/b') | `'../b'` | path.win32.relative('C:\\a', 'c:\\b') | `'..\\b'` |
+| path.posix.isAbsolute('/baz/..') | `true` | path.win32.isAbsolute('C:\\foo\\..') | `true` |
+| path.posix.delimiter | `':'` | path.win32.delimiter | `','` |
+| process.env.PATH | `'/usr/bin:/bin'` | process.env.PATH | `C:\Windows\system32;C:\Program Files\node\'` |
+| PATH.split(path.posix.delimiter) | `['/usr/bin', '/bin']` | PATH.split(path.win32.delimiter) | `['C:\\Windows\\system32', 'C:\\Program Files\\node\\']` |
 
 看了上表之后, 你应该了解到当你处于某个平台之下的时候, 所使用的 `path` 模块的方法其实就是对应的平台的方法, 例如笔者这里用的是 mac, 所以:
 
 ```javascript
-const path = require("path");
+const path = require('path');
 console.log(path.basename === path.posix.basename); // true
 ```
 
@@ -1624,7 +1620,7 @@ console.log(path.basename === path.posix.basename); // true
 on POSIX:
 
 ```javascript
-path.parse("/home/user/dir/file.txt");
+path.parse('/home/user/dir/file.txt');
 // Returns:
 // {
 //    root : "/",
@@ -1647,7 +1643,7 @@ path.parse("/home/user/dir/file.txt");
 on Windows:
 
 ```javascript
-path.parse("C:\\path\\dir\\file.txt");
+path.parse('C:\\path\\dir\\file.txt');
 // Returns:
 // {
 //    root : "C:\\",
@@ -1894,7 +1890,7 @@ file locks                      (-x) unlimited
 而常见的系统错误列表可以通过 Node.js 的 os 对象常看列表：
 
 ```javascript
-const os = require("os");
+const os = require('os');
 
 console.log(os.constants.errno);
 ```
@@ -1929,7 +1925,7 @@ callback(err, data) 这种形式的错误处理起来繁琐, 并不具备强制�
 
 ```javascript
 function test() {
-  throw new Error("test error");
+  throw new Error('test error');
 }
 
 function main() {
@@ -1965,7 +1961,7 @@ Error: test error
 
 ```javascript
 function test() {
-  throw new Error("test error");
+  throw new Error('test error');
 }
 
 function main() {
@@ -2009,17 +2005,17 @@ Error: test error
 当异常没有被捕获一路冒泡到 Event Loop 时就会触发该事件 process 对象上的 `uncaughtException` 事件. 默认情况下, Node.js 对于此类异常会直接将其堆栈跟踪信息输出给 `stderr` 并结束进程, 而为 `uncaughtException` 事件添加监听可以覆盖该默认行为, 不会直接结束进程.
 
 ```javascript
-process.on("uncaughtException", err => {
+process.on('uncaughtException', (err) => {
   console.log(`Caught exception: ${err}`);
 });
 
 setTimeout(() => {
-  console.log("This will still run.");
+  console.log('This will still run.');
 }, 500);
 
 // Intentionally cause an exception, but don't catch it.
 nonexistentFunc();
-console.log("This will not run.");
+console.log('This will not run.');
 ```
 
 #### 合理使用 uncaughtException
@@ -2046,12 +2042,12 @@ console.log("This will not run.");
 例如
 
 ```javascript
-process.on("unhandledRejection", (reason, p) => {
-  console.log("Unhandled Rejection at: Promise", p, "reason:", reason);
+process.on('unhandledRejection', (reason, p) => {
+  console.log('Unhandled Rejection at: Promise', p, 'reason:', reason);
   // application specific logging, throwing an error, or other logic here
 });
 
-somePromise.then(res => {
+somePromise.then((res) => {
   return reportToUser(JSON.pasre(res)); // note the typo (`pasre`)
 }); // no `.catch` or `.then`
 ```
@@ -2061,7 +2057,7 @@ somePromise.then(res => {
 ```javascript
 function SomeResource() {
   // Initially set the loaded status to a rejected promise
-  this.loaded = Promise.reject(new Error("Resource not yet loaded!"));
+  this.loaded = Promise.reject(new Error('Resource not yet loaded!'));
 }
 
 var resource = new SomeResource();
@@ -2114,10 +2110,10 @@ domain 本身是一个 EventEmitter 对象, 其中文意思是 "域" 的意思, 
 
 ```javascript
 // Print GC events to stdout for one minute.
-const v8 = require("v8");
-v8.setFlagsFromString("--trace_gc");
+const v8 = require('v8');
+v8.setFlagsFromString('--trace_gc');
 setTimeout(function() {
-  v8.setFlagsFromString("--notrace_gc");
+  v8.setFlagsFromString('--notrace_gc');
 }, 60e3);
 ```
 
@@ -2282,15 +2278,15 @@ query string 属于 URL 的一部分, 见上方 URL 的表. 在 Node.js 中有�
 Node.js 内置的 querystring 目前对于有深度的结构尚不支持. 见如下:
 
 ```javascript
-const qs = require("qs"); // 第三方
-const querystring = require("querystring"); // Node.js 内置
+const qs = require('qs'); // 第三方
+const querystring = require('querystring'); // Node.js 内置
 
 let obj = { a: { b: { c: 1 } } };
 
 console.log(qs.stringify(obj)); // 'a%5Bb%5D%5Bc%5D=1'
 console.log(querystring.stringify(obj)); // 'a='
 
-let str = "a%5Bb%5D%5Bc%5D=1";
+let str = 'a%5Bb%5D%5Bc%5D=1';
 
 console.log(qs.parse(str)); // { a: { b: { c: '1' } } }
 console.log(querystring.parse(str)); // { 'a[b][c]': '1' }
@@ -2299,7 +2295,7 @@ console.log(querystring.parse(str)); // { 'a[b][c]': '1' }
 > <a name="q-get-param"></a> HTTP 如何通过 GET 方法 (URL) 传递 let arr = [1,2,3,4] 给服务器?
 
 ```javascript
-const qs = require("qs");
+const qs = require('qs');
 
 let arr = [1, 2, 3, 4];
 let str = qs.stringify({ arr });
@@ -2363,19 +2359,13 @@ https://github.com/nodejs/node/blob/v7.6.0/lib/util.js#L960
  */
 exports.inherits = function(ctor, superCtor) {
   if (ctor === undefined || ctor === null)
-    throw new TypeError(
-      'The constructor to "inherits" must not be ' + "null or undefined"
-    );
+    throw new TypeError('The constructor to "inherits" must not be ' + 'null or undefined');
 
   if (superCtor === undefined || superCtor === null)
-    throw new TypeError(
-      'The super constructor to "inherits" must not ' + "be null or undefined"
-    );
+    throw new TypeError('The super constructor to "inherits" must not ' + 'be null or undefined');
 
   if (superCtor.prototype === undefined)
-    throw new TypeError(
-      'The super constructor to "inherits" must ' + "have a prototype"
-    );
+    throw new TypeError('The super constructor to "inherits" must ' + 'have a prototype');
 
   ctor.super_ = superCtor;
   Object.setPrototypeOf(ctor.prototype, superCtor.prototype);
@@ -2390,23 +2380,22 @@ exports.inherits = function(ctor, superCtor) {
 
 ## 常用模块
 
-[Awesome Node.js](https://github.com/sindresorhus/awesome-nodejs)
-[Most depended-upon packages](https://www.npmjs.com/browse/depended)
+[Awesome Node.js](https://github.com/sindresorhus/awesome-nodejs) [Most depended-upon packages](https://www.npmjs.com/browse/depended)
 
 > <a name="q-traversal"></a> 如何获取某个文件夹下所有的文件名?
 
 一个简单的例子:
 
 ```javascript
-const fs = require("fs");
-const path = require("path");
+const fs = require('fs');
+const path = require('path');
 
 function traversal(dir) {
   let res = [];
   for (let item of fs.readdirSync(dir)) {
     let filepath = path.join(dir, item);
     try {
-      let fd = fs.openSync(filepath, "r");
+      let fd = fs.openSync(filepath, 'r');
       let flag = fs.fstatSync(fd).isDirectory();
       fs.close(fd);
       if (flag) {
@@ -2416,33 +2405,33 @@ function traversal(dir) {
       }
     } catch (err) {
       if (
-        err.code === "ENOENT" && // link 文件打不开
+        err.code === 'ENOENT' && // link 文件打不开
         !!fs.readlinkSync(filepath)
       ) {
         // 判断是否 link 文件
         res.push(filepath);
       } else {
-        console.error("err", err);
+        console.error('err', err);
       }
     }
   }
-  return res.map(file => path.basename(file));
+  return res.map((file) => path.basename(file));
 }
 
-console.log(traversal("."));
+console.log(traversal('.'));
 ```
 
 当然也可以 Oh my [glob](https://github.com/isaacs/node-glob):
 
 ```javascript
-const glob = require("glob");
+const glob = require('glob');
 
-glob("**/*.js", (err, files) => {
+glob('**/*.js', (err, files) => {
   if (err) {
     throw new Error(err);
   }
-  files.map(filename => {
-    console.log("Here you are:", filename);
+  files.map((filename) => {
+    console.log('Here you are:', filename);
   });
 });
 ```
@@ -2658,7 +2647,7 @@ Node.js 的加密貌似有点问题, 某些算法算出来跟别的语言 (比�
 
 ```html
 <script>
-  alert("xss");
+  alert('xss');
 </script>
 ```
 
@@ -2692,16 +2681,16 @@ alert('xss')"
 以 Node.js 为例, 计算脚本的 hashes 值:
 
 ```js
-const crypto = require("crypto");
+const crypto = require('crypto');
 
-function getHashByCode(code, algorithm = "sha256") {
+function getHashByCode(code, algorithm = 'sha256') {
   return (
     algorithm +
-    "-" +
+    '-' +
     crypto
       .createHash(algorithm)
-      .update(code, "utf8")
-      .digest("base64")
+      .update(code, 'utf8')
+      .digest('base64')
   );
 }
 
@@ -2716,11 +2705,11 @@ content-security-policy: script-src 'sha256-wxWy1+9LmiuOeDwtQyZNmWpT0jqCUikqaqVl
 
 ```html
 <script>
-  console.log("hello geemo");
+  console.log('hello geemo');
 </script>
 <!-- 不执行 -->
 <script>
-  console.log("hello world");
+  console.log('hello world');
 </script>
 <!-- 执行 -->
 ```

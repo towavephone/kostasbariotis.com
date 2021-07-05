@@ -38,13 +38,17 @@ function App() {
   const len = 3000;
   return (
     <ul>
-      {Array(len).fill(0).map((_, i) => <li>{i}</li>)}
+      {Array(len)
+        .fill(0)
+        .map((_, i) => (
+          <li>{i}</li>
+        ))}
     </ul>
   );
 }
 
-const rootEl = document.querySelector("#root");
-ReactDOM.render(<App/>, rootEl);  
+const rootEl = document.querySelector('#root');
+ReactDOM.render(<App />, rootEl);
 ```
 
 主流浏览器刷新频率为 60Hz，即每 （1000ms / 60Hz）16.6ms 浏览器刷新一次。
@@ -59,7 +63,7 @@ JS 脚本执行 -----  样式布局 ----- 样式绘制
 
 当 JS 执行时间过长，超出了 16.6ms，这次刷新就没有时间执行样式布局和样式绘制了。
 
-在 Demo 中，由于组件数量繁多（3000个），JS 脚本执行时间过长，页面掉帧，造成卡顿。
+在 Demo 中，由于组件数量繁多（3000 个），JS 脚本执行时间过长，页面掉帧，造成卡顿。
 
 可以从打印的执行堆栈图看到，JS 执行时间为 73.65ms，远远多于一帧的时间。
 
@@ -77,8 +81,8 @@ JS 脚本执行 -----  样式布局 ----- 样式绘制
 
 ```js
 // 通过使用ReactDOM.unstable_createRoot开启Concurrent Mode
-// ReactDOM.render(<App/>, rootEl);  
-ReactDOM.unstable_createRoot(rootEl).render(<App/>);
+// ReactDOM.render(<App/>, rootEl);
+ReactDOM.unstable_createRoot(rootEl).render(<App />);
 ```
 
 此时我们的长任务被拆分到每一帧不同的 task 中，JS 脚本执行时间大体在 5ms 左右，这样浏览器就有剩余时间执行样式布局和样式绘制，减少掉帧的可能性。
@@ -99,19 +103,19 @@ React 给出的答案是将人机交互研究的结果整合到真实的 UI 中�
 
 <a target="_blank" href="./res/legacy-move.gif">通用</a>
 
-作为对比，再点击“设置”面板中的“Siri与搜索”，进入“Siri与搜索”界面：
+作为对比，再点击“设置”面板中的“Siri 与搜索”，进入“Siri 与搜索”界面：
 
-<a target="_blank" href="./res/concurrent-move.gif">Siri与搜索</a>
+<a target="_blank" href="./res/concurrent-move.gif">Siri 与搜索</a>
 
 你能感受到两者体验上的区别么？
 
-事实上，点击“通用”后的交互是同步的，直接显示后续界面。而点击“Siri与搜索”后的交互是异步的，需要等待请求返回后再显示后续界面。但从用户感知来看，这两者的区别微乎其微。
+事实上，点击“通用”后的交互是同步的，直接显示后续界面。而点击“Siri 与搜索”后的交互是异步的，需要等待请求返回后再显示后续界面。但从用户感知来看，这两者的区别微乎其微。
 
-这里的窍门在于：点击“Siri与搜索”后，先在当前页面停留了一小段时间，这一小段时间被用来请求数据。
+这里的窍门在于：点击“Siri 与搜索”后，先在当前页面停留了一小段时间，这一小段时间被用来请求数据。
 
 当“这一小段时间”足够短时，用户是无感知的。如果请求时间超过一个范围，再显示 loading 的效果。
 
-试想如果我们一点击“Siri与搜索”就显示 loading 效果，即使数据请求时间很短，loading 效果一闪而过。用户也是可以感知到的。
+试想如果我们一点击“Siri 与搜索”就显示 loading 效果，即使数据请求时间很短，loading 效果一闪而过。用户也是可以感知到的。
 
 为此，React 实现了 Suspense 功能及配套的 hook——useDeferredValue。
 
@@ -178,13 +182,13 @@ React15 架构可以分为两层：
 接下来，让我们模拟一下，如果中途中断更新会怎么样？
 
 > 注意  
-> 以下是我们模拟中断的情况，实际上React15并不会中断进行中的更新
+> 以下是我们模拟中断的情况，实际上 React15 并不会中断进行中的更新
 
 ![](res/2021-01-20-13-41-12.png)
 
 当第一个 li 完成更新时中断更新，即步骤 3 完成后中断更新，此时后面的步骤都还未执行。
 
-用户本来期望 123 变为 246。实际却看见更新不完全的 DOM！（即223）
+用户本来期望 123 变为 246。实际却看见更新不完全的 DOM！（即 223）
 
 基于这个原因，React 决定重写整个架构。
 
@@ -275,7 +279,7 @@ Fiber 是什么？他和 Reconciler 或者说和 React 之间是什么关系？�
 
 ## Fiber 架构的心智模型
 
-React 核心团队成员 Sebastian Markbåge（React Hooks的发明者）曾说：我们在 React 中做的就是践行代数效应（Algebraic Effects）。
+React 核心团队成员 Sebastian Markbåge（React Hooks 的发明者）曾说：我们在 React 中做的就是践行代数效应（Algebraic Effects）。
 
 那么，代数效应是什么呢？他和 React 有什么关系呢。
 
@@ -369,10 +373,8 @@ try {
 ```jsx
 function App() {
   const [num, updateNum] = useState(0);
-  
-  return (
-    <button onClick={() => updateNum(num => num + 1)}>{num}</button>  
-  )
+
+  return <button onClick={() => updateNum((num) => num + 1)}>{num}</button>;
 }
 ```
 
@@ -427,7 +429,7 @@ function* doWork(A, B, C) {
 
 如果通过全局变量保存之前执行的中间状态，又会引入新的复杂度。
 
-> 更详细的解释可以参考[这个issue](https://github.com/facebook/react/issues/7942#issuecomment-254987818)
+> 更详细的解释可以参考[这个 issue](https://github.com/facebook/react/issues/7942#issuecomment-254987818)
 
 基于这些原因，React 没有采用 Generator 实现协调器。
 
@@ -465,7 +467,7 @@ React 内部实现的一套状态更新机制。支持任务不同优先级，�
 
 Fiber 包含三层含义：
 
-1. 作为架构来说，之前 React15 的 Reconciler 采用递归的方式执行，数据保存在递归调用栈中，所以被称为stack Reconciler。React16 的 Reconciler 基于 Fiber 节点实现，被称为 Fiber Reconciler。
+1. 作为架构来说，之前 React15 的 Reconciler 采用递归的方式执行，数据保存在递归调用栈中，所以被称为 stack Reconciler。React16 的 Reconciler 基于 Fiber 节点实现，被称为 Fiber Reconciler。
 2. 作为静态的数据结构来说，每个 Fiber 节点对应一个 React element，保存了该组件的类型（函数组件/类组件/原生组件...）、对应的 DOM 节点等信息。
 3. 作为动态的工作单元来说，每个 Fiber 节点保存了本次更新中该组件改变的状态、要执行的工作（需要被删除/被插入页面中/被更新...）。
 
@@ -474,12 +476,7 @@ Fiber 包含三层含义：
 你可以从这里看到 [Fiber 节点的属性定义](https://github.com/facebook/react/blob/1fb18e22ae66fdb1dc127347e169e73948778e5a/packages/react-reconciler/src/ReactFiber.new.js#L117)。虽然属性很多，但我们可以按三层含义将他们分类来看
 
 ```js
-function FiberNode(
-  tag: WorkTag,
-  pendingProps: mixed,
-  key: null | string,
-  mode: TypeOfMode,
-) {
+function FiberNode(tag: WorkTag, pendingProps: mixed, key: null | string, mode: TypeOfMode) {
   // 作为静态数据结构的属性
   this.tag = tag;
   this.key = key;
@@ -541,7 +538,7 @@ function App() {
       i am
       <span>KaSong</span>
     </div>
-  )
+  );
 }
 ```
 
@@ -598,9 +595,9 @@ this.lanes = NoLanes;
 this.childLanes = NoLanes;
 ```
 
-> 注意  
+> 注意
 >
-> 在 2020 年 5 月，调度优先级策略经历了比较大的重构。以 expirationTime 属性为代表的优先级模型被 lane 取代。详见[这个PR](https://github.com/facebook/react/pull/18796)
+> 在 2020 年 5 月，调度优先级策略经历了比较大的重构。以 expirationTime 属性为代表的优先级模型被 lane 取代。详见[这个 PR](https://github.com/facebook/react/pull/18796)
 >
 > 如果你的源码中 fiber.expirationTime 仍存在，请参照调试源码章节获取最新代码。
 
@@ -654,50 +651,51 @@ React 应用的根节点通过 current 指针在不同 Fiber 树的 rootFiber �
 ```js
 function App() {
   const [num, add] = useState(0);
-  return (
-    <p onClick={() => add(num + 1)}>{num}</p>
-  )
+  return <p onClick={() => add(num + 1)}>{num}</p>;
 }
 
-ReactDOM.render(<App/>, document.getElementById('root'));
+ReactDOM.render(<App />, document.getElementById('root'));
 ```
 
-1. 首次执行 ReactDOM.render 会创建 fiberRootNode（源码中叫fiberRoot）和 rootFiber。其中 fiberRootNode 是整个应用的根节点，rootFiber 是 `<App/>` 所在组件树的根节点。
+1. 首次执行 ReactDOM.render 会创建 fiberRootNode（源码中叫 fiberRoot）和 rootFiber。其中 fiberRootNode 是整个应用的根节点，rootFiber 是 `<App/>` 所在组件树的根节点。
 
-    之所以要区分 fiberRootNode 与 rootFiber，是因为在应用中我们可以多次调用 ReactDOM.render 渲染不同的组件树，他们会拥有不同的 rootFiber。但是整个应用的根节点只有一个，那就是 fiberRootNode。
+   之所以要区分 fiberRootNode 与 rootFiber，是因为在应用中我们可以多次调用 ReactDOM.render 渲染不同的组件树，他们会拥有不同的 rootFiber。但是整个应用的根节点只有一个，那就是 fiberRootNode。
 
-    fiberRootNode 的 current 会指向当前页面上已渲染内容对应对 Fiber 树，被称为 current Fiber 树。
+   fiberRootNode 的 current 会指向当前页面上已渲染内容对应对 Fiber 树，被称为 current Fiber 树。
 
-    ![](res/2021-01-21-11-51-03.png)
+   ![](res/2021-01-21-11-51-03.png)
 
-    ```js
-    fiberRootNode.current = rootFiber;
-    ```
+   ```js
+   fiberRootNode.current = rootFiber;
+   ```
 
-    由于是首屏渲染，页面中还没有挂载任何 DOM，所以 fiberRootNode.current 指向的 rootFiber 没有任何子 Fiber 节点（即 current Fiber 树为空）。
+   由于是首屏渲染，页面中还没有挂载任何 DOM，所以 fiberRootNode.current 指向的 rootFiber 没有任何子 Fiber 节点（即 current Fiber 树为空）。
+
 2. 接下来进入 render 阶段，根据组件返回的 JSX 在内存中依次创建 Fiber 节点并连接在一起构建 Fiber 树，被称为 workInProgress Fiber 树。（下图中右侧为内存中构建的树，左侧为页面显示的树）
 
-    在构建 workInProgress Fiber 树时会尝试复用 current Fiber 树中已有的 Fiber 节点内的属性，在首屏渲染时只有 rootFiber 存在对应的 current fiber（即 rootFiber.alternate）。
+   在构建 workInProgress Fiber 树时会尝试复用 current Fiber 树中已有的 Fiber 节点内的属性，在首屏渲染时只有 rootFiber 存在对应的 current fiber（即 rootFiber.alternate）。
 
-    ![](res/2021-01-21-13-50-15.png)
+   ![](res/2021-01-21-13-50-15.png)
+
 3. 图中右侧已构建完的 workInProgress Fiber 树在 commit 阶段渲染到页面。
 
-    此时 DOM 更新为右侧树对应的样子。fiberRootNode 的 current 指针指向 workInProgress Fiber 树使其变为 current Fiber 树。
+   此时 DOM 更新为右侧树对应的样子。fiberRootNode 的 current 指针指向 workInProgress Fiber 树使其变为 current Fiber 树。
 
-    ![](res/2021-01-21-13-52-59.png)
-    
+   ![](res/2021-01-21-13-52-59.png)
+
 ### update 时
 
 1. 接下来我们点击 p 节点触发状态改变，这会开启一次新的 render 阶段并构建一棵新的 workInProgress Fiber 树。
 
-    ![](res/2021-01-21-13-55-02.png)
+   ![](res/2021-01-21-13-55-02.png)
 
-    和 mount 时一样，workInProgress fiber 的创建可以复用 current Fiber 树对应的节点数据。
+   和 mount 时一样，workInProgress fiber 的创建可以复用 current Fiber 树对应的节点数据。
 
-    > 这个决定是否复用的过程就是 Diff 算法，后面章节会详细讲解
+   > 这个决定是否复用的过程就是 Diff 算法，后面章节会详细讲解
+
 2. workInProgress Fiber 树在 render 阶段完成构建后进入 commit 阶段渲染到页面上。渲染完毕后，workInProgress Fiber 树变为 current Fiber 树。
 
-    ![](res/2021-01-21-13-58-36.png)
+   ![](res/2021-01-21-13-58-36.png)
 
 ### 总结
 
@@ -832,9 +830,9 @@ JSX 并不是只能被编译为 React.createElement 方法，你可以通过 @ba
 
 ```jsx
 // 编译前
-<p>KaSong</p>
+<p>KaSong</p>;
 // 编译后
-h("p", null, "KaSong");
+h('p', null, 'KaSong');
 ```
 
 ### React.createElement
@@ -864,15 +862,7 @@ export function createElement(type, config, children) {
   // 处理 defaultProps
   // ...省略
 
-  return ReactElement(
-    type,
-    key,
-    ref,
-    self,
-    source,
-    ReactCurrentOwner.current,
-    props,
-  );
+  return ReactElement(type, key, ref, self, source, ReactCurrentOwner.current, props);
 }
 
 const ReactElement = function(type, key, ref, self, source, owner, props) {
@@ -884,7 +874,7 @@ const ReactElement = function(type, key, ref, self, source, owner, props) {
     key: key,
     ref: ref,
     props: props,
-    _owner: owner,
+    _owner: owner
   };
 
   return element;
@@ -899,11 +889,7 @@ React 提供了验证合法 React Element 的全局 API [React.isValidElement](h
 
 ```js
 export function isValidElement(object) {
-  return (
-    typeof object === 'object' &&
-    object !== null &&
-    object.$$typeof === REACT_ELEMENT_TYPE
-  );
+  return typeof object === 'object' && object !== null && object.$$typeof === REACT_ELEMENT_TYPE;
 }
 ```
 
@@ -918,18 +904,17 @@ export function isValidElement(object) {
 ```jsx
 class AppClass extends React.Component {
   render() {
-    return <p>KaSong</p>
+    return <p>KaSong</p>;
   }
 }
 console.log('这是ClassComponent：', AppClass);
-console.log('这是Element：', <AppClass/>);
-
+console.log('这是Element：', <AppClass />);
 
 function AppFunc() {
   return <p>KaSong</p>;
 }
 console.log('这是FunctionComponent：', AppFunc);
-console.log('这是Element：', <AppFunc/>);
+console.log('这是Element：', <AppFunc />);
 ```
 
 我们可以从 Demo 控制台打印的对象看出，ClassComponent 对应的 Element 的 type 字段为 AppClass 自身。
@@ -946,7 +931,7 @@ FunctionComponent 对应的 Element 的 type 字段为 AppFunc 自身，如下�
   _owner: null,
   _store: {validated: false},
   _self: null,
-  _source: null 
+  _source: null
 }
 ```
 
@@ -978,4 +963,3 @@ ClassComponent.prototype.isReactComponent = {};
 所以，在组件 mount 时，Reconciler 根据 JSX 描述的组件内容生成组件对应的 Fiber 节点。
 
 在 update 时，Reconciler 将 JSX 与 Fiber 节点保存的数据对比，生成组件对应的 Fiber 节点，并根据对比结果为 Fiber 节点打上标记。
-

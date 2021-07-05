@@ -14,7 +14,7 @@ date: 2020-7-10 15:29:05
 webpack 里面有两个很核心的概念，叫 chunk 和 module，这里为了简单，只看 js 相关的，用笔者自己的理解去解释一下他们直接的区别：
 
 > module：每一个源码 js 文件其实都可以看成一个 module  
-chunk：每一个打包落地的 js 文件其实都是一个 chunk，每个 chunk 都包含很多 module
+> chunk：每一个打包落地的 js 文件其实都是一个 chunk，每个 chunk 都包含很多 module
 
 默认的 chunk 数量实际上是由你的入口文件的 js 数量决定的，但是如果你配置动态加载或者提取公共包的话，也会生成新的 chunk。
 
@@ -27,24 +27,22 @@ chunk：每一个打包落地的 js 文件其实都是一个 chunk，每个 chun
 // ---main.js
 // ---moduleA.js
 // ---moduleB.js
- 
+
 /**
-* moduleA.js
-*/
+ * moduleA.js
+ */
 export default function testA() {
-    console.log('this is A');
+  console.log('this is A');
 }
- 
+
 /**
-* main.js
-*/
+ * main.js
+ */
 import testA from './moduleA';
- 
+
 testA();
- 
-import('./moduleB').then(module => {
- 
-});
+
+import('./moduleB').then((module) => {});
 ```
 
 非常简单，入口 js 是 main.js，里面就是直接引入 moduleA.js，然后动态引入 moduleB.js，那么最终生成的文件就是两个 chunk，分别是:
@@ -59,20 +57,19 @@ import('./moduleB').then(module => {
 整个 main.js 的代码打包后是下面这样的
 
 ```js
-(function (module, __webpack_exports__, __webpack_require__) {
- 
-    "use strict";
-    __webpack_require__.r(__webpack_exports__);
-    /* harmony import */
-    var _moduleA__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__( /*!        ./moduleA */ "./src/moduleA.js");
- 
-    Object(_moduleA__WEBPACK_IMPORTED_MODULE_0__["default"])();
- 
-    __webpack_require__.e( /*! import() */ 0).then(__webpack_require__.bind(null, /*! ./moduleB             */ "./src/moduleB.js")).then(module => {
- 
-    });
- 
-})
+(function(module, __webpack_exports__, __webpack_require__) {
+  'use strict';
+  __webpack_require__.r(__webpack_exports__);
+  /* harmony import */
+  var _moduleA__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*!        ./moduleA */ './src/moduleA.js');
+
+  Object(_moduleA__WEBPACK_IMPORTED_MODULE_0__['default'])();
+
+  __webpack_require__
+    .e(/*! import() */ 0)
+    .then(__webpack_require__.bind(null, /*! ./moduleB             */ './src/moduleB.js'))
+    .then((module) => {});
+});
 ```
 
 可以看到，我们的直接 import moduleA 最后会变成 webpack_require，而这个函数是 webpack 打包后的一个核心函数，就是解决依赖引入的。
@@ -83,24 +80,24 @@ import('./moduleB').then(module => {
 
 ```js
 function __webpack_require__(moduleId) {
-    // Check if module is in cache
-    // 先检查模块是否已经加载过了，如果加载过了直接返回
-    if (installedModules[moduleId]) {
-        return installedModules[moduleId].exports;
-    }
-    // Create a new module (and put it into the cache)
-    // 如果一个import的模块是第一次加载，那之前必然没有加载过，就会去执行加载过程
-    var module = installedModules[moduleId] = {
-        i: moduleId,
-        l: false,
-        exports: {}
-    };
-    // Execute the module function
-    modules[moduleId].call(module.exports, module, module.exports, __webpack_require__);
-    // Flag the module as loaded
-    module.l = true;
-    // Return the exports of the module
-    return module.exports;
+  // Check if module is in cache
+  // 先检查模块是否已经加载过了，如果加载过了直接返回
+  if (installedModules[moduleId]) {
+    return installedModules[moduleId].exports;
+  }
+  // Create a new module (and put it into the cache)
+  // 如果一个import的模块是第一次加载，那之前必然没有加载过，就会去执行加载过程
+  var module = (installedModules[moduleId] = {
+    i: moduleId,
+    l: false,
+    exports: {}
+  });
+  // Execute the module function
+  modules[moduleId].call(module.exports, module, module.exports, __webpack_require__);
+  // Flag the module as loaded
+  module.l = true;
+  // Return the exports of the module
+  return module.exports;
 }
 ```
 
@@ -111,9 +108,9 @@ function __webpack_require__(moduleId) {
 那相信很多人都有疑问了，modules 这么个至关重要的 map 是从哪里来的呢，我们把 bundle.js 生成的 js 再简化一下：
 
 ```js
-(function (modules) {})({
-    "./src/main.js": (function (module, __webpack_exports__, __webpack_require__) {}),
-    "./src/moduleA.js": (function (module, __webpack_exports__, __webpack_require__) {})
+(function(modules) {})({
+  './src/main.js': function(module, __webpack_exports__, __webpack_require__) {},
+  './src/moduleA.js': function(module, __webpack_exports__, __webpack_require__) {}
 });
 ```
 
@@ -126,9 +123,10 @@ function __webpack_require__(moduleId) {
 先看动态 import 的代码变成了什么样：
 
 ```js
-__webpack_require__.e( /*! import() */ 0).then(__webpack_require__.bind(null, /*! ./moduleB             */ "./src/moduleB.js")).then(module => {
- 
-});
+__webpack_require__
+  .e(/*! import() */ 0)
+  .then(__webpack_require__.bind(null, /*! ./moduleB             */ './src/moduleB.js'))
+  .then((module) => {});
 ```
 
 从代码看，实际上就是外面套了一层 webpck_require.e，然后这是一个 promise，在 then 里面再去执行 webpack_require。
@@ -140,24 +138,22 @@ __webpack_require__.e( /*! import() */ 0).then(__webpack_require__.bind(null, /*
 我们看 0.bundle.js 到底是什么内容，让它拥有这样的魔力：
 
 ```js
-(window["webpackJsonp"] = window["webpackJsonp"] || []).push(
-    [
-        [0],
-        {
-            "./src/moduleB.js": (function (module, __webpack_exports__, __webpack_require__) {})
-        }
-    ]
-);
+(window['webpackJsonp'] = window['webpackJsonp'] || []).push([
+  [0],
+  {
+    './src/moduleB.js': function(module, __webpack_exports__, __webpack_require__) {}
+  }
+]);
 ```
 
 拿简化后的代码一看，大家第一眼想到的是 jsonp，但是很遗憾的是它不是一个函数，却只是向一个全局数组里面 push 了自己的模块 id 以及对应的 modules。那看起来魔法的核心应该是在 bundle.js 里面了，事实的确也是如此。
 
 ```js
-var jsonpArray = window["webpackJsonp"] = window["webpackJsonp"] || [];
+var jsonpArray = (window['webpackJsonp'] = window['webpackJsonp'] || []);
 var oldJsonpFunction = jsonpArray.push.bind(jsonpArray);
 jsonpArray.push = webpackJsonpCallback;
 jsonpArray = jsonpArray.slice();
-for(var i = 0; i < jsonpArray.length; i++) webpackJsonpCallback(jsonpArray[i]);
+for (var i = 0; i < jsonpArray.length; i++) webpackJsonpCallback(jsonpArray[i]);
 var parentJsonpFunction = oldJsonpFunction;
 ```
 
@@ -190,7 +186,7 @@ app1
 ---index.js 入口文件
 ---bootstrap.js 启动文件
 ---App.js react组件
- 
+
 app2
 ---index.js 入口文件
 ---bootstrap.js 启动文件
@@ -203,38 +199,38 @@ app2
 ```js
 /** app1 **/
 /**
-* index.js
-**/
+ * index.js
+ **/
 import('./bootstrap');
- 
+
 /**
-* bootstrap.js
-**/
+ * bootstrap.js
+ **/
 import('./bootstrap');
-import App from "./App";
-import React from "react";
-import ReactDOM from "react-dom";
- 
-ReactDOM.render(<App />, document.getElementById("root"));
- 
+import App from './App';
+import React from 'react';
+import ReactDOM from 'react-dom';
+
+ReactDOM.render(<App />, document.getElementById('root'));
+
 /**
-* App.js
-**/
+ * App.js
+ **/
 import('./bootstrap');
-import React from "react";
- 
+import React from 'react';
+
 import RemoteButton from 'app2/Button';
- 
+
 const App = () => (
   <div>
     <h1>Basic Host-Remote</h1>
     <h2>App 1</h2>
-    <React.Suspense fallback="Loading Button">
+    <React.Suspense fallback='Loading Button'>
       <RemoteButton />
     </React.Suspense>
   </div>
 );
- 
+
 export default App;
 ```
 
@@ -255,19 +251,19 @@ import RemoteButton from 'app2/Button';
  * app1/webpack.js
  */
 {
-    plugins: [
-        new ModuleFederationPlugin({
-            name: "app1",
-            library: {
-                type: "var",
-                name: "app1"
-            },
-            remotes: {
-                app2: "app2"
-            },
-            shared: ["react", "react-dom"]
-        })
-    ]
+  plugins: [
+    new ModuleFederationPlugin({
+      name: 'app1',
+      library: {
+        type: 'var',
+        name: 'app1'
+      },
+      remotes: {
+        app2: 'app2'
+      },
+      shared: ['react', 'react-dom']
+    })
+  ];
 }
 ```
 
@@ -342,12 +338,14 @@ app1 和 app2 还是有自己的 modules，所以实现的关键就是两个 mod
 ```js
 // import源码
 import RemoteButton from 'app2/Button';
- 
+
 // import打包代码 在app1/src_bootstrap.js里面
 /* harmony import */
-var app2_Button__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__( /*! app2/Button */ "?ad8d");
+var app2_Button__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! app2/Button */ '?ad8d');
 /* harmony import */
-var app2_Button__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/ __webpack_require__.n(app2_Button__WEBPACK_IMPORTED_MODULE_1__);
+var app2_Button__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/ __webpack_require__.n(
+  app2_Button__WEBPACK_IMPORTED_MODULE_1__
+);
 ```
 
 从这里来看，我们好像看不出什么，因为还是正常的 webpack_require，难道说它真的像我们之前所设想的那样，重写了 webpack_require 吗？
@@ -377,26 +375,26 @@ app1/src_bootstrap.js
 那我们看看 main.js 到底写了啥
 
 ```js
-(() => { // webpackBootstrap
-    var __webpack_modules__ = ({})
- 
-    var __webpack_module_cache__ = {};
- 
-    function __webpack_require__(moduleId) {
- 
-        if (__webpack_module_cache__[moduleId]) {
-            return __webpack_module_cache__[moduleId].exports;
-        }
-        var module = __webpack_module_cache__[moduleId] = {
-            exports: {}
-        };
-        __webpack_modules__[moduleId](module, module.exports, __webpack_require__);
-        return module.exports;
+(() => {
+  // webpackBootstrap
+  var __webpack_modules__ = {};
+
+  var __webpack_module_cache__ = {};
+
+  function __webpack_require__(moduleId) {
+    if (__webpack_module_cache__[moduleId]) {
+      return __webpack_module_cache__[moduleId].exports;
     }
-    __webpack_require__.m = __webpack_modules__;
- 
-    __webpack_require__("./src/index.js");
-})()
+    var module = (__webpack_module_cache__[moduleId] = {
+      exports: {}
+    });
+    __webpack_modules__[moduleId](module, module.exports, __webpack_require__);
+    return module.exports;
+  }
+  __webpack_require__.m = __webpack_modules__;
+
+  __webpack_require__('./src/index.js');
+})();
 ```
 
 可以看到区别不大，只是把之前的 modules 换成了 webpack_modules，然后把这个 modules 的初始化由参数改成了内部声明变量。
@@ -404,22 +402,24 @@ app1/src_bootstrap.js
 那我们来看看 webpack_modules 内部的实现:
 
 ```js
-var __webpack_modules__ = ({
-    "./src/index.js": ((__unused_webpack_module, __unused_webpack_exports, __webpack_require__) => {
-        __webpack_require__.e( /*! import() */ "src_bootstrap_js").then(__webpack_require__.bind(__webpack_require__, /*! ./bootstrap */ "./src/bootstrap.js"));
-    }),
- 
-    "container-reference/app2": ((module) => {
-        "use strict";
-        module.exports = app2;
-    }),
- 
-    "?8bfd": ((module, __unused_webpack_exports, __webpack_require__) => {
-        "use strict";
-        var external = __webpack_require__("container-reference/app2");
-        module.exports = external;
-    })
-});
+var __webpack_modules__ = {
+  './src/index.js': (__unused_webpack_module, __unused_webpack_exports, __webpack_require__) => {
+    __webpack_require__
+      .e(/*! import() */ 'src_bootstrap_js')
+      .then(__webpack_require__.bind(__webpack_require__, /*! ./bootstrap */ './src/bootstrap.js'));
+  },
+
+  'container-reference/app2': (module) => {
+    'use strict';
+    module.exports = app2;
+  },
+
+  '?8bfd': (module, __unused_webpack_exports, __webpack_require__) => {
+    'use strict';
+    var external = __webpack_require__('container-reference/app2');
+    module.exports = external;
+  }
+};
 ```
 
 从代码看起来就三个 module：
@@ -428,20 +428,22 @@ var __webpack_modules__ = ({
 2. `container-reference/app2` 直接返回一个全局的 `app2`，这里感觉和我们的 `app2` 有关系
 3. `?8bfd` 这个字符串是我们上面提到的 `app2/button` 对应的文件引用 `id`
 
-那在加载 src_bootstrap.js 之前加载的那些 react 文件还有 app2/button 文件都是谁做的呢？通过 debug，我们发现秘密就在 webpack_require__.e("src_bootstrap_js") 这句话
+那在加载 src_bootstrap.js 之前加载的那些 react 文件还有 app2/button 文件都是谁做的呢？通过 debug，我们发现秘密就在 webpack_require\_\_.e("src_bootstrap_js") 这句话
 
 > 实际上 webpck_require.e 就是去加载 chunk 的 js 文件 0.bundle.js，等到加载回来后它认为 bundle.js 里面的 modules 就一定会有了 0.bundle.js 包含的那些 modules
 
-也就是说原来的 webpack_require__.e 平淡无奇，就是加载一个 script，以致于我们都不想去贴出它的代码，但是这次升级后一切变的不一样了，它成了关键中的关键！
+也就是说原来的 webpack_require\_\_.e 平淡无奇，就是加载一个 script，以致于我们都不想去贴出它的代码，但是这次升级后一切变的不一样了，它成了关键中的关键！
 
-###  webpack_require__.e 做了什么
+### webpack_require\_\_.e 做了什么
 
 ```js
 __webpack_require__.e = (chunkId) => {
-    return Promise.all(Object.keys(__webpack_require__.f).reduce((promises, key) => {
-        __webpack_require__.f[key](chunkId, promises);
-        return promises;
-    }, []));
+  return Promise.all(
+    Object.keys(__webpack_require__.f).reduce((promises, key) => {
+      __webpack_require__.f[key](chunkId, promises);
+      return promises;
+    }, [])
+  );
 };
 ```
 
@@ -455,24 +457,25 @@ __webpack_require__.e = (chunkId) => {
 /* webpack/runtime/overridables */
 __webpack_require__.O = {};
 var chunkMapping = {
-    "src_bootstrap_js": [
-        "?a75e",
-        "?6365"
-    ]
+  src_bootstrap_js: ['?a75e', '?6365']
 };
 var idToNameMapping = {
-    "?a75e": "react-dom",
-    "?6365": "react"
+  '?a75e': 'react-dom',
+  '?6365': 'react'
 };
 var fallbackMapping = {
-    "?a75e": () => {
-        return __webpack_require__.e("vendors-node_modules_react-dom_index_js").then(() => () => __webpack_require__("./node_modules/react-dom/index.js"))
-    },
-    "?6365": () => {
-        return __webpack_require__.e("vendors-node_modules_react_index_js").then(() => () => __webpack_require__("./node_modules/react/index.js"))
-    }
+  '?a75e': () => {
+    return __webpack_require__
+      .e('vendors-node_modules_react-dom_index_js')
+      .then(() => () => __webpack_require__('./node_modules/react-dom/index.js'));
+  },
+  '?6365': () => {
+    return __webpack_require__
+      .e('vendors-node_modules_react_index_js')
+      .then(() => () => __webpack_require__('./node_modules/react/index.js'));
+  }
 };
-__webpack_require__.f.overridables = (chunkId, promises) => {}
+__webpack_require__.f.overridables = (chunkId, promises) => {};
 ```
 
 #### remotes
@@ -480,17 +483,12 @@ __webpack_require__.f.overridables = (chunkId, promises) => {}
 ```js
 /* webpack/runtime/remotes loading */
 var chunkMapping = {
-    "src_bootstrap_js": [
-        "?ad8d"
-    ]
+  src_bootstrap_js: ['?ad8d']
 };
 var idToExternalAndNameMapping = {
-    "?ad8d": [
-        "?8bfd",
-        "Button"
-    ]
+  '?ad8d': ['?8bfd', 'Button']
 };
-__webpack_require__.f.remotes = (chunkId, promises) => {}
+__webpack_require__.f.remotes = (chunkId, promises) => {};
 ```
 
 #### jsonp
@@ -498,10 +496,10 @@ __webpack_require__.f.remotes = (chunkId, promises) => {}
 ```js
 /* webpack/runtime/jsonp chunk loading */
 var installedChunks = {
-    "main": 0
+  main: 0
 };
- 
-__webpack_require__.f.j = (chunkId, promises) => {}
+
+__webpack_require__.f.j = (chunkId, promises) => {};
 ```
 
 这三个函数我把核心部分节选出来了，其实注释也写得比较清楚了，我还是解释一下：
@@ -535,20 +533,18 @@ __webpack_require__.f.j = (chunkId, promises) => {}
 这个时候就要用到前面我们提到的 main.js 里面的 webpack_modules 了
 
 ```js
-var __webpack_modules__ = ({
-    "container-reference/app2": 
-        ((module) => {
-            "use strict";
-            module.exports = app2;
-        }),
- 
-    "?8bfd":
-        ((module, __unused_webpack_exports, __webpack_require__) => {
-        "use strict";
-            var external = __webpack_require__("container-reference/app2");
-            module.exports = external;
-        })
-});
+var __webpack_modules__ = {
+  'container-reference/app2': (module) => {
+    'use strict';
+    module.exports = app2;
+  },
+
+  '?8bfd': (module, __unused_webpack_exports, __webpack_require__) => {
+    'use strict';
+    var external = __webpack_require__('container-reference/app2');
+    module.exports = external;
+  }
+};
 ```
 
 这里面有三个 module，我们还有 ?8bfd、container-reference/app2 没有用到，我们再看一下 remotes 的实现
@@ -556,43 +552,37 @@ var __webpack_modules__ = ({
 ```js
 /* webpack/runtime/remotes loading */
 var chunkMapping = {
-    "src_bootstrap_js": [
-        "?ad8d"
-    ]
+  src_bootstrap_js: ['?ad8d']
 };
 var idToExternalAndNameMapping = {
-    "?ad8d": [
-        "?8bfd",
-        "Button"
-    ]
+  '?ad8d': ['?8bfd', 'Button']
 };
 __webpack_require__.f.remotes = (chunkId, promises) => {
-    if (__webpack_require__.o(chunkMapping, chunkId)) {
-        chunkMapping[chunkId].forEach((id) => {
-            if (__webpack_modules__[id]) return;
-            var data = idToExternalAndNameMapping[id];
-            promises.push(Promise.resolve(__webpack_require__(data[0]).get(data[1])).then((factory) => {
-                __webpack_modules__[id] = (module) => {
-                    module.exports = factory();
-                }
-            }))
-        });
-    }
-}
+  if (__webpack_require__.o(chunkMapping, chunkId)) {
+    chunkMapping[chunkId].forEach((id) => {
+      if (__webpack_modules__[id]) return;
+      var data = idToExternalAndNameMapping[id];
+      promises.push(
+        Promise.resolve(__webpack_require__(data[0]).get(data[1])).then((factory) => {
+          __webpack_modules__[id] = (module) => {
+            module.exports = factory();
+          };
+        })
+      );
+    });
+  }
+};
 ```
 
 当我们加载 src_bootstrap_js 这个 chunk 时，经过 remotes，发现这个 chunk 依赖了?ad8d，那在运行时的时候：
 
 ```js
-id = "?8bfd"
-data = [
-   "?8bfd",
-   "Button"
-]
+id = '?8bfd';
+data = ['?8bfd', 'Button'];
 // 源码
-__webpack_require__(data[0]).get(data[1])
+__webpack_require__(data[0]).get(data[1]);
 // 运行时
-__webpack_require__('?8bfd').get("Button")
+__webpack_require__('?8bfd').get('Button');
 ```
 
 结合 main.js 的 module ?8bfd 的代码，那最终就是 app2.get("Button")
@@ -605,37 +595,36 @@ __webpack_require__('?8bfd').get("Button")
 
 ```js
 var app2;
-app2 =
-    (() => {
-        "use strict";
-        var __webpack_modules__ = ({
-            "?8619": ((__unused_webpack_module, exports, __webpack_require__) => {
-                var moduleMap = {
-                    "Button": () => {
-                        return __webpack_require__.e("src_Button_js").then(() => () => __webpack_require__( /*! ./src/Button */ "./src/Button.js"));
-                    }
-                };
-                var get = (module) => {
-                    return (
-                        __webpack_require__.o(moduleMap, module) ?
-                        moduleMap[module]() :
-                        Promise.resolve().then(() => {
-                            throw new Error("Module " + module + " does not exist in container.");
-                        })
-                    );
-                };
-                var override = (override) => {
-                    Object.assign(__webpack_require__.O, override);
-                }
- 
-                __webpack_require__.d(exports, {
-                    get: () => get,
-                    override: () => override
-                });
-            })
-        });
-        return __webpack_require__("?8619");
-    })()
+app2 = (() => {
+  'use strict';
+  var __webpack_modules__ = {
+    '?8619': (__unused_webpack_module, exports, __webpack_require__) => {
+      var moduleMap = {
+        Button: () => {
+          return __webpack_require__
+            .e('src_Button_js')
+            .then(() => () => __webpack_require__(/*! ./src/Button */ './src/Button.js'));
+        }
+      };
+      var get = (module) => {
+        return __webpack_require__.o(moduleMap, module)
+          ? moduleMap[module]()
+          : Promise.resolve().then(() => {
+              throw new Error('Module ' + module + ' does not exist in container.');
+            });
+      };
+      var override = (override) => {
+        Object.assign(__webpack_require__.O, override);
+      };
+
+      __webpack_require__.d(exports, {
+        get: () => get,
+        override: () => override
+      });
+    }
+  };
+  return __webpack_require__('?8619');
+})();
 ```
 
 如果你细心看，就会发现，这个文件定义了全局的 app2 变量，然后提供了一个 get 函数，里面实际上就是去加载具体的模块
@@ -667,5 +656,4 @@ app2 =
 
 这种实现方式的优缺点其实也明显：
 
-优点：做到代码的运行时加载，而且 shared 代码无需自己手动打包
-缺点：对于其他应用的依赖，实际上是强依赖的，也就是说 app2 有没有按照接口实现，你是不知道的
+优点：做到代码的运行时加载，而且 shared 代码无需自己手动打包缺点：对于其他应用的依赖，实际上是强依赖的，也就是说 app2 有没有按照接口实现，你是不知道的

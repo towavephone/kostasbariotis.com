@@ -9,7 +9,7 @@ tags: 前端, 调试
 
 ## 复制与保存
 
-### copy方法
+### copy 方法
 
 可以通过全局的方法 `copy()` 在 `console` 里 `copy` 任何你能拿到的资源
 
@@ -29,7 +29,7 @@ tags: 前端, 调试
 
 ![](2019-03-11-19-30-29.png)
 
-### 直接Copy HTML
+### 直接 Copy HTML
 
 几乎所有人都知道，右击或者点击在 `HTML` 元素边上的省略号 (...) 就可以将它 `copy` 到剪贴板中，但是你不知道的是：古老的 `[ctrl] + [c]` 大法依旧可用！
 
@@ -42,7 +42,7 @@ tags: 前端, 调试
 ### 切换 DevTools 的面板
 
 - 按下 `ctrl + [ 和 ctrl + ]` 可以从当前面板的分别向左和向右切换面板
-- 按下 `ctrl + 1` 到 `ctrl + 9`可以直接转到编号1...9的面板(`ctrl + 1`转到元素面板，`ctrl + 4` 转到 网络信息面板等等)
+- 按下 `ctrl + 1` 到 `ctrl + 9`可以直接转到编号 1...9 的面板(`ctrl + 1`转到元素面板，`ctrl + 4` 转到 网络信息面板等等)
 
 ### 递增/递减
 
@@ -52,7 +52,7 @@ tags: 前端, 调试
 
 ### elements， logs， sources & network 中的查找
 
-DevTools 中的前4个主要的面板，每一个都支持 `[ctrl] + [f]` 快捷方式，你可以使用对应的查询方式来查找信息:
+DevTools 中的前 4 个主要的面板，每一个都支持 `[ctrl] + [f]` 快捷方式，你可以使用对应的查询方式来查找信息:
 
 - 在 `Elements` 面板中 - 通过 `string`，`选择器` 或者 `XPath` 来查找
 - 而在 `Console`， `Network` 以及 `Source` 面板 - 通过区分大小写，或者可以被视为表达式的 `strings` 来查找
@@ -107,9 +107,9 @@ DevTools 中的前4个主要的面板，每一个都支持 `[ctrl] + [f]` 快捷
 
 ### &amp;0
 
-在 Chrome 的 Elements 面板中， $0 是对我们当前选中的 html 节点的引用。
+在 Chrome 的 Elements 面板中， \$0 是对我们当前选中的 html 节点的引用。
 
-理所当然，`$1` 是对上一次我们选择的节点的引用，$2 是对在那之前选择的节点的引用等等，一直到 `$4`
+理所当然，`$1` 是对上一次我们选择的节点的引用，\$2 是对在那之前选择的节点的引用等等，一直到 `$4`
 
 你可以尝试一些相关操作(例如: `$1.appendChild($0)`)
 
@@ -125,7 +125,7 @@ DevTools 中的前4个主要的面板，每一个都支持 `[ctrl] + [f]` 快捷
 
 ![](2019-03-15-00-17-13.png)
 
-### &amp;_
+### &amp;\_
 
 调试的过程中，你经常会通过打印查看一些变量的值，但如果你想看一下上次执行的结果呢？再输一遍表达式吗？
 
@@ -137,7 +137,7 @@ DevTools 中的前4个主要的面板，每一个都支持 `[ctrl] + [f]` 快捷
 
 现在的前端开发过程，离不开各种 `npm` 插件，但你可能没有想过，有一天我们竟然可以在 Dev Tools 里面来使用 `npm` 插件！
 
-有时你只是想玩玩新出的 npm 包，现在不用再大费周章去建一个项目测试了，只需要在 Chrome插件: [Console Importer](https://chrome.google.com/webstore/detail/console-importer/hgajpakhafplebkdljleajgbpdmplhie/related) 的帮助之下，快速的在 console 中引入和测试一些 npm 库。
+有时你只是想玩玩新出的 npm 包，现在不用再大费周章去建一个项目测试了，只需要在 Chrome 插件: [Console Importer](https://chrome.google.com/webstore/detail/console-importer/hgajpakhafplebkdljleajgbpdmplhie/related) 的帮助之下，快速的在 console 中引入和测试一些 npm 库。
 
 运行 `$i('lodash')` 或者 `$i('moment')` 几秒钟后，你就可以获取到 `lodash / momentjs` 了:
 
@@ -172,16 +172,15 @@ DevTools 中的前4个主要的面板，每一个都支持 `[ctrl] + [f]` 快捷
 ### Storage 系统的占用数和空闲数
 
 ```js
-await navigator.storage.estimate()
+await navigator.storage.estimate();
 ```
 
 ![](2019-03-16-15-46-14.png)
 
-
 ### 设备的 电池信息
 
 ```js
-console.table(await navigator.getBattery())
+console.table(await navigator.getBattery());
 ```
 
 ![](2019-03-16-15-49-02.png)
@@ -202,13 +201,13 @@ console.table(await navigator.getBattery())
 
 DevTools 里的 queryObjects 函数可以展示这些信息
 
->请注意，列表中创建的最后一个对象是不可用的 : 在代码执行后，对于它的引用并没有留存下来，也就是说，我们只有 3 个 person 对象：
+> 请注意，列表中创建的最后一个对象是不可用的 : 在代码执行后，对于它的引用并没有留存下来，也就是说，我们只有 3 个 person 对象：
 
 ![](2019-03-16-16-33-42.png)
 
 ### monitor （镜像）方法
 
-monitor 是 DevTools 的一个方法， 它能够让你 “潜入” 到任何 _function calls(方法的调用) 中：每当一个被潜入的方法运行的时候，console 控制台会把它的实例打印出来，包含函数名以及调用它的参数
+monitor 是 DevTools 的一个方法， 它能够让你 “潜入” 到任何 \_function calls(方法的调用) 中：每当一个被潜入的方法运行的时候，console 控制台会把它的实例打印出来，包含函数名以及调用它的参数
 
 我们把前面例子里面的 Person 类拿过来，并且给它扩展两个方法：
 
@@ -242,7 +241,7 @@ class Person {
 
 ![](2019-03-18-15-43-56.png)
 
-## console中骚操作
+## console 中骚操作
 
 ### console.assert
 
@@ -279,9 +278,9 @@ console.assert(assertion, msg [, subst1, ..., substN]); // c-like message format
 
 ### console.dir
 
-有时候你想要打印一个 DOM 节点。 console.log 会将这个交互式的元素渲染成像是从 Elements 中剪切出来的一样。如果说你想要查看这个节点所关联到的真实的js对象呢？并且想要查看他的属性等等？
+有时候你想要打印一个 DOM 节点。 console.log 会将这个交互式的元素渲染成像是从 Elements 中剪切出来的一样。如果说你想要查看这个节点所关联到的真实的 js 对象呢？并且想要查看他的属性等等？
 
-在那样的情况下，就可以使用console.dir:
+在那样的情况下，就可以使用 console.dir:
 
 ![](2019-03-19-14-52-57.png)
 
@@ -340,7 +339,7 @@ Network 面板中的过滤器输入框接受字符串或正则表达式，对应
 
 在某一特定时刻，你想要对已发送的 “ajax” 请求进行捕获怎么做呢？ 可以使用 XHR/fetch breakpoint 。
 
->这些只能在 Source 面板中设置。（我也同样希望可以直接在 Network 面板中设置，但事实并非如此）
+> 这些只能在 Source 面板中设置。（我也同样希望可以直接在 Network 面板中设置，但事实并非如此）
 
 ![](2019-03-19-15-19-25.png)
 

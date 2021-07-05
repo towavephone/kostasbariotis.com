@@ -2,7 +2,7 @@
 title: 编译器之旅（六）——变量
 date: 2020-3-5 10:24:51
 categories:
-- 计算机基础
+  - 计算机基础
 tags: 编译原理, 变量
 path: /tour-of-compiler-variables/
 ---
@@ -29,7 +29,7 @@ print fred + jim;
 
 # 准备
 
-## BNF语法
+## BNF 语法
 
 ```
 statements: statement
@@ -68,9 +68,9 @@ static int Globs = 0;                   // Position of next free global symbol s
 
 Globs 实际上是位于 sym.c 中用于管理符号表的文件，具有以下功能：
 
-- int findglob(char *s)：确定符号 s 是否在全局符号表中，返回其插槽位置；如果找不到，则返回 -1。
+- int findglob(char \*s)：确定符号 s 是否在全局符号表中，返回其插槽位置；如果找不到，则返回 -1。
 - static int newglob(void)：获取新的全局符号槽的位置，否则如果我们用完所有位置则结束。
-- int addglob(char *name)：将全局符号添加到符号表，返回符号表中的插槽号。
+- int addglob(char \*name)：将全局符号添加到符号表，返回符号表中的插槽号。
 
 该代码相当简单，因此我不会在这里给出代码。使用这些功能，我们可以找到符号并将新符号添加到符号表中。
 
@@ -219,7 +219,7 @@ void assignment_statement(void) {
 area = width * height;
 ```
 
-我们将右侧的结果（即rvalue）分配给左侧的变量（即lvalue），在右值不依赖于特定的位置，表达式结果可能在任意寄存器中。
+我们将右侧的结果（即 rvalue）分配给左侧的变量（即 lvalue），在右值不依赖于特定的位置，表达式结果可能在任意寄存器中。
 
 还要注意，尽管赋值语句具有以下语法
 
@@ -287,7 +287,7 @@ A_INTLIT   A_LVIDENT
    (3)        (5)
 ```
 
-我们调用 leftreg = genAST(n->left, -1); 以执行 `A_INTLIT` 操作，这将执行 return (cgloadint(n->v.intvalue)); 即加载值为 3 的寄存器并返回寄存器ID。
+我们调用 leftreg = genAST(n->left, -1); 以执行 `A_INTLIT` 操作，这将执行 return (cgloadint(n->v.intvalue)); 即加载值为 3 的寄存器并返回寄存器 ID。
 
 然后我们调用 rightreg = genAST(n->right, leftreg); 以执行 `A_LVIDENT` 操作，这将把 return (cgstorglob(reg, Gsym[n->v.id].name)); 返回的寄存器存储到名称为 Gsym[5] 的变量中。
 

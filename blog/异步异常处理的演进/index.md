@@ -2,7 +2,7 @@
 title: 异步异常处理的演进
 date: 2021-1-11 15:34:15
 categories:
-- 前端
+  - 前端
 tags: 前端, JS, 高级前端
 path: /async-exception-throw-evolution/
 ---
@@ -19,14 +19,14 @@ path: /async-exception-throw-evolution/
 
 ```js
 function fetch(callback) {
-    setTimeout(() => {
-        console.log('请求失败')
-    })
+  setTimeout(() => {
+    console.log('请求失败');
+  });
 }
 
 fetch(() => {
-    console.log('请求处理') // 永远不会执行
-})
+  console.log('请求处理'); // 永远不会执行
+});
 ```
 
 # 回调，无法捕获的异常
@@ -37,17 +37,17 @@ fetch(() => {
 
 ```js
 function fetch(callback) {
-    setTimeout(() => {
-        throw Error('请求失败')
-    })
+  setTimeout(() => {
+    throw Error('请求失败');
+  });
 }
 
 try {
-    fetch(() => {
-        console.log('请求处理') // 永远不会执行
-    })
+  fetch(() => {
+    console.log('请求处理'); // 永远不会执行
+  });
 } catch (error) {
-    console.log('触发异常', error) // 永远不会执行
+  console.log('触发异常', error); // 永远不会执行
 }
 
 // 程序崩溃
@@ -64,16 +64,19 @@ try {
 
 ```js
 function fetch(handleError, callback) {
-    setTimeout(() => {
-        handleError('请求失败')
-    })
+  setTimeout(() => {
+    handleError('请求失败');
+  });
 }
 
-fetch(() => {
-    console.log('失败处理') // 失败处理
-}, error => {
-    console.log('请求处理') // 永远不会执行
-})
+fetch(
+  () => {
+    console.log('失败处理'); // 失败处理
+  },
+  (error) => {
+    console.log('请求处理'); // 永远不会执行
+  }
+);
 ```
 
 # Promise 异常处理
@@ -82,16 +85,18 @@ fetch(() => {
 
 ```js
 function fetch(callback) {
-    return new Promise((resolve, reject) => {
-        throw Error('用户不存在')
-    })
+  return new Promise((resolve, reject) => {
+    throw Error('用户不存在');
+  });
 }
 
-fetch().then(result => {
-    console.log('请求处理', result) // 永远不会执行
-}).catch(error => {
-    console.log('请求处理异常', error) // 请求处理异常 用户不存在
-})
+fetch()
+  .then((result) => {
+    console.log('请求处理', result); // 永远不会执行
+  })
+  .catch((error) => {
+    console.log('请求处理异常', error); // 请求处理异常 用户不存在
+  });
 ```
 
 # Promise 无法捕获的异常
@@ -100,18 +105,20 @@ fetch().then(result => {
 
 ```js
 function fetch(callback) {
-    return new Promise((resolve, reject) => {
-        setTimeout(() => {
-             throw Error('用户不存在')
-        })
-    })
+  return new Promise((resolve, reject) => {
+    setTimeout(() => {
+      throw Error('用户不存在');
+    });
+  });
 }
 
-fetch().then(result => {
-    console.log('请求处理', result) // 永远不会执行
-}).catch(error => {
-    console.log('请求处理异常', error) // 永远不会执行
-})
+fetch()
+  .then((result) => {
+    console.log('请求处理', result); // 永远不会执行
+  })
+  .catch((error) => {
+    console.log('请求处理异常', error); // 永远不会执行
+  });
 
 // 程序崩溃
 // Uncaught Error: 用户不存在
@@ -120,11 +127,13 @@ fetch().then(result => {
 不过 microtask 中抛出的异常可以被捕获，说明 microtask 队列并没有离开当前作用域，我们通过以下例子来证明：
 
 ```js
-Promise.resolve(true).then((resolve, reject)=> {
-    throw Error('microtask 中的异常')
-}).catch(error => {
-    console.log('捕获异常', error) // 捕获异常 Error: microtask 中的异常
-})
+Promise.resolve(true)
+  .then((resolve, reject) => {
+    throw Error('microtask 中的异常');
+  })
+  .catch((error) => {
+    console.log('捕获异常', error); // 捕获异常 Error: microtask 中的异常
+  });
 ```
 
 至此，Promise 的异常处理有了比较清晰的答案，只要注意在 macrotask 级别回调中使用 reject，就没有抓不住的异常。
@@ -135,16 +144,18 @@ Promise.resolve(true).then((resolve, reject)=> {
 
 ```js
 function thirdFunction() {
-    setTimeout(() => {
-        throw Error('就是任性')
-    })
+  setTimeout(() => {
+    throw Error('就是任性');
+  });
 }
 
-Promise.resolve(true).then((resolve, reject) => {
-    thirdFunction()
-}).catch(error => {
-    console.log('捕获异常', error)
-})
+Promise.resolve(true)
+  .then((resolve, reject) => {
+    thirdFunction();
+  })
+  .catch((error) => {
+    console.log('捕获异常', error);
+  });
 
 // 程序崩溃
 // Uncaught Error: 就是任性
@@ -156,18 +167,20 @@ Promise.resolve(true).then((resolve, reject) => {
 
 ```js
 function thirdFunction() {
-    return new Promise((resolve, reject) => {
-        setTimeout(() => {
-            reject('收敛一些')
-        })
-    })
+  return new Promise((resolve, reject) => {
+    setTimeout(() => {
+      reject('收敛一些');
+    });
+  });
 }
 
-Promise.resolve(true).then((resolve, reject) => {
-    return thirdFunction()
-}).catch(error => {
-    console.log('捕获异常', error) // 捕获异常 收敛一些
-})
+Promise.resolve(true)
+  .then((resolve, reject) => {
+    return thirdFunction();
+  })
+  .catch((error) => {
+    console.log('捕获异常', error); // 捕获异常 收敛一些
+  });
 ```
 
 请注意，如果 `return thirdFunction()` 这行缺少了 return 的话，依然无法抓住这个错误，这是因为没有将对方返回的 Promise 传递下去，错误也不会继续传递。
@@ -176,23 +189,27 @@ Promise.resolve(true).then((resolve, reject) => {
 
 ```js
 function thirdFunction() {
-    return new Promise((resolve, reject) => {
-        setTimeout(() => {
-            reject('收敛一些')
-        })
-    })
+  return new Promise((resolve, reject) => {
+    setTimeout(() => {
+      reject('收敛一些');
+    });
+  });
 }
 
-Promise.resolve(true).then((resolve, reject) => {
-    return thirdFunction().then(() => {
-        return thirdFunction()
-    }).then(() => {
-        return thirdFunction()
-    }).then(() => {
-    })
-}).catch(error => {
-    console.log('捕获异常', error)
-})
+Promise.resolve(true)
+  .then((resolve, reject) => {
+    return thirdFunction()
+      .then(() => {
+        return thirdFunction();
+      })
+      .then(() => {
+        return thirdFunction();
+      })
+      .then(() => {});
+  })
+  .catch((error) => {
+    console.log('捕获异常', error);
+  });
 ```
 
 是的，我们还有更好的处理方式。
@@ -203,19 +220,19 @@ Promise.resolve(true).then((resolve, reject) => {
 
 ```js
 function fetch(callback) {
-    return new Promise((resolve, reject) => {
-        setTimeout(() => {
-            reject()
-        })
-    })
+  return new Promise((resolve, reject) => {
+    setTimeout(() => {
+      reject();
+    });
+  });
 }
 
 async function main() {
-    const result = await fetch()
-    console.log('请求处理', result) // 永远不会执行
+  const result = await fetch();
+  console.log('请求处理', result); // 永远不会执行
 }
 
-main()
+main();
 ```
 
 # Async Await 捕获异常
@@ -226,23 +243,23 @@ main()
 
 ```js
 function fetch(callback) {
-    return new Promise((resolve, reject) => {
-        setTimeout(() => {
-            reject('no')
-        })
-    })
+  return new Promise((resolve, reject) => {
+    setTimeout(() => {
+      reject('no');
+    });
+  });
 }
 
 async function main() {
-    try {
-        const result = await fetch()
-        console.log('请求处理', result) // 永远不会执行
-    } catch (error) {
-        console.log('异常', error) // 异常 no
-    }
+  try {
+    const result = await fetch();
+    console.log('请求处理', result); // 永远不会执行
+  } catch (error) {
+    console.log('异常', error); // 异常 no
+  }
 }
 
-main()
+main();
 ```
 
 # Async Await 无法捕获的异常
@@ -251,40 +268,40 @@ main()
 
 ```js
 function thirdFunction() {
-    return new Promise((resolve, reject) => {
-        setTimeout(() => {
-            reject('收敛一些')
-        })
-    })
+  return new Promise((resolve, reject) => {
+    setTimeout(() => {
+      reject('收敛一些');
+    });
+  });
 }
 
 async function main() {
-    try {
-        const result = await thirdFunction()
-        console.log('请求处理', result) // 永远不会执行
-    } catch (error) {
-        console.log('异常', error) // 异常 收敛一些
-    }
+  try {
+    const result = await thirdFunction();
+    console.log('请求处理', result); // 永远不会执行
+  } catch (error) {
+    console.log('异常', error); // 异常 收敛一些
+  }
 }
 
-main()
+main();
 ```
 
 现在解答 `Promise 异常追问` 尾部的问题，为什么 await 是更加优雅的方案：
 
 ```js
 async function main() {
-    try {
-        const result1 = await secondFunction() // 如果不抛出异常，后续继续执行
-        const result2 = await thirdFunction() // 抛出异常
-        const result3 = await thirdFunction() // 永远不会执行
-        console.log('请求处理', result) // 永远不会执行
-    } catch (error) {
-        console.log('异常', error) // 异常 收敛一些
-    }
+  try {
+    const result1 = await secondFunction(); // 如果不抛出异常，后续继续执行
+    const result2 = await thirdFunction(); // 抛出异常
+    const result3 = await thirdFunction(); // 永远不会执行
+    console.log('请求处理', result); // 永远不会执行
+  } catch (error) {
+    console.log('异常', error); // 异常 收敛一些
+  }
 }
 
-main()
+main();
 ```
 
 # 业务场景
@@ -294,32 +311,32 @@ main()
 我们以如下业务代码为例，默认不捕获错误的话，错误会一直冒泡到顶层，最后抛出异常。
 
 ```js
-const successRequest = () => Promise.resolve('a')
-const failRequest = () => Promise.reject('b')
+const successRequest = () => Promise.resolve('a');
+const failRequest = () => Promise.reject('b');
 
 class Action {
-    async successReuqest() {
-        const result = await successRequest()
-        console.log('successReuqest', '处理返回值', result) // successReuqest 处理返回值 a
-    }
+  async successReuqest() {
+    const result = await successRequest();
+    console.log('successReuqest', '处理返回值', result); // successReuqest 处理返回值 a
+  }
 
-    async failReuqest() {
-        const result = await failRequest()
-        console.log('failReuqest', '处理返回值', result) // 永远不会执行
-    }
+  async failReuqest() {
+    const result = await failRequest();
+    console.log('failReuqest', '处理返回值', result); // 永远不会执行
+  }
 
-    async allReuqest() {
-        const result1 = await successRequest()
-        console.log('allReuqest', '处理返回值 success', result1) // allReuqest 处理返回值 success a
-        const result2 = await failRequest()
-        console.log('allReuqest', '处理返回值 success', result2) // 永远不会执行
-    }
+  async allReuqest() {
+    const result1 = await successRequest();
+    console.log('allReuqest', '处理返回值 success', result1); // allReuqest 处理返回值 success a
+    const result2 = await failRequest();
+    console.log('allReuqest', '处理返回值 success', result2); // 永远不会执行
+  }
 }
 
-const action = new Action()
-action.successReuqest()
-action.failReuqest()
-action.allReuqest()
+const action = new Action();
+action.successReuqest();
+action.failReuqest();
+action.allReuqest();
 
 // 程序崩溃
 // Uncaught (in promise) b
@@ -336,109 +353,113 @@ action.allReuqest()
 
 ```js
 const asyncClass = (errorHandler?: (error?: Error) => void) => (target: any) => {
-    Object.getOwnPropertyNames(target.prototype).forEach(key => {
-        const func = target.prototype[key]
-        target.prototype[key] = async (...args: any[]) => {
-            try {
-                await func.apply(this, args)
-            } catch (error) {
-                errorHandler && errorHandler(error)
-            }
-        }
-    })
-    return target
-}
+  Object.getOwnPropertyNames(target.prototype).forEach((key) => {
+    const func = target.prototype[key];
+    target.prototype[key] = async (...args: any[]) => {
+      try {
+        await func.apply(this, args);
+      } catch (error) {
+        errorHandler && errorHandler(error);
+      }
+    };
+  });
+  return target;
+};
 ```
 
 将类所有方法都用 try catch 包裹住，将异常交给业务方统一的 errorHandler 处理：
 
 ```js
-const successRequest = () => Promise.resolve('a')
-const failRequest = () => Promise.reject('b')
+const successRequest = () => Promise.resolve('a');
+const failRequest = () => Promise.reject('b');
 
-const iAsyncClass = asyncClass(error => {
-    console.log('统一异常处理', error) // 统一异常处理 b
-})
+const iAsyncClass = asyncClass((error) => {
+  console.log('统一异常处理', error); // 统一异常处理 b
+});
 
 @iAsyncClass
 class Action {
-    async successReuqest() {
-        const result = await successRequest()
-        console.log('successReuqest', '处理返回值', result)
-    }
+  async successReuqest() {
+    const result = await successRequest();
+    console.log('successReuqest', '处理返回值', result);
+  }
 
-    async failReuqest() {
-        const result = await failRequest()
-        console.log('failReuqest', '处理返回值', result) // 永远不会执行
-    }
+  async failReuqest() {
+    const result = await failRequest();
+    console.log('failReuqest', '处理返回值', result); // 永远不会执行
+  }
 
-    async allReuqest() {
-        const result1 = await successRequest()
-        console.log('allReuqest', '处理返回值 success', result1)
-        const result2 = await failRequest()
-        console.log('allReuqest', '处理返回值 success', result2) // 永远不会执行
-    }
+  async allReuqest() {
+    const result1 = await successRequest();
+    console.log('allReuqest', '处理返回值 success', result1);
+    const result2 = await failRequest();
+    console.log('allReuqest', '处理返回值 success', result2); // 永远不会执行
+  }
 }
 
-const action = new Action()
-action.successReuqest()
-action.failReuqest()
-action.allReuqest()
+const action = new Action();
+action.successReuqest();
+action.failReuqest();
+action.allReuqest();
 ```
 
 我们也可以编写方法级别的异常处理：
 
 ```js
-const asyncMethod = (errorHandler?: (error?: Error) => void) => (target: any, propertyKey: string, descriptor: PropertyDescriptor) => {
-    const func = descriptor.value
-    return {
-        get() {
-            return (...args: any[]) => {
-                return Promise.resolve(func.apply(this, args)).catch(error => {
-                    errorHandler && errorHandler(error)
-                })
-            }
-        },
-        set(newValue: any) {
-            return newValue
-        }
+const asyncMethod = (errorHandler?: (error?: Error) => void) => (
+  target: any,
+  propertyKey: string,
+  descriptor: PropertyDescriptor
+) => {
+  const func = descriptor.value;
+  return {
+    get() {
+      return (...args: any[]) => {
+        return Promise.resolve(func.apply(this, args)).catch((error) => {
+          errorHandler && errorHandler(error);
+        });
+      };
+    },
+    set(newValue: any) {
+      return newValue;
     }
-}
+  };
+};
 ```
 
 业务方用法类似，只是装饰器需要放在函数上：
 
 ```js
-const successRequest = () => Promise.resolve('a')
-const failRequest = () => Promise.reject('b')
+const successRequest = () => Promise.resolve('a');
+const failRequest = () => Promise.reject('b');
 
-const asyncAction = asyncMethod(error => {
-    console.log('统一异常处理', error) // 统一异常处理 b
-})
+const asyncAction = asyncMethod((error) => {
+  console.log('统一异常处理', error); // 统一异常处理 b
+});
 
 class Action {
-    @asyncAction async successReuqest() {
-        const result = await successRequest()
-        console.log('successReuqest', '处理返回值', result)
-    }
+  @asyncAction async successReuqest() {
+    const result = await successRequest();
+    console.log('successReuqest', '处理返回值', result);
+  }
 
-    @asyncAction async failReuqest() {
-        const result = await failRequest()
-        console.log('failReuqest', '处理返回值', result) // 永远不会执行
-    }
+  @asyncAction async failReuqest() {
+    const result = await failRequest();
+    console.log('failReuqest', '处理返回值', result); // 永远不会执行
+  }
 
-    @asyncAction async allReuqest() {
-        const result1 = await successRequest()
-        console.log('allReuqest', '处理返回值 success', result1)
-        const result2 = await failRequest()
-        console.log('allReuqest', '处理返回值 success', result2) // 永远不会执行
-    }
+  @asyncAction async allReuqest() {
+    const result1 = await successRequest();
+    console.log('allReuqest', '处理返回值 success', result1);
+    const result2 = await failRequest();
+    console.log('allReuqest', '处理返回值 success', result2); // 永远不会执行
+  }
 }
 
-const action = new Action()
-action.successReuqest()
-action.failReuqest()
-action.allReuqest()
+const action = new Action();
+action.successReuqest();
+action.failReuqest();
+action.allReuqest();
 ```
 
 # 业务场景 没有后顾之忧的主动权
@@ -449,7 +470,7 @@ action.allReuqest()
 
 > 像 golang 中异常处理方式，就存在这个问题通过 err, result := func() 的方式，虽然固定了第一个参数是错误信息，但下一行代码免不了要以 if error {...} 开头，整个程序的业务代码充斥着巨量的不必要错误处理，而大部分时候，我们还要为如何处理这些错误想的焦头烂额。
 
-而 js 异常冒泡的方式，在前端可以用提示框兜底，nodejs端可以返回 500 错误兜底，并立刻中断后续请求代码，等于在所有危险代码身后加了一层隐藏的 return。
+而 js 异常冒泡的方式，在前端可以用提示框兜底，nodejs 端可以返回 500 错误兜底，并立刻中断后续请求代码，等于在所有危险代码身后加了一层隐藏的 return。
 
 同时业务方也握有绝对的主动权，比如登录失败后，如果账户不存在，那么直接跳转到注册页，而不是傻瓜的提示用户帐号不存在，可以这样做：
 
@@ -474,21 +495,21 @@ async login(nickname, password) {
 
 ```js
 process.on('uncaughtException', (error: any) => {
-    logger.error('uncaughtException', error)
-})
+  logger.error('uncaughtException', error);
+});
 
 process.on('unhandledRejection', (error: any) => {
-    logger.error('unhandledRejection', error)
-})
+  logger.error('unhandledRejection', error);
+});
 ```
 
 在浏览器端，记得监听 window 全局错误，兜住漏网之鱼：
 
 ```js
 window.addEventListener('unhandledrejection', (event: any) => {
-    logger.error('unhandledrejection', event)
-})
+  logger.error('unhandledrejection', event);
+});
 window.addEventListener('onrejectionhandled', (event: any) => {
-    logger.error('onrejectionhandled', event)
-})
+  logger.error('onrejectionhandled', event);
+});
 ```

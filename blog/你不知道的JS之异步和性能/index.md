@@ -6,6 +6,7 @@ tags: 前端, JS, 你不知道的JS
 path: /you-dont-know-js-asynchronism-and-performance/
 date: 2018-11-16 14:35:13
 ---
+
 # 异步：现在与将来
 
 ## 分块的程序
@@ -18,33 +19,35 @@ date: 2018-11-16 14:35:13
 考虑以下代码：
 
 ```js
-function now(){
-    return 21;
+function now() {
+  return 21;
 }
-function later(){
-    answer=answer*2;
-    console.log("Meaning of life:",answer);
+function later() {
+  answer = answer * 2;
+  console.log('Meaning of life:', answer);
 }
-var answer=now();
-setTimeout(later,1000);
+var answer = now();
+setTimeout(later, 1000);
 ```
 
 以上代码可以拆分现在和将来部分：
 
 ```js
 // 现在
-function now(){
-    return 21;
+function now() {
+  return 21;
 }
-function later(){/*...*/}
-var answer=now();
-setTimeout(later,1000);
+function later() {
+  /*...*/
+}
+var answer = now();
+setTimeout(later, 1000);
 ```
 
 ```js
 // 将来
-answer=answer*2;
-console.log("Meaning of life:",answer);
+answer = answer * 2;
+console.log('Meaning of life:', answer);
 ```
 
 ### 异步控制台
@@ -53,10 +56,10 @@ console.log("Meaning of life:",answer);
 - 出现以上情况的原因是，在许多程序中，I/O 是非常低速阻塞部分，所以浏览器在后台异步处理控制台 I/O 能够提高性能
 
 ```js
-var a={
-    index:1
+var a = {
+  index: 1
 };
-console.log(a);//可能为 2，由 I/O 异步化造成
+console.log(a); //可能为 2，由 I/O 异步化造成
 a.index++;
 ```
 
@@ -69,20 +72,20 @@ a.index++;
 
 ```js
 //eventLoop 是一个用作队列的数组
-var eventLoop=[];
+var eventLoop = [];
 var event;
-while(true){
-    // 一次 tick
-    if(eventLoop.length>0){
-        // 拿到队列中的下一个事件
-        event=eventLoop.shift();
-        try{
-            // 执行下一个事件
-            event();
-        }catch(err){
-            reportError(err);
-        }
+while (true) {
+  // 一次 tick
+  if (eventLoop.length > 0) {
+    // 拿到队列中的下一个事件
+    event = eventLoop.shift();
+    try {
+      // 执行下一个事件
+      event();
+    } catch (err) {
+      reportError(err);
     }
+  }
 }
 ```
 
@@ -95,15 +98,15 @@ setTimeout 并没有把你的回调函数挂在事件循环队列中，它所作
 ## 并行线程
 
 ```js
-var a=20;
-function foo(){
-    a=a+1;
+var a = 20;
+function foo() {
+  a = a + 1;
 }
-function bar(){
-    a=a*2;
+function bar() {
+  a = a * 2;
 }
-ajax("http://some.url.1",foo);
-ajax("http://some.url.2",bar);
+ajax('http://some.url.1', foo);
+ajax('http://some.url.2', bar);
 ```
 
 根据 js 单线程运行特性，如果 foo() 运行在 bar() 之前，a 的结果是 42，而如果 bar() 运行在 foo() 之前，a 的结果是 41。
@@ -130,29 +133,29 @@ bar():
 
 假如按照以下步骤执行
 
-| 步骤  | 执行方法 | 结果  |
-| :---: | :------: | :---: |
-| 1     | a1       | 20    |
-| 2     | b1       | 20    |
-| 3     | a2       | 1     |
-| 4     | b2       | 2     |
-| 5     | a3       | 22    |
-| 6     | a4       | 22    |
-| 7     | b3       | 44    |
-| 8     | b4       | 44    |
+| 步骤 | 执行方法 | 结果 |
+| :--: | :------: | :--: |
+|  1   |    a1    |  20  |
+|  2   |    b1    |  20  |
+|  3   |    a2    |  1   |
+|  4   |    b2    |  2   |
+|  5   |    a3    |  22  |
+|  6   |    a4    |  22  |
+|  7   |    b3    |  44  |
+|  8   |    b4    |  44  |
 
 按另一种方式运行：
 
-| 步骤  | 执行方法 | 结果  |
-| :---: | :------: | :---: |
-| 1     | a1       | 20    |
-| 2     | b1       | 20    |
-| 3     | b2       | 2     |
-| 4     | a2       | 1     |
-| 5     | b3       | 20    |
-| 6     | a3       | 21    |
-| 7     | a4       | 21    |
-| 8     | b4       | 21    |
+| 步骤 | 执行方法 | 结果 |
+| :--: | :------: | :--: |
+|  1   |    a1    |  20  |
+|  2   |    b1    |  20  |
+|  3   |    b2    |  2   |
+|  4   |    a2    |  1   |
+|  5   |    b3    |  20  |
+|  6   |    a3    |  21  |
+|  7   |    a4    |  21  |
+|  8   |    b4    |  21  |
 
 所以多线程是非常复杂的，如果不通过特殊的步骤来防止中断和交错运行，可能会得到不确定的行为
 
@@ -163,36 +166,36 @@ js 从不跨线程共享数据，但并不保证 js 总是确定性的，foo 和
 由于 js 单线程特性，foo 以及 bar 中的代码具有原子性，也就是说一旦 foo 开始运行，它的所有代码都会在 bar 中的任意代码运行之前完成，或者相反，这称为完整运行特性
 
 ```js
-var a=1;
-var b=2;
-function foo(){
-    a++;
-    b=b*a;
-    a=b+3;
+var a = 1;
+var b = 2;
+function foo() {
+  a++;
+  b = b * a;
+  a = b + 3;
 }
-function bar(){
-    b--;
-    a=8+b;
-    b=a*2;
+function bar() {
+  b--;
+  a = 8 + b;
+  b = a * 2;
 }
-ajax("http://some.url.1",foo);
-ajax("http://some.url.2",bar);
+ajax('http://some.url.1', foo);
+ajax('http://some.url.2', bar);
 ```
 
 会被解析为：
 
 ```js
 //块 1
-var a=1;
-var b=2;
+var a = 1;
+var b = 2;
 //块 2
 a++;
-b=b*a;
-a=b+3;
+b = b * a;
+a = b + 3;
 //块 3
 b--;
-a=8+b;
-b=a*2;
+a = 8 + b;
+b = a * 2;
 ```
 
 块 2 和块 3 哪个都有可能先运行，所以有两种输出，是函数顺序级别的不确定，而不是多线程下语句的顺序级别
@@ -208,15 +211,15 @@ b=a*2;
 如果进程间没有相互影响的话，不确定性是完全可以接受的，如以下代码
 
 ```js
-var res={};
-function foo(results){
-    res.foo=results;
+var res = {};
+function foo(results) {
+  res.foo = results;
 }
-function bar(result){
-    res.bar=results;
+function bar(result) {
+  res.bar = results;
 }
-ajax("http://some.url.1",foo);
-ajax("http://some.url.2",bar);
+ajax('http://some.url.1', foo);
+ajax('http://some.url.2', bar);
 ```
 
 不管如何执行，结果一样，这就是非交互
@@ -226,12 +229,12 @@ ajax("http://some.url.2",bar);
 更常见的情况是，并发的进程需要交流，通过作用域或 DOM 间接交互，正如前面介绍的，如果出现这样的交互，就需要对他们的交互进行协调以避免竞态的出现
 
 ```js
-var res={};
-function response(data){
-    res.push(data);
+var res = {};
+function response(data) {
+  res.push(data);
 }
-ajax("http://some.url.1",response);
-ajax("http://some.url.2",response);
+ajax('http://some.url.1', response);
+ajax('http://some.url.2', response);
 ```
 
 不同的调用顺序会导致数组顺序的不同，这种不确定性很有可能就是竞态条件的 bug
@@ -239,35 +242,35 @@ ajax("http://some.url.2",response);
 需要协调交互顺序来处理竞态条件
 
 ```js
-var res=[];
-function response(data){
-    if(data.url=="http://some.url.1"){
-        res[0]=data;
-    }else{
-        res[1]=data;
-    }
+var res = [];
+function response(data) {
+  if (data.url == 'http://some.url.1') {
+    res[0] = data;
+  } else {
+    res[1] = data;
+  }
 }
-ajax("http://some.url.1",response);
-ajax("http://some.url.2",response);
+ajax('http://some.url.1', response);
+ajax('http://some.url.2', response);
 ```
 
 有些并发场景不做协调，就总是出错，考虑
 
 ```js
-var a,b;
-function foo(x){
-    a=x*2;
-    baz();
+var a, b;
+function foo(x) {
+  a = x * 2;
+  baz();
 }
-function bar(y){
-    b=y*2;
-    baz();
+function bar(y) {
+  b = y * 2;
+  baz();
 }
-function baz(){
-    console.log(a+b);
+function baz() {
+  console.log(a + b);
 }
-ajax("http://some.url.1",foo);
-ajax("http://some.url.2",bar);
+ajax('http://some.url.1', foo);
+ajax('http://some.url.2', bar);
 ```
 
 在这个例子中，无论 bar 与 foo 哪一个先触发，总会使 baz 过早运行（a 或者 b 处于未定义状态）；但对 baz 的第二次调用就没有问题，因为这时候 a,b 都已经可用了
@@ -275,43 +278,43 @@ ajax("http://some.url.2",bar);
 解决方法如下
 
 ```js
-var a,b;
-function foo(x){
-    a=x*2;
-    if(a&&b){
-        baz();
-    }
+var a, b;
+function foo(x) {
+  a = x * 2;
+  if (a && b) {
+    baz();
+  }
 }
-function bar(y){
-    b=y*2;
-    if(a&&b){
-        baz();
-    }
+function bar(y) {
+  b = y * 2;
+  if (a && b) {
+    baz();
+  }
 }
-function baz(){
-    console.log(a+b);
+function baz() {
+  console.log(a + b);
 }
-ajax("http://some.url.1",foo);
-ajax("http://some.url.2",bar);
+ajax('http://some.url.1', foo);
+ajax('http://some.url.2', bar);
 ```
 
 另一种可能遇到的并发交互条件有时称为竞态 (race)，但更精确的叫法是门闩 (latch)，它的特性可以描述为只有第一名取胜，不确定性是可以接受的
 
 ```js
 var a;
-function foo(x){
-    a=x*2;
-    baz();
+function foo(x) {
+  a = x * 2;
+  baz();
 }
-function bar(x){
-    a=x/2;
-    baz();
+function bar(x) {
+  a = x / 2;
+  baz();
 }
-function baz(){
-    console.log(a);
+function baz() {
+  console.log(a);
 }
-ajax("http://some.url.1",foo);
-ajax("http://some.url.2",bar);
+ajax('http://some.url.1', foo);
+ajax('http://some.url.2', bar);
 ```
 
 不管哪一个先触发，都会覆盖另外一个给 a 赋的值，也会重复调用 baz
@@ -320,23 +323,23 @@ ajax("http://some.url.2",bar);
 
 ```js
 var a;
-function foo(x){
-    if(!a){
-        a=x*2;
-        baz();
-    }
+function foo(x) {
+  if (!a) {
+    a = x * 2;
+    baz();
+  }
 }
-function bar(x){
-    if(!a){
-        a=x/2;
-        baz();
-    }
+function bar(x) {
+  if (!a) {
+    a = x / 2;
+    baz();
+  }
 }
-function baz(){
-    console.log(a);
+function baz() {
+  console.log(a);
 }
-ajax("http://some.url.1",foo);
-ajax("http://some.url.2",bar);
+ajax('http://some.url.1', foo);
+ajax('http://some.url.2', bar);
 ```
 
 以上例子只会让第一个运行的通过
@@ -359,22 +362,23 @@ ajax("http://some.url.2",response);
 假设 ajax 请求的数据规模达到上千万，那么就会阻塞 UI 事件的运行，所以需要创建一个协作性更强且不会阻塞事件循环队列的并发系统，可以分批处理这些结果，每次处理后返回事件循环，让其他等待事件有机会运行
 
 ```js
-var res=[];
-function response(data){
-    var chunk=data.splice(0,1000);
-    res=res.concat(chunk.map(function(val){
-            return val*2;
-        })
-    );
-    if(data.length>0){
-        //异步调度下一次批处理
-        setTimeout(function(){
-            response(data);
-        },0);
-    }
+var res = [];
+function response(data) {
+  var chunk = data.splice(0, 1000);
+  res = res.concat(
+    chunk.map(function(val) {
+      return val * 2;
+    })
+  );
+  if (data.length > 0) {
+    //异步调度下一次批处理
+    setTimeout(function() {
+      response(data);
+    }, 0);
+  }
 }
-ajax("http://some.url.1",response);
-ajax("http://some.url.2",response);
+ajax('http://some.url.1', response);
+ajax('http://some.url.2', response);
 ```
 
 每次只处理 1000 条数据，确保运行时间会很短，即使这意味着更多的后续进程，因为事件循环队列的交替运行会提高响应
@@ -390,15 +394,15 @@ ajax("http://some.url.2",response);
 设想一个调度任务的 API，称之为 schedule，考虑
 
 ```js
-console.log("A");
-setTimeout(function(){
-    console.log("B");
-},0);
-schedule(function(){
-    console.log("C");
-    schedule(function(){
-        console.log("D");
-    });
+console.log('A');
+setTimeout(function() {
+  console.log('B');
+}, 0);
+schedule(function() {
+  console.log('C');
+  schedule(function() {
+    console.log('D');
+  });
 });
 ```
 
@@ -409,20 +413,20 @@ schedule(function(){
 代码中语句的顺序和 js 引擎执行语句的顺序并不一定要一致
 
 ```js
-var a,b;
-a=10;
-b=30;
-a=a+1;
-b=b+1;
-console.log(a+b);//42
+var a, b;
+a = 10;
+b = 30;
+a = a + 1;
+b = b + 1;
+console.log(a + b); //42
 ```
 
 js 引擎会这样优化以提高执行速度
 
 ```js
-var a,b;
-a=11;
-b=31;
+var a, b;
+a = 11;
+b = 31;
 console.log(42);
 ```
 
@@ -435,44 +439,44 @@ console.log(42);
 但是有一种场景其中特定的优化是不安全的，因此也是不允许的
 
 ```js
-var a,b;
-a=10;
-b=30;
+var a, b;
+a = 10;
+b = 30;
 // 我们需要 a 和 b 处于递增之前的状态
-console.log(a*b);
-a=a+1;
-b=b+1;
-console.log(a+b);
+console.log(a * b);
+a = a + 1;
+b = b + 1;
+console.log(a + b);
 ```
 
 还有其他一些例子，其中编译器排序会产生可见的副作用（因此必须禁止），比如会产生副作用的函数调用或 ES6 代理对象
 
 ```js
-function foo(){
-    console.log(b);
-    return 1;
+function foo() {
+  console.log(b);
+  return 1;
 }
-var a,b,c;
+var a, b, c;
 // ES5.1 getter 字面量语法
-c={
-    get bar(){
-        console.log(a);
-        return 1;
-    }
+c = {
+  get bar() {
+    console.log(a);
+    return 1;
+  }
 };
-a=10;
-b=30;
-a+=foo();//30
-b+=c.bar;//11
-console.log(a+b);//42
+a = 10;
+b = 30;
+a += foo(); //30
+b += c.bar; //11
+console.log(a + b); //42
 ```
 
 如果不是代码片段中的语句 console.log，js 引擎如果愿意的话，本来可以自由的把代码重新排序
 
 ```js
 //...
-a=10+foo();
-b=30+c.bar;
+a = 10 + foo();
+b = 30 + c.bar;
 //...
 ```
 
@@ -495,18 +499,17 @@ ajax( "..", function(..){
 ### 嵌套回调与链式回调
 
 ```js
-listen( "click", function handler(evt){
-    setTimeout( function request(){
-        ajax( "http://some.url.1", function response(text){
-            if (text == "hello") {
-                handler();
-            }
-            else if (text == "world") {
-                request();
-            }
-        } );
-    }, 500) ;
-} );
+listen('click', function handler(evt) {
+  setTimeout(function request() {
+    ajax('http://some.url.1', function response(text) {
+      if (text == 'hello') {
+        handler();
+      } else if (text == 'world') {
+        request();
+      }
+    });
+  }, 500);
+});
 ```
 
 这种代码常常被称为回调地狱（callback hell），有时也被称为毁灭金字塔
@@ -516,12 +519,12 @@ listen( "click", function handler(evt){
 一眼看去，这段代码似乎很自然地将其异步性映射到了顺序大脑计划。
 
 ```js
-doA(function(){
-    doB();
-    doC(function(){
-        doD();
-    })
-    doE();
+doA(function() {
+  doB();
+  doC(function() {
+    doD();
+  });
+  doE();
 });
 doF();
 ```
@@ -553,9 +556,9 @@ ajax( "..", function(..){
 代码可能是这样：
 
 ```js
-analytics.trackPurchase(purchaseData, function(){
-    chargeCreditCard();
-    displayThankyouPage();
+analytics.trackPurchase(purchaseData, function() {
+  chargeCreditCard();
+  displayThankyouPage();
 });
 ```
 
@@ -565,12 +568,12 @@ analytics.trackPurchase(purchaseData, function(){
 
 ```js
 var tracked = false;
-analytics.trackPurchase(purchaseData, function(){
-    if (!tracked) {
-        tracked = true;
-        chargeCreditCard();
-        displayThankyouPage();
-    }
+analytics.trackPurchase(purchaseData, function() {
+  if (!tracked) {
+    tracked = true;
+    chargeCreditCard();
+    displayThankyouPage();
+  }
 });
 ```
 
@@ -602,12 +605,12 @@ analytics.trackPurchase(purchaseData, function(){
 
 ```js
 function success(data) {
-    console.log( data );
+  console.log(data);
 }
 function failure(err) {
-    console.error( err );
+  console.error(err);
 }
-ajax( "http://some.url.1", success, failure );
+ajax('http://some.url.1', success, failure);
 ```
 
 在这种设计下，API 的出错处理函数 failure() 常常是可选的，如果没有提供的话，就是假定这个错误可以吞掉。
@@ -615,17 +618,17 @@ ajax( "http://some.url.1", success, failure );
 还有一种常见的回调模式叫作“error-first 风格”（有时候也称为“Node 风格”，因为几乎所有 Node.js API 都采用这种风格），其中回调的第一个参数保留用作错误对象（如果有的话）。如果成功的话，这个参数就会被清空 / 置假（后续的参数就是成功数据）。不过，如果产生了错误结果，那么第一个参数就会被置起 / 置真（通常就不会再传递其他结果）：
 
 ```js
-function response(err,data) {
-    // 出错？
-    if (err) {
-        console.error( err );
-    }
-    // 否则认为成功
-    else {
-        console.log( data );
-    }
+function response(err, data) {
+  // 出错？
+  if (err) {
+    console.error(err);
+  }
+  // 否则认为成功
+  else {
+    console.log(data);
+  }
 }
-ajax( "http://some.url.1", response );
+ajax('http://some.url.1', response);
 ```
 
 在这两种情况下，都应该注意到以下几点。
@@ -635,19 +638,19 @@ ajax( "http://some.url.1", response );
 那么完全不调用这个信任问题又会怎样呢？如果这是个问题的话（可能应该是个问题！），你可能需要设置一个超时来取消事件。可以构造一个工具（这里展示的只是一个“验证概念”版本）来帮助实现这一点
 
 ```js
-function timeoutify(fn,delay) {
-    var intv = setTimeout(function(){
-        intv = null;
-        fn(new Error( "Timeout!" ));
-    }, delay);
+function timeoutify(fn, delay) {
+  var intv = setTimeout(function() {
+    intv = null;
+    fn(new Error('Timeout!'));
+  }, delay);
 
-    return function() {
-        // 还没有超时？
-        if (intv) {
-            clearTimeout( intv );
-            fn.apply( this, arguments );
-        }
-    };
+  return function() {
+    // 还没有超时？
+    if (intv) {
+      clearTimeout(intv);
+      fn.apply(this, arguments);
+    }
+  };
 }
 ```
 
@@ -655,15 +658,14 @@ function timeoutify(fn,delay) {
 
 ```js
 // 使用"error-first 风格" 回调设计
-function foo(err,data) {
-    if (err) {
-        console.error( err );
-    }
-        else {
-        console.log( data );
-    }
+function foo(err, data) {
+  if (err) {
+    console.error(err);
+  } else {
+    console.log(data);
+  }
 }
-ajax( "http://some.url.1", timeoutify( foo, 500 ) );
+ajax('http://some.url.1', timeoutify(foo, 500));
 ```
 
 还有一个信任问题是调用过早。在特定应用的术语中，这可能实际上是指在某个关键任务完成之前调用回调。但是更通用地来说，对于既可能在现在（同步）也可能在将来（异步）调用你的回调的工具来说，这个问题是明显的。
@@ -676,10 +678,10 @@ ajax( "http://some.url.1", timeoutify( foo, 500 ) );
 
 ```js
 function result(data) {
-    console.log( a );
+  console.log(a);
 }
 var a = 0;
-ajax( "..pre-cached-url..", result );
+ajax('..pre-cached-url..', result);
 a++;
 ```
 
@@ -687,28 +689,28 @@ a++;
 
 ```js
 function asyncify(fn) {
-var orig_fn = fn,
-    intv = setTimeout(function(){
-        intv = null;
-        if (fn) fn();
+  var orig_fn = fn,
+    intv = setTimeout(function() {
+      intv = null;
+      if (fn) fn();
     }, 0);
-    fn = null;
-    return function() {
-        // 触发太快，在定时器 intv 触发指示异步转换发生之前？
-        if (intv) {
-            fn = orig_fn.bind.apply(
-                orig_fn,
-                // 把封装器的 this 添加到 bind(..) 调用的参数中，
-                // 以及克里化（currying）所有传入参数
-                [this].concat([].slice.call(arguments))
-            );
-        }
-        // 已经是异步
-        else {
-            // 调用原来的函数
-            orig_fn.apply(this, arguments);
-        }
-    };
+  fn = null;
+  return function() {
+    // 触发太快，在定时器 intv 触发指示异步转换发生之前？
+    if (intv) {
+      fn = orig_fn.bind.apply(
+        orig_fn,
+        // 把封装器的 this 添加到 bind(..) 调用的参数中，
+        // 以及克里化（currying）所有传入参数
+        [this].concat([].slice.call(arguments))
+      );
+    }
+    // 已经是异步
+    else {
+      // 调用原来的函数
+      orig_fn.apply(this, arguments);
+    }
+  };
 }
 ```
 
@@ -716,10 +718,10 @@ var orig_fn = fn,
 
 ```js
 function result(data) {
-    console.log( a );
+  console.log(a);
 }
 var a = 0;
-ajax( "..pre-cached-url..", asyncify( result ) );
+ajax('..pre-cached-url..', asyncify(result));
 a++;
 ```
 
@@ -736,27 +738,27 @@ a++;
 ### 未来值
 
 ```js
-function add(getX,getY,cb) {
-    var x, y;
-    getX(function(xVal){
-        x = xVal;
-        // 两个都准备好了？
-        if (y != undefined) {
-            cb( x + y ); // 发送和
-        }
-    });
-    getY(function(yVal){
-        y = yVal;
-        // 两个都准备好了？
-        if (x != undefined) {
-            cb( x + y ); // 发送和
-        }
-    });
+function add(getX, getY, cb) {
+  var x, y;
+  getX(function(xVal) {
+    x = xVal;
+    // 两个都准备好了？
+    if (y != undefined) {
+      cb(x + y); // 发送和
+    }
+  });
+  getY(function(yVal) {
+    y = yVal;
+    // 两个都准备好了？
+    if (x != undefined) {
+      cb(x + y); // 发送和
+    }
+  });
 }
 
 // fetchX() 和 fetchY() 是同步或者异步函数
-add(fetchX, fetchY, function(sum){
-    console.log( sum ); // 是不是很容易？
+add(fetchX, fetchY, function(sum) {
+  console.log(sum); // 是不是很容易？
 });
 ```
 
@@ -767,24 +769,26 @@ add(fetchX, fetchY, function(sum){
 通过 Promise 函数表达这个 x + y 的例子
 
 ```js
-function add(xPromise,yPromise) {
-    // Promise.all([ .. ]) 接受一个 promise 数组并返回一个新的 promise，
-    // 这个新 promise 等待数组中的所有 promise 完成
-    return Promise.all([xPromise, yPromise])
-    // 这个 promise 决议之后，我们取得收到的 X 和 Y 值并加在一起
-    .then(function(values){
-    // values 是来自于之前决议的 promise 的消息数组
+function add(xPromise, yPromise) {
+  // Promise.all([ .. ]) 接受一个 promise 数组并返回一个新的 promise，
+  // 这个新 promise 等待数组中的所有 promise 完成
+  return (
+    Promise.all([xPromise, yPromise])
+      // 这个 promise 决议之后，我们取得收到的 X 和 Y 值并加在一起
+      .then(function(values) {
+        // values 是来自于之前决议的 promise 的消息数组
         return values[0] + values[1];
-    });
+      })
+  );
 }
 // fetchX() 和 fetchY() 返回相应值的 promise，可能已经就绪，
 // 也可能以后就绪
 add(fetchX(), fetchY())
-// 我们得到一个这两个数组的和的 promise
-// 现在链式调用 then(..) 来等待返回 promise 的决议
-.then(function(sum){
+  // 我们得到一个这两个数组的和的 promise
+  // 现在链式调用 then(..) 来等待返回 promise 的决议
+  .then(function(sum) {
     console.log(sum); // 这更简单！
-});
+  });
 ```
 
 fetchX() 和 fetchY() 是直接调用的，它们的返回值（promise）被传给 add(..) 。这些 promise 代表的底层值的可用时间可能是现在或将来，但不管怎样，promise 归一保证了行为的一致性。我们可以按照不依赖于时间的方式追踪值 X 和 Y 。它们是未来值。
@@ -795,14 +799,14 @@ fetchX() 和 fetchY() 是直接调用的，它们的返回值（promise）被传
 
 ```js
 add(fetchX(), fetchY()).then(
-    // 完成处理函数
-    function(sum) {
-        console.log( sum );
-    },
-    // 拒绝处理函数
-    function(err) {
-        console.error( err ); // 烦！
-    }
+  // 完成处理函数
+  function(sum) {
+    console.log(sum);
+  },
+  // 拒绝处理函数
+  function(err) {
+    console.error(err); // 烦！
+  }
 );
 ```
 
@@ -837,16 +841,16 @@ on (foo "error") {
 
 ```js
 function foo(x) {
-    // 开始做点可能耗时的工作
-    // 构造一个 listener 事件通知处理对象来返回
-    return listener;
+  // 开始做点可能耗时的工作
+  // 构造一个 listener 事件通知处理对象来返回
+  return listener;
 }
 var evt = foo(42);
-evt.on("completion", function(){
-    // 可以进行下一步了！
+evt.on('completion', function() {
+  // 可以进行下一步了！
 });
-evt.on("failure", function(err){
-    // 啊，foo(..) 中出错了
+evt.on('failure', function(err) {
+  // 啊，foo(..) 中出错了
 });
 ```
 
@@ -876,14 +880,14 @@ baz(evt);
 
 ```js
 function foo(x) {
-    // 可是做一些可能耗时的工作
-    // 构造并返回一个 promise
-    return new Promise(function(resolve,reject){
+  // 可是做一些可能耗时的工作
+  // 构造并返回一个 promise
+  return new Promise(function(resolve, reject) {
     // 最终调用 resolve(..) 或者 reject(..)
     // 这是这个 promise 的决议回调
-    });
+  });
 }
-var p = foo( 42 );
+var p = foo(42);
 bar(p);
 baz(p);
 ```
@@ -892,15 +896,15 @@ baz(p);
 
 ```js
 function bar(fooPromise) {
-    // 侦听 foo(..) 完成
-    fooPromise.then(
-        function(){
-        // foo(..) 已经完毕，所以执行 bar(..) 的任务
-        },
-        function(){
-        // 啊，foo(..) 中出错了！
-        }
-    );
+  // 侦听 foo(..) 完成
+  fooPromise.then(
+    function() {
+      // foo(..) 已经完毕，所以执行 bar(..) 的任务
+    },
+    function() {
+      // 啊，foo(..) 中出错了！
+    }
+  );
 }
 ```
 
@@ -908,10 +912,10 @@ function bar(fooPromise) {
 
 ```js
 function bar() {
-    // foo(..) 肯定已经完成，所以执行 bar(..) 的任务
+  // foo(..) 肯定已经完成，所以执行 bar(..) 的任务
 }
 function oopsBar() {
-    // 啊，foo(..) 中出错了，所以 bar(..) 没有运行
+  // 啊，foo(..) 中出错了，所以 bar(..) 没有运行
 }
 // 对于 baz() 和 oopsBaz() 也是一样
 var p = foo(42);
@@ -919,16 +923,15 @@ p.then(bar, oopsBar);
 p.then(baz, oopsBaz);
 ```
 
-这里没有把 promise  p 传给 bar(..) 和 baz(..) ，而是使用 promise 控制 bar(..) 和  baz(..) 何时执行，如果执行的话。最主要的区别在于错误处理部分。
+这里没有把 promise p 传给 bar(..) 和 baz(..) ，而是使用 promise 控制 bar(..) 和 baz(..) 何时执行，如果执行的话。最主要的区别在于错误处理部分。
 
 在第一段代码的方法里，不论 foo(..) 成功与否， bar(..) 都会被调用。并且如果收到了 foo(..) 失败的通知，它会亲自处理自己的回退逻辑。显然， baz(..) 也是如此。
 
 在第二段代码中， bar(..) 只有在 foo(..) 成功时才会被调用，否则就会调用 oppsBar(..) 。baz(..) 也是如此。
 
-不管哪种情况，都是从 foo(..) 返回的 promise  p 来控制接下来的步骤。
+不管哪种情况，都是从 foo(..) 返回的 promise p 来控制接下来的步骤。
 
-另外，两段代码都以使用 promise  p 调用 then(..) 两次结束。这个事实说明了前面的观点，
-就是 Promise（一旦决议）一直保持其决议结果（完成或拒绝）不变，可以按照需要多次查看
+另外，两段代码都以使用 promise p 调用 then(..) 两次结束。这个事实说明了前面的观点，就是 Promise（一旦决议）一直保持其决议结果（完成或拒绝）不变，可以按照需要多次查看
 
 一旦 p 决议，不论是现在还是将来，下一个步骤总是相同的。
 
@@ -941,18 +944,10 @@ p.then(baz, oopsBaz);
 根据一个值的形态（具有哪些属性）对这个值的类型做出一些假定。这种类型检查（typecheck）一般用术语鸭子类型（duck typing）来表示——“如果它看起来像只鸭子，叫起来像只鸭子，那它一定就是只鸭子”（参见本书的“类型和语法”部分）。于是，对 thenable 值的鸭子类型检测就大致类似于
 
 ```js
-if (
-    p !== null &&
-    (
-    typeof p === "object" ||
-    typeof p === "function"
-    ) &&
-    typeof p.then === "function"
-) {
-// 假定这是一个 thenable!
-}
-else {
-// 不是 thenable
+if (p !== null && (typeof p === 'object' || typeof p === 'function') && typeof p.then === 'function') {
+  // 假定这是一个 thenable!
+} else {
+  // 不是 thenable
 }
 ```
 
@@ -961,19 +956,19 @@ else {
 即使你并没有意识到这个值有 then(..) 函数也是这样。比如：
 
 ```js
-var o = { then: function(){} };
+var o = { then: function() {} };
 // 让 v [[Prototype]]-link 到 o
-var v = Object.create( o );
-v.someStuff = "cool";
-v.otherStuff = "not so cool";
-v.hasOwnProperty( "then" ); // false
+var v = Object.create(o);
+v.someStuff = 'cool';
+v.otherStuff = 'not so cool';
+v.hasOwnProperty('then'); // false
 ```
 
 ```js
-Object.prototype.then = function(){};
-Array.prototype.then = function(){};
-var v1 = { hello: "world" };
-var v2 = [ "Hello", "World" ];
+Object.prototype.then = function() {};
+Array.prototype.then = function() {};
+var v1 = { hello: 'world' };
+var v2 = ['Hello', 'World'];
 ```
 
 v1 和 v2 都会被认作 thenable
@@ -990,7 +985,7 @@ v1 和 v2 都会被认作 thenable
 
 也就是说，对一个 Promise 调用 then(..) 的时候，即使这个 Promise 已经决议，提供给 then(..) 的回调也总会被异步调用（对此的更多讨论，请参见 1.5 节）。
 
-不再需要插入你自己的 setTimeout(..,0)  hack，Promise 会自动防止 Zalgo 出现。
+不再需要插入你自己的 setTimeout(..,0) hack，Promise 会自动防止 Zalgo 出现。
 
 ### 调用过晚
 
@@ -1001,14 +996,14 @@ v1 和 v2 都会被认作 thenable
 举例来说
 
 ```js
-p.then(function(){
-    p.then(function(){
-        console.log( "C" );
-    });
-    console.log( "A" );
+p.then(function() {
+  p.then(function() {
+    console.log('C');
+  });
+  console.log('A');
 });
-p.then(function(){
-    console.log( "B" );
+p.then(function() {
+  console.log('B');
 });
 // A B C
 ```
@@ -1017,23 +1012,23 @@ p.then(function(){
 
 但是，还有很重要的一点需要指出，有很多调度的细微差别。在这种情况下，两个独立 Promise 上链接的回调的相对顺序无法可靠预测。
 
-如果两个 promise  p1 和 p2 都已经决议，那么 p1.then(..) ;  p2.then(..) 应该最终会先调用 p1 的回调，然后是 p2 的那些。但还有一些微妙的场景可能不是这样的，比如以下代码：
+如果两个 promise p1 和 p2 都已经决议，那么 p1.then(..) ; p2.then(..) 应该最终会先调用 p1 的回调，然后是 p2 的那些。但还有一些微妙的场景可能不是这样的，比如以下代码：
 
 ```js
-var p3 = new Promise(function(resolve,reject){
-    resolve("B");
+var p3 = new Promise(function(resolve, reject) {
+  resolve('B');
 });
-var p1 = new Promise(function(resolve,reject){
-    resolve(p3);
+var p1 = new Promise(function(resolve, reject) {
+  resolve(p3);
 });
-p2 = new Promise(function(resolve,reject){
-    resolve("A");
+p2 = new Promise(function(resolve, reject) {
+  resolve('A');
 });
-p1.then(function(v){
-    console.log(v);
+p1.then(function(v) {
+  console.log(v);
 });
-p2.then(function(v){
-    console.log(v);
+p2.then(function(v) {
+  console.log(v);
 });
 // A B <-- 而不是像你可能认为的 B A
 ```
@@ -1055,25 +1050,24 @@ p2.then(function(v){
 ```js
 // 用于超时一个 Promise 的工具
 function timeoutPromise(delay) {
-    return new Promise(function(resolve,reject){
-        setTimeout(function(){
-            reject("Timeout!");
-        }, delay);
-    });
+  return new Promise(function(resolve, reject) {
+    setTimeout(function() {
+      reject('Timeout!');
+    }, delay);
+  });
 }
 // 设置 foo() 超时
 Promise.race([
-    foo(), // 试着开始 foo()
-    timeoutPromise(3000) // 给它 3 秒钟
-])
-.then(
-    function(){
-        // foo(..) 及时完成！
-    },
-    function(err){
-        // 或者 foo() 被拒绝，或者只是没能按时完成
-        // 查看 err 来了解是哪种情况
-    }
+  foo(), // 试着开始 foo()
+  timeoutPromise(3000) // 给它 3 秒钟
+]).then(
+  function() {
+    // foo(..) 及时完成！
+  },
+  function(err) {
+    // 或者 foo() 被拒绝，或者只是没能按时完成
+    // 查看 err 来了解是哪种情况
+  }
 );
 ```
 
@@ -1104,17 +1098,17 @@ Promise 至多只能有一个决议值（完成或拒绝）
 基本上，这部分是上个要点的再次说明。如果拒绝一个 Promise 并给出一个理由（也就是一个出错消息），这个值就会被传给拒绝回调。
 
 ```js
-var p = new Promise(function(resolve,reject){
-    foo.bar(); // foo 未定义，所以会出错！
-    resolve(42); // 永远不会到达这里 :(
+var p = new Promise(function(resolve, reject) {
+  foo.bar(); // foo 未定义，所以会出错！
+  resolve(42); // 永远不会到达这里 :(
 });
 p.then(
-    function fulfilled(){
-        // 永远不会到达这里 :(
-    },
-    function rejected(err){
-        // err 将会是一个 TypeError 异常对象来自 foo.bar() 这一行
-    }
+  function fulfilled() {
+    // 永远不会到达这里 :(
+  },
+  function rejected(err) {
+    // err 将会是一个 TypeError 异常对象来自 foo.bar() 这一行
+  }
 );
 ```
 
@@ -1125,17 +1119,17 @@ foo.bar() 中发生的 JavaScript 异常导致了 Promise 拒绝，你可以捕�
 但是，如果 Promise 完成后在查看结果时（ then(..) 注册的回调中）出现了 JavaScript 异常错误会怎样呢？即使这些异常不会被丢弃，但你会发现，对它们的处理方式还是有点出乎意料，需要进行一些深入研究才能理解：
 
 ```js
-var p = new Promise(function(resolve,reject){
-    resolve(42);
+var p = new Promise(function(resolve, reject) {
+  resolve(42);
 });
 p.then(
-    function fulfilled(msg){
-        foo.bar();
-        console.log( msg ); // 永远不会到达这里 :(
-    },
-    function rejected(err){
-        // 永远也不会到达这里 :(
-    }
+  function fulfilled(msg) {
+    foo.bar();
+    console.log(msg); // 永远不会到达这里 :(
+  },
+  function rejected(err) {
+    // 永远也不会到达这里 :(
+  }
 );
 ```
 
@@ -1147,11 +1141,11 @@ p.then(
 
 关于 Promise 的很重要但是常常被忽略的一个细节是，Promise 对这个问题已经有一个解决方案。包含在原生 ES6 Promise 实现中的解决方案就是 Promise.resolve(..) 。
 
-如果向 Promise.resolve(..) 传递一个非 Promise、非 thenable 的立即值，就会得到一个用这个值填充的 promise。下面这种情况下，promise  p1 和 promise  p2 的行为是完全一样的：
+如果向 Promise.resolve(..) 传递一个非 Promise、非 thenable 的立即值，就会得到一个用这个值填充的 promise。下面这种情况下，promise p1 和 promise p2 的行为是完全一样的：
 
 ```js
-var p1 = new Promise(function(resolve,reject){
-    resolve(42);
+var p1 = new Promise(function(resolve, reject) {
+  resolve(42);
 });
 var p2 = Promise.resolve(42);
 ```
@@ -1168,19 +1162,18 @@ p1 === p2; // true
 
 ```js
 var p = {
-    then: function(cb) {
-        cb(42);
-    }
+  then: function(cb) {
+    cb(42);
+  }
 };
 // 这可以工作，但只是因为幸运而已
-p
-.then(
-    function fulfilled(val){
-        console.log(val); // 42
-    },
-    function rejected(err){
-        // 永远不会到达这里
-    }
+p.then(
+  function fulfilled(val) {
+    console.log(val); // 42
+  },
+  function rejected(err) {
+    // 永远不会到达这里
+  }
 );
 ```
 
@@ -1188,20 +1181,19 @@ p
 
 ```js
 var p = {
-    then: function(cb,errcb) {
-        cb( 42 );
-        errcb( "evil laugh" );
-    }
+  then: function(cb, errcb) {
+    cb(42);
+    errcb('evil laugh');
+  }
 };
-p
-.then(
-    function fulfilled(val){
-        console.log( val ); // 42
-    },
-    function rejected(err){
-        // 啊，不应该运行！
-        console.log( err ); // 邪恶的笑
-    }
+p.then(
+  function fulfilled(val) {
+    console.log(val); // 42
+  },
+  function rejected(err) {
+    // 啊，不应该运行！
+    console.log(err); // 邪恶的笑
+  }
 );
 ```
 
@@ -1210,14 +1202,13 @@ p
 尽管如此，我们还是都可以把这些版本的 p 传给 Promise.resolve(..) ，然后就会得到期望中的规范化后的安全结果：
 
 ```js
-Promise.resolve( p )
-.then(
-    function fulfilled(val){
-        console.log( val ); // 42
-    },
-    function rejected(err){
-        // 永远不会到达这里
-    }
+Promise.resolve(p).then(
+  function fulfilled(val) {
+    console.log(val); // 42
+  },
+  function rejected(err) {
+    // 永远不会到达这里
+  }
 );
 ```
 
@@ -1227,15 +1218,13 @@ Promise.resolve(..) 可以接受任何 thenable，将其解封为它的非 thena
 
 ```js
 // 不要只是这么做：
-foo( 42 )
-.then( function(v){
-    console.log( v );
-} );
+foo(42).then(function(v) {
+  console.log(v);
+});
 // 而要这么做：
-Promise.resolve( foo( 42 ) )
-.then( function(v){
-    console.log( v );
-} );
+Promise.resolve(foo(42)).then(function(v) {
+  console.log(v);
+});
 ```
 
 对于用 Promise.resolve(..) 为所有函数的返回值（不管是不是 thenable）都封装一层。另一个好处是，这样做很容易把函数调用规范为定义良好的异步任务。如果 foo(42) 有时会返回一个立即值，有时会返回 Promise，那么 Promise.resolve( foo(42) ) 就能够保证总会返回一个 Promise 结果，而且避免 Zalgo 就能得到更好的代码。
@@ -1260,34 +1249,33 @@ Promise 这种模式通过可信任的语义把回调作为参数传递，使得
 考虑如下代码
 
 ```js
-var p = Promise.resolve( 21 );
-var p2 = p.then( function(v){
-    console.log( v ); // 21
-    // 用值 42 填充 p2
-    return v * 2;
-} );
+var p = Promise.resolve(21);
+var p2 = p.then(function(v) {
+  console.log(v); // 21
+  // 用值 42 填充 p2
+  return v * 2;
+});
 // 连接 p2
-p2.then( function(v){
-    console.log( v ); // 42
-} );
+p2.then(function(v) {
+  console.log(v); // 42
+});
 ```
 
-我们通过返回 v * 2 ( 即 42 )，完成了第一个调用 then(..) 创建并返回的 promise  p2 。 p2 的 then(..) 调用在运行时会从 return v * 2 语句接受完成值。当然， p2.then(..) 又创建了另一个新的 promise，可以用变量 p3 存储
+我们通过返回 v _ 2 ( 即 42 )，完成了第一个调用 then(..) 创建并返回的 promise p2 。 p2 的 then(..) 调用在运行时会从 return v _ 2 语句接受完成值。当然， p2.then(..) 又创建了另一个新的 promise，可以用变量 p3 存储
 
 但是，如果必须创建一个临时变量 p2 （或 p3 等），还是有一点麻烦的。谢天谢地，我们很容易把这些链接到一起：
 
 ```js
-var p = Promise.resolve( 21 );
-p
-.then( function(v){
-    console.log( v ); // 21
-    // 用值 42 完成连接的 promise
-    return v * 2;
-} )
-// 这里是链接的 promise
-.then( function(v){
-    console.log( v ); // 42
-} );
+var p = Promise.resolve(21);
+p.then(function(v) {
+  console.log(v); // 21
+  // 用值 42 完成连接的 promise
+  return v * 2;
+})
+  // 这里是链接的 promise
+  .then(function(v) {
+    console.log(v); // 42
+  });
 ```
 
 现在第一个 then(..) 就是异步序列中的第一步，第二个 then(..) 就是第二步。这可以一直任意扩展下去。只要保持把先前的 then(..) 连到自动创建的每一个 Promise 即可。
@@ -1299,39 +1287,37 @@ p
 从完成（或拒绝）处理函数返回 thenable 或者 Promise 的时候也会发生同样的展开。考虑：
 
 ```js
-var p = Promise.resolve( 21 );
-p.then( function(v){
-    console.log( v ); // 21
-    // 创建一个 promise 并将其返回
-    return new Promise( function(resolve,reject){
-        // 用值 42 填充
-        resolve( v * 2 );
-    } );
-} )
-.then( function(v){
-    console.log( v ); // 42
-} );
+var p = Promise.resolve(21);
+p.then(function(v) {
+  console.log(v); // 21
+  // 创建一个 promise 并将其返回
+  return new Promise(function(resolve, reject) {
+    // 用值 42 填充
+    resolve(v * 2);
+  });
+}).then(function(v) {
+  console.log(v); // 42
+});
 ```
 
 虽然我们把 42 封装到了返回的 promise 中，但它仍然会被展开并最终成为链接的 promise 的决议，因此第二个 then(..) 得到的仍然是 42 。如果我们向封装的 promise 引入异步，一切都仍然会同样工作：
 
 ```js
-var p = Promise.resolve( 21 );
-p.then( function(v){
-    console.log( v ); // 21
-    // 创建一个 promise 并返回
-    return new Promise( function(resolve,reject){
-        // 引入异步！
-        setTimeout( function(){
-            // 用值 42 填充
-            resolve( v * 2 );
-        }, 100 );
-    } );
-} )
-.then( function(v){
-    // 在前一步中的 100ms 延迟之后运行
-    console.log( v ); // 42
-} );
+var p = Promise.resolve(21);
+p.then(function(v) {
+  console.log(v); // 21
+  // 创建一个 promise 并返回
+  return new Promise(function(resolve, reject) {
+    // 引入异步！
+    setTimeout(function() {
+      // 用值 42 填充
+      resolve(v * 2);
+    }, 100);
+  });
+}).then(function(v) {
+  // 在前一步中的 100ms 延迟之后运行
+  console.log(v); // 42
+});
 ```
 
 这种强大实在不可思议！现在我们可以构建这样一个序列：不管我们想要多少个异步步骤，每一步都能够根据需要等待下一步（或者不等！）。
@@ -1342,25 +1328,25 @@ p.then( function(v){
 
 ```js
 function delay(time) {
-    return new Promise( function(resolve,reject){
-        setTimeout( resolve, time );
-    } );
+  return new Promise(function(resolve, reject) {
+    setTimeout(resolve, time);
+  });
 }
-delay( 100 ) // 步骤 1
-.then( function STEP2(){
-    console.log( "step 2 (after 100ms)" );
-    return delay( 200 );
-} )
-.then( function STEP3(){
-    console.log( "step 3 (after another 200ms)" );
-} )
-.then( function STEP4(){
-    console.log( "step 4 (next Job)" );
-    return delay( 50 );
-} )
-.then( function STEP5(){
-    console.log( "step 5 (after another 50ms)" );
-} )
+delay(100) // 步骤 1
+  .then(function STEP2() {
+    console.log('step 2 (after 100ms)');
+    return delay(200);
+  })
+  .then(function STEP3() {
+    console.log('step 3 (after another 200ms)');
+  })
+  .then(function STEP4() {
+    console.log('step 4 (next Job)');
+    return delay(50);
+  })
+  .then(function STEP5() {
+    console.log('step 5 (after another 50ms)');
+  });
 ```
 
 调用 delay(200) 创建了一个将在 200ms 后完成的 promise，然后我们从第一个 then(..) 完成回调中返回这个 promise，这会导致第二个 then(..) 的 promise 等待这个 200ms 的 promise。
@@ -1373,23 +1359,23 @@ delay( 100 ) // 步骤 1
 // 假定工具 ajax( {url}, {callback} ) 存在
 // Promise-aware ajax
 function request(url) {
-    return new Promise( function(resolve,reject){
+  return new Promise(function(resolve, reject) {
     // ajax(..) 回调应该是我们这个 promise 的 resolve(..) 函数
-        ajax( url, resolve );
-    } );
+    ajax(url, resolve);
+  });
 }
 ```
 
 我们首先定义一个工具 request(..) ，用来构造一个表示 ajax(..) 调用完成的 promise：
 
 ```js
-request( "http://some.url.1/" )
-.then( function(response1){
-    return request( "http://some.url.2/?v=" + response1 );
-} )
-.then( function(response2){
-    console.log( response2 );
-} );
+request('http://some.url.1/')
+  .then(function(response1) {
+    return request('http://some.url.2/?v=' + response1);
+  })
+  .then(function(response2) {
+    console.log(response2);
+  });
 ```
 
 利用返回 Promise 的 request(..) ，我们通过使用第一个 URL 调用它来创建链接中的第一步，并且把返回的 promise 与第一个 then(..) 链接起来。
@@ -1400,29 +1386,29 @@ request( "http://some.url.1/" )
 
 ```js
 // 步骤 1：
-request( "http://some.url.1/" )
-// 步骤 2：
-.then( function(response1){
+request('http://some.url.1/')
+  // 步骤 2：
+  .then(function(response1) {
     foo.bar(); // undefined，出错！
     // 永远不会到达这里
-    return request( "http://some.url.2/?v=" + response1 );
-} )
-// 步骤 3：
-.then(
-    function fulfilled(response2){
-        // 永远不会到达这里
+    return request('http://some.url.2/?v=' + response1);
+  })
+  // 步骤 3：
+  .then(
+    function fulfilled(response2) {
+      // 永远不会到达这里
     },
     // 捕捉错误的拒绝处理函数
-    function rejected(err){
-        console.log( err );
-        // 来自 foo.bar() 的错误 TypeError
-        return 42;
+    function rejected(err) {
+      console.log(err);
+      // 来自 foo.bar() 的错误 TypeError
+      return 42;
     }
-)
-// 步骤 4：
-.then( function(msg){
-    console.log( msg ); // 42
-} );
+  )
+  // 步骤 4：
+  .then(function(msg) {
+    console.log(msg); // 42
+  });
 ```
 
 第 2 步出错后，第 3 步的拒绝处理函数会捕捉到这个错误。拒绝处理函数的返回值（这段代码中是 42 ），如果有的话，会用来完成交给下一个步骤（第 4 步）的 promise，这样，这个链现在就回到了完成状态。
@@ -1430,17 +1416,17 @@ request( "http://some.url.1/" )
 如果你调用 promise 的 then(..) ，并且只传入一个完成处理函数，一个默认拒绝处理函数就会顶替上来：
 
 ```js
-var p = new Promise( function(resolve,reject){
-    reject( "Oops" );
-} );
+var p = new Promise(function(resolve, reject) {
+  reject('Oops');
+});
 var p2 = p.then(
-    function fulfilled(){
+  function fulfilled() {
     // 永远不会达到这里
-    }
-    // 假定的拒绝处理函数，如果省略或者传入任何非函数值
-    // function(err) {
-    // throw err;
-    // }
+  }
+  // 假定的拒绝处理函数，如果省略或者传入任何非函数值
+  // function(err) {
+  // throw err;
+  // }
 );
 ```
 
@@ -1449,16 +1435,16 @@ var p2 = p.then(
 如果没有给 then(..) 传递一个适当有效的函数作为完成处理函数参数，还是会有作为替代的一个默认处理函数：
 
 ```js
-var p = Promise.resolve( 42 );
+var p = Promise.resolve(42);
 p.then(
-    // 假设的完成处理函数，如果省略或者传入任何非函数值
-    // function(v) {
-    // return v;
-    // }
-    null,
-    function rejected(err){
+  // 假设的完成处理函数，如果省略或者传入任何非函数值
+  // function(v) {
+  // return v;
+  // }
+  null,
+  function rejected(err) {
     // 永远不会到达这里
-    }
+  }
 );
 ```
 
@@ -1484,11 +1470,11 @@ then(null,function(err){ .. }) 这个模式——只处理拒绝（如果有的�
 
 ```js
 var rejectedTh = {
-    then: function(resolved,rejected) {
-        rejected( "Oops" );
-    }
+  then: function(resolved, rejected) {
+    rejected('Oops');
+  }
 };
-var rejectedPr = Promise.resolve( rejectedTh );
+var rejectedPr = Promise.resolve(rejectedTh);
 ```
 
 Promise.resolve(..) 会将传入的真正 Promise 直接返回，对传入的 thenable 则会展开，如果这个 thenable 展开得到一个拒绝状态，那么从 Promise.resolve(..) 返回的 Promise 实际上就是这同一个拒绝状态
@@ -1498,21 +1484,21 @@ Promise.resolve(..) 会将传入的真正 Promise 直接返回，对传入的 th
 Promise(..) 构造器的第一个参数回调会展开 thenable（和 Promise.resolve(..) 一样）或真正的 Promise：
 
 ```js{2}
-var rejectedPr = new Promise( function(resolve,reject){
-    // 用一个被拒绝的 promise 完成这个 promise, 注意 reject(..) 不会像 resolve(..) 一样进行展开
-    resolve( Promise.reject( "Oops" ) );
-} );
+var rejectedPr = new Promise(function(resolve, reject) {
+  // 用一个被拒绝的 promise 完成这个 promise, 注意 reject(..) 不会像 resolve(..) 一样进行展开
+  resolve(Promise.reject('Oops'));
+});
 rejectedPr.then(
-    function fulfilled(){
-        // 永远不会到达这里
-    },
-    function rejected(err){
-        console.log( err ); // "Oops"
-    }
+  function fulfilled() {
+    // 永远不会到达这里
+  },
+  function rejected(err) {
+    console.log(err); // "Oops"
+  }
 );
 ```
 
-then 的回调建议是 fulfilled(..) 和 rejected(..) 
+then 的回调建议是 fulfilled(..) 和 rejected(..)
 
 ## Promise 模式
 
@@ -1523,15 +1509,16 @@ then 的回调建议是 fulfilled(..) 和 rejected(..)
 ```js
 // request(..) 是一个 Promise-aware Ajax 工具
 // 就像我们在本章前面定义的一样
-var p1 = request( "http://some.url.1/" );
-var p2 = request( "http://some.url.2/" );
-Promise.all( [p1,p2] ).then( function(msgs){
+var p1 = request('http://some.url.1/');
+var p2 = request('http://some.url.2/');
+Promise.all([p1, p2])
+  .then(function(msgs) {
     // 这里，p1 和 p2 完成并把它们的消息传入
-    return request("http://some.url.3/?v=" + msgs.join(","));
-} )
-.then( function(msg){
-    console.log( msg );
-} );
+    return request('http://some.url.3/?v=' + msgs.join(','));
+  })
+  .then(function(msg) {
+    console.log(msg);
+  });
 ```
 
 > 严格说来，传给 Promise.all([ .. ]) 的数组中的值可以是 Promise、thenable，甚至是立即值。就本质而言，列表中的每个值都会通过 Promise.resolve(..) 过滤，以确保要等待的是一个真正的 Promise，所以立即值会被规范化为为这个值构建的 Promise。如果数组是空的，主 Promise 就会立即完成
@@ -1541,15 +1528,16 @@ Promise.all( [p1,p2] ).then( function(msgs){
 ```js
 // request(..) 是一个支持 Promise 的 Ajax 工具
 // 就像我们在本章前面定义的一样
-var p1 = request( "http://some.url.1/" );
-var p2 = request( "http://some.url.2/" );
-Promise.race( [p1,p2] ).then( function(msg){
+var p1 = request('http://some.url.1/');
+var p2 = request('http://some.url.2/');
+Promise.race([p1, p2])
+  .then(function(msg) {
     // p1 或者 p2 将赢得这场竞赛
-    return request("http://some.url.3/?v=" + msg);
-} )
-.then( function(msg){
-    console.log( msg );
-} );
+    return request('http://some.url.3/?v=' + msg);
+  })
+  .then(function(msg) {
+    console.log(msg);
+  });
 ```
 
 #### 超时竞赛
@@ -1559,18 +1547,17 @@ Promise.race( [p1,p2] ).then( function(msg){
 // 前面定义的 timeoutPromise(..) 返回一个 promise，
 // 这个 promise 会在指定延时之后拒绝
 // 为 foo() 设定超时
-Promise.race( [
-    foo(), // 启动 foo()
-    timeoutPromise( 3000 ) // 给它 3 秒钟
-] )
-.then(
-    function(){
-        // foo(..) 按时完成！
-    },
-    function(err){
-        // 要么 foo() 被拒绝，要么只是没能够按时完成，
-        // 因此要查看 err 了解具体原因
-    }
+Promise.race([
+  foo(), // 启动 foo()
+  timeoutPromise(3000) // 给它 3 秒钟
+]).then(
+  function() {
+    // foo(..) 按时完成！
+  },
+  function(err) {
+    // 要么 foo() 被拒绝，要么只是没能够按时完成，
+    // 因此要查看 err 了解具体原因
+  }
 );
 ```
 
@@ -1581,36 +1568,36 @@ Promise.race( [
 ```js
 // polyfill 安全的 guard 检查
 if (!Promise.observe) {
-    Promise.observe = function(pr,cb) {
-        // 观察 pr 的决议
-        pr.then(
-            function fulfilled (msg){
-                // 安排异步回调（作为 Job）
-                Promise.resolve( msg ).then( cb );
-            },
-            function rejected(err){
-                // 安排异步回调（作为 Job）
-                Promise.resolve( err ).then( cb );
-            }
-        );
-        // 返回最初的 promise
-        return pr;
-    };
+  Promise.observe = function(pr, cb) {
+    // 观察 pr 的决议
+    pr.then(
+      function fulfilled(msg) {
+        // 安排异步回调（作为 Job）
+        Promise.resolve(msg).then(cb);
+      },
+      function rejected(err) {
+        // 安排异步回调（作为 Job）
+        Promise.resolve(err).then(cb);
+      }
+    );
+    // 返回最初的 promise
+    return pr;
+  };
 }
 ```
 
 下面是如何在前面的超时例子中使用这个工具：
 
 ```js
-Promise.race( [
-    Promise.observe(
-        foo(), // 试着运行 foo()
-        function cleanup(msg){
-            // 在 foo() 之后清理，即使它没有在超时之前完成
-        }
-    ),
-    timeoutPromise( 3000 ) // 给它 3 秒钟
-] )
+Promise.race([
+  Promise.observe(
+    foo(), // 试着运行 foo()
+    function cleanup(msg) {
+      // 在 foo() 之后清理，即使它没有在超时之前完成
+    }
+  ),
+  timeoutPromise(3000) // 给它 3 秒钟
+]);
 ```
 
 ### all([ .. ]) 和 race([ .. ]) 的变体
@@ -1618,17 +1605,17 @@ Promise.race( [
 ```js
 // polyfill 安全的 guard 检查
 if (!Promise.first) {
-    Promise.first = function(prs) {
-        return new Promise( function(resolve,reject){
-            // 在所有 promise 上循环
-            prs.forEach( function(pr){
-                // 把值规整化
-                Promise.resolve( pr )
-                // 不管哪个最先完成，就决议主 promise
-                .then( resolve );
-            } );
-        } );
-    };
+  Promise.first = function(prs) {
+    return new Promise(function(resolve, reject) {
+      // 在所有 promise 上循环
+      prs.forEach(function(pr) {
+        // 把值规整化
+        Promise.resolve(pr)
+          // 不管哪个最先完成，就决议主 promise
+          .then(resolve);
+      });
+    });
+  };
 }
 ```
 
@@ -1636,44 +1623,42 @@ if (!Promise.first) {
 
 ```js
 if (!Promise.map) {
-    Promise.map = function(vals,cb) {
-        // 一个等待所有 map 的 promise 的新 promise
-        return Promise.all(
-            // 注：一般数组 map(..) 把值数组转换为 promise 数组
-            vals.map( function(val){
-                // 用 val 异步 map 之后决议的新 promise 替换 val
-                return new Promise( function(resolve){
-                    cb( val, resolve );
-                } );
-            } )
-        );
-    };
+  Promise.map = function(vals, cb) {
+    // 一个等待所有 map 的 promise 的新 promise
+    return Promise.all(
+      // 注：一般数组 map(..) 把值数组转换为 promise 数组
+      vals.map(function(val) {
+        // 用 val 异步 map 之后决议的新 promise 替换 val
+        return new Promise(function(resolve) {
+          cb(val, resolve);
+        });
+      })
+    );
+  };
 }
 ```
 
 下面展示如何在一组 Promise（而非简单的值）上使用 map(..)
 
 ```js
-var p1 = Promise.resolve( 21 );
-var p2 = Promise.resolve( 42 );
-var p3 = Promise.reject( "Oops" );
+var p1 = Promise.resolve(21);
+var p2 = Promise.resolve(42);
+var p3 = Promise.reject('Oops');
 // 把列表中的值加倍，即使是在 Promise 中
-Promise.map( [p1,p2,p3], function(pr,done){
-    // 保证这一条本身是一个 Promise
-    Promise.resolve( pr )
-    .then(
-        // 提取值作为 v
-        function(v){
-        // map 完成的 v 到新值
-        done( v * 2 );
-        },
-        // 或者 map 到 promise 拒绝消息
-        done
-    );
-} )
-.then( function(vals){
-    console.log( vals ); // [42,84,"Oops"]
-} );
+Promise.map([p1, p2, p3], function(pr, done) {
+  // 保证这一条本身是一个 Promise
+  Promise.resolve(pr).then(
+    // 提取值作为 v
+    function(v) {
+      // map 完成的 v 到新值
+      done(v * 2);
+    },
+    // 或者 map 到 promise 拒绝消息
+    done
+  );
+}).then(function(vals) {
+  console.log(vals); // [42,84,"Oops"]
+});
 ```
 
 ## Promise 局限性
@@ -1694,42 +1679,39 @@ Promise 链中的错误很容易被无意中默默忽略掉
 
 ```js
 function getY(x) {
-    return new Promise( function(resolve,reject){
-        setTimeout( function(){
-            resolve( (3 * x) - 1 );
-        }, 5000 );
-    } );
+  return new Promise(function(resolve, reject) {
+    setTimeout(function() {
+      resolve(3 * x - 1);
+    }, 5000);
+  });
 }
-function foo(bar,baz) {
-    var x = bar * baz;
-    return getY( x ).then( function(y){
-        // 把两个值封装到容器中
-        return [x,y];
-    } );
+function foo(bar, baz) {
+  var x = bar * baz;
+  return getY(x).then(function(y) {
+    // 把两个值封装到容器中
+    return [x, y];
+  });
 }
-foo( 10, 20 ).then( function(msgs){
-    var x = msgs[0];
-    var y = msgs[1];
-    console.log( x, y ); // 200 599
-} );
+foo(10, 20).then(function(msgs) {
+  var x = msgs[0];
+  var y = msgs[1];
+  console.log(x, y); // 200 599
+});
 ```
 
 重构之后：
 
 ```js
-function foo(bar,baz) {
-    var x = bar * baz;
-    // 返回两个 promise
-    return [
-        Promise.resolve( x ),
-        getY( x )
-    ];
+function foo(bar, baz) {
+  var x = bar * baz;
+  // 返回两个 promise
+  return [Promise.resolve(x), getY(x)];
 }
-Promise.all(foo( 10, 20 )).then( function(msgs){
-    var x = msgs[0];
-    var y = msgs[1];
-    console.log( x, y );
-} );
+Promise.all(foo(10, 20)).then(function(msgs) {
+  var x = msgs[0];
+  var y = msgs[1];
+  console.log(x, y);
+});
 ```
 
 一个 promise 数组真的要优于传递给单个 promise 的一个值数组吗？从语法的角度来说，这算不上是一个改进
@@ -1739,9 +1721,9 @@ Promise.all(foo( 10, 20 )).then( function(msgs){
 #### 展开 / 传递参数
 
 ```js
-Promise.all(foo( 10, 20 )).then( function([x,y]){
-    console.log( x, y ); // 200 599
-} );
+Promise.all(foo(10, 20)).then(function([x, y]) {
+  console.log(x, y); // 200 599
+});
 ```
 
 ### 单决议
@@ -1751,27 +1733,26 @@ Promise.all(foo( 10, 20 )).then( function([x,y]){
 ```js
 // click(..) 把"click"事件绑定到一个 DOM 元素
 // request(..) 是前面定义的支持 Promise 的 Ajax
-var p = new Promise( function(resolve,reject){
-    click( "#mybtn", resolve );
-} );
-p.then( function(evt){
-    var btnID = evt.currentTarget.id;
-    return request( "http://some.url.1/?id=" + btnID );
-} )
-.then( function(text){
-    console.log( text );
-} );
+var p = new Promise(function(resolve, reject) {
+  click('#mybtn', resolve);
+});
+p.then(function(evt) {
+  var btnID = evt.currentTarget.id;
+  return request('http://some.url.1/?id=' + btnID);
+}).then(function(text) {
+  console.log(text);
+});
 ```
 
 只有在你的应用只需要响应按钮点击一次的情况下，这种方式才能工作，只有为每个事件的发生创建一整个新的 Promise 链才能正常工作
 
 ```js
-click( "#mybtn", function(evt){
-    var btnID = evt.currentTarget.id;
-    request( "http://some.url.1/?id=" + btnID ).then( function(text){
-        console.log( text );
-    } );
-} );
+click('#mybtn', function(evt) {
+  var btnID = evt.currentTarget.id;
+  request('http://some.url.1/?id=' + btnID).then(function(text) {
+    console.log(text);
+  });
+});
 ```
 
 由于需要在事件处理函数中定义整个 Promise 链，这很丑陋。除此之外，这个设计在某种程度上破坏了关注点与功能分离（SoC）的思想。这需要一些辅助机制来实现，其中 rxjs 做出了一些抽象
@@ -1781,52 +1762,50 @@ click( "#mybtn", function(evt){
 ```js
 // polyfill 安全的 guard 检查
 if (!Promise.wrap) {
-    Promise.wrap = function(fn) {
-        return function() {
-            var args = [].slice.call( arguments );
-            return new Promise( function(resolve,reject){
-                fn.apply(null, args.concat( function(err,v){
-                        if (err) {
-                            reject( err );
-                        }
-                        else {
-                            resolve( v );
-                        }
-                    } )
-                );
-            } );
-        };
+  Promise.wrap = function(fn) {
+    return function() {
+      var args = [].slice.call(arguments);
+      return new Promise(function(resolve, reject) {
+        fn.apply(
+          null,
+          args.concat(function(err, v) {
+            if (err) {
+              reject(err);
+            } else {
+              resolve(v);
+            }
+          })
+        );
+      });
     };
+  };
 }
 
 var request = Promise.wrap(ajax);
-request( "http://some.url.1/" ).then()
+request('http://some.url.1/').then();
 ```
 
 ```js
 // 为 ajax(..) 构造一个 promisory
-var request = Promise.wrap( ajax );
+var request = Promise.wrap(ajax);
 // 重构 foo(..)，但使其外部成为基于外部回调的，
 // 与目前代码的其他部分保持通用
 // ——只在内部使用 request(..) 的 promise
-function foo(x,y,cb) {
-    request("http://some.url.1/?x=" + x + "&y=" + y).then(
-        function fulfilled(text){
-            cb( null, text );
-        },
-        cb
-    );
+function foo(x, y, cb) {
+  request('http://some.url.1/?x=' + x + '&y=' + y).then(function fulfilled(text) {
+    cb(null, text);
+  }, cb);
 }
 // 现在，为了这段代码的目的，为 foo(..) 构造一个 promisory
-var betterFoo = Promise.wrap( foo );
+var betterFoo = Promise.wrap(foo);
 // 并使用这个 promisory
-betterFoo( 11, 31 ).then(
-    function fulfilled(text){
-        console.log( text );
-    },
-    function rejected(err){
-        console.error( err );
-    }
+betterFoo(11, 31).then(
+  function fulfilled(text) {
+    console.log(text);
+  },
+  function rejected(err) {
+    console.error(err);
+  }
 );
 ```
 
@@ -1850,13 +1829,13 @@ betterFoo( 11, 31 ).then(
 
 ```js
 var x = 1;
-function *foo() {
-    x++;
-    yield; // 暂停！
-    console.log( "x:", x );
+function* foo() {
+  x++;
+  yield; // 暂停！
+  console.log('x:', x);
 }
 function bar() {
-    x++;
+  x++;
 }
 ```
 
@@ -1874,10 +1853,10 @@ it.next(); // x: 3，恢复执行
 ### 输入和输出
 
 ```js
-function *foo(x,y) {
-    return x * y;
+function* foo(x, y) {
+  return x * y;
 }
-var it = foo( 6, 7 );
+var it = foo(6, 7);
 var res = it.next();
 res.value; // 42
 ```
@@ -1887,14 +1866,14 @@ res.value; // 42
 除了能够接受参数并提供返回值之外，生成器甚至提供了更强大更引人注目的内建消息输入输出能力，通过 yield 和 next(..) 实现。
 
 ```js
-function *foo(x) {
-    var y = x * (yield);
-    return y;
+function* foo(x) {
+  var y = x * (yield);
+  return y;
 }
-var it = foo( 6 );
+var it = foo(6);
 // 启动 foo(..)
 it.next();
-var res = it.next( 7 );
+var res = it.next(7);
 res.value; // 42
 ```
 
@@ -1903,7 +1882,7 @@ res.value; // 42
 只考虑生成器代码：
 
 ```js
-var y = x * (yield);
+var y = x * yield;
 return y;
 ```
 
@@ -1912,14 +1891,14 @@ return y;
 消息是双向传递的，yield 作为一个表达式可以发出消息响应 next(..) 调用，next(..) 也可以向暂停的 yield 表达式发送值，考虑下面这段稍稍调整过的代码：
 
 ```js
-function *foo(x) {
-    var y = x * (yield "Hello"); // <-- yield 一个值！
-    return y;
+function* foo(x) {
+  var y = x * (yield 'Hello'); // <-- yield 一个值！
+  return y;
 }
-var it = foo( 6 );
+var it = foo(6);
 var res = it.next(); // 第一个 next()，并不传入任何东西
 res.value; // "Hello"
-res = it.next( 7 ); // 向等待的 yield 传入 7
+res = it.next(7); // 向等待的 yield 传入 7
 res.value; // 42
 ```
 
@@ -1928,30 +1907,30 @@ yield .. 和 next(..) 这一对组合起来，在生成器的执行过程中构�
 ```js
 var res = it.next(); // 第一个 next()，并不传入任何东西
 res.value; // "Hello"
-res = it.next( 7 ); // 向等待的 yield 传入 7
+res = it.next(7); // 向等待的 yield 传入 7
 res.value; // 42
 ```
 
 ### 多个迭代器
 
 ```js
-function *foo() {
-    var x = yield 2;
-    z++;
-    var y = yield (x * z);
-    console.log( x, y, z );
+function* foo() {
+  var x = yield 2;
+  z++;
+  var y = yield x * z;
+  console.log(x, y, z);
 }
 var z = 1;
 var it1 = foo();
 var it2 = foo();
 var val1 = it1.next().value; // 2 <-- yield 2
 var val2 = it2.next().value; // 2 <-- yield 2
-val1 = it1.next( val2 * 10 ).value; // 40 <-- x:20, z:2
-val2 = it2.next( val1 * 5 ).value; // 600 <-- x:200, z:3
-it1.next( val2 / 2 );   // y:300
-                        // 20 300 3
-it2.next( val1 / 4 );   // y:10
-                        // 200 10 3
+val1 = it1.next(val2 * 10).value; // 40 <-- x:20, z:2
+val2 = it2.next(val1 * 5).value; // 600 <-- x:200, z:3
+it1.next(val2 / 2); // y:300
+// 20 300 3
+it2.next(val1 / 4); // y:10
+// 200 10 3
 ```
 
 ## 生成器产生值
@@ -1963,17 +1942,16 @@ it2.next( val1 / 4 );   // y:10
 可以实现一个直接使用函数闭包的版本：
 
 ```js
-var gimmeSomething = (function(){
-    var nextVal;
-    return function(){
-        if (nextVal === undefined) {
-            nextVal = 1;
-        }
-        else {
-            nextVal = (3 * nextVal) +6;
-        }
-        return nextVal;
-    };
+var gimmeSomething = (function() {
+  var nextVal;
+  return function() {
+    if (nextVal === undefined) {
+      nextVal = 1;
+    } else {
+      nextVal = 3 * nextVal + 6;
+    }
+    return nextVal;
+  };
 })();
 gimmeSomething(); // 1
 gimmeSomething(); // 9
@@ -1983,24 +1961,24 @@ gimmeSomething(); // 105
 
 可以为我们的数字序列生成器实现标准的迭代器接口：
 
-
 ```js
-var something = (function(){
-    var nextVal;
-    return {
-        // for..of 循环需要
-        [Symbol.iterator]: function(){ return this; },
-        // 标准迭代器接口方法
-        next: function(){
-            if (nextVal === undefined) {
-                nextVal = 1;
-            }
-            else {
-                nextVal = (3 * nextVal) + 6;
-            }
-            return { done:false, value:nextVal };
-        }
-    };
+var something = (function() {
+  var nextVal;
+  return {
+    // for..of 循环需要
+    [Symbol.iterator]: function() {
+      return this;
+    },
+    // 标准迭代器接口方法
+    next: function() {
+      if (nextVal === undefined) {
+        nextVal = 1;
+      } else {
+        nextVal = 3 * nextVal + 6;
+      }
+      return { done: false, value: nextVal };
+    }
+  };
 })();
 something.next().value; // 1
 something.next().value; // 9
@@ -2012,22 +1990,22 @@ something.next().value; // 105
 
 ```js
 for (var v of something) {
-    console.log( v );
-    // 不要死循环！
-    if (v > 500) {
-        break;
-    }
+  console.log(v);
+  // 不要死循环！
+  if (v > 500) {
+    break;
+  }
 }
 // 1 9 33 105 321 969
 ```
 
 ```js
-for (var ret;(ret = something.next()) && !ret.done;) {
-    console.log( ret.value );
-    // 不要死循环！
-    if (ret.value > 500) {
-        break; //这种手工 for 方法当然要比 ES6 的 for..of 循环语法丑陋，但其优点是，这样就可以在需要时向 next() 传递值。
-    }
+for (var ret; (ret = something.next()) && !ret.done; ) {
+  console.log(ret.value);
+  // 不要死循环！
+  if (ret.value > 500) {
+    break; //这种手工 for 方法当然要比 ES6 的 for..of 循环语法丑陋，但其优点是，这样就可以在需要时向 next() 传递值。
+  }
 }
 // 1 9 33 105 321 969
 ```
@@ -2039,14 +2017,14 @@ for (var ret;(ret = something.next()) && !ret.done;) {
 第一次考虑代码如下：
 
 ```js
-function *foo() {
-    var r1 = yield request( "http://some.url.1" );
-    var r2 = yield request( "http://some.url.2" );
-    var r3 = yield request("http://some.url.3/?v=" + r1 + "," + r2);
-    console.log( r3 );
+function* foo() {
+  var r1 = yield request('http://some.url.1');
+  var r2 = yield request('http://some.url.2');
+  var r3 = yield request('http://some.url.3/?v=' + r1 + ',' + r2);
+  console.log(r3);
 }
 // 使用前面定义的工具 run(..)
-run( foo );
+run(foo);
 ```
 
 最自然有效的答案就是让异步流程基于 Promise，特别是基于它们以时间无关的方式管理状态的能力。
@@ -2054,18 +2032,18 @@ run( foo );
 最简单的方法：
 
 ```js
-function *foo() {
-    // 让两个请求"并行"
-    var p1 = request( "http://some.url.1" );
-    var p2 = request( "http://some.url.2" );
-    // 等待两个 promise 都决议
-    var r1 = yield p1;
-    var r2 = yield p2;
-    var r3 = yield request("http://some.url.3/?v=" + r1 + "," + r2);
-    console.log( r3 );
+function* foo() {
+  // 让两个请求"并行"
+  var p1 = request('http://some.url.1');
+  var p2 = request('http://some.url.2');
+  // 等待两个 promise 都决议
+  var r1 = yield p1;
+  var r2 = yield p2;
+  var r3 = yield request('http://some.url.3/?v=' + r1 + ',' + r2);
+  console.log(r3);
 }
 // 使用前面定义的工具 run(..)
-run( foo );
+run(foo);
 ```
 
 两个 yield 语句等待并取得 promise 的决议（分别写入 r1 和 r2 ）。如果 p1 先决议，那么 yield p1 就会先恢复执行，然后等待 yield p2 恢复。如果 p2 先决议，它就会耐心保持其决议值等待请求，但是 yield p1 将会先等待，直到 p1 决议。
@@ -2073,41 +2051,35 @@ run( foo );
 等价于 Promise.all([ .. ]) 工具：
 
 ```js
-function *foo() {
-    // 让两个请求"并行"，并等待两个 promise 都决议
-    var results = yield Promise.all( [
-        request( "http://some.url.1" ),
-        request( "http://some.url.2" )
-    ] );
-    var r1 = results[0];
-    var r2 = results[1];
-    var r3 = yield request("http://some.url.3/?v=" + r1 + "," + r2);
-    console.log( r3 );
+function* foo() {
+  // 让两个请求"并行"，并等待两个 promise 都决议
+  var results = yield Promise.all([request('http://some.url.1'), request('http://some.url.2')]);
+  var r1 = results[0];
+  var r2 = results[1];
+  var r3 = yield request('http://some.url.3/?v=' + r1 + ',' + r2);
+  console.log(r3);
 }
 // 使用前面定义的工具 run(..)
-run( foo );
+run(foo);
 ```
 
 更简洁的方案：
 
 ```js
 // 注：普通函数，不是生成器
-function bar(url1,url2) {
-    return Promise.all( [
-        request( url1 ),
-        request( url2 )
-    ] );
+function bar(url1, url2) {
+  return Promise.all([request(url1), request(url2)]);
 }
-function *foo() {
-    // 隐藏 bar(..) 内部基于 Promise 的并发细节
-    var results = yield bar("http://some.url.1", "http://some.url.2");
-    var r1 = results[0];
-    var r2 = results[1];
-    var r3 = yield request("http://some.url.3/?v=" + r1 + "," + r2);
-    console.log( r3 );
+function* foo() {
+  // 隐藏 bar(..) 内部基于 Promise 的并发细节
+  var results = yield bar('http://some.url.1', 'http://some.url.2');
+  var r1 = results[0];
+  var r2 = results[1];
+  var r3 = yield request('http://some.url.3/?v=' + r1 + ',' + r2);
+  console.log(r3);
 }
 // 使用前面定义的工具 run(..)
-run( foo );
+run(foo);
 ```
 
 如果想要实现一系列高级流程控制的话，那么非常有用的做法是：把你的 Promise 逻辑隐藏在一个只从生成器代码中调用的函数内部。比如：
@@ -2128,37 +2100,37 @@ function bar() {
 从一个生成器调用另一个生成器，使用辅助函数 run(..)，就像这样
 
 ```js
-function *foo() {
-    var r2 = yield request( "http://some.url.2" );
-    var r3 = yield request( "http://some.url.3/?v=" + r2 );
-    return r3;
+function* foo() {
+  var r2 = yield request('http://some.url.2');
+  var r3 = yield request('http://some.url.3/?v=' + r2);
+  return r3;
 }
-function *bar() {
-    var r1 = yield request( "http://some.url.1" );
-    // 通过 run(..) "委托"给*foo()
-    var r3 = yield run( foo );
-    console.log( r3 );
+function* bar() {
+  var r1 = yield request('http://some.url.1');
+  // 通过 run(..) "委托"给*foo()
+  var r3 = yield run(foo);
+  console.log(r3);
 }
-run( bar );
+run(bar);
 ```
 
 我们再次通过 run(..) 工具从 *bar() 内部运行 *foo() 。这里我们利用了如下事实：我们前面定义的 run(..) 返回一个 promise，这个 promise 在生成器运行结束时（或出错退出时）决议。因此，如果从一个 run(..) 调用中 yield 出来一个 promise 到另一个 run(..) 实例中，它会自动暂停 *bar() ，直到 *foo() 结束。
 
-其实还有一个更好的方法可以实现从 *bar() 调用 *foo() ，称为 yield 委托。 yield 委托的具体语法是： yield * __（注意多出来的 * ）。
+其实还有一个更好的方法可以实现从 *bar() 调用 *foo() ，称为 yield 委托。 yield 委托的具体语法是： yield _ \_\_（注意多出来的 _ ）。
 
 ```js
-function *foo() {
-    var r2 = yield request( "http://some.url.2" );
-    var r3 = yield request( "http://some.url.3/?v=" + r2 );
-    return r3;
-    }
-function *bar() {
-    var r1 = yield request( "http://some.url.1" );
-    // 通过 yeild* "委托"给*foo()
-    var r3 = yield *foo();
-    console.log( r3 );
+function* foo() {
+  var r2 = yield request('http://some.url.2');
+  var r3 = yield request('http://some.url.3/?v=' + r2);
+  return r3;
 }
-run( bar );
+function* bar() {
+  var r1 = yield request('http://some.url.1');
+  // 通过 yeild* "委托"给*foo()
+  var r3 = yield* foo();
+  console.log(r3);
+}
+run(bar);
 ```
 
 yield * 暂停了迭代控制，而不是生成器控制。当你调用 *foo() 生成器时，现在 yield 委托到了它的迭代器。但实际上，你可以 yield 委托到任意 iterable ， yield `*[1,2,3]` 会消耗数组值 `[1,2,3]` 的默认迭代器。
@@ -2172,33 +2144,32 @@ yield 委托的主要目的是代码组织，以达到与普通函数调用的�
 yield 委托是如何不只用于迭代器控制工作，也用于双向消息传递工作。认真跟踪下面的通过 yield 委托实现的消息流出入：
 
 ```js
-function *foo() {
-    console.log( "inside *foo():", yield "B" );
-    console.log( "inside *foo():", yield "C" );
-    return "D";
+function* foo() {
+  console.log('inside *foo():', yield 'B');
+  console.log('inside *foo():', yield 'C');
+  return 'D';
 }
-function *bar() {
-    console.log( "inside *bar():", yield "A" );
-    // yield 委托！
-    console.log( "inside *bar():", yield *foo() );
-    console.log( "inside *bar():", yield "E" );
-    return "F";
+function* bar() {
+  console.log('inside *bar():', yield 'A');
+  // yield 委托！
+  console.log('inside *bar():', yield* foo());
+  console.log('inside *bar():', yield 'E');
+  return 'F';
 }
 var it = bar();
-console.log( "outside:", it.next().value );
+console.log('outside:', it.next().value);
 // outside: A
-console.log( "outside:", it.next( 1 ).value );
+console.log('outside:', it.next(1).value);
 // inside *bar(): 1
 // outside: B
-console.log( "outside:", it.next( 2 ).value );
+console.log('outside:', it.next(2).value);
 // inside *foo(): 2
 // outside: C
-console.log( "outside:", it.next( 3 ).value );
+console.log('outside:', it.next(3).value);
 // inside *foo(): 3
 // inside *bar(): D
 // outside: E
-console.log( "outside:", it.next( 4 ).value );
+console.log('outside:', it.next(4).value);
 // inside *bar(): 4
 // outside: F
 ```
-

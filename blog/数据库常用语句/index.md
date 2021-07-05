@@ -7,9 +7,7 @@ path: /database-commonly-used-statements/
 date: 2018-04-02 17:45:38
 ---
 
-以下是sql常用语句整理：
-
-
+以下是 sql 常用语句整理：
 
 ```sql
 drop database  if exists Student_Course_Database ;

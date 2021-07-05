@@ -58,7 +58,7 @@ ex 是 CSS 中的一个相对单位，指的是小写字母 x 的高度，没错
 
 默认空`<div>`高度是 0，但是一旦里面写上几个文字，`<div>`高度就有了，请问这个高度由何而来，或者说是由哪个 CSS 属性决定的？
 
-本质上是由 line-height 属性全权决定的，尽管某些场景确实与font-size 大小有关。
+本质上是由 line-height 属性全权决定的，尽管某些场景确实与 font-size 大小有关。
 
 例如：
 
@@ -126,15 +126,15 @@ ex 是 CSS 中的一个相对单位，指的是小写字母 x 的高度，没错
 
 ![](2018-09-19-10-03-19.png)
 
-所有与文字相关的间距都是从文字的上边缘和下边缘开始标注的，假设 line-height 是 1.5，font-size 大小是 14px，那么我们的半行距大小就是（套用上面的行距公式再除以 2）：(14px * 1.5 - 14px) / 2 = 14px * 0.25 = 3.5px。border 以及 line-height 等传统 CSS 属性并没有小数像素的概念（从 CSS3 动画的细腻程度可以看出），因此，这里的 3.5px 需要取整处理，如果标注的是文字上边距，则向下取整；如果是文字下边距，则向上取整，因为绝大多数的字体在内容区域中都是偏下的。所以，假设设计师标注了文字字形上边缘到图片下边缘间距 20px，则我们实际的 margin-top 值应该是 17px，因为 3.5px 向下取整是 3px。
+所有与文字相关的间距都是从文字的上边缘和下边缘开始标注的，假设 line-height 是 1.5，font-size 大小是 14px，那么我们的半行距大小就是（套用上面的行距公式再除以 2）：(14px _ 1.5 - 14px) / 2 = 14px _ 0.25 = 3.5px。border 以及 line-height 等传统 CSS 属性并没有小数像素的概念（从 CSS3 动画的细腻程度可以看出），因此，这里的 3.5px 需要取整处理，如果标注的是文字上边距，则向下取整；如果是文字下边距，则向上取整，因为绝大多数的字体在内容区域中都是偏下的。所以，假设设计师标注了文字字形上边缘到图片下边缘间距 20px，则我们实际的 margin-top 值应该是 17px，因为 3.5px 向下取整是 3px。
 
-### line-height如何通过改变行距实现文字排版
+### line-height 如何通过改变行距实现文字排版
 
-当line-height设为 2 的时候，半行距是一半的文字大小，两行文字中间的间隙差不多一个文字尺寸大小；如果 line-height 大小是 1 倍文字大小，则根据计算，半行距是 0，也就是两行文字会紧密依偎在一起；如果 line-height 值是 0.5，则此时的行距就是负值，虽然 line-height 不支持负值，但是行距可以为负值，此时，两行文字就是重叠纠缠在一起
+当 line-height 设为 2 的时候，半行距是一半的文字大小，两行文字中间的间隙差不多一个文字尺寸大小；如果 line-height 大小是 1 倍文字大小，则根据计算，半行距是 0，也就是两行文字会紧密依偎在一起；如果 line-height 值是 0.5，则此时的行距就是负值，虽然 line-height 不支持负值，但是行距可以为负值，此时，两行文字就是重叠纠缠在一起
 
 ![](2018-09-19-10-13-58.png)
 
-### 替换元素和块级元素中line-height的影响
+### 替换元素和块级元素中 line-height 的影响
 
 line-height 可以影响替换元素（如图片的高度）？
 
@@ -190,7 +190,7 @@ line-height 可以影响替换元素（如图片的高度）？
 <p>微软雅黑</p>
 ```
 
-字形明显偏下，font-size 12px～16px 很多，因此，虽然微软雅黑字体有下沉，但也就 1 像素的样子
+字形明显偏下，font-size 12px ～ 16px 很多，因此，虽然微软雅黑字体有下沉，但也就 1 像素的样子
 
 ![](2018-09-19-10-49-14.png)
 
@@ -200,10 +200,10 @@ line-height 可以影响替换元素（如图片的高度）？
 
 实现的原理大致如下:
 
-1. 多行文字使用一个标签包裹，然后设置 display 为 inline-block。好处在于既能重置外部的 line-height 为正常的大小，又能保持内联元素特性，从而可以设置 vertical-align 属性，以及产生一个非常关键的“行框盒子”。我们需要的其实并不是这个“行框盒子”，而是每个“行框盒子”都会附带的一个产物 — “幽灵空白节点”，即一个宽度为0、表现如同普通字符的看不见的“节点”。有了这个“幽灵空白节点”，我们的 line-height:120px 就有了作用的对象，从而相当于在.content 元素前面撑起了一个高度为 120px 的宽度为 0 的内联元素。
+1. 多行文字使用一个标签包裹，然后设置 display 为 inline-block。好处在于既能重置外部的 line-height 为正常的大小，又能保持内联元素特性，从而可以设置 vertical-align 属性，以及产生一个非常关键的“行框盒子”。我们需要的其实并不是这个“行框盒子”，而是每个“行框盒子”都会附带的一个产物 — “幽灵空白节点”，即一个宽度为 0、表现如同普通字符的看不见的“节点”。有了这个“幽灵空白节点”，我们的 line-height:120px 就有了作用的对象，从而相当于在.content 元素前面撑起了一个高度为 120px 的宽度为 0 的内联元素。
 2. 因为内联元素默认都是基线对齐的，所以我们通过对 .content 元素设置 vertical-align:middle 来调整多行文本的垂直位置，从而实现我们想要的“垂直居中”效果。如果是要借助 line-height 实现图片垂直居中效果，也是类似的原理和做法
 
-这里实现的“垂直居中”确实也不是真正意义上的垂直居中，也是“近似垂直居中”。还是上面的多行文本垂直居中的例子，如果我们捕获到多行文本元素的尺寸空间，截个图，然后通过尺子工具一量就会发现，上面的留空是41px，下面的留空是 39px，对啦，原来不是完全的垂直居中
+这里实现的“垂直居中”确实也不是真正意义上的垂直居中，也是“近似垂直居中”。还是上面的多行文本垂直居中的例子，如果我们捕获到多行文本元素的尺寸空间，截个图，然后通过尺子工具一量就会发现，上面的留空是 41px，下面的留空是 39px，对啦，原来不是完全的垂直居中
 
 ![](2018-09-19-11-20-20.png)
 
@@ -225,21 +225,20 @@ div {
 }
 ```
 
-此时两段 CSS 中 line-height 的属性值 normal 的计算值是不一样的，下表给出的是我在
-几个桌面浏览器的测试数据。
+此时两段 CSS 中 line-height 的属性值 normal 的计算值是不一样的，下表给出的是我在几个桌面浏览器的测试数据。
 
-|字体|chrome|Firefox|IE|
-|:--:|:--:|:--:|:--:|
-|微软雅黑|1.32|1.321|1.32|
-|宋体|1.141|1.142|1.141|
+|   字体   | chrome | Firefox |  IE   |
+| :------: | :----: | :-----: | :---: |
+| 微软雅黑 |  1.32  |  1.321  | 1.32  |
+|   宋体   | 1.141  |  1.142  | 1.141 |
 
 只要字体确定，各个浏览器下的默认 line-height 解析值基本上都是一样的，然而不同的浏览器所使用的默认中英文字体并不是一样的，并且不同操作系统的默认字体也不一样，换句话说，就是不同系统不同浏览器的默认 line-height 都是有差异的。因此，在实际开发的时候，对 line-height 的默认值进行重置是势在必行的。下面问题来了，line-height 应该重置为多大的值呢？是使用数值、百分比值还是长度值呢？
 
 要回答这个问题，我们需要先对这几种属性值有一定的了解才行
 
-- 数值，如 line-height:1.5，其最终的计算值是和当前 font-size 相乘后的值。例如，假设我们此时的 font-size 大小为 14px，则 line-height 计算值是 1.5*14px = 21px。
-- 百分比值，如 line-height:150%，其最终的计算值是和当前 font-size 相乘后的值。例如，假设我们此时的 font-size 大小为 14px，则 line-height 计算值是150%*14px=21px。
-- 长度值，也就是带单位的值，如 line-height:21px 或者 line-height:1.5em等，此处 em 是一个相对于 font-size 的相对单位，因此，line-height:1.5em 最终的计算值也是和当前font-size相乘后的值。例如，假设我们此时的font-size大小为 14px，则 line-height 计算值是 1.5*14px=21px。
+- 数值，如 line-height:1.5，其最终的计算值是和当前 font-size 相乘后的值。例如，假设我们此时的 font-size 大小为 14px，则 line-height 计算值是 1.5\*14px = 21px。
+- 百分比值，如 line-height:150%，其最终的计算值是和当前 font-size 相乘后的值。例如，假设我们此时的 font-size 大小为 14px，则 line-height 计算值是 150%\*14px=21px。
+- 长度值，也就是带单位的值，如 line-height:21px 或者 line-height:1.5em 等，此处 em 是一个相对于 font-size 的相对单位，因此，line-height:1.5em 最终的计算值也是和当前 font-size 相乘后的值。例如，假设我们此时的 font-size 大小为 14px，则 line-height 计算值是 1.5\*14px=21px。
 
 实际上，line-height:1.5 和另外两个有一点儿不同，那就是继承细节有所差别。如果使用数值作为 line-height 的属性值，那么所有的子元素继承的都是这个值；但是，如果使用百分比值或者长度值作为属性值，那么所有的子元素继承的是最终的计算值。什么意思呢？比方说下面 3 段 CSS 代码
 
@@ -266,11 +265,11 @@ body {
 <style>
   h3,
   p {
-    margin: 0; 
+    margin: 0;
   }
 
   h3 {
-    font-size: 32px; 
+    font-size: 32px;
   }
 
   p {
@@ -287,9 +286,9 @@ body {
 
 <iframe src="/examples/code-editor.html?html=%3Cdiv%20class%3D%22box%20box-1%22%3E%0A%20%20%20%20%3Ch3%3E%u6807%u9898%3C/h3%3E%0A%20%20%20%20%3Cp%3E%u5185%u5BB9%3C/p%3E%0A%3C/div%3E%0A%3Cdiv%20class%3D%22box%20box-2%22%3E%0A%20%20%20%20%3Ch3%3E%u6807%u9898%3C/h3%3E%0A%20%20%20%20%3Cp%3E%u5185%u5BB9%3C/p%3E%0A%3C/div%3E%0A%3Cdiv%20class%3D%22box%20box-3%22%3E%0A%20%20%20%20%3Ch3%3E%u6807%u9898%3C/h3%3E%0A%20%20%20%20%3Cp%3E%u5185%u5BB9%3C/p%3E%0A%3C/div%3E&css=.box%20%20%20%7B%20font-size%3A%2014px%3B%20%7D%0A.box-1%20%7B%20line-height%3A%201.5%3B%20%7D%0A.box-2%20%7B%20line-height%3A%20150%25%3B%20%7D%0A.box-3%20%7B%20line-height%3A%201.5em%3B%20%7D%0A%0Ah3%2C%20p%20%7B%0A%20%20%20%20margin%3A%200%3B%0A%7D%0Ah3%20%7B%20font-size%3A%2032px%3B%20%7D%0Ap%20%20%7B%20font-size%3A%2020px%3B%20%7D" width="400" height="200"></iframe>
 
-line-height:150% 和 line-height:1.5em 代码下的文字重叠的原因在于`<h3>`和`<p>`元素继承的并不是 150% 或者 1.5em，而是`<body>`元素的 line-height 计算值 21px，也就是说，`<h3>`和`<p>`元素的行高都是21px，考虑到`<h3>`的 font-size 大小为 32px，此时`<h3>`的半行间距就是-5.5px，因而“标题”文字和下面的“内容”文字发生重叠。
+line-height:150% 和 line-height:1.5em 代码下的文字重叠的原因在于`<h3>`和`<p>`元素继承的并不是 150% 或者 1.5em，而是`<body>`元素的 line-height 计算值 21px，也就是说，`<h3>`和`<p>`元素的行高都是 21px，考虑到`<h3>`的 font-size 大小为 32px，此时`<h3>`的半行间距就是-5.5px，因而“标题”文字和下面的“内容”文字发生重叠。
 
-但是 line-height:1.5 的继承则不同，`<h3>`和`<p>`元素的 line-height 继承的不是计算值，而是属性值 1.5，因此，对于`<h3>`元素，此时的行高计算值是 1.5 * 32px = 48px，`<p>`元素的行高计算值是 1.5 * 20px = 30px，于是，间距合理，排版舒适。
+但是 line-height:1.5 的继承则不同，`<h3>`和`<p>`元素的 line-height 继承的不是计算值，而是属性值 1.5，因此，对于`<h3>`元素，此时的行高计算值是 1.5 _ 32px = 48px，`<p>`元素的行高计算值是 1.5 _ 20px = 30px，于是，间距合理，排版舒适。
 
 实际上，line-height:150%、line-height:1.5em 要想有类似 line-height:1.5 的继承效果，也是可以实现的，类似下面的 CSS 代码：
 
@@ -301,7 +300,7 @@ line-height:150% 和 line-height:1.5em 代码下的文字重叠的原因在于`<
 
 既然 line-height 数值可以让元素天然继承相对计算特性，那这里的通配符岂不完全没必要？
 
-两者还是有差别的。HTML 中的很多替换元素，尤其表单类的替换元素，如输入框、按钮之类的，很多具有继承特性的CSS属性其自己也有一套，如 font-family、font-size 以及这里的 line-height。由于继承是属于最弱的权重，因此 body 中设置的 line-height 是无法影响到这些替换元素的，但是 * 作为一个选择器，就不一样了，会直接重置这些替换元素默认的 line-height，这其实是我们需要的，因此从道义上讲，使用 * 通配也是合理的。但又考虑到*的性能以及明明有继承却不好好利用的羞耻感，我们可以折中使用下面的方法：
+两者还是有差别的。HTML 中的很多替换元素，尤其表单类的替换元素，如输入框、按钮之类的，很多具有继承特性的 CSS 属性其自己也有一套，如 font-family、font-size 以及这里的 line-height。由于继承是属于最弱的权重，因此 body 中设置的 line-height 是无法影响到这些替换元素的，但是 _ 作为一个选择器，就不一样了，会直接重置这些替换元素默认的 line-height，这其实是我们需要的，因此从道义上讲，使用 _ 通配也是合理的。但又考虑到\*的性能以及明明有继承却不好好利用的羞耻感，我们可以折中使用下面的方法：
 
 ```css
 body {
@@ -316,7 +315,7 @@ button {
 
 ## 内联元素 line-height 的“大值特性”
 
-一个子元素行高是 20px，一个是96px，假如文字就 1 行，.box 元素的高度分别是多少？
+一个子元素行高是 20px，一个是 96px，假如文字就 1 行，.box 元素的高度分别是多少？
 
 <iframe src="/examples/code-editor.html?html=%3Cdiv%20class%3D%22box%20box1%22%3E%0A%20%20%20%20%3Cspan%3Espan%3A%20line-height%3A20px%3C/span%3E%0A%3C/div%3E%0A%3Cdiv%20class%3D%22box%20box2%22%3E%0A%20%20%20%20%3Cspan%3Espan%3A%20line-height%3A20px%3C/span%3E%0A%3C/div%3E&css=.box%20%7B%0A%20%20%20%20width%3A%20280px%3B%0A%20%20%20%20margin%3A%201em%20auto%3B%0A%20%20%20%20outline%3A%201px%20solid%20%23beceeb%3B%0A%20%20%20%20background%3A%20%23f0f3f9%3B%0A%7D%0A.box1%20%7B%0A%20%20%20%20line-height%3A%2096px%3B%0A%7D%0A.box1%20span%20%7B%0A%20%20%20%20line-height%3A%2020px%3B%0A%7D%0A.box2%20%7B%0A%20%20%20%20line-height%3A%2020px%3B%0A%7D%0A.box2%20span%20%7B%0A%20%20%20%20line-height%3A%2096px%3B%0A%7D" width="400" height="200"></iframe>
 
@@ -325,12 +324,10 @@ button {
 于是，就效果而言，我们的 HTML 实际上等同于：
 
 ```html
-<div class="box">
-  字符<span>内容...</span>
-</div>
+<div class="box">字符<span>内容...</span></div>
 ```
 
-这下就好理解了，当 .box 元素设置 line-height:96px 时，“字符”高度 96px；当设置 line-height:20px 时，`<span>`元素的高度则变成了 96px，而行框盒子的高度是由高度最高的那个“内联盒子”决定的，这就是 .box 元素高度永远都是最大的那个 line-height的原因。
+这下就好理解了，当 .box 元素设置 line-height:96px 时，“字符”高度 96px；当设置 line-height:20px 时，`<span>`元素的高度则变成了 96px，而行框盒子的高度是由高度最高的那个“内联盒子”决定的，这就是 .box 元素高度永远都是最大的那个 line-height 的原因。
 
 知道了原因也就能够对症下药，要避免“幽灵空白节点”的干扰，例如，设置`<span>`元素 display:inline-block，创建一个独立的“行框盒子”，这样`<span>`元素设置的 line-height:20px 就可以生效了，否则 line-height 都是 96px，这也是多行文字垂直居中示例中这么设置的原因。
 
@@ -385,7 +382,7 @@ vertical-align 的数值属性值在实际开发的时候实用性非常强
 - 其兼容性非常好
 - 其可以精确控制内联元素的垂直对齐位置
 
-假设有一个 display 值为 inline-block 的尺寸为 20 像素×20 像素的小图标，默认状态下，文字是明显偏下的，类似图 5-20 中“请选择”三个字和后面三角图形的位置关系。
+假设有一个 display 值为 inline-block 的尺寸为 20 像素 ×20 像素的小图标，默认状态下，文字是明显偏下的，类似图 5-20 中“请选择”三个字和后面三角图形的位置关系。
 
 这里，我们需要的是垂直居中对齐效果，所以很多人都使用具有强烈语义的 vertical-align:middle 控制图标的垂直位置，然而，由于 middle 并不是真正意义上的垂直居中，因此还是会有像素级别的误差，误差大小与字体和字号均有关。例如，在本例中，图标往下多偏移了 1 像素而导致容器的可视高度变成了 21 像素，如图 5-21 所示。
 
@@ -492,12 +489,12 @@ vertical-align 的数值属性值在实际开发的时候实用性非常强
 
 ```html
 <style>
-  .box { 
-    line-height: 32px; 
+  .box {
+    line-height: 32px;
   }
 
-  .box > span { 
-    font-size: 24px; 
+  .box > span {
+    font-size: 24px;
   }
 </style>
 <div class="box">
@@ -512,9 +509,7 @@ vertical-align 的数值属性值在实际开发的时候实用性非常强
 大家一定还记得图 5-16。这里也是类似的，`<span>`标签前面实际上有一个看不见的类似字符的“幽灵空白节点”。看不见的东西不利于理解，因此我们不妨使用一个看得见的字符 x 占位，同时“文字”后面也添加一个 x，便于看出基线位置，于是就有如下 HTML：
 
 ```html
-<div class="box">
-  x<span>文字 x</span>
-</div>
+<div class="box">x<span>文字 x</span></div>
 ```
 
 我们可以明显看到两处大小完全不同的文字。一处是字母 x 构成了一个“匿名内联盒子”，另一处是“文字 x”所在的`<span>`元素，构成了一个“内联盒子”。由于都受 line-height:32px 影响，因此，这两个“内联盒子”的高度都是 32px。下面关键的来了，对字符而言，font-size 越大字符的基线位置越往下，因为文字默认全部都是基线对齐，所以当字号大小不一样的两个文字在一起的时候，彼此就会发生上下位移，如果位移距离足够大，就会超过行高的限制，而导致出现意料之外的高度，如图 5-25 所示。
@@ -531,8 +526,7 @@ vertical-align 的数值属性值在实际开发的时候实用性非常强
   font-size: 24px;
 }
 
-.box > span { 
-
+.box > span {
 }
 ```
 
@@ -612,10 +606,10 @@ text-align:jusitfy 声明可以帮助我们实现兼容的列表两端对齐效�
   }
 </style>
 <div class="box">
-  <img src="1.jpg" width="96">
-  <img src="1.jpg" width="96">
-  <img src="1.jpg" width="96">
-  <img src="1.jpg" width="96">
+  <img src="1.jpg" width="96" />
+  <img src="1.jpg" width="96" />
+  <img src="1.jpg" width="96" />
+  <img src="1.jpg" width="96" />
   <i class="justify-fix"></i>
   <i class="justify-fix"></i>
   <i class="justify-fix"></i>
@@ -648,16 +642,15 @@ vertical-align 属性的默认值 baseline 在文本之类的内联元素那里�
 
 ```html
 <style>
-   .dib-baseline {
-     display: inline-block;
-     width: 150px; 
-     height: 150px;
-     border: 1px solid #cad5eb;
-     background-color: #f0f3f9;
-   }
+  .dib-baseline {
+    display: inline-block;
+    width: 150px;
+    height: 150px;
+    border: 1px solid #cad5eb;
+    background-color: #f0f3f9;
+  }
 </style>
-<span class="dib-baseline">
-</span>
+<span class="dib-baseline"> </span>
 <span class="dib-baseline">
   x-baseline
 </span>
@@ -675,7 +668,7 @@ vertical-align 属性的默认值 baseline 在文本之类的内联元素那里�
 
 ![](2018-10-09-19-53-10.png)
 
-现在行高 line-height 是 0，则字符 x-baseline 行间距就是-1em，也就是高度为 0，由于 CSS 世界中的行间距是上下等分的，因此，此时字符 x-baseline 的对齐点就是当前内容区域（可以看成文字选中背景区域，如图5-35 所示，截自 Firefox 浏览器）的垂直中心位置。由于图 5-34 中的 x-baseline 使用的是微软雅黑字体，字形下沉明显，因此，内容区域的垂直中心位置大约在字符 x 的上面 1/4 处，而这个位置就是字符 x-baseline 和最后一行图片下边缘交汇的地方
+现在行高 line-height 是 0，则字符 x-baseline 行间距就是-1em，也就是高度为 0，由于 CSS 世界中的行间距是上下等分的，因此，此时字符 x-baseline 的对齐点就是当前内容区域（可以看成文字选中背景区域，如图 5-35 所示，截自 Firefox 浏览器）的垂直中心位置。由于图 5-34 中的 x-baseline 使用的是微软雅黑字体，字形下沉明显，因此，内容区域的垂直中心位置大约在字符 x 的上面 1/4 处，而这个位置就是字符 x-baseline 和最后一行图片下边缘交汇的地方
 
 ![](2018-10-09-19-54-45.png)
 
@@ -685,7 +678,7 @@ vertical-align 属性的默认值 baseline 在文本之类的内联元素那里�
 
 1. 改变占位`<i>`元素的基线。这个很简单，只要在空的`<i>`元素里面随便放几个字符就可以了。例如，塞一个空格`&nbsp`;
 2. 改造“幽灵空白节点”的基线位置可以使用 font-size，当字体足够小时，基线和中线会重合在一起。什么时候字体足够小呢？就是 0。于是，如下 CSS 代码（line-height 如果是相对 font-size 的属性值，line-height:0 也可以省掉），看上去好像效果类似，都是没有间隙，但是 font-size:0 下的各类对齐效果都更彻底。
-3. 使用其他 vertical-align 对齐方式就是让`<i>`占位元素vertical-align:top/bottom之类，当前，前提还是先让容器 line-height:0
+3. 使用其他 vertical-align 对齐方式就是让`<i>`占位元素 vertical-align:top/bottom 之类，当前，前提还是先让容器 line-height:0
 
 ![](2018-10-09-19-58-24.png)
 
@@ -720,7 +713,7 @@ vertical-align 属性的默认值 baseline 在文本之类的内联元素那里�
 ```css
 .icon {
   display: inline-block;
-  width: 20px; 
+  width: 20px;
   height: 20px;
   background: url(sprite.png) no-repeat;
   white-space: nowrap;
@@ -753,8 +746,7 @@ vertical-align 属性的默认值 baseline 在文本之类的内联元素那里�
 
 已知一个`<div>`元素中有两张图片，其中后面一张图片设置了 vertial-align:bottom，请问这两张图片的底边缘是对齐的吗？
 
-不是对齐的。因为图片所在行框盒子的最低点是“幽灵空白节点”的底部，所以最后的表现会如图 5-39
-所示。
+不是对齐的。因为图片所在行框盒子的最低点是“幽灵空白节点”的底部，所以最后的表现会如图 5-39 所示。
 
 ![](2018-10-09-20-19-21.png)
 
@@ -779,7 +771,7 @@ vertial-align:middle 可以让内联元素的真正意义上的垂直中心位�
 
 如果想要实现真正意义上的垂直居中对齐，只要想办法让字符 x 的中心位置就是容器的垂直中心位置即可，通常的做法是设置 font-size:0，整个字符 x 缩小成了一个看不见的点，根据 line-height 的半行间距上下等分规则，这个点就正好是整个容器的垂直中心位置，这样就可以实现真正意义上的垂直居中对齐了。
 
-不过话又说回来，平常我们开发的时候，font-size 可能就 12px 或 14px，虽然最终的效果是“近似垂直居中”，但偏差也就 1px～2px 的样子，普通用户其实是很难觉察到其中的差异的，因此，是否非要真正意义上垂直居中，还是要根据项目的实现情况权衡做出决策。
+不过话又说回来，平常我们开发的时候，font-size 可能就 12px 或 14px，虽然最终的效果是“近似垂直居中”，但偏差也就 1px ～ 2px 的样子，普通用户其实是很难觉察到其中的差异的，因此，是否非要真正意义上垂直居中，还是要根据项目的实现情况权衡做出决策。
 
 ## 无处不在的 vertical-align
 
@@ -797,9 +789,9 @@ vertial-align:middle 可以让内联元素的真正意义上的垂直中心位�
 <style>
   .container {
     position: fixed;
-    top: 0; 
-    right: 0; 
-    bottom: 0; 
+    top: 0;
+    right: 0;
+    bottom: 0;
     left: 0;
     background-color: rgba(0, 0, 0, .5);
     /* 水平居中 */
@@ -841,6 +833,7 @@ vertial-align:middle 可以让内联元素的真正意义上的垂直中心位�
 - 节省了很多无谓的定位的 JavaScript 代码，也不需要浏览器 resize 事件之类的处理，当弹框内容动态变化的时候，也无须重新定位。
 - 性能更改、渲染速度更快，毕竟浏览器内置 CSS 的即时渲染显然比 JavaScript 的处理要更好。
 - 可以非常灵活控制垂直居中的比例，比方说设置：
+
   ```css
   .container:after {
     height: 90%;
@@ -848,6 +841,7 @@ vertial-align:middle 可以让内联元素的真正意义上的垂直中心位�
   ```
 
   则弹框不是垂直居中对齐，而是近似上下 2 : 3 这种感觉的对齐，反而会让人有视觉上居中的感觉。
+
 - 容器设置 overflow:auto 可以实现弹框高度超过一屏时依然能看见屏幕外的内容，传统实现方法则比较尴尬。
 
 这里的技巧还有一个关键点是半透明黑色蒙层和弹框元素是在一起的父子关系

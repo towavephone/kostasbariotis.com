@@ -13,7 +13,7 @@ export default function Tags({ pathContext, data }) {
   const { posts, tag, pagesSum, page, length } = pathContext;
 
   return (
-    <section className="main-content">
+    <section className='main-content'>
       <MetaTags
         title={`Tag ${tag}`}
         description={`All posts talking about ${tag}`}
@@ -22,14 +22,14 @@ export default function Tags({ pathContext, data }) {
         path={`/tag/${tag}`}
         noIndex={false}
       />
-      <section className="blog container tags-collection">
-        <div className="medium-8 medium-offset-2 large-10 large-offset-1">
-          <header className="header">
-            <h1 className="tag-title tag-page-title">{tag}</h1>
+      <section className='blog container tags-collection'>
+        <div className='medium-8 medium-offset-2 large-10 large-offset-1'>
+          <header className='header'>
+            <h1 className='tag-title tag-page-title'>{tag}</h1>
           </header>
-          <section className="tag-meta">共 {length} 篇文章</section>
+          <section className='tag-meta'>共 {length} 篇文章</section>
 
-          <div className="posts">
+          <div className='posts'>
             <Pagination page={page} pagesSum={pagesSum} tag={tag} />
             <Separator />
             <Posts posts={posts} />
@@ -44,7 +44,7 @@ export default function Tags({ pathContext, data }) {
 
 Tags.propTypes = {
   data: PropTypes.object,
-  pathContext: PropTypes.object,
+  pathContext: PropTypes.object
 };
 
 export const tagsQuery = graphql`

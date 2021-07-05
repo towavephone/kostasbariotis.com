@@ -58,7 +58,7 @@ server {
 
 基于域名的虚拟主机：使用最广的方式，上边例子中就是用了基于域名的虚拟主机，前提条件是你有多个域名分别对应每个站点，server_name 填写不同的域名即可
 
-# nginx添加账号密码验证
+# nginx 添加账号密码验证
 
 ```bash
 server {
@@ -72,7 +72,7 @@ server {
 有很多服务通过 nginx 访问，但本身没有提供账号认证的功能，就可以通过 nginx 提供的 authbase 账号密码认证来实现，可以用以下脚本来生成账号的密码
 
 ```bash
-# cat pwd.pl 
+# cat pwd.pl
 #!/usr/bin/perl
 use strict;
 
@@ -88,7 +88,7 @@ opf8BImqCAXww
 # echo "admin:opf8BImqCAXww" > key/auth.key
 ```
 
-# nginx开启列目录
+# nginx 开启列目录
 
 当你想让 nginx 作为文件下载服务器存在时，需要开启 nginx 列目录
 
@@ -125,7 +125,7 @@ server {
 
 当一个 nginx 服务上创建了多个虚拟主机时默认会从上到下查找，如果匹配不到虚拟主机则会返回第一个虚拟主机的内容，如果你想指定一个默认站点时，可以将这个站点的虚拟主机放在配置文件中第一个虚拟主机的位置，或者在这个站点的虚拟主机上配置 listen default
 
-# 不允许通过IP访问
+# 不允许通过 IP 访问
 
 ```bash
 server {
@@ -138,7 +138,7 @@ server {
 
 可能有一些未备案的域名或者你不希望的域名将服务器地址指向了你的服务器，这时候就会对你的站点造成一定的影响，需要禁止 IP 或未配置的域名访问，我们利用上边所说的 default 规则，将默认流量都转到 404 去
 
-上边这个方法比较粗暴，当然你也可以配置下所有未配置的地址访问时直接301重定向到你的网站去，也能为你的网站带来一定的流量
+上边这个方法比较粗暴，当然你也可以配置下所有未配置的地址访问时直接 301 重定向到你的网站去，也能为你的网站带来一定的流量
 
 ```bash
 server {
@@ -168,8 +168,8 @@ http {
     }
 
     server {
-        location /ops-coffee/ { 
-            proxy_pass http://tomcats; 
+        location /ops-coffee/ {
+            proxy_pass http://tomcats;
 
             proxy_set_header Host $host;
             proxy_set_header X-Real-IP $remote_addr;
@@ -187,25 +187,25 @@ http {
 
 1. 目标地址中不带 uri(proxy_pass `http://tomcats`)。此时新的目标 url 中，匹配的 uri 部分不做修改，原来是什么就是什么。
 
-      ```bash
-      location /ops-coffee/ {
-          proxy_pass  http://192.168.106.135:8181;
-      }
+   ```bash
+   location /ops-coffee/ {
+       proxy_pass  http://192.168.106.135:8181;
+   }
 
-      http://domain/ops-coffee/   -->     http://192.168.106.135:8181/ops-coffee/
-      http://domain/ops-coffee/action/abc   -->     http://192.168.106.135:8181/ops-coffee/action/abc
-      ```
+   http://domain/ops-coffee/   -->     http://192.168.106.135:8181/ops-coffee/
+   http://domain/ops-coffee/action/abc   -->     http://192.168.106.135:8181/ops-coffee/action/abc
+   ```
 
-2. 目标地址中带 uri (proxy_pass `http://tomcats/`，/也是uri) ,此时新的目标 url 中，匹配的 uri 部分将会被修改为该参数中的 uri。
+2. 目标地址中带 uri (proxy_pass `http://tomcats/`，/也是 uri) ,此时新的目标 url 中，匹配的 uri 部分将会被修改为该参数中的 uri。
 
-      ```bash
-      location /ops-coffee/ {
-          proxy_pass  http://192.168.106.135:8181/;
-      }
+   ```bash
+   location /ops-coffee/ {
+       proxy_pass  http://192.168.106.135:8181/;
+   }
 
-      http://domain/ops-coffee/   -->     http://192.168.106.135:8181
-      http://domain/ops-coffee/action/abc   -->     http://192.168.106.135:8181/action/abc
-      ```
+   http://domain/ops-coffee/   -->     http://192.168.106.135:8181
+   http://domain/ops-coffee/action/abc   -->     http://192.168.106.135:8181/action/abc
+   ```
 
 # nginx upstream 开启 keepalive
 
@@ -225,7 +225,7 @@ server {
 }
 ```
 
-nginx 在项目中大多数情况下会作为反向代理使用，例如 nginx 后接 tomcat，nginx 后接 php等，这时我们开启 nginx 和后端服务之间的 keepalive 能够减少频繁创建 TCP 连接造成的资源消耗，配置如上
+nginx 在项目中大多数情况下会作为反向代理使用，例如 nginx 后接 tomcat，nginx 后接 php 等，这时我们开启 nginx 和后端服务之间的 keepalive 能够减少频繁创建 TCP 连接造成的资源消耗，配置如上
 
 keepalive: 指定每个 nginxworker 可以保持的最大连接数量为 1024，默认不设置，即 nginx 作为 client 时 keepalive 未生效
 
@@ -233,7 +233,7 @@ keepalive: 指定每个 nginxworker 可以保持的最大连接数量为 1024，
 
 `proxy_set_header Connection ""`: 为了兼容老的协议以及防止 http 头中有 Connection close 导致的 keepalive 失效，这里需要及时清掉 HTTP 头部的 Connection
 
-# 404自动跳转到首页
+# 404 自动跳转到首页
 
 ```bash
 server {

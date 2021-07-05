@@ -26,8 +26,8 @@ Webpack 在执行的时候，以配置的 entry 为入口，递归解析文件�
 1. 使用 cache-loader 可以将编译结果写入硬盘缓存，Webpack 再次构建时如果文件没有发生变化则会直接拉取缓存
 2. 还有一部分 loader 自带缓存配置，比如 babel-loader，可以配置参数 cacheDirectory 使用缓存，将每次的编译结果写进磁盘（默认在 node_modules/.cache/babel-loader 目录），UglifyJsPlugin 插件中的 cache 选项
 3. terser-webpack-plugin 开启缓存
-3. hard-source-webpack-plugin 插件
-4. webpack.DllPlugin 插件
+4. hard-source-webpack-plugin 插件
+5. webpack.DllPlugin 插件
 
 ## 现在的方案
 
@@ -47,7 +47,7 @@ module.exports = {
 
 # 优化长期缓存
 
-Webpack 5 针对 moduleId  和 chunkId 的计算方式进行了优化，增加确定性的 moduleId 和 chunkId 的生成策略。moduleId 根据上下文模块路径，chunkId 根据 chunk 内容计算，最后为 moduleId 和 chunkId 生成 3 - 4 位的数字 id，实现长期缓存，生产环境下默认开启。
+Webpack 5 针对 moduleId 和 chunkId 的计算方式进行了优化，增加确定性的 moduleId 和 chunkId 的生成策略。moduleId 根据上下文模块路径，chunkId 根据 chunk 内容计算，最后为 moduleId 和 chunkId 生成 3 - 4 位的数字 id，实现长期缓存，生产环境下默认开启。
 
 ## 对比原来的 moduleId
 
@@ -66,7 +66,7 @@ Webpack 5 针对 moduleId  和 chunkId 的计算方式进行了优化，增加�
 ```js
 // index.js
 import sha256 from 'crypto-js/sha256';
- 
+
 const hashDigest = sha256('hello world');
 console.log(hashDigest);
 ```
@@ -97,11 +97,11 @@ export const a = 'aaaaaaaaaa';
 export const b = 'bbbbbbbbbb';
 
 // module.js
-import * as inner from "./inner";
+import * as inner from './inner';
 export { inner };
 
 // index.js
-import * as module from "./module";
+import * as module from './module';
 console.log(module.inner.a);
 ```
 
@@ -154,18 +154,18 @@ UMD 优点在 runtime。缺点也明显，体积优化不方便，容易有版�
 
 ```js
 // app1 & app2: index.js
-import App from "./App";
-import React from "react";
-import ReactDOM from "react-dom";
+import App from './App';
+import React from 'react';
+import ReactDOM from 'react-dom';
 
-ReactDOM.render(<App />, document.getElementById("root"));
+ReactDOM.render(<App />, document.getElementById('root'));
 ```
 
 app2 生产了 Button 组件：
 
 ```js
 // app2: Button.js
-import React from "react";
+import React from 'react';
 
 const Button = () => <button>App 2 Button</button>;
 
@@ -176,8 +176,8 @@ app2 自身消费 Button 组件：
 
 ```js
 // app2: App.js
-import LocalButton from "./Button";
-import React from "react";
+import LocalButton from './Button';
+import React from 'react';
 
 const App = () => (
   <div>
@@ -193,16 +193,15 @@ export default App;
 app1 引用 app2 的 Button 组件：
 
 ```js
-
 // app1: App.js
-import React from "react";
-const RemoteButton = React.lazy(() => import("app2/Button"));
+import React from 'react';
+const RemoteButton = React.lazy(() => import('app2/Button'));
 
 const App = () => (
   <div>
     <h1>Basic Host-Remote</h1>
     <h2>App 1</h2>
-    <React.Suspense fallback="Loading Button">
+    <React.Suspense fallback='Loading Button'>
       <RemoteButton />
     </React.Suspense>
   </div>
@@ -215,39 +214,39 @@ export default App;
 
 ```js
 // app2：webpack.config.js
-const HtmlWebpackPlugin = require("html-webpack-plugin");
-const { ModuleFederationPlugin } = require("webpack").container;
-const path = require("path");
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+const { ModuleFederationPlugin } = require('webpack').container;
+const path = require('path');
 
 module.exports = {
-  entry: "./src/index",
-  mode: "development",
+  entry: './src/index',
+  mode: 'development',
   devServer: {
-    contentBase: path.join(__dirname, "dist"),
-    port: 3002,
+    contentBase: path.join(__dirname, 'dist'),
+    port: 3002
   },
   output: {
-    publicPath: "http://localhost:3002/",
+    publicPath: 'http://localhost:3002/'
   },
   module: {
     rules: [
       // ...
-    ],
+    ]
   },
   plugins: [
     new ModuleFederationPlugin({
-      name: "app2Lib",
-      library: { type: "var", name: "app2Lib" },
-      filename: "app2-remote-entry.js",
+      name: 'app2Lib',
+      library: { type: 'var', name: 'app2Lib' },
+      filename: 'app2-remote-entry.js',
       exposes: {
-        Button: "./src/Button",
+        Button: './src/Button'
       },
-      shared: ["react", "react-dom"],
+      shared: ['react', 'react-dom']
     }),
     new HtmlWebpackPlugin({
-      template: "./index.html",
-    }),
-  ],
+      template: './index.html'
+    })
+  ]
 };
 ```
 
@@ -256,38 +255,38 @@ module.exports = {
 app1 的配置文件：
 
 ```js
-const HtmlWebpackPlugin = require("html-webpack-plugin");
-const { ModuleFederationPlugin } = require("webpack").container;
-const path = require("path");
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+const { ModuleFederationPlugin } = require('webpack').container;
+const path = require('path');
 
 module.exports = {
-  entry: "./src/index",
-  mode: "development",
+  entry: './src/index',
+  mode: 'development',
   devServer: {
-    contentBase: path.join(__dirname, "dist"),
-    port: 3001,
+    contentBase: path.join(__dirname, 'dist'),
+    port: 3001
   },
   output: {
-    publicPath: "http://localhost:3001/",
+    publicPath: 'http://localhost:3001/'
   },
   module: {
     rules: [
       // ...
-    ],
+    ]
   },
   plugins: [
     new ModuleFederationPlugin({
-      name: "app1",
-      library: { type: "var", name: "app1" },
+      name: 'app1',
+      library: { type: 'var', name: 'app1' },
       remotes: {
-        app2: "app2Lib",
+        app2: 'app2Lib'
       },
-      shared: ["react", "react-dom"],
+      shared: ['react', 'react-dom']
     }),
     new HtmlWebpackPlugin({
-      template: "./index.html",
-    }),
-  ],
+      template: './index.html'
+    })
+  ]
 };
 ```
 
@@ -332,18 +331,23 @@ data[0] 即 webpack/container/remote-overrides/a46c3e，这里提供了 app2 需
 ```js
 module.exports = (external) => {
   if (external.override) {
-    external.override(Object.assign({
-      "react": () => {
-        return Promise.resolve().then(() => {
-          return () => __webpack_require__(/*! react */ "./node_modules/react/index.js")
-        })
-      },
-      "react-dom": () => {
-        return Promise.resolve().then(() => {
-          return () => __webpack_require__(/*! react-dom */ "./node_modules/react-dom/index.js")
-        })
-      }
-    }, __webpack_require__.O))
+    external.override(
+      Object.assign(
+        {
+          react: () => {
+            return Promise.resolve().then(() => {
+              return () => __webpack_require__(/*! react */ './node_modules/react/index.js');
+            });
+          },
+          'react-dom': () => {
+            return Promise.resolve().then(() => {
+              return () => __webpack_require__(/*! react-dom */ './node_modules/react-dom/index.js');
+            });
+          }
+        },
+        __webpack_require__.O
+      )
+    );
   }
   return external;
 };
@@ -367,13 +371,11 @@ app2Lib 对象拥有两个方法，具体为：
 
 ```js
 var get = (module) => {
-  return (
-    __webpack_require__.o(moduleMap, module)
-      ? moduleMap[module]()
-      : Promise.resolve().then(() => {
-        throw new Error('Module \"' + module + '\" does not exist in container.');
-      })
-  );
+  return __webpack_require__.o(moduleMap, module)
+    ? moduleMap[module]()
+    : Promise.resolve().then(() => {
+        throw new Error('Module "' + module + '" does not exist in container.');
+      });
 };
 
 var override = (override) => {
@@ -385,10 +387,10 @@ var override = (override) => {
 
 ```js
 var moduleMap = {
-  "Button": () => {
-    return __webpack_require__.e("src_Button_js").then(() => 
-      () => __webpack_require__(/*! ./src/Button */ "./src/Button.js")
-    );
+  Button: () => {
+    return __webpack_require__
+      .e('src_Button_js')
+      .then(() => () => __webpack_require__(/*! ./src/Button */ './src/Button.js'));
   }
 };
 ```
@@ -400,11 +402,11 @@ app2 中指明了需要依赖 react、react-dom，并期望消费的应用提供
 ```js
 plugins: [
   new ModuleFederationPlugin({
-    name: "app1",
-    library: { type: "var", name: "app1" },
+    name: 'app1',
+    library: { type: 'var', name: 'app1' },
     remotes: {
-      'app2': "app2Lib",
-    },
+      app2: 'app2Lib'
+    }
     // shared: ["react", "react-dom"],
     // 版本不一致同理
     // shared: {
@@ -413,9 +415,9 @@ plugins: [
     // },
   }),
   new HtmlWebpackPlugin({
-    template: "./index.html",
-  }),
-]
+    template: './index.html'
+  })
+];
 ```
 
 那么，刚才 app1 main.js 中的 data[0] 即 webpack/container/remote-overrides/a46c3e 会变为：
@@ -457,4 +459,3 @@ app1 则从 app2 加载 react 依赖：
 - SplitChunks 支持更灵活的资源拆分
 - 不包含 JS 代码的 Chunk 将不再生成 JS 文件
 - Output 默认生成 ES6 规范代码，也支持配置为 5 - 11
-

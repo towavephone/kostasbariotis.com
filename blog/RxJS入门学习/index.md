@@ -17,7 +17,7 @@ tags: 前端, RxJS
 Rx.Observable.of('foo', 'bar');
 
 // 来自数组
-Rx.Observable.from([1,2,3]);
+Rx.Observable.from([1, 2, 3]);
 
 // 来自事件
 Rx.Observable.fromEvent(document.querySelector('button'), 'click');
@@ -28,7 +28,7 @@ Rx.Observable.fromPromise(fetch('/users'));
 // 来自回调函数(最后一个参数得是回调函数，比如下面的 cb)
 // fs.exists = (path, cb(exists))
 var exists = Rx.Observable.bindCallback(fs.exists);
-exists('file.txt').subscribe(exists => console.log('Does file exist?', exists));
+exists('file.txt').subscribe((exists) => console.log('Does file exist?', exists));
 
 // 来自回调函数(最后一个参数得是回调函数，比如下面的 cb)
 // fs.rename = (pathA, pathB, cb(err, result))
@@ -42,18 +42,18 @@ rename('file.txt', 'else.txt').subscribe(() => console.log('Renamed!'));
 
 ```js
 var myObservable = new Rx.Subject();
-myObservable.subscribe(value => console.log(value));
+myObservable.subscribe((value) => console.log(value));
 myObservable.next('foo');
 ```
 
 在内部产生新事件。
 
 ```js
-var myObservable = Rx.Observable.create(observer => {
+var myObservable = Rx.Observable.create((observer) => {
   observer.next('foo');
   setTimeout(() => observer.next('bar'), 1000);
 });
-myObservable.subscribe(value => console.log(value));
+myObservable.subscribe((value) => console.log(value));
 ```
 
 选择哪种方式需要根据场景。当你想要包装随时间推移产生值的功能时，普通的 Observable 就已经很好了。使用 Subject，你可以从任何地方触发新事件，并且将已存在的 observables 和它进行连接。
@@ -65,35 +65,41 @@ myObservable.subscribe(value => console.log(value));
 var input = Rx.Observable.fromEvent(document.querySelector('input'), 'input');
 
 // 过滤掉小于3个字符长度的目标值
-input.filter(event => event.target.value.length > 2)
-  .map(event => event.target.value)
-  .subscribe(value => console.log(value)); // "hel"
+input
+  .filter((event) => event.target.value.length > 2)
+  .map((event) => event.target.value)
+  .subscribe((value) => console.log(value)); // "hel"
 
 // 延迟事件
-input.delay(200)
-  .map(event => event.target.value)
-  .subscribe(value => console.log(value)); // "h" -200ms-> "e" -200ms-> "l" ...
+input
+  .delay(200)
+  .map((event) => event.target.value)
+  .subscribe((value) => console.log(value)); // "h" -200ms-> "e" -200ms-> "l" ...
 
 // 每200ms只能通过一个事件
-input.throttleTime(200)
-  .map(event => event.target.value)
-  .subscribe(value => console.log(value)); // "h" -200ms-> "w"
+input
+  .throttleTime(200)
+  .map((event) => event.target.value)
+  .subscribe((value) => console.log(value)); // "h" -200ms-> "w"
 
 // 停止输入后200ms方能通过最新的那个事件
-input.debounceTime(200)
-  .map(event => event.target.value)
-  .subscribe(value => console.log(value)); // "o" -200ms-> "d"
+input
+  .debounceTime(200)
+  .map((event) => event.target.value)
+  .subscribe((value) => console.log(value)); // "o" -200ms-> "d"
 
 // 在3次事件后停止事件流
-input.take(3)
-  .map(event => event.target.value)
-  .subscribe(value => console.log(value)); // "hel"
+input
+  .take(3)
+  .map((event) => event.target.value)
+  .subscribe((value) => console.log(value)); // "hel"
 
 // 直到其他 observable 触发事件才停止事件流
 var stopStream = Rx.Observable.fromEvent(document.querySelector('button'), 'click');
-input.takeUntil(stopStream)
-  .map(event => event.target.value)
-  .subscribe(value => console.log(value)); // "hello" (点击才能看到)
+input
+  .takeUntil(stopStream)
+  .map((event) => event.target.value)
+  .subscribe((value) => console.log(value)); // "hello" (点击才能看到)
 ```
 
 ## 产生值
@@ -103,39 +109,43 @@ input.takeUntil(stopStream)
 var input = Rx.Observable.fromEvent(document.querySelector('input'), 'input');
 
 // 传递一个新的值
-input.map(event => event.target.value)
-  .subscribe(value => console.log(value)); // "h"
+input.map((event) => event.target.value).subscribe((value) => console.log(value)); // "h"
 
 // 通过提取属性传递一个新的值
-input.pluck('target', 'value')
-  .subscribe(value => console.log(value)); // "h"
+input.pluck('target', 'value').subscribe((value) => console.log(value)); // "h"
 
 // 传递之前的两个值
-input.pluck('target', 'value').pairwise()
-  .subscribe(value => console.log(value)); // ["h", "he"]
+input
+  .pluck('target', 'value')
+  .pairwise()
+  .subscribe((value) => console.log(value)); // ["h", "he"]
 
 // 只会通过唯一的值，即不会传递当前与之前的项都不相同的值
-input.pluck('data').distinct()
-  .subscribe(value => console.log(value)); // "helo wrd"
+input
+  .pluck('data')
+  .distinct()
+  .subscribe((value) => console.log(value)); // "helo wrd"
 
 // 不会传递当前与前一项重复的值
-input.pluck('data').distinctUntilChanged()
-  .subscribe(value => console.log(value)); // "helo world"
+input
+  .pluck('data')
+  .distinctUntilChanged()
+  .subscribe((value) => console.log(value)); // "helo world"
 ```
 
 # 创建应用
 
 RxJS 是个很好的工具，可以让你的代码更少出错。它是通过使用无状态的纯函数来做到这点的。但是应用是有状态的，那么我们如何将 RxJS 的无状态世界与我们应用的有状态世界连接起来呢？
 
-我们来创建一个只存储值为0的简单状态。每次点击我们想要增加存储在状态中的 count 。
+我们来创建一个只存储值为 0 的简单状态。每次点击我们想要增加存储在状态中的 count 。
 
 ```js
 var button = document.querySelector('button');
 Rx.Observable.fromEvent(button, 'click')
   // 对流进行 scan (reduce) 操作，以获取 count 的值
-  .scan(count => count + 1, 0)
+  .scan((count) => count + 1, 0)
   // 每次改变时都在元素上设置 count
-  .subscribe(count => document.querySelector('#count').innerHTML = count);
+  .subscribe((count) => (document.querySelector('#count').innerHTML = count));
 ```
 
 所以产生状态是在 RxJS 的世界中完成的，但最后一行代码中改变 DOM 却是一种副作用。
@@ -148,19 +158,20 @@ Rx.Observable.fromEvent(button, 'click')
 var increaseButton = document.querySelector('#increase');
 var increase = Rx.Observable.fromEvent(increaseButton, 'click')
   // 我们映射到一个函数，它会改变状态
-  .map(() => state => Object.assign({}, state, {count: state.count + 1}));
+  .map(() => (state) => Object.assign({}, state, { count: state.count + 1 }));
 ```
 
 我们在这所做的是将点击事件映射成改变状态的函数。所以我们映射到一个函数，而不是映射到一个值。函数会改变状态存储中的状态。那么现在我们来看下如何实际地做出改变。
 
 ```js
 var increaseButton = document.querySelector('#increase');
-var increase = Rx.Observable.fromEvent(increaseButton, 'click')
-  .map(() => state => Object.assign({}, state, {count: state.count + 1}));
+var increase = Rx.Observable.fromEvent(increaseButton, 'click').map(() => (state) =>
+  Object.assign({}, state, { count: state.count + 1 })
+);
 
 // 我们使用初始状态创建了一个对象。每当状态发生变化时，我们会接收到改变状态的函数，
 // 并把状态传递给它。然后返回新的状态并准备在下次点击后再次更改状态。
-var state = increase.scan((state, changeFn) => changeFn(state), {count: 0});
+var state = increase.scan((state, changeFn) => changeFn(state), { count: 0 });
 ```
 
 现在我们还可以再添加几个 observables ，它们同样也可以更改同一个状态存储。
@@ -169,24 +180,20 @@ var state = increase.scan((state, changeFn) => changeFn(state), {count: 0});
 var increaseButton = document.querySelector('#increase');
 var increase = Rx.Observable.fromEvent(increaseButton, 'click')
   // 我们再一次映射到一个函数，它会增加 count
-  .map(() => state => Object.assign({}, state, {count: state.count + 1}));
+  .map(() => (state) => Object.assign({}, state, { count: state.count + 1 }));
 
 var decreaseButton = document.querySelector('#decrease');
 var decrease = Rx.Observable.fromEvent(decreaseButton, 'click')
-  // 我们还是映射到一个函数，它会减少 count 
-  .map(() => state => Object.assign({}, state, {count: state.count - 1}));
+  // 我们还是映射到一个函数，它会减少 count
+  .map(() => (state) => Object.assign({}, state, { count: state.count - 1 }));
 
 var inputElement = document.querySelector('#input');
 var input = Rx.Observable.fromEvent(inputElement, 'keypress')
   // 我们还将按键事件映射成一个函数，它会产生一个叫做 inputValue 状态
-  .map(event => state => Object.assign({}, state, {inputValue: event.target.value}));
+  .map((event) => (state) => Object.assign({}, state, { inputValue: event.target.value }));
 
 // 我们将这三个改变状态的 observables 进行合并
-var state = Rx.Observable.merge(
-  increase,
-  decrease,
-  input
-).scan((state, changeFn) => changeFn(state), {
+var state = Rx.Observable.merge(increase, decrease, input).scan((state, changeFn) => changeFn(state), {
   count: 0,
   inputValue: ''
 });
@@ -225,10 +232,10 @@ var initialState = {
   foo: 'bar'
 };
 
-var state = Observable.merge(
-  someObservable,
-  someOtherObservable
-).scan((state, changeFn) => changeFn(state), Immutable.fromJS(initialState));
+var state = Observable.merge(someObservable, someOtherObservable).scan(
+  (state, changeFn) => changeFn(state),
+  Immutable.fromJS(initialState)
+);
 
 export default state;
 ```
@@ -238,7 +245,7 @@ export default state;
 ```js
 import state from './state';
 
-state.subscribe(state => {
+state.subscribe((state) => {
   document.querySelector('#text').innerHTML = state.get('foo');
 });
 ```
@@ -253,14 +260,14 @@ import messages from './someObservable';
 class MyComponent extends ObservableComponent {
   constructor(props) {
     super(props);
-    this.state = {messages: []};
+    this.state = { messages: [] };
   }
   componentDidMount() {
     this.messages = messages
       // 在数组中累积我们的消息
       .scan((messages, message) => [message].concat(messages), [])
       // 当得到一条新消息时进行渲染
-      .subscribe(messages => this.setState({messages: messages}));
+      .subscribe((messages) => this.setState({ messages: messages }));
   }
   componentWillUnmount() {
     this.messages.unsubscribe();
@@ -269,7 +276,9 @@ class MyComponent extends ObservableComponent {
     return (
       <div>
         <ul>
-          {this.state.messages.map(message => <li>{message.text}</li>)}
+          {this.state.messages.map((message) => (
+            <li>{message.text}</li>
+          ))}
         </ul>
       </div>
     );

@@ -2,7 +2,7 @@
 title: 编译器之旅（八）——IF语句
 date: 2020-3-16 17:22:09
 categories:
-- 计算机基础
+  - 计算机基础
 tags: 编译原理, IF语句
 path: /tour-of-compiler-if-statements/
 ---
@@ -18,7 +18,7 @@ path: /tour-of-compiler-if-statements/
 IF 语句的语法为：
 
 ```
-if (condition is true) 
+if (condition is true)
   perform this first block of code
 else
   perform this other block of code
@@ -52,7 +52,7 @@ int x; x= 7 < 9;         From input04
 movq    $7, %r8
 movq    $9, %r9
 cmpq    %r9, %r8
-setl    %r9b        Set if less than 
+setl    %r9b        Set if less than
 andq    $255,%r9
 ```
 
@@ -77,7 +77,7 @@ L1:
 
 ## 新元素和其他悬空元素
 
-我们将需要使用我们的语言的一堆新元素，我暂时也想避免其他问题。为此我更改了语法，以便所有语句组都用 `{...}` 大括号括起来；我称这种分组为 `复合语句`。我们还需要使用括号 `(...)` 来容纳 IF 表达式以及关键字 if 和 else，因此新元素为（defs.h中的代码）：
+我们将需要使用我们的语言的一堆新元素，我暂时也想避免其他问题。为此我更改了语法，以便所有语句组都用 `{...}` 大括号括起来；我称这种分组为 `复合语句`。我们还需要使用括号 `(...)` 来容纳 IF 表达式以及关键字 if 和 else，因此新元素为（defs.h 中的代码）：
 
 ```
 T_LBRACE, T_RBRACE, T_LPAREN, T_RPAREN,
@@ -227,7 +227,7 @@ struct ASTnode *compound_statement(void) {
 
 ## 解析 IF 语法
 
-因为我们是递归下降解析器，所以解析IF语句还不错：
+因为我们是递归下降解析器，所以解析 IF 语句还不错：
 
 ```c
 // Parse an IF statement including
@@ -263,7 +263,7 @@ struct ASTnode *if_statement(void) {
 }
 ```
 
-现在我不想处理类似的输入 if (x-2)，因此我已经限制了二进制表达式 binexpr() 只能具有一个根，该根是六个比较运算符 A_EQ，A_NE，A_LT，A_GT，A_LE 或 A_GE之一。
+现在我不想处理类似的输入 if (x-2)，因此我已经限制了二进制表达式 binexpr() 只能具有一个根，该根是六个比较运算符 A_EQ，A_NE，A_LT，A_GT，A_LE 或 A_GE 之一。
 
 ## 三个子树
 
@@ -350,7 +350,7 @@ stmt4;
 
 ## 通用代码生成器
 
-现在我们的 AST 节点有多个子节点，我们的通用代码生成器将变得更加复杂。另外对于比较运算符，我们需要知道是否要在 IF 语句（相反的比较中为跳转）或正则表达式（正常的比较中将寄存器设置为1或0）的一部分中进行比较。
+现在我们的 AST 节点有多个子节点，我们的通用代码生成器将变得更加复杂。另外对于比较运算符，我们需要知道是否要在 IF 语句（相反的比较中为跳转）或正则表达式（正常的比较中将寄存器设置为 1 或 0）的一部分中进行比较。
 
 为此我进行了修改 getAST() 以便我们可以传递父 AST 节点操作：
 
@@ -468,7 +468,7 @@ genAST(n->mid, NOREG, n->op);         // Statements after 'if'
 cgjump(Lend);                         // Jump to Lend
 cglabel(Lfalse);                      // Lfalse: label
 genAST(n->right, NOREG, n->op);       // Statements after 'else'
-cglabel(Lend);                        
+cglabel(Lend);
 ```
 
 ## x86-64 代码生成功能
@@ -498,7 +498,7 @@ int cgcompare_and_set(int ASTop, int r1, int r2) {
 }
 ```
 
-我还发现了一条 x86-64 指令 movzbq，该指令将一个寄存器中的最低字节移出并将其扩展为适合 64 位寄存器，我现在正在使用它而不是旧代码中的 and $255。
+我还发现了一条 x86-64 指令 movzbq，该指令将一个寄存器中的最低字节移出并将其扩展为适合 64 位寄存器，我现在正在使用它而不是旧代码中的 and \$255。
 
 我们需要一个函数来生成标签并跳转到它：
 

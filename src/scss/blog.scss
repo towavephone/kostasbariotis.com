@@ -298,7 +298,7 @@
           display: inline-block;
         }
         &::before {
-          content: "# ";
+          content: '# ';
           color: $link-color;
         }
       }
@@ -314,7 +314,7 @@
         counter-reset: catalog;
       }
       li::before {
-        content: "# " counters(catalog, ".") " ";
+        content: '# ' counters(catalog, '.') ' ';
         counter-increment: catalog;
         // color: $link-color;
       }
@@ -339,7 +339,8 @@
       left: 25px;
     }
 
-    [class^="icon-"]:before, [class*=" icon-"]:before {
+    [class^='icon-']:before,
+    [class*=' icon-']:before {
       vertical-align: 4px;
     }
   }
@@ -383,19 +384,19 @@
   border-left: 0.25em solid #f99;
 }
 
-code[class*="language-"] {
+code[class*='language-'] {
   word-wrap: break-word;
   word-break: break-all;
 }
 
-:not(pre) > code[class*="language-"] {
+:not(pre) > code[class*='language-'] {
   color: $link-color;
 }
 
 .gatsby-highlight {
   margin-bottom: 1em;
   overflow: auto;
-  pre[class*="language-"] {
+  pre[class*='language-'] {
     float: left;
     min-width: 100%;
     overflow-y: auto !important;

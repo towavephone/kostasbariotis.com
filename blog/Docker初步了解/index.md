@@ -4,17 +4,16 @@ date: 2017-12-11 23:32:56
 path: /docker-know/
 tags: 后端, Docker, Docker初级入门
 categories:
-- 运维
+  - 运维
 ---
 
->翻译[深入 Docker：容器和镜像](http://opensolitude.com/2015/04/26/discovering-docker-containers-images.html)这篇文章，通过一些实例向大家介绍`Docker`容器和镜像的具体区别。
+> 翻译[深入 Docker：容器和镜像](http://opensolitude.com/2015/04/26/discovering-docker-containers-images.html)这篇文章，通过一些实例向大家介绍`Docker`容器和镜像的具体区别。
 
 `Docker`是一个非常有趣的项目。它自己宣称可以减轻部署服务器的难度，当然我相信里面有炒作的成分。但是实际使用后，我觉得 Docker 的表现还是可圈可点的。本篇文章将会从头开始进行操作镜像，同时试图通过实例和文档来解答实际操作 Docker 中遇到的问题。
 
 本文仅仅是试图使用深入讲解`Docker`镜像和容器的基础知识，而不是像了解 [Docker：一种更好的虚拟化方式](https://redstack.wordpress.com/2014/11/14/gettingn-to-know-docker-a-better-way-to-do-virtualization/)一样试图总结出 Docker 的所有操作方法。
 
 如果你打算按照本文操作的话，那么你首先有台安装好 Docker 的 Linux 主机。使用 Docker Machine 安装 Docker 很简单，但是同时我也推荐使用 Digital Ocean 中已经安装好 Docker 的云主机直接操作。本篇文章所使用的 Docker 版本为 1.6.0，同时文中所有的命令都需要 root 权限。
-
 
 ## 技巧
 
@@ -70,10 +69,9 @@ b3d8c3ef31a0        ubuntu:latest         "cat /message.txt"   33 minutes ago   
 
 ## 容器到底去哪儿了？
 
->刚刚的问题是：“容器去哪儿了？”
-现在的问题是：“容器到底去哪儿了？我需要里面的 message.txt 文件，怎么才能取出来？”
+> 刚刚的问题是：“容器去哪儿了？” 现在的问题是：“容器到底去哪儿了？我需要里面的 message.txt 文件，怎么才能取出来？”
 
-已经停止的容器中的数据并不会消失，而是被存储在相应的“改动层”中。我们可以通过 docker ps -a 进行查找容器。在这个例子中，我们要找的容器便是执行了 /bin/bash 命令的容器，ID是 1f608dc4e5b4，名称是 insane_wright。
+已经停止的容器中的数据并不会消失，而是被存储在相应的“改动层”中。我们可以通过 docker ps -a 进行查找容器。在这个例子中，我们要找的容器便是执行了 /bin/bash 命令的容器，ID 是 1f608dc4e5b4，名称是 insane_wright。
 
 对比起 ID，容器的名称更加易读。因此在本篇文章后面的例子中，我都将用名称来进行操作和识别容器。当然，你也可以在 docker run 的时候用 --name 参数指定容器的名称。
 
@@ -90,7 +88,7 @@ hello docker
 
 ## 容器能不能提取出来？
 
->现在我们已经运行了自己的容器，容器内也有独立的数据，我们也知道如何获取容器内的数据，那么问题来了：我们能不能把这个状态下的容器给保存起来？
+> 现在我们已经运行了自己的容器，容器内也有独立的数据，我们也知道如何获取容器内的数据，那么问题来了：我们能不能把这个状态下的容器给保存起来？
 
 本专栏前面的文章提到过得益于 UnionFS，对于 Docker 来说，其实容器和镜像的差别并不大。容器可以认为是已经运行过的或正在运行的镜像，只不过是镜像上面添加了几个改动层。当然，大部分镜像也是如此。例如某些 mysql 镜像，便仅仅是在官方 ubuntu 镜像的基础上增加了一个 mysql 改动层。
 
@@ -116,8 +114,7 @@ ubuntu              latest              b7cf8f0d9e82        4 days ago          
 
 现在我们有两个镜像了：一个是原有的 ubuntu 镜像，镜像是我们在刚开始进行 docker run 的时候自动从 Docker Hub 上面下载下来的；另一个便是我们刚刚保存的，有一个 /message.txt 文件的镜像。
 
-不信？
-那我运行给你看。
+不信？那我运行给你看。
 
 ```sh
 (HOST) # docker run -it jbgo/message:v0.0.1 cat /message.txt
@@ -126,8 +123,7 @@ hello docker
 我们确实把刚刚的容器保存为一个新的镜像了。
 ```
 
-还不信？
-那我检查给你看。
+还不信？那我检查给你看。
 
 ```sh
 (HOST) # docker ps -a
@@ -141,7 +137,7 @@ b3d8c3ef31a0        ubuntu:latest         "cat /message.txt"   33 minutes ago   
 
 ## 如何备份镜像？
 
->上面我们创建了带有一个 /message.txt 文件的镜像，也用它运行了容器，那么如果 Docker 宿主机崩溃了或者文件消失了怎么办？如何保证我们创建的镜像在系统崩溃后仍然不丢失？
+> 上面我们创建了带有一个 /message.txt 文件的镜像，也用它运行了容器，那么如果 Docker 宿主机崩溃了或者文件消失了怎么办？如何保证我们创建的镜像在系统崩溃后仍然不丢失？
 
 我们需要 Docker Registry，可以存储和下载镜像的地方。Docker Hub 官方提供了 Docker Hub Registry 让我们来存储镜像，当然我们也可以自己搭建 Docker Registry。本篇文章将会使用 Docker Hub Registry，如果你想按照本文中继续操作的话，记得将我的名字 jbgo 换成你自己在 Docker Hub 上的用户名。
 
@@ -169,8 +165,7 @@ Digest: sha256:b2a98b19e06a4df91150f8a2cd47a6e440cbc13b39f1fc235d46f97f631ad117
 
 因为我是第一次在本机执行 docker push 操作，所以 Docker Registry 需要验证我的身份。
 
-本次上传的镜像被保存在这里。
-你可以使用 docker pull jbgo/message 来下载我的镜像。
+本次上传的镜像被保存在这里。你可以使用 docker pull jbgo/message 来下载我的镜像。
 
 当然，如果你按照上面的来操作的话，可能会出现一点小问题：
 
@@ -180,9 +175,7 @@ Pulling repository jbgo/message
 FATA[0007] Tag latest not found in repository jbgo/message
 ```
 
-下面我来解释一下到底出了什么问题：
-当你使用 docker push jbgo/message 命令的时候，默认上传标签为 latest 的镜像。如果没有便会报错。你可以采用如下命令解决： docker tag jbgo/message:v0.0.1 jbgo/message:latest。
-这次再尝试推送：
+下面我来解释一下到底出了什么问题：当你使用 docker push jbgo/message 命令的时候，默认上传标签为 latest 的镜像。如果没有便会报错。你可以采用如下命令解决： docker tag jbgo/message:v0.0.1 jbgo/message:latest。这次再尝试推送：
 
 ```sh
 (HOST) # docker push jbgo/message:latest
@@ -197,8 +190,7 @@ Digest: sha256:cc2fbbb2029c6402cea639b2454da08ef05672da81176ae97f57d4f51be19fc3
 
 这次上传会快得多，因为服务器上已经有了这个镜像，我们上传的仅仅是相同镜像的不同标签而已。
 
-你不信？
-那我验证给你看：
+你不信？那我验证给你看：
 
 ```sh
 (HOST) # docker pull jbgo/message
@@ -214,12 +206,11 @@ Status: Downloaded newer image for jbgo/message:latest
 
 当然，别台服务器一样可以使用这个命令下载我的镜像。
 
-当然，也可以使用如下命令上传特定标签的镜像：docker push jbgo/message:v0.0.1。
-建议使用版本标签标记镜像，并推送特定版本标签的镜像和 latest 标签的镜像。
+当然，也可以使用如下命令上传特定标签的镜像：docker push jbgo/message:v0.0.1。建议使用版本标签标记镜像，并推送特定版本标签的镜像和 latest 标签的镜像。
 
 ## 使用完毕的容器如何处理？
 
->上面只是介绍了容器如何理解容器和镜像，如果有很多历史容器被保存在硬盘上，想要释放掉这些空间，我们应该怎么做？
+> 上面只是介绍了容器如何理解容器和镜像，如果有很多历史容器被保存在硬盘上，想要释放掉这些空间，我们应该怎么做？
 
 使用如下命令删除多个容器：
 
@@ -267,8 +258,7 @@ a62a42e77c9c        4 days ago          /bin/sh -c echo '#!/bin/sh' > /usr/sbin/
 706766fe1019        4 days ago          /bin/sh -c #(nop) ADD file:777fad733fc954c0c1   188.1 MB
 ```
 
-会发现，其实我们创建了不止一个镜像，也就是有不止一个改动层。
-使用 docker inspect 命令仔细观察第一个镜像（第一层）进行过的改动：
+会发现，其实我们创建了不止一个镜像，也就是有不止一个改动层。使用 docker inspect 命令仔细观察第一个镜像（第一层）进行过的改动：
 
 ```sh
 (HOST) # docker inspect 1c9195e4c24c
@@ -296,7 +286,7 @@ a62a42e77c9c        4 days ago          /bin/sh -c echo '#!/bin/sh' > /usr/sbin/
 
 ## 如何删除镜像？
 
->前面提到过，我们删除容器，那么我们本机上仍然保存着镜像，如何删掉它们？
+> 前面提到过，我们删除容器，那么我们本机上仍然保存着镜像，如何删掉它们？
 
 ```sh
 （HOST） # docker rmi jbgo/message
@@ -332,8 +322,7 @@ Deleted: a62a42e77c9c3626118dc411092d23cf658220261acdafe21a7589a8eeba627e
 Deleted: 706766fe101906a1a6628173c2677173a5f8c6c469075083f3cf3a8f5e5eb367
 ```
 
-这次我们可以很轻松地删除掉 jbgo/message 镜像了。
-确认一下：
+这次我们可以很轻松地删除掉 jbgo/message 镜像了。确认一下：
 
 ```sh
 (HOST) # docker images

@@ -19,33 +19,31 @@ tags: 前端, CSS, CSS世界
 所谓“包裹性”，由“包裹”和“自适应性”两部分组成。
 
 1. 包裹。假设浮动元素父元素宽度 200px，浮动元素子元素是一个 128px 宽度的图片，则此时浮动元素宽度表现为“包裹”，就是里面图片的宽度 128px，代码如下：
-    ```html
-    <style>
-      .father {
-        width: 200px;
-      }
-      .float {
-        float: left;
-      }
-      .float img {
-        width: 128px;
-      }
-    </style>
-    <div class="father">
-      <div class="float">
-        <img src="1.jpg" />
-      </div>
-    </div>
-    ```
+   ```html
+   <style>
+     .father {
+       width: 200px;
+     }
+     .float {
+       float: left;
+     }
+     .float img {
+       width: 128px;
+     }
+   </style>
+   <div class="father">
+     <div class="float">
+       <img src="1.jpg" />
+     </div>
+   </div>
+   ```
 2. 自适应性。如果浮动元素的子元素不只是一张 128px 宽度的图片，还有一大波普通的文字，例如：
-    ```html
-    <div class="father">
-      <div class="float">
-        <img src="1.jpg" />我是帅哥，好巧啊，我也是帅哥，原来看这本书的人都是帅哥~
-      </div>
-    </div>
-    ```
-    则此时浮动元素宽度就自适应父元素的 200px 宽度，最终的宽度表现也是 200px。
+   ```html
+   <div class="father">
+     <div class="float"><img src="1.jpg" />我是帅哥，好巧啊，我也是帅哥，原来看这本书的人都是帅哥~</div>
+   </div>
+   ```
+   则此时浮动元素宽度就自适应父元素的 200px 宽度，最终的宽度表现也是 200px。
 
 当然，要想最大宽度自适应父元素宽度，一定是在浮动元素的“首选最小宽度”比父元素的宽度要小的前提下，比方说上面示意的“我是帅哥”等文字全是一连串超长的英文字母，则浮动元素的宽度显然就不是 200px 了。
 
@@ -82,19 +80,19 @@ span {
 
 float 属性与 display 属性值转换关系如表 6-1 所示。
 
-| 设定值 | 计算值 |
-|:--------: | :-------: |
-| inline | block |
-| inline-block | block |
-| inline-table | table |
-| table-row | block |
-| table-row-group | block |
-| table-column | block |
-| table-column-group | block |
-| table-cell | block |
-| table-caption | block |
-| table-header-group | block |
-| table-footer-group | block |
+|       设定值       | 计算值 |
+| :----------------: | :----: |
+|       inline       | block  |
+|    inline-block    | block  |
+|    inline-table    | table  |
+|     table-row      | block  |
+|  table-row-group   | block  |
+|    table-column    | block  |
+| table-column-group | block  |
+|     table-cell     | block  |
+|   table-caption    | block  |
+| table-header-group | block  |
+| table-footer-group | block  |
 
 除了 inline-table 计算为 table 外，其他全都是 block。
 
@@ -104,7 +102,7 @@ float 属性有个著名的特性表现，就是会让父元素的高度塌陷�
 
 ```html
 <div class="father">
-  <img src="me.jpg"/>
+  <img src="me.jpg" />
 </div>
 <p class="animal">小猫 1，小猫 2，...</p>
 ```
@@ -158,7 +156,7 @@ float 属性有个著名的特性表现，就是会让父元素的高度塌陷�
 </style>
 <div class="father">
   <div class="float">
-    <img src="zxx.jpg">
+    <img src="zxx.jpg" />
   </div>
   我是帅哥，好巧啊，我也是帅哥，原来看这本书的人都是帅哥~
 </div>
@@ -171,7 +169,7 @@ float 属性有个著名的特性表现，就是会让父元素的高度塌陷�
 
 从这段代码可以看出父级元素.father 高度设置的和图片高度一模一样，都是 64px。按道理，下面的“虽然你很帅，但是我对你不感兴趣。”这些文字应该居左显示，但最后的结果却是图 6-9 所示的这样。
 
-虽然肉眼看上去容器和图片一样高，但是，大家都读过 5.3 节，应该都知道内联状态下的图片底部是有间隙的，也就是.float 这个浮动元素的实际高度并不是 64px，而是要比 64px 高几像素，带来的问题就是浮动元素的高度超出.father 几像素。于是，下面的文字就遭殃了，因为“虽然你很帅……”这段文字所在的“行框盒子”和浮动元素在垂直位置有了重叠，尽管就那么几像素。于是，区域被限制，形成了图6-9 所示的“被环绕”效果。
+虽然肉眼看上去容器和图片一样高，但是，大家都读过 5.3 节，应该都知道内联状态下的图片底部是有间隙的，也就是.float 这个浮动元素的实际高度并不是 64px，而是要比 64px 高几像素，带来的问题就是浮动元素的高度超出.father 几像素。于是，下面的文字就遭殃了，因为“虽然你很帅……”这段文字所在的“行框盒子”和浮动元素在垂直位置有了重叠，尽管就那么几像素。于是，区域被限制，形成了图 6-9 所示的“被环绕”效果。
 
 因此，当使用浮动元素的时候，比较稳妥的做法还是采用一些手段干净地清除浮动带来的影响，以避免很多意料之外的样式问题的发生。
 
@@ -209,7 +207,7 @@ float 属性有个著名的特性表现，就是会让父元素的高度塌陷�
 - 浮动锚点是 float 元素所在的“流”中的一个点，这个点本身并不浮动，就表现而言更像一个没有 margin、border 和 padding 的空的内联元素。
 - 浮动参考指的是浮动元素对齐参考的实体。
 
-在 CSS 世界中，float 元素的“浮动参考”是“行框盒子”，也就是 float 元素在当前“行框盒子”内定位。再强调一遍，是“行框盒子”，不是外面的包含块盒子之类的东西，因为CSS 浮动设计的初衷仅仅是实现文字环绕效果。在 CSS 新世界中，float 被赋予了更多的作用和使命，“浮动参考”就不仅仅是“行框盒子”了，不过此非本书重点，就不展开了。
+在 CSS 世界中，float 元素的“浮动参考”是“行框盒子”，也就是 float 元素在当前“行框盒子”内定位。再强调一遍，是“行框盒子”，不是外面的包含块盒子之类的东西，因为 CSS 浮动设计的初衷仅仅是实现文字环绕效果。在 CSS 新世界中，float 被赋予了更多的作用和使命，“浮动参考”就不仅仅是“行框盒子”了，不过此非本书重点，就不展开了。
 
 正是因为 float 定位参考的是“行框盒子”，所以“更多”才会在第二行显示。还没理解？那再具体解释一下：每一行内联元素都有一个“行框盒子”，这个例子中标题文字比较多，两行显示了，因此有上下两个“行框盒子”，而“更多”所在的`<a>`元素是在标题文字后面，位于第二行，因此，这里设置了 float:right 的`<a>`元素是相对于第二行的“行框盒子”对齐的，也就是图 6-11 所示的效果。
 
@@ -238,16 +236,16 @@ float 通过破坏正常 CSS 流实现 CSS 环绕，带来了烦人的“高度�
   }
 </style>
 <div class="father">
-  <img src="me.jpg">
+  <img src="me.jpg" />
   <p class="animal">
     小猫 1，小猫 2，...
   </p>
 </div>
 ```
 
-和文字环绕效果相比，区别就在于.animal 多了一个margin-left:70px，也就是所有小动物都要跟男主保持至少70px 的距离，由于图片宽度就60px，因此不会发生环绕，自适应效果达成。
+和文字环绕效果相比，区别就在于.animal 多了一个 margin-left:70px，也就是所有小动物都要跟男主保持至少 70px 的距离，由于图片宽度就 60px，因此不会发生环绕，自适应效果达成。
 
-原理其实很简单，.animal 元素没有浮动，也没有设置宽度，因此，流动性保持得很好，设置margin-left、border-left或者padding-left都可以自动改变content box的尺寸，继而实现了宽度自适应布局效果。我们不妨对比一下环绕效果的背景区域和这里自适应效果的背景区域（见图 6-13），理解起来应该会更加直白。
+原理其实很简单，.animal 元素没有浮动，也没有设置宽度，因此，流动性保持得很好，设置 margin-left、border-left 或者 padding-left 都可以自动改变 content box 的尺寸，继而实现了宽度自适应布局效果。我们不妨对比一下环绕效果的背景区域和这里自适应效果的背景区域（见图 6-13），理解起来应该会更加直白。
 
 ![](2020-01-07-16-35-49.png)
 
@@ -318,8 +316,7 @@ float 通过破坏正常 CSS 流实现 CSS 环绕，带来了烦人的“高度�
 
 ## 什么是 clear 属性
 
-生生相克，float 这个魔鬼属性也不例外。CSS 有一个专门用来处理 float 属性带来的
-高度塌陷等问题的属性，这个属性就是 clear。其语法如下：
+生生相克，float 这个魔鬼属性也不例外。CSS 有一个专门用来处理 float 属性带来的高度塌陷等问题的属性，这个属性就是 clear。其语法如下：
 
 ```
 clear: none | left | right | both
@@ -327,7 +324,7 @@ clear: none | left | right | both
 
 如果单看字面意思，clear:left 应该是“清除左浮动”，clear:right 应该是“清除右浮动”的意思，实际上，这种解释是有问题的，因为浮动一直还在，并没有清除。没错，并没有清除。
 
-官方对 clear 属性的解释是：“元素盒子的边不能和前面的浮动元素相邻。”虽然有些拗口，但是有一点是可以体会出来的，就是设置了 clear 属性的元素自身如何如何，而不是让 float 元素如何如何，有种“己所不欲勿施于人”的意味在里面。因此，我对clear 属性值的理解是下面这样的。
+官方对 clear 属性的解释是：“元素盒子的边不能和前面的浮动元素相邻。”虽然有些拗口，但是有一点是可以体会出来的，就是设置了 clear 属性的元素自身如何如何，而不是让 float 元素如何如何，有种“己所不欲勿施于人”的意味在里面。因此，我对 clear 属性值的理解是下面这样的。
 
 - none：默认值，左右浮动来就来。
 - left：左侧抗浮动。
@@ -367,7 +364,7 @@ clear 属性只有块级元素才有效的，而::after 等伪元素默认都是
 .clear:after {
   content: '';
   /* 也可以是'block'，或者是'list-item' */
-  display: table; 
+  display: table;
   clear: both;
 }
 ```
@@ -375,19 +372,17 @@ clear 属性只有块级元素才有效的，而::after 等伪元素默认都是
 然而，利用伪元素或者直接使用下面 HTML，有时候也会产生一些意想不到的问题：
 
 ```html
-<div style="clear:both;">
-</div>
+<div style="clear:both;"></div>
 ```
 
 继续前面那个小动物环绕的例子，如果我们在右侧自适应内容里面使用了类似这样的样式，则可能会发生右边的内容跑到图片下边的情况，HTML 代码如下：
 
 ```html
 <div class="father">
-  <img src="me.jpg">
+  <img src="me.jpg" />
   <div class="animal">
     小猫 1，小猫 2，
-    <div class="clear">
-    </div>
+    <div class="clear"></div>
     小猫 3，小猫 4，...
   </div>
 </div>
@@ -402,29 +397,30 @@ clear 属性只有块级元素才有效的，而::after 等伪元素默认都是
 1. 如果 clear:both 元素前面的元素就是 float 元素，则 margin-top 负值即使设成-9999px，也不见任何效果。
 2. clear:both 后面的元素依旧可能会发生文字环绕的现象。举个例子，如下 HTML 和 CSS：
 
-    ```html
-    <style>
-      .father:after {
-        content: '';
-        display: table;
-        clear: both;
-      }
-      .father img {
-        float:left;
-        width: 60px;
-        height: 64px;
-      }
-      .father + div {
-        margin-top: -2px;
-      }
-    </style>
-    <div class="father">
-      <img src="zxx.jpg" />
-      我是帅哥，好巧啊，我也是帅哥，原来看这本书的人都是帅哥~
-    </div>
-    <div>虽然你很帅，但是我对你不感兴趣。</div>
-    ```
-    虽然.father 父元素的最后设置了 clear:both 来阻止浮动对后面元素的影响，但是最后结果错位依然发生了，如图 6-17 所示。
+   ```html
+   <style>
+     .father:after {
+       content: '';
+       display: table;
+       clear: both;
+     }
+     .father img {
+       float: left;
+       width: 60px;
+       height: 64px;
+     }
+     .father + div {
+       margin-top: -2px;
+     }
+   </style>
+   <div class="father">
+     <img src="zxx.jpg" />
+     我是帅哥，好巧啊，我也是帅哥，原来看这本书的人都是帅哥~
+   </div>
+   <div>虽然你很帅，但是我对你不感兴趣。</div>
+   ```
+
+   虽然.father 父元素的最后设置了 clear:both 来阻止浮动对后面元素的影响，但是最后结果错位依然发生了，如图 6-17 所示。
 
 ![](2020-01-07-17-00-30.png)
 
@@ -458,7 +454,7 @@ BFC 的结界特性最重要的用途其实不是去 margin 重叠或者是清�
 
 ```html
 <style>
-  img { 
+  img {
     float: left;
   }
 </style>
@@ -515,17 +511,17 @@ img {
 
 1. 自适应内容由于封闭而更健壮，容错性更强。比方说，内部设置 clear:both 不会与 float 元素相互干扰而导致错位，也就不会发生类似于图 6-22 所示的问题。
 2. 自适应内容自动填满浮动以外区域，无须关心浮动元素宽度，可以整站大规模应用。比方说，抽象几个通用的布局类名，如：
-    ```css
-    .left {
-      float: left; 
-    }
-    .right {
-      float: right;
-    }
-    .bfc {
-      overflow: hidden;
-    }
-    ```
+   ```css
+   .left {
+     float: left;
+   }
+   .right {
+     float: right;
+   }
+   .bfc {
+     overflow: hidden;
+   }
+   ```
 
 于是，只要遇到两栏结构，直接使用上面的结构类名就可以完成基本的布局。HTML 示意如下：
 
@@ -556,28 +552,26 @@ img {
 2. position:absolute。这个脱离文档流有些严重，过于清高，和非定位元素很难玩到一块儿去，我就不说什么了。
 3. overflow:hidden。这个超棒！不像浮动和绝对定位，玩得有点儿过。其本身还是一个很普通的元素，因此，块状元素的流体特性保存得相当完好，附上 BFC 的独立区域特性，可谓如虎添翼、宇宙无敌！而且 overflow:hidden 的 BFC 特性从 IE7 浏览器开始就支持，兼容性也很不错。唯一的问题就是容器盒子外的元素可能会被隐藏掉，一定程度上限制了这种特性的大规模使用。不过，溢出隐藏的交互场景比例不算很高，所以它还是可以作为常用 BFC 布局属性使用的。
 4. display:inline-block。这是 CSS 世界最伟大的声明之一，但是用在这里，就有些捉襟见肘了。display:inline-block 会让元素尺寸包裹收缩，完全就不是我们想要的 block 水平的流动特性。只能是一声叹息舍弃掉！然而，峰回路转，世事难料。大家应该知道，IE6 和 IE7 浏览器下，block 水平的元素设置 display:inline-block 元素还是 block 水平，也就是还是会自适应容器的可用宽度显示。于是，对于 IE6 和 IE7 浏览器，我们会阴差阳错得到一个比 overflow:hidden 更强大的声明，既 BFC 特性加身，又流体特性保留
-    ```css
-    .float-left {
-      float: left;
-    }
-    .bfc-content {
-      display: inline-block;
-    }
-    ```
-    当然，*zoom: 1 也是类似效果，不过只适用于低级的 IE 浏览器，如 IE7。
-5. display:table-cell。其让元素表现得像单元格一样，IE8 及以上版本浏览器才支持。跟 display:inline-block 一样，它会跟随内部元素的宽度显示，看样子也是不合适的命。但是，单元格有一个非常神奇的特性，就是宽度值设置得再大，实际宽度也不会超过表格容器的宽度。第 3 章单元格一柱擎天的例子利用的就是这种特性，如图 6-23 所示。
-    ![](2020-01-07-17-37-05.png)
-    因此，如果我们把 display:table-cell 这个 BFC 元素宽度设置得很大，比方说 3000px，那其实就跟 block 水平元素自动适应容器空间效果一模一样了，除非你的容器宽度超过 3000px。实际上，一般 Web 页面不会有 3000px 宽的模块，所以，要是实在不放心，设个 9999px 好了！
-    ```css
-    .float-left {
-      float: left;
-    }
-    .bfc-content {
-      display: table-cell;
-      width: 9999px;
-    }
-    ```
-    看上去好像还不错。但是，还是有两点制约，一是需要 IE8 及以上版本的浏览器；二是应付连续英文字符换行有些吃力。但是，总体来看，其适用的场景要比 overflow:hidden 更为广泛。
+   ```css
+   .float-left {
+     float: left;
+   }
+   .bfc-content {
+     display: inline-block;
+   }
+   ```
+   当然，\*zoom: 1 也是类似效果，不过只适用于低级的 IE 浏览器，如 IE7。
+5. display:table-cell。其让元素表现得像单元格一样，IE8 及以上版本浏览器才支持。跟 display:inline-block 一样，它会跟随内部元素的宽度显示，看样子也是不合适的命。但是，单元格有一个非常神奇的特性，就是宽度值设置得再大，实际宽度也不会超过表格容器的宽度。第 3 章单元格一柱擎天的例子利用的就是这种特性，如图 6-23 所示。 ![](2020-01-07-17-37-05.png) 因此，如果我们把 display:table-cell 这个 BFC 元素宽度设置得很大，比方说 3000px，那其实就跟 block 水平元素自动适应容器空间效果一模一样了，除非你的容器宽度超过 3000px。实际上，一般 Web 页面不会有 3000px 宽的模块，所以，要是实在不放心，设个 9999px 好了！
+   ```css
+   .float-left {
+     float: left;
+   }
+   .bfc-content {
+     display: table-cell;
+     width: 9999px;
+   }
+   ```
+   看上去好像还不错。但是，还是有两点制约，一是需要 IE8 及以上版本的浏览器；二是应付连续英文字符换行有些吃力。但是，总体来看，其适用的场景要比 overflow:hidden 更为广泛。
 6. display:table-row。对 width 无感，无法自适应剩余容器空间。
 7. display:table-caption。此属性一无是处。
 
@@ -590,21 +584,21 @@ img {
 最后，我们可以提炼出两套 IE7 及以上版本浏览器适配的自适应解决方案。
 
 1. 借助 overflow 属性，如下：
-    ```css
-    .lbf-content {
-      overflow: hidden;
-    }
-    ```
+   ```css
+   .lbf-content {
+     overflow: hidden;
+   }
+   ```
 2. 融合 display:table-cell 和 display:inline-block，如下：
-    ```css
-    .lbf-content {
-      display: table-cell;
-      width: 9999px;
-      /* 如果不需要兼容 IE7，下面样式可以省略 */
-      *display: inline-block;
-      *width: auto;
-    }
-    ```
+   ```css
+   .lbf-content {
+     display: table-cell;
+     width: 9999px;
+     /* 如果不需要兼容 IE7，下面样式可以省略 */
+     *display: inline-block;
+     *width: auto;
+   }
+   ```
 
 这两种基于 BFC 的自适应方案均支持无限嵌套，因此，多栏自适应可以通过嵌套方式实现。这两种方案均有一点不足，前者如果子元素要定位到父元素的外面可能会被隐藏，后者无法直接让连续英文字符换行。所以，大家可以根据实际的项目场景选择合适的技术方案。
 
@@ -683,29 +677,31 @@ HTML 中有两个标签是默认可以产生滚动条的，一个是根元素`<h
 
 1. 在 PC 端，无论是什么浏览器，默认滚动条均来自`<html>`，而不是`<body>`标签。验证很简单，新建一个空白页面，此时`<body>`标签的默认 margin 值是.5em，如果滚动条是由`<body>`标签产生的，那么效果应该如图 6-27 所示这般边缘留有间隙。但是最后实现结果却是图 6-28 所示的这样没有间隙。
 
-    ![](2020-01-07-19-45-09.png)
+   ![](2020-01-07-19-45-09.png)
 
-    所以，如果我们想要去除页面默认滚动条，只需要：
+   所以，如果我们想要去除页面默认滚动条，只需要：
 
-    ```css
-    html { 
-      overflow: hidden; 
-    }
-    ```
+   ```css
+   html {
+     overflow: hidden;
+   }
+   ```
 
-    而没必要把`<body>`也拉下水：
+   而没必要把`<body>`也拉下水：
 
-    注意，上述规则只对 PC 端有效，对于移动端并不一定适用。例如，在 PC 端，对`<html>`标签设置 overflow:hidden 可以隐藏滚动条禁止滚动，但是在移动端基本上无效。在 PC 端，窗体滚动高度可以使用 document.documentElement.scrollTop 获取，但是在移动端，可能就要使用 document.body.scrollTop 获取。
+   注意，上述规则只对 PC 端有效，对于移动端并不一定适用。例如，在 PC 端，对`<html>`标签设置 overflow:hidden 可以隐藏滚动条禁止滚动，但是在移动端基本上无效。在 PC 端，窗体滚动高度可以使用 document.documentElement.scrollTop 获取，但是在移动端，可能就要使用 document.body.scrollTop 获取。
+
 2. 滚动条会占用容器的可用宽度或高度。假设一个元素的宽度是 400px，CSS 代码如下：
-    ```css
-    .box {
-      width: 400px;
-      height: 100px;
-      overflow: auto;
-    }
-    ```
 
-    当子元素高度超过 100px 出现滚动条的时候，子元素可用的实际宽度实际上要小于400px，因为滚动条（准确地说应该是滚动栏）占据了一定的宽度。当然这还要看操作系统，比方说在移动端就不会有这样的问题，因为移动端的屏幕尺寸本身就有限，滚动条一般都是悬浮模式，不会占据可用宽度，但是在 PC 端，尤其 Windows 操作系统下，几乎所有浏览器的滚动栏都会占据宽度，而且这个宽度大小是固定的。我通过在 Windows 7 系统下的测试和对比发现，IE7 及以上版本 IE、Chrome、Firefox 浏览器滚动栏所占据的宽度均是17px，注意，很精准的是17px，我不知道网上那些误人子弟的20px、14px 是从哪里来的。当然，随着以后操作系统的升级，滚动栏的宽度发生变化也是有可能的。
+   ```css
+   .box {
+     width: 400px;
+     height: 100px;
+     overflow: auto;
+   }
+   ```
+
+   当子元素高度超过 100px 出现滚动条的时候，子元素可用的实际宽度实际上要小于 400px，因为滚动条（准确地说应该是滚动栏）占据了一定的宽度。当然这还要看操作系统，比方说在移动端就不会有这样的问题，因为移动端的屏幕尺寸本身就有限，滚动条一般都是悬浮模式，不会占据可用宽度，但是在 PC 端，尤其 Windows 操作系统下，几乎所有浏览器的滚动栏都会占据宽度，而且这个宽度大小是固定的。我通过在 Windows 7 系统下的测试和对比发现，IE7 及以上版本 IE、Chrome、Firefox 浏览器滚动栏所占据的宽度均是 17px，注意，很精准的是 17px，我不知道网上那些误人子弟的 20px、14px 是从哪里来的。当然，随着以后操作系统的升级，滚动栏的宽度发生变化也是有可能的。
 
 要知道自己浏览器的滚动栏宽度是多少其实很简单，代码如下：
 
@@ -720,7 +716,7 @@ HTML 中有两个标签是默认可以产生滚动条的，一个是根元素`<h
   <div id="in" class="in"></div>
 </div>
 <script>
-  console.log(400 - document.getElementById("in").clientWidth);
+  console.log(400 - document.getElementById('in').clientWidth);
 </script>
 ```
 
@@ -775,17 +771,20 @@ body {
 但是我们平时开发中只用下面 3 个属性：
 
 ```css
-::-webkit-scrollbar { /* 血槽宽度 */
+::-webkit-scrollbar {
+  /* 血槽宽度 */
   width: 8px;
   height: 8px;
 }
 
-::-webkit-scrollbar-thumb { /* 拖动条 */
-  background-color: rgba(0,0,0,.3);
+::-webkit-scrollbar-thumb {
+  /* 拖动条 */
+  background-color: rgba(0, 0, 0, 0.3);
   border-radius: 6px;
 }
 
-::-webkit-scrollbar-track { /* 背景槽 */
+::-webkit-scrollbar-track {
+  /* 背景槽 */
   background-color: #ddd;
   border-radius: 6px;
 }
@@ -832,8 +831,7 @@ body {
 使用更精练的代码表示就是：
 
 ```html
-<a href="#1">发展历程></a>
-<a name="1"></a>
+<a href="#1">发展历程></a> <a name="1"></a>
 ```
 
 就我个人而言，我更喜欢使用下面的做法，也就是利用标签的 id 属性，因为 HTML 会显得更干净一些，也不存在任何兼容性问题：
@@ -1054,10 +1052,12 @@ HTML 和核心 CSS 代码如下：
 然而，上面这种技术要想用在实际项目中还离不开 JavaScript 的支持，一个是选项卡按钮的选中效果，另一个就是处理列表部分区域在浏览器外面时依然会跳动的问题。相关处理类似下面的做法，即使用 jQuery 语法：
 
 ```js
-$('label.click').removeAttr('for').on('click', function() {
-  // 'xxx'表示滚动数值
-  $('.box').scrollTop(xxx);
-});
+$('label.click')
+  .removeAttr('for')
+  .on('click', function() {
+    // 'xxx'表示滚动数值
+    $('.box').scrollTop(xxx);
+  });
 ```
 
 于是，就算 JavaScript 出现异常或者加载缓慢，选项卡点击功能依然正常，并且直接用 Tab 键浏览选项卡内容的超级便捷的可访问性也保留下来了。综合来看，这是非常不错的一种选项卡实现技巧。
@@ -1076,9 +1076,10 @@ $('label.click').removeAttr('for').on('click', function() {
 
 1. 实现简单，无须做边界判断。因为就算 scrollTop 设为-999，浏览器依然按照 0 来渲染，要想滚动到底部，直接一个很大的 scrollTop 值就可以了，无须任何计算。例如：
 
-    container.scrollTop = 99999;
+   container.scrollTop = 99999;
 
-    列表滚动了多少直接就是 scrollTop 值，实时获取，天然存储。传统实现要变量以及边界更新，很啰嗦。
+   列表滚动了多少直接就是 scrollTop 值，实时获取，天然存储。传统实现要变量以及边界更新，很啰嗦。
+
 2. 可与原生的 scroll 事件天然集成，无缝对接。例如，我们的滚动延迟加载图片效果就可以直接应用，因为图片位置的计算往往都是和 scrollTop 值相关联的，所以传统实现 scrollTop 值一直是 0，很可能导致这类组件出现异常。
 3. 无须改变子元素的结构。传统实现为了定位方便，会给所有的列表元素外面包一层独立的`<div>`元素，这可能会导致某些选择器（类似于.container > .list{}）失效，但是，基于父容器本身的 scrollTop 滚动实现则无此问题，即使子元素全是兄弟元素也是可以的。
 
@@ -1123,14 +1124,14 @@ $('label.click').removeAttr('for').on('click', function() {
 3. 如果元素 position:fixed，则“包含块”是“初始包含块”。
 4. 如果元素 position:absolute，则“包含块”由最近的 position 不为 static 的祖先元素建立，具体方式如下：
 
-    如果该祖先元素是纯 inline 元素，则规则略复杂：
+   如果该祖先元素是纯 inline 元素，则规则略复杂：
 
-    - 假设给内联元素的前后各生成一个宽度为 0 的内联盒子（inline box），则这两个内联盒子的 padding box 外面的包围盒就是内联元素的“包含块”；
-    - 如果该内联元素被跨行分割了，那么“包含块”是未定义的，也就是 CSS2.1 规范并没有明确定义，浏览器自行发挥。
+   - 假设给内联元素的前后各生成一个宽度为 0 的内联盒子（inline box），则这两个内联盒子的 padding box 外面的包围盒就是内联元素的“包含块”；
+   - 如果该内联元素被跨行分割了，那么“包含块”是未定义的，也就是 CSS2.1 规范并没有明确定义，浏览器自行发挥。
 
-    否则，“包含块”由该祖先的 padding box 边界形成。
+   否则，“包含块”由该祖先的 padding box 边界形成。
 
-    如果没有符合条件的祖先元素，则“包含块”是“初始包含块”。
+   如果没有符合条件的祖先元素，则“包含块”是“初始包含块”。
 
 可以看到，和常规元素相比，absolute 绝对定位元素的“包含块”有以下 3 个明显差异：
 
@@ -1145,58 +1146,59 @@ $('label.click').removeAttr('for').on('click', function() {
 1. 我们一旦使用 absolute 绝对定位，基本上都是用来布局，而内联元素主要的作用是图文展示，所谓道不同不相为谋，因此两者很难凑到一块儿。
 2. 理解和学习成本比较高。内联元素的“包含块”不能按照常规块级元素的“包含块”来理解。举个例子，如下 HTML 代码：
 
-    ```html
-    <span style="position:relative;">
-      我是<big style="font-size:200%;">字号很大</big>的文字！
-    </span>
-    ```
-    其效果如图 6-41 所示。请问：此时`<span>`元素的“包含块”范围是什么？
+   ```html
+   <span style="position:relative;"> 我是<big style="font-size:200%;">字号很大</big>的文字！ </span>
+   ```
 
-    ![](2020-01-08-10-38-00.png)
+   其效果如图 6-41 所示。请问：此时`<span>`元素的“包含块”范围是什么？
 
-    如果对定义理解不够，很容易误认为包含块的上下边缘被其中“字号很大”的`<big>`元素给撑大了。实际上，此时元素的“包含块”范围与`<big>`元素毫无关系，就算其字号大小设置得再大，“包含块”范围依然是图 6-42 虚线所示的那么大。原因很简单，内联元素的“包含块”是由“生成的”前后内联盒子决定的，与里面的内联盒子细节没有任何关系。
+   ![](2020-01-08-10-38-00.png)
 
-    我根据自己的进一步测试发现，内联元素的“包含块”可以受::first-line 伪元素影响，但不受::first-letter 伪元素影响。
+   如果对定义理解不够，很容易误认为包含块的上下边缘被其中“字号很大”的`<big>`元素给撑大了。实际上，此时元素的“包含块”范围与`<big>`元素毫无关系，就算其字号大小设置得再大，“包含块”范围依然是图 6-42 虚线所示的那么大。原因很简单，内联元素的“包含块”是由“生成的”前后内联盒子决定的，与里面的内联盒子细节没有任何关系。
 
-    可以看出，内联元素的“包含块”范围相对稳固，不会受 line-height 等属性影响，因此，理论上其还是有实用价值的。
+   我根据自己的进一步测试发现，内联元素的“包含块”可以受::first-line 伪元素影响，但不受::first-letter 伪元素影响。
+
+   可以看出，内联元素的“包含块”范围相对稳固，不会受 line-height 等属性影响，因此，理论上其还是有实用价值的。
+
 3. 兼容性问题。无论内联元素是单行还是跨行都存在兼容性问题。单行的兼容性问题存在于“包含块”是一个空的内联元素的时候。例如，按照我们的理解，下面的代码实现的效果应该是图片在容器的右上角对齐：
-    ```html
-    <p>
-      <span>
-        <img src="1.jpg" />
-      </span>
-    </p>
-    <style>
-      p { 
-        text-align: right; 
-      }
 
-      p > span {
-        position: relative;
-      }
+   ```html
+   <p>
+     <span>
+       <img src="1.jpg" />
+     </span>
+   </p>
+   <style>
+     p {
+       text-align: right;
+     }
 
-      p > span > img {
-        position: absolute;
-        right: 0;
-      }
-    </style>
-    ```
-    在 IE8 至 IE10 浏览器下，图片完全在`<p>`容器的左侧外部显示了，IE、Edge 中则无此问题。需要给空的`<span>`元素设置 border 或 padding 让“幽灵空白节点”显现或者直接插入字符才能表现一致。
+     p > span {
+       position: relative;
+     }
 
-    跨行的兼容性问题在于规范对此行为并未定义，导致浏览器在实现上各有差异。主要差异在于，Firefox 浏览器的“包含块”仅覆盖第一行，而 IE 和 Chrome 浏览器“包含块”的表现完全符合定义，由第一行开头和最后一行结尾的内联盒子共同决定。差异如图 6-43 所示。
+     p > span > img {
+       position: absolute;
+       right: 0;
+     }
+   </style>
+   ```
 
-    ![](2020-01-08-11-00-27.png)
+   在 IE8 至 IE10 浏览器下，图片完全在`<p>`容器的左侧外部显示了，IE、Edge 中则无此问题。需要给空的`<span>`元素设置 border 或 padding 让“幽灵空白节点”显现或者直接插入字符才能表现一致。
 
-    个人认为，IE（包括 IE8）和 Chrome 浏览器的渲染规则是更准确的，但这种渲染可能会带来另外一个疑惑：如果内联元素最后一个内联盒子的右边缘比第一个内联盒子的左边缘还要靠左，那岂不是“包含块”宽度要为负了？眼见为实，例如，我们修改一下 HTML，让“包含块”从后面的文字开始算起：
+   跨行的兼容性问题在于规范对此行为并未定义，导致浏览器在实现上各有差异。主要差异在于，Firefox 浏览器的“包含块”仅覆盖第一行，而 IE 和 Chrome 浏览器“包含块”的表现完全符合定义，由第一行开头和最后一行结尾的内联盒子共同决定。差异如图 6-43 所示。
 
-    ```html
-    我是<big style="font-size:200%;">字号很大</big>
-    <span style="position:relative;">的文字！我是第二行内容。</span>
-    ```
+   ![](2020-01-08-11-00-27.png)
 
-    结果“包含块”的宽度按照 0 来处理了，起始位置为第一个内联盒子所在的位置，如图 6-44 所示。
+   个人认为，IE（包括 IE8）和 Chrome 浏览器的渲染规则是更准确的，但这种渲染可能会带来另外一个疑惑：如果内联元素最后一个内联盒子的右边缘比第一个内联盒子的左边缘还要靠左，那岂不是“包含块”宽度要为负了？眼见为实，例如，我们修改一下 HTML，让“包含块”从后面的文字开始算起：
 
-    ![](2020-01-08-11-03-55.png)
+   ```html
+   我是<big style="font-size:200%;">字号很大</big> <span style="position:relative;">的文字！我是第二行内容。</span>
+   ```
+
+   结果“包含块”的宽度按照 0 来处理了，起始位置为第一个内联盒子所在的位置，如图 6-44 所示。
+
+   ![](2020-01-08-11-03-55.png)
 
 ### 差异点二：绝对定位元素计算的容器
 
@@ -1208,7 +1210,7 @@ $('label.click').removeAttr('for').on('click', function() {
 
 ```html
 <style>
-  .box { 
+  .box {
     position: absolute;
   }
 </style>
@@ -1304,13 +1306,13 @@ dialog {
 
 ```css
 .list-2 {
-  padding: .75rem;
+  padding: 0.75rem;
 }
 
 .tag-2 {
   position: absolute;
-  top: .75rem;
-  right: .75rem;
+  top: 0.75rem;
+  right: 0.75rem;
 }
 ```
 
@@ -1350,7 +1352,7 @@ top、right 属性值都是 0，被固定了下来，于是当间距发生变化
 
 ```css
 .list-2 {
-  border: .75rem solid transparent;
+  border: 0.75rem solid transparent;
 }
 ```
 
@@ -1435,9 +1437,7 @@ absolute 是非常独立的 CSS 属性值，其样式和行为表现不依赖其
     background: url(warn.png) no-repeat center;
   }
 </style>
-<span class="icon-x">
-  <i class="icon-warn"></i>邮箱格式不准确
-</span>
+<span class="icon-x"> <i class="icon-warn"></i>邮箱格式不准确 </span>
 ```
 
 同样是 position:absolute，然后简单的 margin 偏移实现。此方法兼容性很好，与 inline-block 对齐相比的好处在于，inline-block 对齐最终行框高度并不是 20px，因为中文下沉，图标居中，要想视觉上水平，图标 vertical-align 对齐要比实际低一点儿，这就会导致最终整个行框的高度不是预期的 20px，而是 21px 或者更大。但是，如果使用“无依赖绝对定位”实现，则完全不要担心这一问题，因为绝对定位元素不会改变正常流的尺寸空间，就算我们的图标有 30px 大小，行框高度依然是纯文本所在的 20px 高度。
@@ -1508,8 +1508,7 @@ absolute 是非常独立的 CSS 属性值，其样式和行为表现不依赖其
 
 除了代码少这个好处外，维护成本也在一定程度上降低了，比方说，输入框的高度发生了变化，我们不需要修改任何 CSS 代码，列表依然在输入框的底部完美对齐显示。不仅如此，没有了父元素 position: relative 限定，我们的 z-index 层级管理规则更简单了，并且也无须担心父元素设置 oveflow:hidden 会裁剪下拉列表。
 
-虽然“无依赖绝对定位”好处多多，但建议只用在静态交互效果上，比方说，导航二级菜单的显示与定位。如果是动态呈现的列表，建议还是使用 JavaScript
-来计算和定位。
+虽然“无依赖绝对定位”好处多多，但建议只用在静态交互效果上，比方说，导航二级菜单的显示与定位。如果是动态呈现的列表，建议还是使用 JavaScript 来计算和定位。
 
 ### 占位符效果模拟
 
@@ -1522,7 +1521,6 @@ IE9 及其以下浏览器不支持 placeholder 占位符效果，实际开发的
   /* 和输入框一样的样式 */
   .placeholder,
   input {
-
   }
 
   /* 占位符元素特有样式 */
@@ -1682,7 +1680,7 @@ p:before {
 ```css
 p {
   text-align: center;
-  font-size: .1px;
+  font-size: 0.1px;
   font-size: -webkit-calc(1px - 1px);
 }
 
@@ -1712,7 +1710,7 @@ img {
   }
 
   .alignright:before {
-    content: "\2002";
+    content: '\2002';
   }
 
   .follow {
@@ -1736,7 +1734,7 @@ img {
 
 # absolute 与 overflow
 
-overflow 对 absolute 元素的剪裁规则用一句话表述就是：绝对定位元素不总是被父级overflow 属性剪裁，尤其当 overflow 在绝对定位元素及其包含块之间的时候。
+overflow 对 absolute 元素的剪裁规则用一句话表述就是：绝对定位元素不总是被父级 overflow 属性剪裁，尤其当 overflow 在绝对定位元素及其包含块之间的时候。
 
 如果 overflow 不是定位元素，同时绝对定位元素和 overflow 容器之间也没有定位元素，则 overflow 无法对 absolute 元素进行剪裁。
 
@@ -1762,7 +1760,8 @@ overflow 元素父级是定位元素也不会剪裁，例如：
 
 ```html
 <div style="overflow: hidden; position: relative;">
-  <img src="1.jpg" style="position: absolute;" /> <!-- 剪裁 -->
+  <img src="1.jpg" style="position: absolute;" />
+  <!-- 剪裁 -->
 </div>
 ```
 
@@ -1771,7 +1770,8 @@ overflow 元素父级是定位元素也不会剪裁，例如：
 ```html
 <div style="overflow: hidden;">
   <div style="position: relative;">
-    <img src="1.jpg" style="position: absolute;" /> <!-- 剪裁 -->
+    <img src="1.jpg" style="position: absolute;" />
+    <!-- 剪裁 -->
   </div>
 </div>
 ```
@@ -1806,7 +1806,7 @@ overflow 元素父级是定位元素也不会剪裁，例如：
 
 由于 position:fixed 固定定位元素的包含块是根元素，因此，除非是窗体滚动，否则上面讨论的所有 overflow 剪裁规则对固定定位都不适用。这一点后面还会提及。
 
-## overflow的作用
+## overflow 的作用
 
 作用一是解决实际问题。例如上一节最后“返回顶部”的案例，保证高度为 0，同时里面的定位内容不会被剪裁，或者在局部滚动的容器中模拟近似 position:fixed 的效果。作用二是在遇到类似现象的时候知道问题所在，可以“对症下药”，快速解决问题。
 
@@ -1835,13 +1835,13 @@ CSS 世界中有些属性或者特性必须和其他属性一起使用才有效�
 clip 属性语法如下：
 
 ```css
-clip: rect(top right bottom left)
+clip: rect(top right bottom left);
 ```
 
 实际上，标准语法应该是：
 
 ```css
-clip: rect(top, right, bottom, left)
+clip: rect(top, right, bottom, left);
 ```
 
 但是使用没有逗号的语法比较好，因为其兼容性更好，**IE6** 和 **IE7** 也支持，而且字符更少。
@@ -1851,7 +1851,7 @@ clip: rect(top, right, bottom, left)
 那具体是如何剪裁的呢？我们看一个例子，CSS 如下：
 
 ```css
-clip: rect(30px 200px 200px 20px)
+clip: rect(30px 200px 200px 20px);
 ```
 
 可以想象，我们手中有一把剪刀，面前有一块画布，rect(30px 200px 200px 20px) 表示的含义就是：距离画布上边缘 30px 的地方剪一刀，距离画布右边缘 200px 的地方剪一刀，距离画布下边缘 200px 的地方剪一刀，距离画布左边缘 20px 的地方剪一刀。最终我们就得到一个新的剪裁好的矩形画布，如图 6-62 所示。
@@ -1889,12 +1889,12 @@ clip: rect(30px 200px 200px 20px)
 - text-indent 缩进是中策，但文字如果缩进过大，大到屏幕之外，屏幕阅读设备也是不会读取的。
 - color: transparent 是移动端上策，但却是桌面端中策，因为原生 IE8 浏览器并不支持它。color: transparent 声明，很难用简单的方式阻止文本被框选。
 - clip 剪裁隐藏是上策，既满足视觉上的隐藏，屏幕阅读设备等辅助设备也支持得很好。
-    ```css
-    .logo h1 {
-      position: absolute;
-      clip: rect(0 0 0 0);
-    }
-    ```
+  ```css
+  .logo h1 {
+    position: absolute;
+    clip: rect(0 0 0 0);
+  }
+  ```
 
 clip 剪裁被我称为“最佳可访问性隐藏”的另外一个原因就是，它具有更强的普遍适应性，任何元素、任何场景都可以无障碍使用。例如，我定义一个如下的 CSS 语句块：
 
@@ -1909,7 +1909,7 @@ clip 剪裁被我称为“最佳可访问性隐藏”的另外一个原因就是
 
 不仅如此，元素原本的行为特性也很好用。例如，依然可以被 focus，而且非常难得的是就地剪裁，因为属于“无依赖的绝对定位”。这一点很重要，我们来看下面这个实用案例。
 
-如果`<form>`表单元素里面有一个 type 为 submit 或者 image 类型的按钮，那么表单自动有回车提交行为，可以节约大量啰嗦的键盘相关的事件的代码。但是，submit 类型按钮在 IE7 下有黑框，很难所有浏览器（包括Firefox 在内的浏览器）UI 完全一致，对视觉呈现是个一挑战。于是就有了下面这个使用`<label>`元素李代桃僵的经典策略：
+如果`<form>`表单元素里面有一个 type 为 submit 或者 image 类型的按钮，那么表单自动有回车提交行为，可以节约大量啰嗦的键盘相关的事件的代码。但是，submit 类型按钮在 IE7 下有黑框，很难所有浏览器（包括 Firefox 在内的浏览器）UI 完全一致，对视觉呈现是个一挑战。于是就有了下面这个使用`<label>`元素李代桃僵的经典策略：
 
 ```html
 <form>
@@ -1925,15 +1925,16 @@ clip 剪裁被我称为“最佳可访问性隐藏”的另外一个原因就是
 - display:none 或者 visibility:hidden 隐藏有两个问题，一个是按钮无法被 focus 了，另外一个是 IE8 浏览器下提交行为丢失，原因应该与按钮 focus 特性丢失有关。
 - 透明度 0 覆盖也是一个不错的实践。如果是移动端项目，建议这么做；但如果是桌面端项目，则完全没有必要。使用透明度 0 覆盖的问题是每一个场景都需要根据环境的不同重新定位，以保证点击区域的准确性，成本较高，但 clip 隐藏直接用一个类名加一下就好。
 - 还有一种比较具有适用性的“可访问隐藏”是下面这种屏幕外隐藏：
-    ```css
-    .abs-out {
-      position: absolute;
-      left: -999px;
-      top: -999px;
-    }
-    ```
 
-    然而，在本例中，会出现一个比较麻烦的问题。当一个控件元素被 focus 的时候，浏览器会自动改变滚动高度，让这个控件元素在屏幕内显示。假如说我们的`<label>`“提交”按钮在第二屏，则点击按钮的时候浏览器会自动跳到第一屏置顶，因为按钮隐藏在了屏幕外，于是发生了非常糟糕的体验问题。而 clip 就地剪裁，就不会有“页面跳动”的体验问题。于是，权衡成本和效果，clip 隐藏成为了最佳选择，特别是对于桌面端项目。
+  ```css
+  .abs-out {
+    position: absolute;
+    left: -999px;
+    top: -999px;
+  }
+  ```
+
+  然而，在本例中，会出现一个比较麻烦的问题。当一个控件元素被 focus 的时候，浏览器会自动改变滚动高度，让这个控件元素在屏幕内显示。假如说我们的`<label>`“提交”按钮在第二屏，则点击按钮的时候浏览器会自动跳到第一屏置顶，因为按钮隐藏在了屏幕外，于是发生了非常糟糕的体验问题。而 clip 就地剪裁，就不会有“页面跳动”的体验问题。于是，权衡成本和效果，clip 隐藏成为了最佳选择，特别是对于桌面端项目。
 
 ## 深入了解 clip 的渲染
 
@@ -2076,7 +2077,7 @@ left/top/right/bottom 是具有定位特性元素专用的 CSS 属性，其中 l
 }
 ```
 
-前者此时宽高依然是窗体可视区域的宽高，但是，后者此时的尺寸是100%+60px，多出了60px。有人可能会立马想到使用 box-sizing: border-box，这样确实可以让 padding 表现保持一致，但是，如果添加的是 margin:30px 呢？
+前者此时宽高依然是窗体可视区域的宽高，但是，后者此时的尺寸是 100%+60px，多出了 60px。有人可能会立马想到使用 box-sizing: border-box，这样确实可以让 padding 表现保持一致，但是，如果添加的是 margin:30px 呢？
 
 前者自动上下左右留白 30px，但是后者的布局已经跑到窗体外面去了，并不支持 margin box 的 box-sizing 此时也无能为力。
 
@@ -2183,7 +2184,7 @@ left/top/right/bottom 是具有定位特性元素专用的 CSS 属性，其中 l
 
 relative 的定位有两大特性：一是相对自身；二是无侵入。
 
-“无侵入”的意思是，当relative 进行定位偏移的时候，一般情况下不会影响周围元素的布局。
+“无侵入”的意思是，当 relative 进行定位偏移的时候，一般情况下不会影响周围元素的布局。
 
 ![](2020-01-09-17-57-57.png)
 
@@ -2247,7 +2248,7 @@ top 和 bottom 这两个垂直方向的百分比值计算跟 height 的百分比
 
 ```html
 <div style="position:relative;">
-  <img src="icon.png" style="position:absolute;top:0;right:0;">
+  <img src="icon.png" style="position:absolute;top:0;right:0;" />
   <p>内容 1</p>
   <p>内容 2</p>
   <p>内容 3</p>
@@ -2275,11 +2276,11 @@ top 和 bottom 这两个垂直方向的百分比值计算跟 height 的百分比
 
 这里我们不妨看一个看似无伤大雅的小问题。场景是这样的：A 模块下方有一个“B 模块”，这个“B 模块”设置了 margin-top:-100px，希望可以覆盖“A 模块”后面的部分内容，此时两种实现的差异就显现出来了。
 
-如果是前面 position:relative 设置在容器上的实现，会发现“B 模块”并没有覆盖“A 模块”，反而是被“A 模块”覆盖了！原因很简单，相比普通元素，相对定位元素的层叠顺序是“鬼畜”级别的，自然“A 模块”要覆盖“B 模块”。如果要想实现目标效果，就需要给“B模块”也设置 position:relative。
+如果是前面 position:relative 设置在容器上的实现，会发现“B 模块”并没有覆盖“A 模块”，反而是被“A 模块”覆盖了！原因很简单，相比普通元素，相对定位元素的层叠顺序是“鬼畜”级别的，自然“A 模块”要覆盖“B 模块”。如果要想实现目标效果，就需要给“B 模块”也设置 position:relative。
 
 但是，如果是后面“relative 的最小化影响原则”的实现，由于 relative 只影响右上角的图标，“A 模块”后面的内容都还是普通元素，那么，最终的效果就是我们希望的“B 模块”覆盖“A 模块”。
 
-“relative 的最小化影响原则”不仅规避了复杂场景可能出现样式问题的隐患，从日后的维护角度讲也更方便，比方说过了一个月，我们不需要右上角的图标了，直接移除这个 relative 最小化的单元即可！但是，如果 relative 是这个容器上的，这段样式代码你敢删吗？万一其他元素定位也需要呢？万一 relative 还有提高层叠顺序的作用呢？留着没问题，删掉可能出bug，我想大多数的开发者一定会留着的，这也是为什么随着项目进程的推进代码会越来越冗余的原因。
+“relative 的最小化影响原则”不仅规避了复杂场景可能出现样式问题的隐患，从日后的维护角度讲也更方便，比方说过了一个月，我们不需要右上角的图标了，直接移除这个 relative 最小化的单元即可！但是，如果 relative 是这个容器上的，这段样式代码你敢删吗？万一其他元素定位也需要呢？万一 relative 还有提高层叠顺序的作用呢？留着没问题，删掉可能出 bug，我想大多数的开发者一定会留着的，这也是为什么随着项目进程的推进代码会越来越冗余的原因。
 
 从这一点可以看出来，项目代码越来越臃肿、越来越冗余，归根结底还是一开始实现项目的人的技术水平和能力火候还不够。实现时 “洋溢着灿烂的笑容”没什么好得意的，能够让日后维护甚至其他人接手项目维护的时候也“洋溢着灿烂的笑容”，那才是真厉害！
 
@@ -2413,13 +2414,13 @@ position:fixed 固定定位元素的“包含块”是根元素，我们可以�
 
 如果网站的滚动结构不方便调整，则需要借助 JavaScript 来实现锁定。
 
-如果是移动端项目，阻止 touchmove 事件的默认行为可以防止滚动；如果是桌面端项目，可以让根元素直接 overflow:hidden。但是，Windows 操作系统下的浏览器的滚动条都是占据一定宽度的，滚动条的消失必然会导致页面的可用宽度变化，页面会产生体验更糟糕的晃动问题，那怎么办呢？很简单，我们只需要找个东西填补消失的滚动条就好了。那该找什么东西填充呢？这时候就轮到功勋卓越的 border 属性出马了 — 消失的滚动条使用同等宽度的透明
-边框填充！
+如果是移动端项目，阻止 touchmove 事件的默认行为可以防止滚动；如果是桌面端项目，可以让根元素直接 overflow:hidden。但是，Windows 操作系统下的浏览器的滚动条都是占据一定宽度的，滚动条的消失必然会导致页面的可用宽度变化，页面会产生体验更糟糕的晃动问题，那怎么办呢？很简单，我们只需要找个东西填补消失的滚动条就好了。那该找什么东西填充呢？这时候就轮到功勋卓越的 border 属性出马了 — 消失的滚动条使用同等宽度的透明边框填充！
 
 于是，在蒙层显示的同时执行下面的 JavaScript 代码：
 
 ```js
-var widthBar = 17, root = document.documentElement;
+var widthBar = 17,
+  root = document.documentElement;
 if (typeof window.innerWidth == 'number') {
   widthBar = window.innerWidth - root.clientWidth;
 }

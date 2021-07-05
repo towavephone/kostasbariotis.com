@@ -11,17 +11,13 @@ date: 2018-04-02 17:54:51
 
 ## S.O.L.I.D
 
-
-
-| 简写 | 全拼 | 中文翻译 |
-| :--: | :--: | :--: |
-| SRP | The Single Responsibility Principle    | 单一责任原则 |
-| OCP | The Open Closed Principle              | 开放封闭原则 |
-| LSP | The Liskov Substitution Principle      | 里氏替换原则 |
-| ISP | The Interface Segregation Principle    | 接口分离原则 |
-| DIP | The Dependency Inversion Principle     | 依赖倒置原则 |
-
-
+| 简写 |                全拼                 |   中文翻译   |
+| :--: | :---------------------------------: | :----------: |
+| SRP  | The Single Responsibility Principle | 单一责任原则 |
+| OCP  |      The Open Closed Principle      | 开放封闭原则 |
+| LSP  |  The Liskov Substitution Principle  | 里氏替换原则 |
+| ISP  | The Interface Segregation Principle | 接口分离原则 |
+| DIP  | The Dependency Inversion Principle  | 依赖倒置原则 |
 
 ### 1. 单一责任原则
 
@@ -69,13 +65,13 @@ date: 2018-04-02 17:54:51
 
 除了上述的经典原则，在实际开发中还有下面这些常见的设计原则。
 
-| 简写    | 全拼    | 中文翻译 |
-| :--: | :--: | :--: |
-|LOD|    The Law of Demeter                   | 迪米特法则   |
-|CRP|    The Composite Reuse Principle        | 合成复用原则 |
-|CCP|    The Common Closure Principle         | 共同封闭原则 |
-|SAP|    The Stable Abstractions Principle    | 稳定抽象原则 |
-|SDP|    The Stable Dependencies Principle    | 稳定依赖原则 |
+| 简写 |               全拼                |   中文翻译   |
+| :--: | :-------------------------------: | :----------: |
+| LOD  |        The Law of Demeter         |  迪米特法则  |
+| CRP  |   The Composite Reuse Principle   | 合成复用原则 |
+| CCP  |   The Common Closure Principle    | 共同封闭原则 |
+| SAP  | The Stable Abstractions Principle | 稳定抽象原则 |
+| SDP  | The Stable Dependencies Principle | 稳定依赖原则 |
 
 ### 1. 迪米特法则
 
@@ -139,9 +135,9 @@ public class Person {
 
 ## 继承
 
-继承实现了  **IS-A**  关系，例如 Cat 和 Animal 就是一种 IS-A 关系，因此 Cat 可以继承自 Animal，从而获得 Animal 非 private 的属性和方法。
+继承实现了 **IS-A** 关系，例如 Cat 和 Animal 就是一种 IS-A 关系，因此 Cat 可以继承自 Animal，从而获得 Animal 非 private 的属性和方法。
 
-Cat 可以当做 Animal 来使用，也就是说可以使用 Animal 引用 Cat 对象。父类引用指向子类对象称为  **向上转型** 。
+Cat 可以当做 Animal 来使用，也就是说可以使用 Animal 引用 Cat 对象。父类引用指向子类对象称为 **向上转型** 。
 
 ```java
 Animal animal = new Cat();
@@ -253,7 +249,7 @@ public class Company
 ```cpp
 public class School
 {
-    private Student[] students;  
+    private Student[] students;
 
     public void GoToSchool()
     {

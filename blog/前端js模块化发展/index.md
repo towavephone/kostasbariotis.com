@@ -2,7 +2,7 @@
 title: 前端js模块化发展
 date: 2019-6-4 12:03:01
 categories:
-- 前端
+  - 前端
 tags: 前端, 前端模块化
 path: /frontend-module-development/
 ---
@@ -25,7 +25,7 @@ path: /frontend-module-development/
 
 **外部依赖定义 (2007)**: 这种定义方式在 cocos2d-js 开发中普遍使用，其核心思想是将依赖抽出单独文件定义，这种方式不利于项目管理，毕竟依赖抽到代码之外，我是不是得两头找呢？所以才有通过 webpack 打包为一个文件的方式暴力替换为 commonjs 的方式出现。
 
-**Sandbox模式 (2009)**: 这种模块化方式很简单，暴力，将所有模块塞到一个 `sanbox` 变量中，硬伤是无法解决冲突问题，毕竟都塞到一个 `sandbox` 对象里，而 `Sandbox` 对象也需要定义在全局，存在被覆盖的风险。模块化需要保证全局变量尽量干净，目前为止的模块化方案都没有很好的做到这一点。
+**Sandbox 模式 (2009)**: 这种模块化方式很简单，暴力，将所有模块塞到一个 `sanbox` 变量中，硬伤是无法解决冲突问题，毕竟都塞到一个 `sandbox` 对象里，而 `Sandbox` 对象也需要定义在全局，存在被覆盖的风险。模块化需要保证全局变量尽量干净，目前为止的模块化方案都没有很好的做到这一点。
 
 **依赖注入 (2009)**: 就是大家熟知的 angular1.0，依赖注入的思想现在已广泛运用在 react、vue 等流行框架中。但依赖注入和解决模块化问题还差得远。
 
@@ -51,19 +51,19 @@ path: /frontend-module-development/
 
 这篇文章所提供的模块化历史的方案都是逻辑模块化，**从 CommonJS 方案开始前端把服务端的解决方案搬过来之后，算是看到标准物理与逻辑统一的模块化**。但之后前端工程不得不引入模块化构建这一步。正是这一步给前端开发无疑带来了诸多的不便，尤其是现在我们开发过程中经常为了优化这个工具带了很多额外的成本。
 
-从 CommonJS 之前其实都只是封装，并没有一套模块化规范，这个就有些像类与包的概念。我在10年左右用的最多的还是 YUI2，YUI2 是用 namespace 来做模块化的，但有很多问题没有解决，比如多版本共存，因此后来 YUI3 出来了。
+从 CommonJS 之前其实都只是封装，并没有一套模块化规范，这个就有些像类与包的概念。我在 10 年左右用的最多的还是 YUI2，YUI2 是用 namespace 来做模块化的，但有很多问题没有解决，比如多版本共存，因此后来 YUI3 出来了。
 
 ```javascript
-YUI().use('node', 'event', function (Y) {
-    // The Node and Event modules are loaded and ready to use.
-    // Your code goes here!
+YUI().use('node', 'event', function(Y) {
+  // The Node and Event modules are loaded and ready to use.
+  // Your code goes here!
 });
 ```
 
 YUI3 的 sandbox 像极了差不多同时出现的 AMD 规范，但早期 yahoo 在前端圈的影响力还是很大的，而 requirejs 到 2011 年才诞生，因此圈子不是用着 YUI 要不就自己封装一套 sandbox，内部使用 jQuery。
 
 为什么模块化方案这么晚才成型，可能早期应用的复杂度都在后端，前端都是非常简单逻辑。后来 Ajax 火了之后，web app 概念的开始流行，前端的复杂度也呈指数级上涨，到今天几乎和后端接近一个量级。**工程发展到一定阶段，要出现的必然会出现。**
-　
+
 ### 前端三剑客的模块化展望
 
 > 从 js 模块化发展史，我们还看到了 css html 模块化方面的严重落后，如今依赖编译工具的模块化增强在未来会被标准所替代。
@@ -117,7 +117,7 @@ YUI3 的 sandbox 像极了差不多同时出现的 AMD 规范，但早期 yahoo 
 ### 补充阅读
 
 - [JavaScript 模块化七日谈](https://huangxuan.me/2015/07/09/js-module-7day/)
-- [JavaScript模块化编程简史（2009-2016）](https://yuguo.us/weblog/javascript-module-development-history/)
+- [JavaScript 模块化编程简史（2009-2016）](https://yuguo.us/weblog/javascript-module-development-history/)
 
 # 总结
 

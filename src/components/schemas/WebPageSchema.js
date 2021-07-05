@@ -9,11 +9,11 @@ export default function WebPageSchema({ title, description, url }) {
     "url": "${url}",
     "description": "${description}"
   }`;
-  return <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: data }} />;
+  return <script type='application/ld+json' dangerouslySetInnerHTML={{ __html: data }} />;
 }
 
 WebPageSchema.propTypes = {
   title: PropTypes.string,
   description: PropTypes.string,
-  url: PropTypes.string,
+  url: PropTypes.string
 };

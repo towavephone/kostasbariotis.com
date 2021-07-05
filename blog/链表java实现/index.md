@@ -2,15 +2,16 @@
 title: 栈、队列java实现
 date: 2018-3-15 14:30:11
 categories:
-- 面试
+  - 面试
 path: /stack-queue-java/
 tags: 面试, 数据结构
 ---
+
 ## 下压栈
 
 ### 特点
 
->能动态调整数组大小的实现
+> 能动态调整数组大小的实现
 
 ### 实现
 
@@ -151,8 +152,6 @@ public class ResizingArrayStack<Item> implements Iterable<Item> {
 
 ```
 
-
-
 ## 下压堆栈（链表实现）
 
 ```java
@@ -249,7 +248,7 @@ public class Stack<Item> implements Iterable<Item> {
         }
         return s.toString();
     }
-       
+
 
     /**
      * Returns an iterator to this stack that iterates through the items in LIFO order.
@@ -279,7 +278,7 @@ public class Stack<Item> implements Iterable<Item> {
         public Item next() {
             if (!hasNext()) throw new NoSuchElementException();
             Item item = current.item;
-            current = current.next; 
+            current = current.next;
             return item;
         }
     }
@@ -403,7 +402,7 @@ public class Queue<Item> implements Iterable<Item> {
             s.append(' ');
         }
         return s.toString();
-    } 
+    }
 
     /**
      * Returns an iterator that iterates over the items in this queue in FIFO order.
@@ -411,7 +410,7 @@ public class Queue<Item> implements Iterable<Item> {
      * @return an iterator that iterates over the items in this queue in FIFO order
      */
     public Iterator<Item> iterator()  {
-        return new ListIterator<Item>(first);  
+        return new ListIterator<Item>(first);
     }
 
     // an iterator, doesn't implement remove() since it's optional
@@ -428,7 +427,7 @@ public class Queue<Item> implements Iterable<Item> {
         public Item next() {
             if (!hasNext()) throw new NoSuchElementException();
             Item item = current.item;
-            current = current.next; 
+            current = current.next;
             return item;
         }
     }
@@ -518,7 +517,7 @@ public class Bag<Item> implements Iterable<Item> {
      * @return an iterator that iterates over the items in this bag in arbitrary order
      */
     public Iterator<Item> iterator()  {
-        return new ListIterator<Item>(first);  
+        return new ListIterator<Item>(first);
     }
 
     // an iterator, doesn't implement remove() since it's optional
@@ -535,7 +534,7 @@ public class Bag<Item> implements Iterable<Item> {
         public Item next() {
             if (!hasNext()) throw new NoSuchElementException();
             Item item = current.item;
-            current = current.next; 
+            current = current.next;
             return item;
         }
     }

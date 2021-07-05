@@ -2,12 +2,12 @@
 title: 动态连通性（网络连通、等价性）
 date: 2018-3-16 18:32:46
 categories:
-- 面试
+  - 面试
 tags: 面试, 算法
 path: /offer-connexity/
 ---
 
-## 加权quick-union算法
+## 加权 quick-union 算法
 
 ![](./QQ截图20180316161228.jpg)
 
@@ -17,10 +17,8 @@ path: /offer-connexity/
 
 ### 特点
 
-- 对于N个触点，加权quick-union算法构造的森林中的任意节点的深度最多为lgN。
-- 对于加权quick-union算法和N个触点，在最坏情况下find()、connected()和union()的成本的增长数量级为logN。
-
-
+- 对于 N 个触点，加权 quick-union 算法构造的森林中的任意节点的深度最多为 lgN。
+- 对于加权 quick-union 算法和 N 个触点，在最坏情况下 find()、connected()和 union()的成本的增长数量级为 logN。
 
 ### 实现
 
@@ -34,7 +32,7 @@ public class WeightedQuickUnionUF {
 
     /**
      * Initializes an empty union–find data structure with {@code n} sites
-     * {@code 0} through {@code n-1}. Each site is initially in its own 
+     * {@code 0} through {@code n-1}. Each site is initially in its own
      * component.
      *
      * @param  n the number of sites
@@ -58,7 +56,7 @@ public class WeightedQuickUnionUF {
     public int count() {
         return count;
     }
-  
+
     /**
      * Returns the component identifier for the component containing site {@code p}.
      *
@@ -77,7 +75,7 @@ public class WeightedQuickUnionUF {
         while (p != parent[p]){
             p = parent[p];
             parent[p] = tmp;
-        } 
+        }
         return p;
     }
 
@@ -85,7 +83,7 @@ public class WeightedQuickUnionUF {
     private void validate(int p) {
         int n = parent.length;
         if (p < 0 || p >= n) {
-            throw new IllegalArgumentException("index " + p + " is not between 0 and " + (n-1));  
+            throw new IllegalArgumentException("index " + p + " is not between 0 and " + (n-1));
         }
     }
 
@@ -104,7 +102,7 @@ public class WeightedQuickUnionUF {
     }
 
     /**
-     * Merges the component containing site {@code p} with the 
+     * Merges the component containing site {@code p} with the
      * the component containing site {@code q}.
      *
      * @param  p the integer representing one site
@@ -131,7 +129,7 @@ public class WeightedQuickUnionUF {
 
 
     /**
-     * Reads in a sequence of pairs of integers (between 0 and n-1) from standard input, 
+     * Reads in a sequence of pairs of integers (between 0 and n-1) from standard input,
      * where each integer represents some object;
      * if the sites are in different components, merge the two components
      * and print the pair to standard output.

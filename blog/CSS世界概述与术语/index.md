@@ -4,10 +4,11 @@ date: 2018-5-22 12:17:44
 path: /css-world-overview-term/
 tags: 前端, CSS, CSS世界
 ---
+
 # 概述
 
 ## 流的概念
- 
+
 - CSS 世界的诞生就是为图文信息展示服务的。
 - 流影响整个 CSS 世界。
 - table 有着自己的世界。
@@ -15,31 +16,31 @@ tags: 前端, CSS, CSS世界
 ## CSS3
 
 1. 布局更为丰富
-    - 移动端的崛起催生了CSS媒体查询以及响应式特性，如图片元素的 srcset 属性、 CSS 的 object-fit 属性。
-    - 弹性盒子布局。
-    - 格栅布局。
+   - 移动端的崛起催生了 CSS 媒体查询以及响应式特性，如图片元素的 srcset 属性、 CSS 的 object-fit 属性。
+   - 弹性盒子布局。
+   - 格栅布局。
 2. 视觉表现长足进步
-    - 圆角、阴影和渐变。
-    - transform 变换。
-    - filter 滤镜和混合模式。
-    - animation 动画。
+   - 圆角、阴影和渐变。
+   - transform 变换。
+   - filter 滤镜和混合模式。
+   - animation 动画。
 
 # 专业术语
 
 ```css
 .class {
-    height: 99px;
-    color: transparent;
+  height: 99px;
+  color: transparent;
 }
 ```
 
 ## 属性
 
-height、color代表属性
+height、color 代表属性
 
 ## 值
 
-99px代表值
+99px 代表值
 
 ## 关键字
 
@@ -57,12 +58,12 @@ px、em、s、ms，注意 2% 中的 % 不是长度单位，是一个完整的值
 
 ### 相对长度单位
 
-- 相对字体长度单位，如em、ex，还有 CSS3 中的 rem 和 ch（字符 0 的宽度）。
-- 相对视区长度单位，如vh、vw、vmin 和 vmax。
+- 相对字体长度单位，如 em、ex，还有 CSS3 中的 rem 和 ch（字符 0 的宽度）。
+- 相对视区长度单位，如 vh、vw、vmin 和 vmax。
 
 ### 绝对长度单位
 
-px，还有pt、cm、mm、pc。
+px，还有 pt、cm、mm、pc。
 
 ## 功能符
 
@@ -89,7 +90,7 @@ px，还有pt、cm、mm、pc。
 选择器是用来瞄准目标元素的东西。
 
 - 类选择器
-- ID选择器
+- ID 选择器
 - 属性选择器
 - 伪类选择器
 - 伪元素选择器

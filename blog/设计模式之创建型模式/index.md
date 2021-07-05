@@ -13,8 +13,6 @@ date: 2018-04-19 00:03:47
 - 结构型模式主要用于处理类或对象的组合。
 - 行为型模式主要用于描述对类或对象怎样交互和怎样分配职责。
 
-
-
 # 创建型模式
 
 ## 单例模式(Singleton)
@@ -25,7 +23,7 @@ date: 2018-04-19 00:03:47
 
 对于系统中的某些类来说，有且只能有一个实例。例如：一个系统只能有一个窗口管理器。系统中可以有许多打印机，但是只能有一个打印机正在工作。
 
-### 模式定义 
+### 模式定义
 
 单例模式确保某一个类只有一个实例，而且自行实例化并向整个系统提供这个实例，这个类称为单例类，它提供全局访问的方法。
 
@@ -40,14 +38,14 @@ date: 2018-04-19 00:03:47
 ![](./微信截图_20180414223904.png)
 
 ```cpp
-public class Singleton 
+public class Singleton
 {
     //4：定义一个变量来存储创建好的类实例
     //5：因为这个变量要在静态方法中使用，所以需要加上static修饰
     private static Singleton instance = null;
     //1：私有化构造方法，便于在内部控制创建实例的数目
     private Singleton()
-    {    
+    {   
     }
     //2：定义一个方法来为客户端提供类实例
     //3：这个方法需要定义成类方法，也就是要加static
@@ -66,17 +64,17 @@ public class Singleton
 ### 优缺点
 
 - 优点
-    - 提供了对唯一实例的受控访问。 
-    - 由于系统中只存在一个对象，因此可以节约系统资源，对于一些需要频繁创建和销毁的对象，单例模式无疑可以提高系统的性能。
-    - 允许可变数目的实例。可以对单例模式进行扩展，设计指定个数的实例对象，即节省系统资源，又解决了由于单例对象共享过多有损性能的问题
+  - 提供了对唯一实例的受控访问。
+  - 由于系统中只存在一个对象，因此可以节约系统资源，对于一些需要频繁创建和销毁的对象，单例模式无疑可以提高系统的性能。
+  - 允许可变数目的实例。可以对单例模式进行扩展，设计指定个数的实例对象，即节省系统资源，又解决了由于单例对象共享过多有损性能的问题
 - 缺点
-    - 由于单例模式中没有抽象层，因此单例类的扩展有很大困难。 
-    - 单例类的职责过重，在一定程度上违背了单一职责原则。因为单例模式既提供业务方法，又提供了创建对象的方法，将对象功能和创建耦合在一起。
-    - 很多面向对象语言的GC垃圾回收技术，实例化的对象长期不使用，系统会认为是垃圾，自动销毁并回收资源，这将导致共享的单例对象状态的丢失。
+  - 由于单例模式中没有抽象层，因此单例类的扩展有很大困难。
+  - 单例类的职责过重，在一定程度上违背了单一职责原则。因为单例模式既提供业务方法，又提供了创建对象的方法，将对象功能和创建耦合在一起。
+  - 很多面向对象语言的 GC 垃圾回收技术，实例化的对象长期不使用，系统会认为是垃圾，自动销毁并回收资源，这将导致共享的单例对象状态的丢失。
 
 ### 模式使用
 
-- 系统只需要一个实例对象。例如，系统要求提供一个唯一的系列号生成器或资源管理器，或资源消耗太大而只允许创建一个对象。 
+- 系统只需要一个实例对象。例如，系统要求提供一个唯一的系列号生成器或资源管理器，或资源消耗太大而只允许创建一个对象。
 - 客户调用类的单个实例只允许使用一个公共访问点。
 
 **例子一**
@@ -85,15 +83,15 @@ public class Singleton
 
 答：这样做是违背单例模式的用意的。单例模式只应当在有真正的“单一实例”的需求时才可使用。
 
->设计得当的系统不应当有所谓的“全局”变量，这些变量一个应当放到它们所描述的实体所对应的类中去。将这些变量从它们所描述的实体类中抽出来，放到一个不相干的单例类中去，会使得这些变量产生错误的依赖关系和耦合关系。
+> 设计得当的系统不应当有所谓的“全局”变量，这些变量一个应当放到它们所描述的实体所对应的类中去。将这些变量从它们所描述的实体类中抽出来，放到一个不相干的单例类中去，会使得这些变量产生错误的依赖关系和耦合关系。
 
 **例子二**
 
-问：我的一个系统需要管理与数据库的连接。学习了单例模式后，我发现可以使用一个单例类包装一个 Connection 对象，并在 finalize() 方法中关闭这个 Connection 对象。这样的话，在这个单例类的实例没有被人引用时，这个finalize()对象就会被调用，因此，Connection 对象就会被释放。这多妙啊。
+问：我的一个系统需要管理与数据库的连接。学习了单例模式后，我发现可以使用一个单例类包装一个 Connection 对象，并在 finalize() 方法中关闭这个 Connection 对象。这样的话，在这个单例类的实例没有被人引用时，这个 finalize()对象就会被调用，因此，Connection 对象就会被释放。这多妙啊。
 
-答：这样做是不恰当的。除非有单一实例的需求，不然不要使用单例模式。在这里Connection 对象可以同时有几个实例共存，不需要是单一实例。
+答：这样做是不恰当的。除非有单一实例的需求，不然不要使用单例模式。在这里 Connection 对象可以同时有几个实例共存，不需要是单一实例。
 
->单例模式有很多的错误使用案例都与此例子相似，它们都是试图使用单例模式管理共享资源的生命周期，这是不恰当的。
+> 单例模式有很多的错误使用案例都与此例子相似，它们都是试图使用单例模式管理共享资源的生命周期，这是不恰当的。
 
 ### 模式应用
 
@@ -118,8 +116,8 @@ public class Singleton
 public class Singleton
 {
     private static Singleton singleton;
-    //定义一个只读静态对象 
-    //且这个对象是在程序运行时创建的 
+    //定义一个只读静态对象
+    //且这个对象是在程序运行时创建的
     private static readonly object syncObject = new object();
     private Singleton()
     {}
@@ -143,8 +141,7 @@ public class Singleton
 }
 ```
 
->如果没有第一重 singleton == null 的话，每一次有线程调用GetInstance（）时，均会执行锁定操作来实现线程同步，这是非常耗费性能的。
-而如果加上第一重 singleton == null 的话，那么就只有在第一次，也就是 singleton ==null 成立时的情况下执行一次锁定以实现线程同步，而以后的话，便只要直接返回 Singleton 实例就 OK 了而根本无需再进入 lock 语句块了，这样就可以解决由线程同步带来的性能问题了。
+> 如果没有第一重 singleton == null 的话，每一次有线程调用 GetInstance（）时，均会执行锁定操作来实现线程同步，这是非常耗费性能的。而如果加上第一重 singleton == null 的话，那么就只有在第一次，也就是 singleton ==null 成立时的情况下执行一次锁定以实现线程同步，而以后的话，便只要直接返回 Singleton 实例就 OK 了而根本无需再进入 lock 语句块了，这样就可以解决由线程同步带来的性能问题了。
 
 **饿汉式单例**
 
@@ -153,7 +150,7 @@ public class Singleton
 - 其自己就会主动实例化单例类的这个唯一类。
 
 ```cpp
-// 
+//
 public class Singleton
 {
     private static readonly Singleton singleton = new Singleton();
@@ -213,7 +210,7 @@ static void Main(string[] args)
         else
         {
             Console.WriteLine("singletonOne 和 singletonTwo 代表的是不同实例");
-        }               
+        }
     }
     Console.ReadKey();
 }
@@ -251,7 +248,7 @@ class Operation
 }
 ```
 
-Switch中添加一个分支就可以了，运算 + - * /  的代码GetResult是正确的，却需要在修改的时候暴露，违反了开放封闭原则，继续改进。
+Switch 中添加一个分支就可以了，运算 + - \* / 的代码 GetResult 是正确的，却需要在修改的时候暴露，违反了开放封闭原则，继续改进。
 
 ![](./简单工厂20180415131811.png)
 
@@ -282,7 +279,7 @@ class Operation
 }
 
 // 加法类，其他同理
-class OperationAdd : Operation  
+class OperationAdd : Operation
 {
     public override double GetResult()
     {
@@ -376,13 +373,13 @@ public class OperationFactory //工厂角色
 **优缺点**
 
 - 优点：
-    - 工厂类含有必要的判断逻辑，可以决定在什么时候创建哪一个产品类的实例，客户端可以免除直接创建产品对象的责任，而仅仅“消费”产品。简单工厂模式通过这种做法实现了对象创建和使用的分离
-    - 客户端代码简洁，无需知道所创建具体产品的类名，只需知道对应的参数，可以减少使用者的记忆量。
+  - 工厂类含有必要的判断逻辑，可以决定在什么时候创建哪一个产品类的实例，客户端可以免除直接创建产品对象的责任，而仅仅“消费”产品。简单工厂模式通过这种做法实现了对象创建和使用的分离
+  - 客户端代码简洁，无需知道所创建具体产品的类名，只需知道对应的参数，可以减少使用者的记忆量。
 - 缺点：
-    - 工厂类集中了所有产品创建逻辑，一旦不能正常工作，整个系统都要受到影响。
-    - 增加了系统中类的数量，增加了系统的复杂度和理解难度。
-    - 系统扩展困难，一旦添加新产品就不得不修改工厂逻辑，有可能造成工厂逻辑过于复杂，不利于扩展。
-    - 简单工厂模式通常使用静态工厂方法，造成工厂角色无法形成基于继承的等级结构。
+  - 工厂类集中了所有产品创建逻辑，一旦不能正常工作，整个系统都要受到影响。
+  - 增加了系统中类的数量，增加了系统的复杂度和理解难度。
+  - 系统扩展困难，一旦添加新产品就不得不修改工厂逻辑，有可能造成工厂逻辑过于复杂，不利于扩展。
+  - 简单工厂模式通常使用静态工厂方法，造成工厂角色无法形成基于继承的等级结构。
 
 **模式应用**
 
@@ -434,17 +431,17 @@ strResult = oper.GetResult().ToString();
 - Factory：抽象工厂
 - ConcreteFactory：具体工厂
 
-工厂方法模式是简单工厂模式的延伸，它继承了简单工厂模式的优点，同时还弥补了简单工厂模式的不足。工厂方法模式是使用频率最高的设计模式之一，是很多开源框架和API类库的核心模式。
+工厂方法模式是简单工厂模式的延伸，它继承了简单工厂模式的优点，同时还弥补了简单工厂模式的不足。工厂方法模式是使用频率最高的设计模式之一，是很多开源框架和 API 类库的核心模式。
 
 **优缺点**
 
 - 优点
-    - 在工厂方法模式中，工厂方法用来创建客户所需要的产品，同时还向客户隐藏了哪种具体产品类被实例化这一细节，用户只需要关心所需产品对应的工厂，无需关心创建产品的细节，甚至无需知道产品类的类名。
-    - 基于工厂角色和产品角色的多态性设计是工厂方法模式的关键。它能够使工厂可以自主确定创建何种产品对象，而如何创建这个对象的细节则完全封装在具体工厂内部。
-    - 使用工厂方法模式的另一个优点是在系统中加入新产品时，无需修改抽象工厂和抽象产品提供的接口，无需修改客户端，也无需修改其它的具体工厂和具体产品，而只要添加一个新的具体工厂和具体产品即可。
+  - 在工厂方法模式中，工厂方法用来创建客户所需要的产品，同时还向客户隐藏了哪种具体产品类被实例化这一细节，用户只需要关心所需产品对应的工厂，无需关心创建产品的细节，甚至无需知道产品类的类名。
+  - 基于工厂角色和产品角色的多态性设计是工厂方法模式的关键。它能够使工厂可以自主确定创建何种产品对象，而如何创建这个对象的细节则完全封装在具体工厂内部。
+  - 使用工厂方法模式的另一个优点是在系统中加入新产品时，无需修改抽象工厂和抽象产品提供的接口，无需修改客户端，也无需修改其它的具体工厂和具体产品，而只要添加一个新的具体工厂和具体产品即可。
 - 缺点
-    - 在添加新产品时，需要编写新的具体产品类，而且还要提供与之对应的具体工厂类，类成对增加，将导致系统设计较为庞大，且运行时系统会有额外的开销。
-    - 由于考虑到系统的可扩展性，需要引入抽象层，在客户端代码中均使用抽象层进行定义，增加了系统的抽象性和理解难度，且在实现的时候可能需要用到反射等技术，增加了系统的实现难度。
+  - 在添加新产品时，需要编写新的具体产品类，而且还要提供与之对应的具体工厂类，类成对增加，将导致系统设计较为庞大，且运行时系统会有额外的开销。
+  - 由于考虑到系统的可扩展性，需要引入抽象层，在客户端代码中均使用抽象层进行定义，增加了系统的抽象性和理解难度，且在实现的时候可能需要用到反射等技术，增加了系统的实现难度。
 
 **模式使用**
 
@@ -460,14 +457,14 @@ strResult = oper.GetResult().ToString();
 
 不能不换数据库？
 
-- 以前基于Access的数据库项目，需要修改为SQL Server
-- SQL语言函数不一样，参数格式不一样
-- 如SQL Server中GetDate()，Access中为Now()
+- 以前基于 Access 的数据库项目，需要修改为 SQL Server
+- SQL 语言函数不一样，参数格式不一样
+- 如 SQL Server 中 GetDate()，Access 中为 Now()
 
 最简单的数据库程序
 
-- 假定使用SQL Server数据库
-- 数据库中有用户表(User)，用户类有2个字段ID和Name
+- 假定使用 SQL Server 数据库
+- 数据库中有用户表(User)，用户类有 2 个字段 ID 和 Name
 - 程序中有用户管理，可以对用户添加和查询
 
 ```cpp
@@ -537,7 +534,7 @@ class SqlserverUser : IUser
 
     public User GetUser(int id)
     {
-        Console.WriteLine("在Sqlserver中根据ID得到User表一条记录"); 
+        Console.WriteLine("在Sqlserver中根据ID得到User表一条记录");
         return null;
     }
 }
@@ -550,7 +547,7 @@ class AccessUser : IUser
 
     public User GetUser(int id)
     {
-        Console.WriteLine("在Access中根据ID得到User表一条记录");    
+        Console.WriteLine("在Access中根据ID得到User表一条记录");
         return null;
     }
 }
@@ -668,7 +665,7 @@ static void Main(string[] args)
     Department dept = new Department();
 
     IFactory factory = new AccessFactory();  //SqlServerFactory();
-    
+
     IUser iu = factory.CreateUser();
     iu.Insert(user);
     iu.GetUser(1);
@@ -691,7 +688,7 @@ static void Main(string[] args)
 
 ### 模式定义
 
-提供一个创建一系列相关或相互依赖对象的接口，而无需指定它们具体的类。抽象工厂模式又称为Kit模式，属于对象创建型模式。
+提供一个创建一系列相关或相互依赖对象的接口，而无需指定它们具体的类。抽象工厂模式又称为 Kit 模式，属于对象创建型模式。
 
 ### 模式结构
 
@@ -706,16 +703,16 @@ static void Main(string[] args)
 ### 优缺点
 
 - 优点
-    - 抽象工厂模式的主要优点是隔离了具体类的生成，使得客户并不需要知道什么被创建。由于这种隔离，更换一个具体工厂就变得相对容易。
-    - 所有的具体工厂都实现了抽象工厂中定义的那些公共接口，因此只需改变具体工厂的实例，就可以在某种程度上改变整个软件系统的行为。另外，应用抽象工厂模式可以实现高内聚低耦合的设计目的，因此抽象工厂模式得到了广泛的应用。
+  - 抽象工厂模式的主要优点是隔离了具体类的生成，使得客户并不需要知道什么被创建。由于这种隔离，更换一个具体工厂就变得相对容易。
+  - 所有的具体工厂都实现了抽象工厂中定义的那些公共接口，因此只需改变具体工厂的实例，就可以在某种程度上改变整个软件系统的行为。另外，应用抽象工厂模式可以实现高内聚低耦合的设计目的，因此抽象工厂模式得到了广泛的应用。
 - 缺点
-    - 抽象工厂模式的缺点是在添加新的产品对象时，难以扩展抽象工厂以便生产新种类的产品，这是因为在抽象工厂角色中规定了所有可能被创建的产品集合，要支持新种类的产品就意味着要对该接口进行扩展，而这将涉及到对抽象工厂角色及其所有子类的修改，显然会带来很多不便。
-    - 开闭原则的倾斜性（增加新的工厂和产品族容易，增加新的产品等级结构麻烦）
+  - 抽象工厂模式的缺点是在添加新的产品对象时，难以扩展抽象工厂以便生产新种类的产品，这是因为在抽象工厂角色中规定了所有可能被创建的产品集合，要支持新种类的产品就意味着要对该接口进行扩展，而这将涉及到对抽象工厂角色及其所有子类的修改，显然会带来很多不便。
+  - 开闭原则的倾斜性（增加新的工厂和产品族容易，增加新的产品等级结构麻烦）
 
 ### 模式使用
 
 - 一个系统不应当依赖于产品类实例如何被创建、组合和表达的细节，这对于所有形态的工厂模式都很重要。
-- 系统有多于一个的产品族，而客户端只消费其中某一产品族。 
+- 系统有多于一个的产品族，而客户端只消费其中某一产品族。
 - 系统提供一个产品类的库，所有的产品以同样的接口出现，从而使客户端不依赖于实现。
 
 ## 建造者模式(Builder)
@@ -772,7 +769,7 @@ abstract class PersonBuilder
 class PersonThinBuilder : PersonBuilder
 {
     public PersonThinBuilder(Graphics g, Pen p)
-        : base(g, p) { }        
+        : base(g, p) { }
     public override void BuildHead()
     {
         g.DrawEllipse(p, 50, 20, 30, 30);
@@ -1000,7 +997,7 @@ static void Main(string[] args)
     dt.Construct();
     pt = bd.GetResult();
     pt.Introduce();
-    
+
     Console.ReadKey();
 }
 ```
@@ -1015,7 +1012,7 @@ static void Main(string[] args)
 ### 优缺点
 
 - 建造者模式的使用使得产品的内部组成可以独立的变化，使用建造者模式可以使客户端不必知道产品内部组成的细节。
-- 每一个Builder都相对独立，而与其他的Builder无关。
+- 每一个 Builder 都相对独立，而与其他的 Builder 无关。
 - 模式所建造的最终产品更易于控制。
 
 ### 模式使用
@@ -1055,7 +1052,7 @@ public void set附件(List<File> files) {
 
 ```cpp
 class Resume     //简历类
-{  
+{
     private string name, sex , age , timeArea, company , AimCompany;
     public Resume(string name)
     {
@@ -1082,7 +1079,7 @@ class Resume     //简历类
 }
 ```
 
-内容相似只能Ctrl+C, Ctrl+V?
+内容相似只能 Ctrl+C, Ctrl+V?
 
 ```cpp
 static void Main(string[] args)
@@ -1091,14 +1088,14 @@ static void Main(string[] args)
     a.SetPersonalInfo("男", "22");
     a.SetWorkExperience("1998-2000", “XX 公司");
     a.SetAimCompany("Google");
-                
-    Resume b = a;            
+
+    Resume b = a;
 
     a.Display();
     b.Display();
 
     b.SetAimCompany(“Baidu");
-    
+
     a.Display();
     b.Display();
 
@@ -1106,13 +1103,13 @@ static void Main(string[] args)
 }
 ```
 
-![](./微信截图_20180416124727.png) 
+![](./微信截图_20180416124727.png)
 
 以下做原型模式的改进
 
 ```cpp
 class Resume: Icloneable //简历类
-{  
+{
     private string name, sex , age , timeArea, company , AimCompany;
     public Resume(string name)
     {
@@ -1135,7 +1132,7 @@ class Resume: Icloneable //简历类
         Console.WriteLine("尊敬的" + AimCompany + "公司领导，您好：")
         Console.WriteLine("{0} {1} {2}", name, sex, age);
         Console.WriteLine("工作经历：{0} {1}", timeArea, company);
-    } 
+    }
     public Object Clone()
     {
         return this.MemberwiseClone();
@@ -1148,14 +1145,14 @@ static void Main(string[] args)
     a.SetPersonalInfo("男", "22");
     a.SetWorkExperience("1998-2000", “XX 公司");
     a.SetAimCompany("Google");
-    
-    Resume b = (Resume)a.Clone();            
+
+    Resume b = (Resume)a.Clone();
 
     a.Display();
     b.Display();
 
     b.SetAimCompany(“Baidu");
-    
+
     a.Display();
     b.Display();
 
@@ -1163,13 +1160,11 @@ static void Main(string[] args)
 }
 ```
 
-
-
 **配钥匙**
 
 前几天，我很不幸把大门的钥匙给弄丢了，结果进不了家门。万幸的是，同学那儿还有一把，于是第二天我拿了他的那把去配钥匙。另外，他还让我顺便给他配一把房间的钥匙。现在配个钥匙真是简单，把钥匙给他，他直接找一个合适的钥匙胚子，把我的钥匙夹在配钥匙机的一端，胚子夹在另一端，一开电源，一把标尺比着我的钥匙齿型走一遍，砂轮就在胚子上复制出一把钥匙来！一分钟不到，两把新钥匙就搞定了！
 
-![](./微信截图_20180416122107.png) 
+![](./微信截图_20180416122107.png)
 
 ```cpp
 public abstract class Key
@@ -1203,7 +1198,7 @@ public abstract class Key
 
 //大门钥匙
 public class GateKey : Key
-{ 
+{
     public GateKey(string owner) : base("大门 钥匙", owner) { }
 
     public override Key Clone()
@@ -1268,13 +1263,13 @@ abstract class Prototype
 {
     private string id;
 
-    // Constructor 
+    // Constructor
     public Prototype(string id)
     {
         this.id = id;
     }
 
-    // Property 
+    // Property
     public string Id
     {
         get { return id; }
@@ -1289,15 +1284,15 @@ abstract class Prototype
 ```cpp
 class ConcretePrototype1 : Prototype
 {
-    // Constructor 
+    // Constructor
     public ConcretePrototype1(string id) : base(id)
     {
     }
 
     public override Prototype Clone()
     {
-        // Shallow copy 
-        return (Prototype) new ConcretePrototype1(this.Id);        
+        // Shallow copy
+        return (Prototype) new ConcretePrototype1(this.Id);
     }
 }
 ```
@@ -1321,12 +1316,12 @@ static void Main(string[] args)
 
 ### 模式解析
 
-- 对于.Net而言，其他许多语言同理，原型抽象类Prototype是用不着的，因为克隆实在太常用了，所以.Net在System命名空间中提供了Icloneable接口，其中就是一个唯一的方法Clone()，这样，只用实现这个接口就可以完成原型模式了。
-- 另一方面，所有的Java类都继承自java.lang.Object，而Object类提供一个clone()方法，可以将一个Java对象复制一份。但是，这个Java类必须实现一个标识接口Cloneable，标识这个Java类支持复制。
+- 对于.Net 而言，其他许多语言同理，原型抽象类 Prototype 是用不着的，因为克隆实在太常用了，所以.Net 在 System 命名空间中提供了 Icloneable 接口，其中就是一个唯一的方法 Clone()，这样，只用实现这个接口就可以完成原型模式了。
+- 另一方面，所有的 Java 类都继承自 java.lang.Object，而 Object 类提供一个 clone()方法，可以将一个 Java 对象复制一份。但是，这个 Java 类必须实现一个标识接口 Cloneable，标识这个 Java 类支持复制。
 
-**深克隆与浅克隆** 
+**深克隆与浅克隆**
 
-接上例中的简历内容，给Resume添加一些新的内容
+接上例中的简历内容，给 Resume 添加一些新的内容
 
 ```cpp
 public class IDInfo
@@ -1367,15 +1362,15 @@ static void Main(string[] args)
     a.SetPersonalInfo("男", "22");
     a.SetWorkExperience("1998-2000", “XX 公司");
     a.SetAimCompany("Google");
-                
-    Resume b = (Resume)a.Clone();            
+
+    Resume b = (Resume)a.Clone();
 
     a.Display();
     b.Display();
 
     b.SetAimCompany(“Baidu");
     b.idinfo.IdNumber = 56789;
-    
+
     a.Display();
     b.Display();
 
@@ -1385,7 +1380,7 @@ static void Main(string[] args)
 
 ![](./微信截图_20180416130349.png)
 
-结果错误！张三的ID也跟着变了！
+结果错误！张三的 ID 也跟着变了！
 
 ![](./微信截图_20180416131200.png)
 
@@ -1407,13 +1402,13 @@ Resume b = (Resume)a.DeepClone();
 ### 优缺点
 
 - 优点
-    - 当创建新的对象实例较为复杂时，使用原型模式可以简化的对象的创建过程，通过复制一个已有实例可以提高新实例的创建效率。
-    - 原型模式允许动态增加或减少产品类。
-    - 原型模式具有给一个应用软件动态加载新功能的能力。 
-    - 产品类不需要非得有任何事先确定的等级结构 。
+  - 当创建新的对象实例较为复杂时，使用原型模式可以简化的对象的创建过程，通过复制一个已有实例可以提高新实例的创建效率。
+  - 原型模式允许动态增加或减少产品类。
+  - 原型模式具有给一个应用软件动态加载新功能的能力。
+  - 产品类不需要非得有任何事先确定的等级结构 。
 - 缺点
-    - 原型模式的最主要缺点就是每一个类必须配备一个克隆方法。而且这个克隆方法需要对类的功能进行通盘考虑，这对全新的类来说不是很难，但对已有的类进行改造时，不一定是件容易的事。
-    - 原型模式的另一个缺点是在实现深克隆时需要编写较为复杂的代码。
+  - 原型模式的最主要缺点就是每一个类必须配备一个克隆方法。而且这个克隆方法需要对类的功能进行通盘考虑，这对全新的类来说不是很难，但对已有的类进行改造时，不一定是件容易的事。
+  - 原型模式的另一个缺点是在实现深克隆时需要编写较为复杂的代码。
 
 ### 模式使用
 

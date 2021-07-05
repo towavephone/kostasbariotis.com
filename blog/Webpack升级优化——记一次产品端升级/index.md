@@ -2,12 +2,12 @@
 title: Webpack升级优化——记一次产品端升级
 date: 2019-8-20 14:33:00
 categories:
-- 前端
+  - 前端
 tags: 前端, 前端构建工具, webpack, 预研
 path: /webpack-upgrade-about-product/
 ---
 
-接上文[Webpack配置笔记](/webpack-config-note/)
+接上文[Webpack 配置笔记](/webpack-config-note/)
 
 # 分包策略
 
@@ -27,7 +27,7 @@ path: /webpack-upgrade-about-product/
 
 # 分包优化步骤
 
-## echarts只提取需要的包
+## echarts 只提取需要的包
 
 `app\components\ECharts\component.js`
 
@@ -95,7 +95,8 @@ export default function loadComponent(loader, options) {
     component = Loadable({
       loader,
       loading: (props) => {
-        if (props.error) {// eslint-disable-line
+        if (props.error) {
+          // eslint-disable-line
           console.error('[chunk loader]', props.error); // eslint-disable-line
         }
         return <div />;
@@ -103,12 +104,16 @@ export default function loadComponent(loader, options) {
       render: (loaded, props) => {
         const Component = loaded.default;
         const { withRef, ...rest } = props; // eslint-disable-line
-        return (<Component
-          ref={(r) => { withRef && withRef(r); }}
-          {...rest}
-        />);
+        return (
+          <Component
+            ref={(r) => {
+              withRef && withRef(r);
+            }}
+            {...rest}
+          />
+        );
       },
-      ...options,
+      ...options
     });
     LoaderCache.set(loader, component);
     // component.preload();
@@ -124,16 +129,18 @@ export default function loadComponent(loader, options) {
 ```js
 import loadComponent from 'utils/loader';
 
-export default loadComponent(() => import(/* webpackChunkName: "c-graph-hint-text-area" */'./component'), null);
+export default loadComponent(() => import(/* webpackChunkName: "c-graph-hint-text-area" */ './component'), null);
 ```
 
 ```jsx
 <GraphHintTextArea
-  withRef={(r) => { this.graphHintTextArea = r; }}
+  withRef={(r) => {
+    this.graphHintTextArea = r;
+  }}
 />
 ```
 
-## antd只加载需要的icon
+## antd 只加载需要的 icon
 
 `internals/webpack/webpack.base.babel.js`
 
@@ -145,15 +152,9 @@ export default loadComponent(() => import(/* webpackChunkName: "c-graph-hint-tex
 
 ```js
 // fill
-export {
-  default as ExclamationCircleFill,
-} from '@ant-design/icons/lib/fill/ExclamationCircleFill';
+export { default as ExclamationCircleFill } from '@ant-design/icons/lib/fill/ExclamationCircleFill';
 // outline
-export {
-  default as QuestionCircleOutline,
-} from '@ant-design/icons/lib/outline/QuestionCircleOutline';
+export { default as QuestionCircleOutline } from '@ant-design/icons/lib/outline/QuestionCircleOutline';
 // twotone
-export {
-  default as ProfileTwoTone,
-} from '@ant-design/icons/lib/twotone/ProfileTwoTone';
+export { default as ProfileTwoTone } from '@ant-design/icons/lib/twotone/ProfileTwoTone';
 ```

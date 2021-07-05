@@ -2,16 +2,16 @@
 title: React之forwardRef入门学习
 date: 2019-9-20 14:35:44
 categories:
-- 前端
+  - 前端
 tags: 前端, React, forwardRef
 path: /react-forwardRef-practice-learn/
 ---
 
-# forwardRef 
+# forwardRef
 
 在 `React.createRef` 中已经介绍过，有三种方式可以使用 React 元素的 ref
 
-ref 是为了获取某个节点的实例，但是 函数式组件（PureComponent） 是没有实例的，不存在 this的，这种时候是拿不到函数式组件的 ref 的。
+ref 是为了获取某个节点的实例，但是 函数式组件（PureComponent） 是没有实例的，不存在 this 的，这种时候是拿不到函数式组件的 ref 的。
 
 为了解决这个问题，由此引入 `React.forwardRef`， **`React.forwardRef` 允许某些组件接收 ref，并将其向下传递给 子组件**
 
@@ -26,7 +26,7 @@ class TestComponent extends React.Component {
     this.inputRef = React.createRef(); // 创建 ref 存储 textRef DOM 元素
   }
   componentDidMount() {
-    this.inputRef.current.value = 'forwardRef'    
+    this.inputRef.current.value = 'forwardRef'
   }
   render() {
     return ( // 可以直接获取到 ForwardInput input 的 ref：
@@ -38,7 +38,7 @@ class TestComponent extends React.Component {
 
 - 只在使用 `React.forwardRef` 定义组件时，**第二个参数 ref** 才存在
 
-- 在项目中组件库中尽量不要使用  `React.forwardRef` ，因为它可能会导致子组件被 **破坏性更改**
+- 在项目中组件库中尽量不要使用 `React.forwardRef` ，因为它可能会导致子组件被 **破坏性更改**
 
 - **函数组件 和 class 组件均不接收 `ref` 参数** ，即 props 中不存在 `ref`，**ref 必须独立 props** 出来，否则会被 React 特殊处理掉。
 
@@ -52,7 +52,7 @@ class TestComponent extends React.Component {
         console.log('Next props: ', nextProps);
       }
       render() {
-        const {forwardedRef, ...others} = this.props;
+        const { forwardedRef, ...others } = this.props;
         // 将自定义的 prop 属性 “forwardedRef” 定义为 ref
         return <WrappedComponent ref={forwardedRef} {...others} />;
       }
@@ -64,7 +64,7 @@ class TestComponent extends React.Component {
       return <Enhance {...props} forwardedRef={ref} />;
     });
   }
-  
+
   // 子组件
   class MyComponent extends React.Component {
     focus() {
@@ -72,20 +72,16 @@ class TestComponent extends React.Component {
     }
     // ...
   }
-  
+
   // EnhancedComponent 会渲染一个高阶组件 enhance(MyComponent)
   const EnhancedComponent = enhance(MyComponent);
-  
+
   const ref = React.createRef();
-  
+
   // 我们导入的 EnhancedComponent 组件是高阶组件（HOC）Enhance。
   // 通过React.forwardRef 将 ref 将指向了 Enhance 内部的 MyComponent 组件
   // 这意味着我们可以直接调用 ref.current.focus() 方法
-  <EnhancedComponent
-    label="Click Me"
-    handleClick={handleClick}
-    ref={ref}
-  />;
+  <EnhancedComponent label='Click Me' handleClick={handleClick} ref={ref} />;
   ```
 
 # forwardRef 与 Hook useImperativeHandle
@@ -111,7 +107,7 @@ FancyInput = forwardRef(FancyInput);
 
 ```js
 export default function forwardRef<Props, ElementType: React$ElementType>(
-  render: (props: Props, ref: React$Ref<ElementType>) => React$Node,
+  render: (props: Props, ref: React$Ref<ElementType>) => React$Node
 ) {
   if (__DEV__) {
     if (render != null && render.$$typeof === REACT_MEMO_TYPE) {
@@ -119,22 +115,20 @@ export default function forwardRef<Props, ElementType: React$ElementType>(
         false,
         'forwardRef requires a render function but received a `memo` ' +
           'component. Instead of forwardRef(memo(...)), use ' +
-          'memo(forwardRef(...)).',
+          'memo(forwardRef(...)).'
       );
     } else if (typeof render !== 'function') {
       warningWithoutStack(
         false,
         'forwardRef requires a render function but was given %s.',
-        render === null ? 'null' : typeof render,
+        render === null ? 'null' : typeof render
       );
     } else {
       warningWithoutStack(
         // Do not warn for 0 arguments because it could be due to usage of the 'arguments' object
         render.length === 0 || render.length === 2,
         'forwardRef render functions accept exactly two parameters: props and ref. %s',
-        render.length === 1
-          ? 'Did you forget to use the ref parameter?'
-          : 'Any additional parameter will be undefined.',
+        render.length === 1 ? 'Did you forget to use the ref parameter?' : 'Any additional parameter will be undefined.'
       );
     }
 
@@ -142,7 +136,7 @@ export default function forwardRef<Props, ElementType: React$ElementType>(
       warningWithoutStack(
         render.defaultProps == null && render.propTypes == null,
         'forwardRef render functions do not support propTypes or defaultProps. ' +
-          'Did you accidentally pass a React component?',
+          'Did you accidentally pass a React component?'
       );
     }
   }
@@ -153,9 +147,10 @@ export default function forwardRef<Props, ElementType: React$ElementType>(
    * 实际上，React.forwardRef 返回的是一个 ReactElement，它的 $$typeof 也就是 REACT_ELEMENT_TYPE
    * 而 返回的对象 是作为 ReactElement 的 type 存在
    */
-  return { // 返回一个对象
+  return {
+    // 返回一个对象
     $$typeof: REACT_FORWARD_REF_TYPE, // 并不是 React.forwardRef 创建的实例的 $$typeof
-    render, // 函数组件
+    render // 函数组件
   };
 }
 ```

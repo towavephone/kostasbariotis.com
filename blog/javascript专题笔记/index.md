@@ -23,24 +23,24 @@ tags: 前端, JS, 高级前端
 <!DOCTYPE html>
 <html lang="zh-cmn-Hans">
   <head>
-    <meta charset="utf-8">
-    <meta http-equiv="x-ua-compatible" content="IE=edge, chrome=1">
+    <meta charset="utf-8" />
+    <meta http-equiv="x-ua-compatible" content="IE=edge, chrome=1" />
     <title>debounce</title>
     <style>
-        #container {
-            width: 100%;
-            height: 200px;
-            line-height: 200px;
-            text-align: center;
-            color: #fff;
-            background-color: #444;
-            font-size: 30px;
-        }
+      #container {
+        width: 100%;
+        height: 200px;
+        line-height: 200px;
+        text-align: center;
+        color: #fff;
+        background-color: #444;
+        font-size: 30px;
+      }
     </style>
   </head>
   <body>
-      <div id="container"></div>
-      <script src="debounce.js"></script>
+    <div id="container"></div>
+    <script src="debounce.js"></script>
   </body>
 </html>
 ```
@@ -52,8 +52,8 @@ var count = 1;
 var container = document.getElementById('container');
 
 function getUserAction() {
-    container.innerHTML = count++;
-};
+  container.innerHTML = count++;
+}
 
 container.onmousemove = getUserAction;
 ```
@@ -84,11 +84,11 @@ container.onmousemove = getUserAction;
 ```js
 // 第一版
 function debounce(func, wait) {
-    var timeout;
-    return function () {
-        clearTimeout(timeout)
-        timeout = setTimeout(func, wait);
-    }
+  var timeout;
+  return function() {
+    clearTimeout(timeout);
+    timeout = setTimeout(func, wait);
+  };
 }
 ```
 
@@ -109,7 +109,7 @@ container.onmousemove = debounce(getUserAction, 1000);
 如果我们在 getUserAction 函数中 console.log(this)，在不使用 debounce 函数的时候，this 的值为：
 
 ```js
-<div id="container"></div>
+<div id='container'></div>
 ```
 
 但是如果使用我们的 debounce 函数，this 就会指向 Window 对象！
@@ -121,16 +121,16 @@ container.onmousemove = debounce(getUserAction, 1000);
 ```js
 // 第二版
 function debounce(func, wait) {
-    var timeout;
+  var timeout;
 
-    return function () {
-        var context = this;
+  return function() {
+    var context = this;
 
-        clearTimeout(timeout)
-        timeout = setTimeout(function(){
-            func.apply(context)
-        }, wait);
-    }
+    clearTimeout(timeout);
+    timeout = setTimeout(function() {
+      func.apply(context);
+    }, wait);
+  };
 }
 ```
 
@@ -140,9 +140,9 @@ JavaScript 在事件处理函数中会提供事件对象 event，我们修改下
 
 ```js
 function getUserAction(e) {
-    console.log(e);
-    container.innerHTML = count++;
-};
+  console.log(e);
+  container.innerHTML = count++;
+}
 ```
 
 如果我们不使用 debouce 函数，这里会打印 MouseEvent 对象，如图所示：
@@ -156,17 +156,17 @@ function getUserAction(e) {
 ```js
 // 第二版
 function debounce(func, wait) {
-    var timeout;
+  var timeout;
 
-    return function () {
-        var context = this;
-        var args = arguments;
+  return function() {
+    var context = this;
+    var args = arguments;
 
-        clearTimeout(timeout)
-        timeout = setTimeout(function(){
-            func.apply(context, args)
-        }, wait);
-    }
+    clearTimeout(timeout);
+    timeout = setTimeout(function() {
+      func.apply(context, args);
+    }, wait);
+  };
 }
 ```
 
@@ -188,29 +188,27 @@ function debounce(func, wait) {
 ```js
 // 第四版，immediate 代表停止触发 n 秒后立即执行
 function debounce(func, wait, immediate) {
+  var timeout;
 
-    var timeout;
+  return function() {
+    var context = this;
+    var args = arguments;
 
-    return function () {
-        var context = this;
-        var args = arguments;
-
-        if (timeout) clearTimeout(timeout);
-        if (immediate) {
-            // 如果已经执行过，不再执行
-            var callNow = !timeout;
-            // 拿 click 事件为例，如果传递的 immediate 为 true, 那么连续点击过程中仅在第一次点击时执行，后面的点击会被 if (timeout) clearTimeout(timeout); 拦截，点击再多次都不会再次执行；当停止点击 wait 毫秒后，设置 timeout = null; 恢复初始时的状态，这次的第一次点击就不会被 if (timeout) clearTimeout(timeout); 拦截。所以这句必须要加，是比较关键的代码。
-            timeout = setTimeout(function(){
-                timeout = null;
-            }, wait)
-            if (callNow) func.apply(context, args)
-        }
-        else {
-            timeout = setTimeout(function(){
-                func.apply(context, args)
-            }, wait);
-        }
+    if (timeout) clearTimeout(timeout);
+    if (immediate) {
+      // 如果已经执行过，不再执行
+      var callNow = !timeout;
+      // 拿 click 事件为例，如果传递的 immediate 为 true, 那么连续点击过程中仅在第一次点击时执行，后面的点击会被 if (timeout) clearTimeout(timeout); 拦截，点击再多次都不会再次执行；当停止点击 wait 毫秒后，设置 timeout = null; 恢复初始时的状态，这次的第一次点击就不会被 if (timeout) clearTimeout(timeout); 拦截。所以这句必须要加，是比较关键的代码。
+      timeout = setTimeout(function() {
+        timeout = null;
+      }, wait);
+      if (callNow) func.apply(context, args);
+    } else {
+      timeout = setTimeout(function() {
+        func.apply(context, args);
+      }, wait);
     }
+  };
 }
 ```
 
@@ -225,29 +223,27 @@ function debounce(func, wait, immediate) {
 ```js
 // 第五版
 function debounce(func, wait, immediate) {
+  var timeout, result;
 
-    var timeout, result;
+  return function() {
+    var context = this;
+    var args = arguments;
 
-    return function () {
-        var context = this;
-        var args = arguments;
-
-        if (timeout) clearTimeout(timeout);
-        if (immediate) {
-            // 如果已经执行过，不再执行
-            var callNow = !timeout;
-            timeout = setTimeout(function(){
-                timeout = null;
-            }, wait)
-            if (callNow) result = func.apply(context, args)
-        }
-        else {
-            timeout = setTimeout(function(){
-                func.apply(context, args)
-            }, wait);
-        }
-        return result;
+    if (timeout) clearTimeout(timeout);
+    if (immediate) {
+      // 如果已经执行过，不再执行
+      var callNow = !timeout;
+      timeout = setTimeout(function() {
+        timeout = null;
+      }, wait);
+      if (callNow) result = func.apply(context, args);
+    } else {
+      timeout = setTimeout(function() {
+        func.apply(context, args);
+      }, wait);
     }
+    return result;
+  };
 }
 ```
 
@@ -260,37 +256,36 @@ function debounce(func, wait, immediate) {
 ```js
 // 第六版
 function debounce(func, wait, immediate) {
+  var timeout, result;
 
-    var timeout, result;
+  var debounced = function() {
+    var context = this;
+    var args = arguments;
 
-    var debounced = function () {
-        var context = this;
-        var args = arguments;
-
-        if (timeout) {
-          clearTimeout(timeout);
-        }
-        if (immediate) {
-            // 如果已经执行过，不再执行
-            var callNow = !timeout;
-            timeout = setTimeout(function(){
-                timeout = null;
-            }, wait)
-            if (callNow) result = func.apply(context, args)
-        } else {
-            timeout = setTimeout(function(){
-                func.apply(context, args)
-            }, wait);
-        }
-        return result;
-    };
-
-    debounced.cancel = function() {
-        clearTimeout(timeout);
+    if (timeout) {
+      clearTimeout(timeout);
+    }
+    if (immediate) {
+      // 如果已经执行过，不再执行
+      var callNow = !timeout;
+      timeout = setTimeout(function() {
         timeout = null;
-    };
+      }, wait);
+      if (callNow) result = func.apply(context, args);
+    } else {
+      timeout = setTimeout(function() {
+        func.apply(context, args);
+      }, wait);
+    }
+    return result;
+  };
 
-    return debounced;
+  debounced.cancel = function() {
+    clearTimeout(timeout);
+    timeout = null;
+  };
+
+  return debounced;
 }
 ```
 
@@ -301,16 +296,16 @@ var count = 1;
 var container = document.getElementById('container');
 
 function getUserAction(e) {
-    container.innerHTML = count++;
-};
+  container.innerHTML = count++;
+}
 
 var setUseAction = debounce(getUserAction, 10000, true);
 
 container.onmousemove = setUseAction;
 
-document.getElementById("button").addEventListener('click', function(){
-    setUseAction.cancel();
-})
+document.getElementById('button').addEventListener('click', function() {
+  setUseAction.cancel();
+});
 ```
 
 演示效果如下：
@@ -325,8 +320,7 @@ document.getElementById("button").addEventListener('click', function(){
 
 如果你持续触发事件，每隔一段时间，只执行一次事件。
 
-根据首次是否执行以及结束后是否执行，效果有所不同，实现的方式也有所不同。
-我们用 leading 代表首次是否执行，trailing 代表结束后是否再执行一次。
+根据首次是否执行以及结束后是否执行，效果有所不同，实现的方式也有所不同。我们用 leading 代表首次是否执行，trailing 代表结束后是否再执行一次。
 
 关于节流的实现，有两种主流的实现方式，一种是使用时间戳，一种是设置定时器。
 
@@ -339,17 +333,17 @@ document.getElementById("button").addEventListener('click', function(){
 ```js
 // 第一版
 function throttle(func, wait) {
-    var previous = 0; 
+  var previous = 0;
 
-    return function() {
-        var now = +new Date();
-        var context = this;
-        var args = arguments;
-        if (now - previous > wait) {
-            func.apply(context, args);
-            previous = now;
-        }
+  return function() {
+    var now = +new Date();
+    var context = this;
+    var args = arguments;
+    if (now - previous > wait) {
+      func.apply(context, args);
+      previous = now;
     }
+  };
 }
 ```
 
@@ -374,18 +368,18 @@ container.onmousemove = throttle(getUserAction, 1000);
 ```js
 // 第一版
 function throttle(func, wait) {
-    var timer; 
+  var timer;
 
-    return function() {
-        var context = this;
-        var args = arguments;
-        if (!timer) {
-          timer = setTimeout(function() {
-            func.apply(context, args);
-            timer = null;
-          }, wait);
-        }
+  return function() {
+    var context = this;
+    var args = arguments;
+    if (!timer) {
+      timer = setTimeout(function() {
+        func.apply(context, args);
+        timer = null;
+      }, wait);
     }
+  };
 }
 ```
 
@@ -411,35 +405,35 @@ function throttle(func, wait) {
 ```js
 // 第三版
 function throttle(func, wait) {
-    var timeout, context, args;
-    var previous = 0;
+  var timeout, context, args;
+  var previous = 0;
 
-    var later = function() {
-        previous = +new Date();
+  var later = function() {
+    previous = +new Date();
+    timeout = null;
+    func.apply(context, args);
+  };
+
+  var throttled = function() {
+    var now = +new Date();
+    // 下次触发 func 剩余的时间
+    var remaining = wait - (now - previous);
+    context = this;
+    args = arguments;
+    // 如果没有剩余的时间了或者你改了系统时间
+    if (remaining <= 0 || remaining > wait) {
+      if (timeout) {
+        clearTimeout(timeout);
         timeout = null;
-        func.apply(context, args);
-    };
+      }
+      previous = now;
+      func.apply(context, args);
+    } else if (!timeout) {
+      timeout = setTimeout(later, remaining);
+    }
+  };
 
-    var throttled = function() {
-        var now = +new Date();
-        // 下次触发 func 剩余的时间
-        var remaining = wait - (now - previous);
-        context = this;
-        args = arguments;
-         // 如果没有剩余的时间了或者你改了系统时间
-        if (remaining <= 0 || remaining > wait) {
-            if (timeout) {
-                clearTimeout(timeout);
-                timeout = null;
-            }
-            previous = now;
-            func.apply(context, args);
-        } else if (!timeout) {
-            timeout = setTimeout(later, remaining);
-        }
-    };
-
-    return throttled;
+  return throttled;
 }
 ```
 
@@ -463,44 +457,44 @@ function throttle(func, wait) {
 ```js
 // 第四版
 function throttle(func, wait, options) {
-    var timeout, context, args;
-    var previous = 0;
-    if (!options) options = {};
+  var timeout, context, args;
+  var previous = 0;
+  if (!options) options = {};
 
-    var later = function() {
-        // 这个作用？
-        previous = options.leading === false ? 0 : new Date().getTime();
+  var later = function() {
+    // 这个作用？
+    previous = options.leading === false ? 0 : new Date().getTime();
+    timeout = null;
+    func.apply(context, args);
+    if (!timeout) {
+      context = args = null;
+    }
+  };
+
+  var throttled = function() {
+    var now = new Date().getTime();
+    if (!previous && options.leading === false) {
+      previous = now;
+    }
+    var remaining = wait - (now - previous);
+    context = this;
+    args = arguments;
+    if (remaining <= 0 || remaining > wait) {
+      // 因为 setTimeOut 有误差，所以有可能到时间了定时器还没有执行，就会进入时间戳判断逻辑，所以要把定时器删掉
+      if (timeout) {
+        clearTimeout(timeout);
         timeout = null;
-        func.apply(context, args);
-        if (!timeout) {
-          context = args = null;
-        }
-    };
-
-    var throttled = function() {
-        var now = new Date().getTime();
-        if (!previous && options.leading === false) {
-          previous = now;
-        }
-        var remaining = wait - (now - previous);
-        context = this;
-        args = arguments;
-        if (remaining <= 0 || remaining > wait) {
-            // 因为 setTimeOut 有误差，所以有可能到时间了定时器还没有执行，就会进入时间戳判断逻辑，所以要把定时器删掉
-            if (timeout) {
-                clearTimeout(timeout);
-                timeout = null;
-            }
-            previous = now;
-            func.apply(context, args);
-            if (!timeout) {
-              context = args = null;
-            }
-        } else if (!timeout && options.trailing !== false) {
-            timeout = setTimeout(later, remaining);
-        }
-    };
-    return throttled;
+      }
+      previous = now;
+      func.apply(context, args);
+      if (!timeout) {
+        context = args = null;
+      }
+    } else if (!timeout && options.trailing !== false) {
+      timeout = setTimeout(later, remaining);
+    }
+  };
+  return throttled;
 }
 ```
 
@@ -510,10 +504,10 @@ function throttle(func, wait, options) {
 
 ```js
 throttled.cancel = function() {
-    clearTimeout(timeout);
-    previous = 0;
-    timeout = null;
-}
+  clearTimeout(timeout);
+  previous = 0;
+  timeout = null;
+};
 ```
 
 ## 注意
@@ -527,10 +521,10 @@ throttled.cancel = function() {
 ```js
 container.onmousemove = throttle(getUserAction, 1000);
 container.onmousemove = throttle(getUserAction, 1000, {
-    leading: false
+  leading: false
 });
 container.onmousemove = throttle(getUserAction, 1000, {
-    trailing: false
+  trailing: false
 });
 ```
 
@@ -542,21 +536,21 @@ container.onmousemove = throttle(getUserAction, 1000, {
 var array = [1, 1, '1', '1'];
 
 function unique(array) {
-    // res用来存储结果
-    var res = [];
-    for (var i = 0, arrayLen = array.length; i < arrayLen; i++) {
-        for (var j = 0, resLen = res.length; j < resLen; j++ ) {
-            // 相等说明可能有重复值
-            if (array[i] === res[j]) {
-                break;
-            }
-        }
-        // 如果 array[i] 是唯一的，那么执行完循环，j 等于resLen
-        if (j === resLen) {
-            res.push(array[i]);
-        }
+  // res用来存储结果
+  var res = [];
+  for (var i = 0, arrayLen = array.length; i < arrayLen; i++) {
+    for (var j = 0, resLen = res.length; j < resLen; j++) {
+      // 相等说明可能有重复值
+      if (array[i] === res[j]) {
+        break;
+      }
     }
-    return res;
+    // 如果 array[i] 是唯一的，那么执行完循环，j 等于resLen
+    if (j === resLen) {
+      res.push(array[i]);
+    }
+  }
+  return res;
 }
 
 console.log(unique(array)); // [1, "1"]
@@ -574,14 +568,14 @@ console.log(unique(array)); // [1, "1"]
 var array = [1, 1, '1'];
 
 function unique(array) {
-    var res = [];
-    for (var i = 0, len = array.length; i < len; i++) {
-        var current = array[i];
-        if (res.indexOf(current) === -1) {
-            res.push(current);
-        }
+  var res = [];
+  for (var i = 0, len = array.length; i < len; i++) {
+    var current = array[i];
+    if (res.indexOf(current) === -1) {
+      res.push(current);
     }
-    return res;
+  }
+  return res;
 }
 
 console.log(unique(array));
@@ -595,17 +589,17 @@ console.log(unique(array));
 var array = [1, 1, '1'];
 
 function unique(array) {
-    var res = [];
-    var sortedArray = array.concat().sort();
-    var seen;
-    for (var i = 0, len = sortedArray.length; i < len; i++) {
-        // 如果是第一个元素或者相邻的元素不相同
-        if (!i || seen !== sortedArray[i]) {
-            res.push(sortedArray[i])
-        }
-        seen = sortedArray[i];
+  var res = [];
+  var sortedArray = array.concat().sort();
+  var seen;
+  for (var i = 0, len = sortedArray.length; i < len; i++) {
+    // 如果是第一个元素或者相邻的元素不相同
+    if (!i || seen !== sortedArray[i]) {
+      res.push(sortedArray[i]);
     }
-    return res;
+    seen = sortedArray[i];
+  }
+  return res;
 }
 
 console.log(unique(array));
@@ -623,22 +617,21 @@ var array2 = [1, 1, '1', 2, 2];
 
 // 第一版
 function unique(array, isSorted) {
-    var res = [];
-    var seen = [];
+  var res = [];
+  var seen = [];
 
-    for (var i = 0, len = array.length; i < len; i++) {
-        var value = array[i];
-        if (isSorted) {
-            if (!i || seen !== value) {
-                res.push(value)
-            }
-            seen = value;
-        }
-        else if (res.indexOf(value) === -1) {
-            res.push(value);
-        }        
+  for (var i = 0, len = array.length; i < len; i++) {
+    var value = array[i];
+    if (isSorted) {
+      if (!i || seen !== value) {
+        res.push(value);
+      }
+      seen = value;
+    } else if (res.indexOf(value) === -1) {
+      res.push(value);
     }
-    return res;
+  }
+  return res;
 }
 
 console.log(unique(array1)); // [1, 2, "1"]
@@ -651,7 +644,7 @@ console.log(unique(array2, true)); // [1, "1", 2]
 
 新需求：字母的大小写视为一致，比如'a'和'A'，保留一个就可以了！
 
-虽然我们可以先处理数组中的所有数据，比如将所有的字母转成小写，然后再传入unique函数，但是有没有方法可以省掉处理数组的这一遍循环，直接就在去重的循环中做呢？让我们去完成这个需求：
+虽然我们可以先处理数组中的所有数据，比如将所有的字母转成小写，然后再传入 unique 函数，但是有没有方法可以省掉处理数组的这一遍循环，直接就在去重的循环中做呢？让我们去完成这个需求：
 
 ```js
 var array3 = [1, 1, 'a', 'A', 2, 2];
@@ -659,32 +652,34 @@ var array3 = [1, 1, 'a', 'A', 2, 2];
 // 第二版
 // iteratee 英文释义：迭代 重复
 function unique(array, isSorted, iteratee) {
-    var res = [];
-    var seen = [];
+  var res = [];
+  var seen = [];
 
-    for (var i = 0, len = array.length; i < len; i++) {
-        var value = array[i];
-        var computed = iteratee ? iteratee(value, i, array) : value;
-        if (isSorted) {
-            if (!i || seen !== computed) {
-                res.push(value)
-            }
-            seen = computed;
-        } else if (iteratee) {
-            if (seen.indexOf(computed) === -1) {
-                seen.push(computed);
-                res.push(value);
-            }
-        } else if (res.indexOf(value) === -1) {
-            res.push(value);
-        }        
+  for (var i = 0, len = array.length; i < len; i++) {
+    var value = array[i];
+    var computed = iteratee ? iteratee(value, i, array) : value;
+    if (isSorted) {
+      if (!i || seen !== computed) {
+        res.push(value);
+      }
+      seen = computed;
+    } else if (iteratee) {
+      if (seen.indexOf(computed) === -1) {
+        seen.push(computed);
+        res.push(value);
+      }
+    } else if (res.indexOf(value) === -1) {
+      res.push(value);
     }
-    return res;
+  }
+  return res;
 }
 
-console.log(unique(array3, false, function(item){
-    return typeof item == 'string' ? item.toLowerCase() : item
-})); // [1, "a", 2]
+console.log(
+  unique(array3, false, function(item) {
+    return typeof item == 'string' ? item.toLowerCase() : item;
+  })
+); // [1, "a", 2]
 ```
 
 在这一版也是最后一版的实现中，函数传递三个参数：
@@ -707,10 +702,10 @@ ES5 提供了 filter 方法，我们可以用来简化外层循环：
 var array = [1, 2, 1, 1, '1'];
 
 function unique(array) {
-    var res = array.filter(function(item, index, array){
-        return array.indexOf(item) === index;
-    })
-    return res;
+  var res = array.filter(function(item, index, array) {
+    return array.indexOf(item) === index;
+  });
+  return res;
 }
 
 console.log(unique(array));
@@ -722,9 +717,12 @@ console.log(unique(array));
 var array = [1, 2, 1, 1, '1'];
 
 function unique(array) {
-    return array.concat().sort().filter(function(item, index, array) {
-        return !index || item !== array[index - 1]
-    })
+  return array
+    .concat()
+    .sort()
+    .filter(function(item, index, array) {
+      return !index || item !== array[index - 1];
+    });
 }
 
 console.log(unique(array));
@@ -740,10 +738,10 @@ console.log(unique(array));
 var array = [1, 2, 1, 1, '1'];
 
 function unique(array) {
-    var obj = {};
-    return array.filter(function(item, index, array) {
-        return obj.hasOwnProperty(item) ? false : (obj[item] = true)
-    })
+  var obj = {};
+  return array.filter(function(item, index, array) {
+    return obj.hasOwnProperty(item) ? false : (obj[item] = true);
+  });
 }
 
 console.log(unique(array)); // [1, 2]
@@ -755,10 +753,10 @@ console.log(unique(array)); // [1, 2]
 var array = [1, 2, 1, 1, '1'];
 
 function unique(array) {
-    var obj = {};
-    return array.filter(function(item, index, array) {
-        return obj.hasOwnProperty(typeof item + item) ? false : (obj[typeof item + item] = true)
-    })
+  var obj = {};
+  return array.filter(function(item, index, array) {
+    return obj.hasOwnProperty(typeof item + item) ? false : (obj[typeof item + item] = true);
+  });
 }
 
 console.log(unique(array)); // [1, 2, "1"]
@@ -767,14 +765,16 @@ console.log(unique(array)); // [1, 2, "1"]
 然而，即便如此，我们依然无法正确区分出两个对象，比如 {value: 1} 和 {value: 2}，因为 typeof item + item 的结果都会是 object[object Object]，不过我们可以使用 JSON.stringify 将对象序列化：
 
 ```js
-var array = [{value: 1}, {value: 1}, {value: 2}];
+var array = [{ value: 1 }, { value: 1 }, { value: 2 }];
 
 function unique(array) {
-    var obj = {};
-    return array.filter(function(item, index, array) {
-        console.log(typeof item + JSON.stringify(item));
-        return obj.hasOwnProperty(typeof item + JSON.stringify(item)) ? false : (obj[typeof item + JSON.stringify(item)] = true)
-    })
+  var obj = {};
+  return array.filter(function(item, index, array) {
+    console.log(typeof item + JSON.stringify(item));
+    return obj.hasOwnProperty(typeof item + JSON.stringify(item))
+      ? false
+      : (obj[typeof item + JSON.stringify(item)] = true);
+  });
 }
 
 console.log(unique(array)); // [{value: 1}, {value: 2}]
@@ -790,7 +790,7 @@ console.log(unique(array)); // [{value: 1}, {value: 2}]
 var array = [1, 2, 1, 1, '1'];
 
 function unique(array) {
-   return Array.from(new Set(array));
+  return Array.from(new Set(array));
 }
 
 console.log(unique(array)); // [1, 2, "1"]
@@ -800,22 +800,22 @@ console.log(unique(array)); // [1, 2, "1"]
 
 ```js
 function unique(array) {
-    return [...new Set(array)];
+  return [...new Set(array)];
 }
 ```
 
 还可以再简化下：
 
 ```js
-var unique = (a) => [...new Set(a)]
+var unique = (a) => [...new Set(a)];
 ```
 
 此外，如果用 Map 的话：
 
 ```js
-function unique (arr) {
-    const seen = new Map()
-    return arr.filter((a) => !seen.has(a) && seen.set(a, 1))
+function unique(arr) {
+  const seen = new Map();
+  return arr.filter((a) => !seen.has(a) && seen.set(a, 1));
 }
 ```
 
@@ -862,15 +862,15 @@ var array = [1, 1, '1', '1', null, null, undefined, undefined, new String('1'), 
 
 我特地整理了一个列表，我们重点关注下对象和 NaN 的去重情况：
 
-|方法 | 结果 | 说明
-|:--:|:--:|:--:|
-|for循环|[1, "1", null, undefined, String, String, /a/, /a/, NaN, NaN]|对象和 NaN 不去重|
-|indexOf|[1, "1", null, undefined, String, String, /a/, /a/, NaN, NaN]|对象和 NaN 不去重|
-|sort|	[/a/, /a/, "1", 1, String, 1, String, NaN, NaN, null, undefined]|对象和 NaN 不去重 数字 1 也不去重|
-|filter + indexOf|[1, "1", null, undefined, String, String, /a/, /a/]|对象不去重 NaN 会被忽略掉|
-|filter + sort|[/a/, /a/, "1", 1, String, 1, String, NaN, NaN, null, undefined]|对象和 NaN 不去重 数字 1 不去重|
-|优化后的键值对方法|[1, "1", null, undefined, String, /a/, NaN]|全部去重|
-|Set|[1, "1", null, undefined, String, String, /a/, /a/, NaN]|对象不去重、NaN 去重|
+| 方法 | 结果 | 说明 |
+| :-: | :-: | :-: |
+| for 循环 | [1, "1", null, undefined, String, String, /a/, /a/, NaN, NaN] | 对象和 NaN 不去重 |
+| indexOf | [1, "1", null, undefined, String, String, /a/, /a/, NaN, NaN] | 对象和 NaN 不去重 |
+| sort | [/a/, /a/, "1", 1, String, 1, String, NaN, NaN, null, undefined] | 对象和 NaN 不去重 数字 1 也不去重 |
+| filter + indexOf | [1, "1", null, undefined, String, String, /a/, /a/] | 对象不去重 NaN 会被忽略掉 |
+| filter + sort | [/a/, /a/, "1", 1, String, 1, String, NaN, NaN, null, undefined] | 对象和 NaN 不去重 数字 1 不去重 |
+| 优化后的键值对方法 | [1, "1", null, undefined, String, /a/, NaN] | 全部去重 |
+| Set | [1, "1", null, undefined, String, String, /a/, /a/, NaN] | 对象不去重、NaN 去重 |
 
 想了解为什么会出现以上的结果，看两个 demo 便能明白：
 
@@ -885,9 +885,9 @@ indexOf 底层还是使用 === 进行判断，因为 NaN === NaN 的结果为 fa
 ```js
 // demo2
 function unique(array) {
-   return Array.from(new Set(array));
+  return Array.from(new Set(array));
 }
-console.log(unique([NaN, NaN])) // [NaN]
+console.log(unique([NaN, NaN])); // [NaN]
 ```
 
 Set 认为尽管 NaN === NaN 为 false，但是这两个元素是重复的。
@@ -901,16 +901,16 @@ Set 认为尽管 NaN === NaN 为 false，但是这两个元素是重复的。
 我们最最常用的莫过于 typeof，注意尽管我们会看到诸如：
 
 ```js
-console.log(typeof('yayu')) // string
+console.log(typeof 'yayu'); // string
 ```
 
 的写法，但是 typeof 可是一个正宗的运算符，就跟加减乘除一样！这就能解释为什么下面这种写法也是可行的：
 
 ```js
-console.log(typeof 'yayu') // string
+console.log(typeof 'yayu'); // string
 ```
 
-引用《JavaScript权威指南》中对 typeof 的介绍：
+引用《JavaScript 权威指南》中对 typeof 的介绍：
 
 > typeof 是一元操作符，放在其单个操作数的前面，操作数可以是任意类型。返回值为表示操作数类型的一个字符串。
 
@@ -956,6 +956,7 @@ console.log(typeof error); // object
 在第 15.2.4.2 节讲的就是 Object.prototype.toString()，为了不误导大家，我先奉上英文版：
 
 > When the toString method is called, the following steps are taken:
+>
 > 1. If the `this` value is `undefined`, return `"[object Undefined]"`.
 > 2. If the `this` value is `null`, return `"[object Null]"`.
 > 3. Let O be the result of calling ToObject passing the `this` value as the argument.
@@ -979,11 +980,11 @@ console.log(typeof error); // object
 让我们写个 demo:
 
 ```js
-console.log(Object.prototype.toString.call(undefined)) // [object Undefined]
-console.log(Object.prototype.toString.call(null)) // [object Null]
+console.log(Object.prototype.toString.call(undefined)); // [object Undefined]
+console.log(Object.prototype.toString.call(null)); // [object Null]
 
 var date = new Date();
-console.log(Object.prototype.toString.call(date)) // [object Date]
+console.log(Object.prototype.toString.call(date)); // [object Date]
 ```
 
 由此我们可以看到这个 class 值就是识别对象类型的关键！
@@ -996,25 +997,25 @@ console.log(Object.prototype.toString.call(date)) // [object Date]
 
 ```js
 // 以下是 11 种：
-var number = 1;          // [object Number]
-var string = '123';      // [object String]
-var boolean = true;      // [object Boolean]
-var und = undefined;     // [object Undefined]
-var nul = null;          // [object Null]
-var obj = {a: 1}         // [object Object]
-var array = [1, 2, 3];   // [object Array]
-var date = new Date();   // [object Date]
+var number = 1; // [object Number]
+var string = '123'; // [object String]
+var boolean = true; // [object Boolean]
+var und = undefined; // [object Undefined]
+var nul = null; // [object Null]
+var obj = { a: 1 }; // [object Object]
+var array = [1, 2, 3]; // [object Array]
+var date = new Date(); // [object Date]
 var error = new Error(); // [object Error]
-var reg = /a/g;          // [object RegExp]
-var func = function a(){}; // [object Function]
+var reg = /a/g; // [object RegExp]
+var func = function a() {}; // [object Function]
 
 function checkType() {
-    for (var i = 0; i < arguments.length; i++) {
-        console.log(Object.prototype.toString.call(arguments[i]))
-    }
+  for (var i = 0; i < arguments.length; i++) {
+    console.log(Object.prototype.toString.call(arguments[i]));
+  }
 }
 
-checkType(number, string, boolean, und, nul, obj, array, date, error, reg, func)
+checkType(number, string, boolean, und, nul, obj, array, date, error, reg, func);
 ```
 
 除了以上 11 种之外，还有：
@@ -1028,7 +1029,7 @@ console.log(Object.prototype.toString.call(JSON)); // [object JSON]
 
 ```js
 function a() {
-    console.log(Object.prototype.toString.call(arguments)); // [object Arguments]
+  console.log(Object.prototype.toString.call(arguments)); // [object Arguments]
 }
 a();
 ```
@@ -1052,14 +1053,14 @@ a();
 var class2type = {};
 
 // 生成class2type映射
-"Boolean Number String Function Array Date RegExp Object Error Null Undefined".split(" ").map(function(item, index) {
-    class2type["[object " + item + "]"] = item.toLowerCase();
-})
+'Boolean Number String Function Array Date RegExp Object Error Null Undefined'.split(' ').map(function(item, index) {
+  class2type['[object ' + item + ']'] = item.toLowerCase();
+});
 
 function type(obj) {
-    return typeof obj === "object" || typeof obj === "function" ?
-        class2type[Object.prototype.toString.call(obj)] || "object" :
-        typeof obj;
+  return typeof obj === 'object' || typeof obj === 'function'
+    ? class2type[Object.prototype.toString.call(obj)] || 'object'
+    : typeof obj;
 }
 ```
 
@@ -1072,18 +1073,18 @@ function type(obj) {
 var class2type = {};
 
 // 生成class2type映射
-"Boolean Number String Function Array Date RegExp Object Error".split(" ").map(function(item, index) {
-    class2type["[object " + item + "]"] = item.toLowerCase();
-})
+'Boolean Number String Function Array Date RegExp Object Error'.split(' ').map(function(item, index) {
+  class2type['[object ' + item + ']'] = item.toLowerCase();
+});
 
 function type(obj) {
-    // 一箭双雕
-    if (obj == null) {
-        return obj + "";
-    }
-    return typeof obj === "object" || typeof obj === "function" ?
-        class2type[Object.prototype.toString.call(obj)] || "object" :
-        typeof obj;
+  // 一箭双雕
+  if (obj == null) {
+    return obj + '';
+  }
+  return typeof obj === 'object' || typeof obj === 'function'
+    ? class2type[Object.prototype.toString.call(obj)] || 'object'
+    : typeof obj;
 }
 ```
 
@@ -1093,7 +1094,7 @@ function type(obj) {
 
 ```js
 function isFunction(obj) {
-    return type(obj) === "function";
+  return type(obj) === 'function';
 }
 ```
 
@@ -1102,9 +1103,11 @@ function isFunction(obj) {
 jQuery 判断数组类型，旧版本是通过判断 Array.isArray 方法是否存在，如果存在就使用该方法，不存在就使用 type 函数。
 
 ```js
-var isArray = Array.isArray || function(obj) {
-    return type(obj) === "array";
-}
+var isArray =
+  Array.isArray ||
+  function(obj) {
+    return type(obj) === 'array';
+  };
 ```
 
 但是在 jQuery v3.0 中已经完全采用了 Array.isArray。
@@ -1113,22 +1116,22 @@ var isArray = Array.isArray || function(obj) {
 
 plainObject 来自于 jQuery，可以翻译成纯粹的对象，所谓"纯粹的对象"，就是该对象是通过 "{}" 或 "new Object" 创建的，该对象含有零个或者多个键值对。
 
-之所以要判断是不是 plainObject，是为了跟其他的 JavaScript对象如 null，数组，宿主对象（documents）等作区分，因为这些用 typeof 都会返回object。
+之所以要判断是不是 plainObject，是为了跟其他的 JavaScript 对象如 null，数组，宿主对象（documents）等作区分，因为这些用 typeof 都会返回 object。
 
-jQuery提供了 isPlainObject 方法进行判断，先让我们看看使用的效果：
+jQuery 提供了 isPlainObject 方法进行判断，先让我们看看使用的效果：
 
 ```js
 function Person(name) {
-    this.name = name;
+  this.name = name;
 }
 
-console.log($.isPlainObject({})) // true
+console.log($.isPlainObject({})); // true
 
-console.log($.isPlainObject(new Object)) // true
+console.log($.isPlainObject(new Object())); // true
 
 console.log($.isPlainObject(Object.create(null))); // true
 
-console.log($.isPlainObject(Object.assign({a: 1}, {b: 2}))); // true
+console.log($.isPlainObject(Object.assign({ a: 1 }, { b: 2 }))); // true
 
 console.log($.isPlainObject(new Person('yayu'))); // false
 
@@ -1150,34 +1153,34 @@ var toString = class2type.toString;
 var hasOwn = class2type.hasOwnProperty;
 
 function isPlainObject(obj) {
-    var proto, Ctor;
+  var proto, Ctor;
 
-    // 排除掉明显不是 obj 的以及一些宿主对象如Window
-    if (!obj || toString.call(obj) !== "[object Object]") {
-        return false;
-    }
+  // 排除掉明显不是 obj 的以及一些宿主对象如Window
+  if (!obj || toString.call(obj) !== '[object Object]') {
+    return false;
+  }
 
-    /**
-     * getPrototypeOf es5 方法，获取 obj 的原型
-     * 以 new Object 创建的对象为例的话
-     * obj.__proto__ === Object.prototype
-     */
-    proto = Object.getPrototypeOf(obj);
+  /**
+   * getPrototypeOf es5 方法，获取 obj 的原型
+   * 以 new Object 创建的对象为例的话
+   * obj.__proto__ === Object.prototype
+   */
+  proto = Object.getPrototypeOf(obj);
 
-    // 没有原型的对象是纯粹的，Object.create(null) 就在这里返回 true
-    if (!proto) {
-        return true;
-    }
+  // 没有原型的对象是纯粹的，Object.create(null) 就在这里返回 true
+  if (!proto) {
+    return true;
+  }
 
-    /**
-     * 以下判断通过 new Object 方式创建的对象
-     * 判断 proto 是否有 constructor 属性，如果有就让 Ctor 的值为 proto.constructor
-     * 如果是 Object 函数创建的对象，Ctor 在这里就等于 Object 构造函数
-     */
-    Ctor = hasOwn.call(proto, "constructor") && proto.constructor;
+  /**
+   * 以下判断通过 new Object 方式创建的对象
+   * 判断 proto 是否有 constructor 属性，如果有就让 Ctor 的值为 proto.constructor
+   * 如果是 Object 函数创建的对象，Ctor 在这里就等于 Object 构造函数
+   */
+  Ctor = hasOwn.call(proto, 'constructor') && proto.constructor;
 
-    // 在这里判断 Ctor 构造函数是不是 Object 构造函数，用于区分自定义构造函数和 Object 构造函数，比较函数源代码字符串
-    return typeof Ctor === "function" && hasOwn.toString.call(Ctor) === hasOwn.toString.call(Object);
+  // 在这里判断 Ctor 构造函数是不是 Object 构造函数，用于区分自定义构造函数和 Object 构造函数，比较函数源代码字符串
+  return typeof Ctor === 'function' && hasOwn.toString.call(Ctor) === hasOwn.toString.call(Object);
 }
 ```
 
@@ -1197,11 +1200,11 @@ console.log(Object.prototype.toString.call(Ctor)); // [object Function]
 jQuery 提供了 isEmptyObject 方法来判断是否是空对象，代码简单，我们直接看源码：
 
 ```js
-function isEmptyObject( obj ) {
+function isEmptyObject(obj) {
   var name;
 
   for (name in obj) {
-      return false;
+    return false;
   }
 
   return true;
@@ -1230,11 +1233,11 @@ console.log(isEmptyObject(true)); // true
 
 ## Window 对象
 
-Window 对象作为客户端 JavaScript 的全局对象，它有一个 window 属性指向自身，这点在《JavaScript深入之变量对象》中讲到过。我们可以利用这个特性判断是否是 Window 对象。
+Window 对象作为客户端 JavaScript 的全局对象，它有一个 window 属性指向自身，这点在《JavaScript 深入之变量对象》中讲到过。我们可以利用这个特性判断是否是 Window 对象。
 
 ```js
-function isWindow( obj ) {
-    return obj != null && obj === obj.window;
+function isWindow(obj) {
+  return obj != null && obj === obj.window;
 }
 ```
 
@@ -1246,17 +1249,16 @@ isArrayLike，看名字可能会让我们觉得这是判断类数组对象的，
 
 ```js
 function isArrayLike(obj) {
-    // obj 必须有 length属性
-    var length = !!obj && "length" in obj && obj.length;
-    var typeRes = type(obj);
+  // obj 必须有 length属性
+  var length = !!obj && 'length' in obj && obj.length;
+  var typeRes = type(obj);
 
-    // 排除掉函数和 Window 对象
-    if (typeRes === "function" || isWindow(obj)) {
-        return false;
-    }
+  // 排除掉函数和 Window 对象
+  if (typeRes === 'function' || isWindow(obj)) {
+    return false;
+  }
 
-    return typeRes === "array" || length === 0 ||
-        typeof length === "number" && length > 0 && (length - 1) in obj;
+  return typeRes === 'array' || length === 0 || (typeof length === 'number' && length > 0 && length - 1 in obj);
 }
 ```
 
@@ -1277,7 +1279,7 @@ var obj = {
   a: 1,
   b: 2,
   length: 0
-}
+};
 ```
 
 isArrayLike 函数就会返回 true，那这个合理吗？
@@ -1286,7 +1288,7 @@ isArrayLike 函数就会返回 true，那这个合理吗？
 
 ```js
 function a() {
-    console.log(isArrayLike(arguments))
+  console.log(isArrayLike(arguments));
 }
 a();
 ```
@@ -1302,32 +1304,32 @@ a();
 让我们先想下数组是不是可以这样写：
 
 ```js
-var arr = [,,3]
+var arr = [, , 3];
 ```
 
 当我们写一个对应的类数组对象就是：
 
 ```js
 var arrLike = {
-    2: 3,
-    length: 3
-}
+  2: 3,
+  length: 3
+};
 ```
 
 也就是说当我们在数组中用逗号直接跳过的时候，我们认为该元素是不存在的，类数组对象中也就不用写这个元素，但是最后一个元素是一定要写的，要不然 length 的长度就不会是最后一个元素的 key 值加 1。比如数组可以这样写
 
 ```js
-var arr = [1,,];
-console.log(arr.length) // 2
+var arr = [1, ,];
+console.log(arr.length); // 2
 ```
 
 但是类数组对象就只能写成：
 
 ```js
 var arrLike = {
-    0: 1,
-    length: 1
-}
+  0: 1,
+  length: 1
+};
 ```
 
 所以符合条件的类数组对象是一定存在最后一个元素的！
@@ -1338,8 +1340,8 @@ var arrLike = {
 var MAX_ARRAY_INDEX = Math.pow(2, 53) - 1;
 
 var isArrayLike = function(collection) {
-    var length = getLength(collection);
-    return typeof length == 'number' && length >= 0 && length <= MAX_ARRAY_INDEX;
+  var length = getLength(collection);
+  return typeof length == 'number' && length >= 0 && length <= MAX_ARRAY_INDEX;
 };
 ```
 
@@ -1349,7 +1351,7 @@ isElement 判断是不是 DOM 元素。
 
 ```js
 isElement = function(obj) {
-    return !!(obj && obj.nodeType === 1);
+  return !!(obj && obj.nodeType === 1);
 };
 ```
 
@@ -1368,8 +1370,8 @@ var new_arr = arr.concat();
 
 new_arr[0] = 'new';
 
-console.log(arr) // ["old", 1, true, null, undefined]
-console.log(new_arr) // ["new", 1, true, null, undefined]
+console.log(arr); // ["old", 1, true, null, undefined]
+console.log(new_arr); // ["new", 1, true, null, undefined]
 ```
 
 用 slice 可以这样做：
@@ -1381,15 +1383,15 @@ var new_arr = arr.slice();
 但是如果数组嵌套了对象或者数组的话，比如：
 
 ```js
-var arr = [{old: 'old'}, ['old']];
+var arr = [{ old: 'old' }, ['old']];
 
 var new_arr = arr.concat();
 
 arr[0].old = 'new';
 arr[1][0] = 'new';
 
-console.log(arr) // [{old: 'new'}, ['new']]
-console.log(new_arr) // [{old: 'new'}, ['new']]
+console.log(arr); // [{old: 'new'}, ['new']]
+console.log(new_arr); // [{old: 'new'}, ['new']]
 ```
 
 我们会发现，无论是新数组还是旧数组都发生了变化，也就是说使用 concat 方法，克隆的并不彻底。
@@ -1405,7 +1407,7 @@ console.log(new_arr) // [{old: 'new'}, ['new']]
 那如何深拷贝一个数组呢？这里介绍一个技巧，不仅适用于数组还适用于对象！那就是：
 
 ```js
-var arr = ['old', 1, true, ['old1', 'old2'], {old: 1}]
+var arr = ['old', 1, true, ['old1', 'old2'], { old: 1 }];
 
 var new_arr = JSON.parse(JSON.stringify(arr));
 
@@ -1415,13 +1417,16 @@ console.log(new_arr);
 是一个简单粗暴的好方法，就是有一个问题，不能拷贝函数，我们做个试验：
 
 ```js
-var arr = [function(){
-    console.log(a)
-}, {
-    b: function(){
-        console.log(b)
+var arr = [
+  function() {
+    console.log(a);
+  },
+  {
+    b: function() {
+      console.log(b);
     }
-}]
+  }
+];
 
 var new_arr = JSON.parse(JSON.stringify(arr));
 
@@ -1442,18 +1447,18 @@ console.log(new_arr);
 
 ```js
 var shallowCopy = function(obj) {
-    // 只拷贝对象
-    if (typeof obj !== 'object') return;
-    // 根据 obj 的类型判断是新建一个数组还是对象
-    var newObj = obj instanceof Array ? [] : {};
-    // 遍历obj，并且判断是obj的属性才拷贝
-    for (var key in obj) {
-        if (obj.hasOwnProperty(key)) {
-            newObj[key] = obj[key];
-        }
+  // 只拷贝对象
+  if (typeof obj !== 'object') return;
+  // 根据 obj 的类型判断是新建一个数组还是对象
+  var newObj = obj instanceof Array ? [] : {};
+  // 遍历obj，并且判断是obj的属性才拷贝
+  for (var key in obj) {
+    if (obj.hasOwnProperty(key)) {
+      newObj[key] = obj[key];
     }
-    return newObj;
-}
+  }
+  return newObj;
+};
 ```
 
 ## 深拷贝的实现
@@ -1462,15 +1467,15 @@ var shallowCopy = function(obj) {
 
 ```js
 var deepCopy = function(obj) {
-    if (typeof obj !== 'object') return;
-    var newObj = obj instanceof Array ? [] : {};
-    for (var key in obj) {
-        if (obj.hasOwnProperty(key)) {
-            newObj[key] = typeof obj[key] === 'object' ? deepCopy(obj[key]) : obj[key];
-        }
+  if (typeof obj !== 'object') return;
+  var newObj = obj instanceof Array ? [] : {};
+  for (var key in obj) {
+    if (obj.hasOwnProperty(key)) {
+      newObj[key] = typeof obj[key] === 'object' ? deepCopy(obj[key]) : obj[key];
     }
-    return newObj;
-}
+  }
+  return newObj;
+};
 ```
 
 # 求数组的最大值和最小值
@@ -1496,10 +1501,10 @@ Math.max([value1[,value2, ...]])
 1. 如果任一参数不能被转换为数值，这就意味着如果参数可以被转换成数字，就是可以进行比较的，比如：
 
 ```js
-Math.max(true, 0) // 1
-Math.max(true, '2', null) // 2
-Math.max(1, undefined) // NaN
-Math.max(1, {}) // NaN
+Math.max(true, 0); // 1
+Math.max(true, '2', null); // 2
+Math.max(1, undefined); // NaN
+Math.max(1, {}); // NaN
 ```
 
 2. 如果没有参数，则结果为 -Infinity，对应的 Math.min 函数，如果没有参数，则结果为 Infinity，所以：
@@ -1521,7 +1526,7 @@ var arr = [6, 4, 1, 8, 2, 11, 23];
 
 var result = arr[0];
 for (var i = 1; i < arr.length; i++) {
-    result =  Math.max(result, arr[i]);
+  result = Math.max(result, arr[i]);
 }
 console.log(result);
 ```
@@ -1534,7 +1539,7 @@ console.log(result);
 var arr = [6, 4, 1, 8, 2, 11, 23];
 
 function max(prev, next) {
-    return Math.max(prev, next);
+  return Math.max(prev, next);
 }
 
 console.log(arr.reduce(max));
@@ -1547,8 +1552,10 @@ console.log(arr.reduce(max));
 ```js
 var arr = [6, 4, 1, 8, 2, 11, 23];
 
-arr.sort(function(a,b){return a - b;});
-console.log(arr[arr.length - 1])
+arr.sort(function(a, b) {
+  return a - b;
+});
+console.log(arr[arr.length - 1]);
 ```
 
 ## eval
@@ -1558,8 +1565,8 @@ Math.max 支持传多个参数来进行比较，那么我们如何将一个数�
 ```js
 var arr = [6, 4, 1, 8, 2, 11, 23];
 
-var max = eval("Math.max(" + arr + ")");
-console.log(max)
+var max = eval('Math.max(' + arr + ')');
+console.log(max);
 ```
 
 ## apply
@@ -1568,7 +1575,7 @@ console.log(max)
 
 ```js
 var arr = [6, 4, 1, 8, 2, 11, 23];
-console.log(Math.max.apply(null, arr))
+console.log(Math.max.apply(null, arr));
 ```
 
 ## ES6 ...
@@ -1577,7 +1584,7 @@ console.log(Math.max.apply(null, arr))
 
 ```js
 var arr = [6, 4, 1, 8, 2, 11, 23];
-console.log(Math.max(...arr))
+console.log(Math.max(...arr));
 ```
 
 # 数组扁平化
@@ -1590,7 +1597,7 @@ console.log(Math.max(...arr))
 
 ```js
 var arr = [1, [2, [3, 4]]];
-console.log(flatten(arr)) // [1, 2, 3, 4]
+console.log(flatten(arr)); // [1, 2, 3, 4]
 ```
 
 ## 递归
@@ -1602,19 +1609,18 @@ console.log(flatten(arr)) // [1, 2, 3, 4]
 var arr = [1, [2, [3, 4]]];
 
 function flatten(arr) {
-    var result = [];
-    for (var i = 0, len = arr.length; i < len; i++) {
-        if (Array.isArray(arr[i])) {
-            result = result.concat(flatten(arr[i]))
-        } else {
-            result.push(arr[i])
-        }
+  var result = [];
+  for (var i = 0, len = arr.length; i < len; i++) {
+    if (Array.isArray(arr[i])) {
+      result = result.concat(flatten(arr[i]));
+    } else {
+      result.push(arr[i]);
     }
-    return result;
+  }
+  return result;
 }
 
-
-console.log(flatten(arr))
+console.log(flatten(arr));
 ```
 
 ## toString
@@ -1622,7 +1628,7 @@ console.log(flatten(arr))
 如果数组的元素都是数字，那么我们可以考虑使用 toString 方法，因为：
 
 ```js
-[1, [2, [3, 4]]].toString() // "1,2,3,4"
+[1, [2, [3, 4]]].toString(); // "1,2,3,4"
 ```
 
 调用 toString 方法，返回了一个逗号分隔的扁平的字符串，这时候我们再 split，然后转成数字不就可以实现扁平化了吗？
@@ -1632,12 +1638,15 @@ console.log(flatten(arr))
 var arr = [1, [2, [3, 4]]];
 
 function flatten(arr) {
-    return arr.toString().split(',').map(function(item){
-        return +item
-    })
+  return arr
+    .toString()
+    .split(',')
+    .map(function(item) {
+      return +item;
+    });
 }
 
-console.log(flatten(arr))
+console.log(flatten(arr));
 ```
 
 然而这种方法使用的场景却非常有限，如果数组是 [1, '1', 2, '2'] 的话，这种方法就会产生错误的结果。
@@ -1651,12 +1660,12 @@ console.log(flatten(arr))
 var arr = [1, [2, [3, 4]]];
 
 function flatten(arr) {
-    return arr.reduce(function(prev, next){
-        return prev.concat(Array.isArray(next) ? flatten(next) : next)
-    }, [])
+  return arr.reduce(function(prev, next) {
+    return prev.concat(Array.isArray(next) ? flatten(next) : next);
+  }, []);
 }
 
-console.log(flatten(arr))
+console.log(flatten(arr));
 ```
 
 ## ES6 ...
@@ -1675,20 +1684,20 @@ console.log([].concat(...arr)); // [1, 2, [3, 4]]
 var arr = [1, [2, [3, 4]]];
 
 function flatten(arr) {
-    while (arr.some(item => Array.isArray(item))) {
-        arr = [].concat(...arr);
-    }
-    return arr;
+  while (arr.some((item) => Array.isArray(item))) {
+    arr = [].concat(...arr);
+  }
+  return arr;
 }
 
-console.log(flatten(arr))
+console.log(flatten(arr));
 ```
 
 ## undercore
 
 那么如何写一个抽象的扁平函数，来方便我们的开发呢，所有又到了我们抄袭 underscore 的时候了~
 
-在这里直接给出源码和注释，但是要注意，这里的 flatten 函数并不是最终的 _.flatten，为了方便多个 API 进行调用，这里对扁平进行了更多的配置。
+在这里直接给出源码和注释，但是要注意，这里的 flatten 函数并不是最终的 \_.flatten，为了方便多个 API 进行调用，这里对扁平进行了更多的配置。
 
 ```js
 /**
@@ -1705,24 +1714,25 @@ function flatten(input, shallow, strict, output) {
   var idx = output.length;
 
   for (var i = 0, len = input.length; i < len; i++) {
-      var value = input[i];
-      // 如果是数组，就进行处理
-      if (Array.isArray(value)) {
-          // 如果是只扁平一层，遍历该数组，依此填入 output
-          if (shallow) {
-              var j = 0, length = value.length;
-              while (j < length) output[idx++] = value[j++];
-          }
-          // 如果是全部扁平就递归，传入已经处理的 output，递归中接着处理 output
-          else {
-              flatten(value, shallow, strict, output);
-              idx = output.length;
-          }
+    var value = input[i];
+    // 如果是数组，就进行处理
+    if (Array.isArray(value)) {
+      // 如果是只扁平一层，遍历该数组，依此填入 output
+      if (shallow) {
+        var j = 0,
+          length = value.length;
+        while (j < length) output[idx++] = value[j++];
       }
-      // 不是数组，根据 strict 的值判断是跳过不处理还是放入 output
-      else if (!strict) {
-          output[idx++] = value;
+      // 如果是全部扁平就递归，传入已经处理的 output，递归中接着处理 output
+      else {
+        flatten(value, shallow, strict, output);
+        idx = output.length;
       }
+    }
+    // 不是数组，根据 strict 的值判断是跳过不处理还是放入 output
+    else if (!strict) {
+      output[idx++] = value;
+    }
   }
 
   return output;
@@ -1745,21 +1755,21 @@ console.log(flatten(arr, true, true)); // [3, 4]
 
 我们看看 underscore 中哪些方法调用了 flatten 这个基本函数：
 
-## _.flatten
+## \_.flatten
 
-首先就是 _.flatten：
+首先就是 \_.flatten：
 
 ```js
 _.flatten = function(array, shallow) {
-    return flatten(array, shallow, false);
+  return flatten(array, shallow, false);
 };
 ```
 
 在正常的扁平中，我们并不需要去掉非数组元素。
 
-## _.union
+## \_.union
 
-接下来是 _.union：
+接下来是 \_.union：
 
 该函数传入多个数组，然后返回传入的数组的并集，
 
@@ -1782,23 +1792,23 @@ _.union([1, 2, 3], [101, 2, 1, 10], 4, 5);
 ```js
 // 关于 unique 可以查看《JavaScript专题之数组去重》[](https://github.com/mqyqingfeng/Blog/issues/27)
 function unique(array) {
-   return Array.from(new Set(array));
+  return Array.from(new Set(array));
 }
 
 _.union = function() {
-    return unique(flatten(arguments, true, true));
-}
+  return unique(flatten(arguments, true, true));
+};
 ```
 
-## _.difference
+## \_.difference
 
-是不是感觉折腾 strict 有点用处了，我们再看一个 _.difference：
+是不是感觉折腾 strict 有点用处了，我们再看一个 \_.difference：
 
 语法为：
 
-> _.difference(array, *others)
+> \_.difference(array, \*others)
 
-效果是取出来自 array 数组，并且不存在于多个 other 数组的元素。跟 _.union 一样，都会排除掉不是数组的元素。
+效果是取出来自 array 数组，并且不存在于多个 other 数组的元素。跟 \_.union 一样，都会排除掉不是数组的元素。
 
 举个例子：
 
@@ -1811,12 +1821,11 @@ _.difference([1, 2, 3, 4, 5], [5, 2, 10], [4], 3);
 
 ```js
 function difference(array, ...rest) {
+  rest = flatten(rest, true, true);
 
-    rest = flatten(rest, true, true);
-
-    return array.filter(function(item){
-        return rest.indexOf(item) === -1;
-    })
+  return array.filter(function(item) {
+    return rest.indexOf(item) === -1;
+  });
 }
 ```
 
@@ -1828,7 +1837,7 @@ function difference(array, ...rest) {
 
 ## 相等
 
-什么是相等？在《JavaScript专题之去重》中，我们认为只要 === 的结果为 true，两者就相等，然而今天我们重新定义相等：
+什么是相等？在《JavaScript 专题之去重》中，我们认为只要 === 的结果为 true，两者就相等，然而今天我们重新定义相等：
 
 我们认为：
 
@@ -1869,43 +1878,48 @@ JavaScript `处心积虑` 的想抹平两者的差异：
 console.log(+0 === -0); // true
 
 // 表现2
-(-0).toString() // '0'
-(+0).toString() // '0'
-
-// 表现3
--0 < +0 // false
-+0 < -0 // false
+(-0)
+  .toString()(
+    // '0'
+    +0
+  )
+  .toString() - // '0'
+  // 表现3
+  0 <
+  +0 + // false
+    0 <
+  -0; // false
 ```
 
 即便如此，两者依然是不同的：
 
 ```js
-1 / +0 // Infinity
-1 / -0 // -Infinity
+1 / +0; // Infinity
+1 / -0; // -Infinity
 
-1 / +0 === 1 / -0 // false
+1 / +0 === 1 / -0; // false
 ```
 
 也许你会好奇为什么要有 +0 和 -0 呢？
 
-这是因为 JavaScript 采用了IEEE_754 浮点数表示法(几乎所有现代编程语言所采用)，这是一种二进制表示法，按照这个标准，最高位是符号位(0 代表正，1 代表负)，剩下的用于表示大小。而对于零这个边界值 ，1000(-0) 和 0000(0)都是表示 0 ，这才有了正负零的区别。
+这是因为 JavaScript 采用了 IEEE_754 浮点数表示法(几乎所有现代编程语言所采用)，这是一种二进制表示法，按照这个标准，最高位是符号位(0 代表正，1 代表负)，剩下的用于表示大小。而对于零这个边界值 ，1000(-0) 和 0000(0)都是表示 0 ，这才有了正负零的区别。
 
 也许你会好奇什么时候会产生 -0 呢？
 
 ```js
-Math.round(-0.1) // -0
+Math.round(-0.1); // -0
 ```
 
 那么我们又该如何在 === 结果为 true 的时候，区别 0 和 -0 得出正确的结果呢？我们可以这样做：
 
 ```js
 function eq(a, b) {
-    if (a === b) return a !== 0 || 1 / a === 1 / b;
-    return false;
+  if (a === b) return a !== 0 || 1 / a === 1 / b;
+  return false;
 }
 
-console.log(eq(0, 0)) // true
-console.log(eq(0, -0)) // false
+console.log(eq(0, 0)); // true
+console.log(eq(0, -0)); // false
 ```
 
 ## NaN
@@ -1920,7 +1934,7 @@ console.log(NaN === NaN); // false
 
 ```js
 function eq(a, b) {
-    if (a !== a) return b !== b;
+  if (a !== a) return b !== b;
 }
 
 console.log(eq(NaN, NaN)); // true
@@ -1934,22 +1948,22 @@ console.log(eq(NaN, NaN)); // true
 // eq 第一版
 // 用来过滤掉简单的类型比较，复杂的对象使用 deepEq 函数进行处理
 function eq(a, b) {
-    // === 结果为 true 的区别出 +0 和 -0
-    if (a === b) return a !== 0 || 1 / a === 1 / b;
+  // === 结果为 true 的区别出 +0 和 -0
+  if (a === b) return a !== 0 || 1 / a === 1 / b;
 
-    // typeof null 的结果为 object ，这里做判断，是为了让有 null 的情况尽早退出函数
-    if (a == null || b == null) return false;
+  // typeof null 的结果为 object ，这里做判断，是为了让有 null 的情况尽早退出函数
+  if (a == null || b == null) return false;
 
-    // 判断 NaN
-    if (a !== a) return b !== b;
+  // 判断 NaN
+  if (a !== a) return b !== b;
 
-    // 判断参数 a 类型，如果是基本类型，在这里可以直接返回 false
-    var type = typeof a;
-    if (type !== 'function' && type !== 'object' && typeof b != 'object') return false;
+  // 判断参数 a 类型，如果是基本类型，在这里可以直接返回 false
+  var type = typeof a;
+  if (type !== 'function' && type !== 'object' && typeof b != 'object') return false;
 
-    // 更复杂的对象使用 deepEq 函数进行深度比较
-    return deepEq(a, b);
-};
+  // 更复杂的对象使用 deepEq 函数进行深度比较
+  return deepEq(a, b);
+}
 ```
 
 也许你会好奇是不是少了一个 typeof b !== function?
@@ -1967,7 +1981,7 @@ console.log(typeof 'Curly'); // string
 console.log(typeof new String('Curly')); // object
 ```
 
-可是我们在《JavaScript专题之类型判断上》中还学习过更多的方法判断类型，比如 Object.prototype.toString：
+可是我们在《JavaScript 专题之类型判断上》中还学习过更多的方法判断类型，比如 Object.prototype.toString：
 
 ```js
 var toString = Object.prototype.toString;
@@ -1983,7 +1997,7 @@ console.log('Curly' + '' === new String('Curly') + ''); // true
 
 看来我们已经有了思路：如果 a 和 b 的 Object.prototype.toString 的结果一致，并且都是"[object String]"，那我们就使用 '' + a === '' + b 进行判断。
 
-可是不止有 String 对象呐，Boolean、Number、RegExp、Date呢？
+可是不止有 String 对象呐，Boolean、Number、RegExp、Date 呢？
 
 ## 更多对象
 
@@ -1995,7 +2009,7 @@ Boolean
 var a = true;
 var b = new Boolean(true);
 
-console.log(+a === +b) // true
+console.log(+a === +b); // true
 ```
 
 Date
@@ -2004,7 +2018,7 @@ Date
 var a = new Date(2009, 9, 25);
 var b = new Date(2009, 9, 25);
 
-console.log(+a === +b) // true
+console.log(+a === +b); // true
 ```
 
 RegExp
@@ -2013,7 +2027,7 @@ RegExp
 var a = /a/i;
 var b = new RegExp(/a/i);
 
-console.log('' + a === '' + b) // true
+console.log('' + a === '' + b); // true
 ```
 
 Number
@@ -2022,7 +2036,7 @@ Number
 var a = 1;
 var b = new Number(1);
 
-console.log(+a === +b) // true
+console.log(+a === +b); // true
 ```
 
 嗯哼？你确定 Number 能这么简单的判断？
@@ -2043,9 +2057,9 @@ var a = Number(NaN);
 var b = Number(NaN);
 
 function eq() {
-    // 判断 Number(NaN) Object(NaN) 等情况
-    if (+a !== +a) return +b !== +b;
-    // 其他判断 ...
+  // 判断 Number(NaN) Object(NaN) 等情况
+  if (+a !== +a) return +b !== +b;
+  // 其他判断 ...
 }
 
 console.log(eq(a, b)); // true
@@ -2059,22 +2073,22 @@ console.log(eq(a, b)); // true
 var toString = Object.prototype.toString;
 
 function deepEq(a, b) {
-    var className = toString.call(a);
-    if (className !== toString.call(b)) return false;
+  var className = toString.call(a);
+  if (className !== toString.call(b)) return false;
 
-    switch (className) {
-        case '[object RegExp]':
-        case '[object String]':
-            return '' + a === '' + b;
-        case '[object Number]':
-            if (+a !== +a) return +b !== +b;
-            return +a === 0 ? 1 / +a === 1 / b : +a === +b;
-      case '[object Date]':
-      case '[object Boolean]':
-            return +a === +b;
-    }
+  switch (className) {
+    case '[object RegExp]':
+    case '[object String]':
+      return '' + a === '' + b;
+    case '[object Number]':
+      if (+a !== +a) return +b !== +b;
+      return +a === 0 ? 1 / +a === 1 / b : +a === +b;
+    case '[object Date]':
+    case '[object Boolean]':
+      return +a === +b;
+  }
 
-    // 其他判断
+  // 其他判断
 }
 ```
 
@@ -2084,17 +2098,17 @@ function deepEq(a, b) {
 
 ```js
 function Person() {
-    this.name = name;
+  this.name = name;
 }
 
 function Animal() {
-    this.name = name
+  this.name = name;
 }
 
 var person = new Person('Kevin');
 var animal = new Animal('Kevin');
 
-eq(person, animal) // ???
+eq(person, animal); // ???
 ```
 
 虽然 person 和 animal 都是 {name: 'Kevin'}，但是 person 和 animal 属于不同构造函数的实例，为了做出区分，我们认为是不同的对象。
@@ -2105,8 +2119,8 @@ eq(person, animal) // ???
 
 ```js
 var attrs = Object.create(null);
-attrs.name = "Bob";
-eq(attrs, {name: "Bob"}); // ???
+attrs.name = 'Bob';
+eq(attrs, { name: 'Bob' }); // ???
 ```
 
 尽管 attrs 没有原型，{name: "Bob"} 的构造函数是 Object，但是在实际应用中，只要他们有着相同的键值对，我们依然认为是相等。
@@ -2117,25 +2131,30 @@ eq(attrs, {name: "Bob"}); // ???
 
 ```js
 function isFunction(obj) {
-    return toString.call(obj) === '[object Function]'
+  return toString.call(obj) === '[object Function]';
 }
 
 function deepEq(a, b) {
-    // 接着上面的内容
-    var areArrays = className === '[object Array]';
-    // 不是数组
-    if (!areArrays) {
-        // 过滤掉两个函数的情况
-        if (typeof a != 'object' || typeof b != 'object') return false;
+  // 接着上面的内容
+  var areArrays = className === '[object Array]';
+  // 不是数组
+  if (!areArrays) {
+    // 过滤掉两个函数的情况
+    if (typeof a != 'object' || typeof b != 'object') return false;
 
-        var aCtor = a.constructor, bCtor = b.constructor;
-        // aCtor 和 bCtor 必须都存在并且都不是 Object 构造函数的情况下，aCtor 不等于 bCtor， 那这两个对象就真的不相等啦
-        if (aCtor !== bCtor && !(isFunction(aCtor) && aCtor instanceof aCtor && isFunction(bCtor) && bCtor instanceof bCtor) && ('constructor' in a && 'constructor' in b)) {
-            return false;
-        }
+    var aCtor = a.constructor,
+      bCtor = b.constructor;
+    // aCtor 和 bCtor 必须都存在并且都不是 Object 构造函数的情况下，aCtor 不等于 bCtor， 那这两个对象就真的不相等啦
+    if (
+      aCtor !== bCtor &&
+      !(isFunction(aCtor) && aCtor instanceof aCtor && isFunction(bCtor) && bCtor instanceof bCtor) &&
+      ('constructor' in a && 'constructor' in b)
+    ) {
+      return false;
     }
+  }
 
-    // 下面还有好多判断
+  // 下面还有好多判断
 }
 ```
 
@@ -2145,25 +2164,25 @@ function deepEq(a, b) {
 
 ```js
 function deepEq(a, b) {
-    // 再接着上面的内容
-    if (areArrays) {
-        length = a.length;
-        if (length !== b.length) return false;
+  // 再接着上面的内容
+  if (areArrays) {
+    length = a.length;
+    if (length !== b.length) return false;
 
-        while (length--) {
-            if (!eq(a[length], b[length])) return false;
-        }
-    } 
-    else {
-        var keys = Object.keys(a), key;
-        length = keys.length;
-        if (Object.keys(b).length !== length) return false;
-        while (length--) {
-            key = keys[length];
-            if (!(b.hasOwnProperty(key) && eq(a[key], b[key]))) return false;
-        }
+    while (length--) {
+      if (!eq(a[length], b[length])) return false;
     }
-    return true;
+  } else {
+    var keys = Object.keys(a),
+      key;
+    length = keys.length;
+    if (Object.keys(b).length !== length) return false;
+    while (length--) {
+      key = keys[length];
+      if (!(b.hasOwnProperty(key) && eq(a[key], b[key]))) return false;
+    }
+  }
+  return true;
 }
 ```
 
@@ -2174,23 +2193,23 @@ function deepEq(a, b) {
 举个简单的例子：
 
 ```js
-a = {abc: null};
-b = {abc: null};
+a = { abc: null };
+b = { abc: null };
 a.abc = a;
 b.abc = b;
 
-eq(a, b)
+eq(a, b);
 ```
 
 再复杂一点的，比如：
 
 ```js
-a = {foo: {b: {foo: {c: {foo: null}}}}};
-b = {foo: {b: {foo: {c: {foo: null}}}}};
+a = { foo: { b: { foo: { c: { foo: null } } } } };
+b = { foo: { b: { foo: { c: { foo: null } } } } };
 a.foo.b.foo.c.foo = a;
 b.foo.b.foo.c.foo = b;
 
-eq(a, b)
+eq(a, b);
 ```
 
 为了给大家演示下循环引用，大家可以把下面这段已经精简过的代码复制到浏览器中尝试：
@@ -2205,26 +2224,26 @@ a.foo.b.foo.c.foo = a;
 b.foo.b.foo.c.foo = b;
 
 function eq(a, b, aStack, bStack) {
-    if (typeof a == 'number') {
-        return a === b;
-    }
-    return deepEq(a, b)
+  if (typeof a == 'number') {
+    return a === b;
+  }
+  return deepEq(a, b);
 }
 
 function deepEq(a, b) {
-    var keys = Object.keys(a);
-    var length = keys.length;
-    var key;
-    while (length--) {
-        key = keys[length]
-        // 这是为了让你看到代码其实一直在执行
-        console.log(a[key], b[key])
-        if (!eq(a[key], b[key])) return false;
-    }
-    return true;
+  var keys = Object.keys(a);
+  var length = keys.length;
+  var key;
+  while (length--) {
+    key = keys[length];
+    // 这是为了让你看到代码其实一直在执行
+    console.log(a[key], b[key]);
+    if (!eq(a[key], b[key])) return false;
+  }
+  return true;
 }
 
-eq(a, b)
+eq(a, b);
 ```
 
 嗯，以上的代码是死循环。
@@ -2242,45 +2261,43 @@ a.foo.b.foo.c.foo = a;
 b.foo.b.foo.c.foo = b;
 
 function eq(a, b, aStack, bStack) {
-    if (typeof a == 'number') {
-        return a === b;
-    }
+  if (typeof a == 'number') {
+    return a === b;
+  }
 
-    return deepEq(a, b, aStack, bStack)
+  return deepEq(a, b, aStack, bStack);
 }
 
 function deepEq(a, b, aStack, bStack) {
+  aStack = aStack || [];
+  bStack = bStack || [];
 
-    aStack = aStack || [];
-    bStack = bStack || [];
+  var length = aStack.length;
 
-    var length = aStack.length;
-
-    while (length--) {
-        if (aStack[length] === a) {
-              return bStack[length] === b;
-        }
+  while (length--) {
+    if (aStack[length] === a) {
+      return bStack[length] === b;
     }
+  }
 
-    aStack.push(a);
-    bStack.push(b);
+  aStack.push(a);
+  bStack.push(b);
 
-    var keys = Object.keys(a);
-    var length = keys.length;
-    var key;
+  var keys = Object.keys(a);
+  var length = keys.length;
+  var key;
 
-    while (length--) {
-        key = keys[length]
-        if (!eq(a[key], b[key], aStack, bStack)) return false;
-    }
+  while (length--) {
+    key = keys[length];
+    if (!eq(a[key], b[key], aStack, bStack)) return false;
+  }
 
-    // aStack.pop();
-    // bStack.pop();
-    return true;
-
+  // aStack.pop();
+  // bStack.pop();
+  return true;
 }
 
-console.log(eq(a, b))
+console.log(eq(a, b));
 ```
 
 之所以注释掉 aStack.pop() 和 bStack.pop() 这两句，是为了方便大家查看 aStack bStack 的值。
@@ -2293,107 +2310,105 @@ console.log(eq(a, b))
 var toString = Object.prototype.toString;
 
 function isFunction(obj) {
-    return toString.call(obj) === '[object Function]'
+  return toString.call(obj) === '[object Function]';
 }
 
 function eq(a, b, aStack, bStack) {
+  // === 结果为 true 的区别出 +0 和 -0
+  if (a === b) return a !== 0 || 1 / a === 1 / b;
 
-    // === 结果为 true 的区别出 +0 和 -0
-    if (a === b) return a !== 0 || 1 / a === 1 / b;
+  // typeof null 的结果为 object ，这里做判断，是为了让有 null 的情况尽早退出函数
+  if (a == null || b == null) return false;
 
-    // typeof null 的结果为 object ，这里做判断，是为了让有 null 的情况尽早退出函数
-    if (a == null || b == null) return false;
+  // 判断 NaN
+  if (a !== a) return b !== b;
 
-    // 判断 NaN
-    if (a !== a) return b !== b;
+  // 判断参数 a 类型，如果是基本类型，在这里可以直接返回 false
+  var type = typeof a;
+  if (type !== 'function' && type !== 'object' && typeof b != 'object') return false;
 
-    // 判断参数 a 类型，如果是基本类型，在这里可以直接返回 false
-    var type = typeof a;
-    if (type !== 'function' && type !== 'object' && typeof b != 'object') return false;
-
-    // 更复杂的对象使用 deepEq 函数进行深度比较
-    return deepEq(a, b, aStack, bStack);
-};
-
-function deepEq(a, b, aStack, bStack) {
-
-    // a 和 b 的内部属性 [[class]] 相同时 返回 true
-    var className = toString.call(a);
-    if (className !== toString.call(b)) return false;
-
-    switch (className) {
-        case '[object RegExp]':
-        case '[object String]':
-            return '' + a === '' + b;
-        case '[object Number]':
-            if (+a !== +a) return +b !== +b;
-            return +a === 0 ? 1 / +a === 1 / b : +a === +b;
-        case '[object Date]':
-        case '[object Boolean]':
-            return +a === +b;
-    }
-
-    var areArrays = className === '[object Array]';
-    // 不是数组
-    if (!areArrays) {
-        // 过滤掉两个函数的情况
-        if (typeof a != 'object' || typeof b != 'object') return false;
-
-        var aCtor = a.constructor,
-            bCtor = b.constructor;
-        // aCtor 和 bCtor 必须都存在并且都不是 Object 构造函数的情况下，aCtor 不等于 bCtor， 那这两个对象就真的不相等啦
-        if (aCtor !== bCtor && !(isFunction(aCtor) && aCtor instanceof aCtor && isFunction(bCtor) && bCtor instanceof bCtor) && ('constructor' in a && 'constructor' in b)) {
-            return false;
-        }
-    }
-
-
-    aStack = aStack || [];
-    bStack = bStack || [];
-    var length = aStack.length;
-
-    // 检查是否有循环引用的部分
-    while (length--) {
-        if (aStack[length] === a) {
-            return bStack[length] === b;
-        }
-    }
-
-    aStack.push(a);
-    bStack.push(b);
-
-    // 数组判断
-    if (areArrays) {
-
-        length = a.length;
-        if (length !== b.length) return false;
-
-        while (length--) {
-            if (!eq(a[length], b[length], aStack, bStack)) return false;
-        }
-    }
-    // 对象判断
-    else {
-
-        var keys = Object.keys(a), key;
-        length = keys.length;
-
-        if (Object.keys(b).length !== length) return false;
-        while (length--) {
-
-            key = keys[length];
-            if (!(b.hasOwnProperty(key) && eq(a[key], b[key], aStack, bStack))) return false;
-        }
-    }
-
-    aStack.pop();
-    bStack.pop();
-    return true;
-
+  // 更复杂的对象使用 deepEq 函数进行深度比较
+  return deepEq(a, b, aStack, bStack);
 }
 
-console.log(eq(0, 0)) // true
-console.log(eq(0, -0)) // false
+function deepEq(a, b, aStack, bStack) {
+  // a 和 b 的内部属性 [[class]] 相同时 返回 true
+  var className = toString.call(a);
+  if (className !== toString.call(b)) return false;
+
+  switch (className) {
+    case '[object RegExp]':
+    case '[object String]':
+      return '' + a === '' + b;
+    case '[object Number]':
+      if (+a !== +a) return +b !== +b;
+      return +a === 0 ? 1 / +a === 1 / b : +a === +b;
+    case '[object Date]':
+    case '[object Boolean]':
+      return +a === +b;
+  }
+
+  var areArrays = className === '[object Array]';
+  // 不是数组
+  if (!areArrays) {
+    // 过滤掉两个函数的情况
+    if (typeof a != 'object' || typeof b != 'object') return false;
+
+    var aCtor = a.constructor,
+      bCtor = b.constructor;
+    // aCtor 和 bCtor 必须都存在并且都不是 Object 构造函数的情况下，aCtor 不等于 bCtor， 那这两个对象就真的不相等啦
+    if (
+      aCtor !== bCtor &&
+      !(isFunction(aCtor) && aCtor instanceof aCtor && isFunction(bCtor) && bCtor instanceof bCtor) &&
+      ('constructor' in a && 'constructor' in b)
+    ) {
+      return false;
+    }
+  }
+
+  aStack = aStack || [];
+  bStack = bStack || [];
+  var length = aStack.length;
+
+  // 检查是否有循环引用的部分
+  while (length--) {
+    if (aStack[length] === a) {
+      return bStack[length] === b;
+    }
+  }
+
+  aStack.push(a);
+  bStack.push(b);
+
+  // 数组判断
+  if (areArrays) {
+    length = a.length;
+    if (length !== b.length) return false;
+
+    while (length--) {
+      if (!eq(a[length], b[length], aStack, bStack)) return false;
+    }
+  }
+  // 对象判断
+  else {
+    var keys = Object.keys(a),
+      key;
+    length = keys.length;
+
+    if (Object.keys(b).length !== length) return false;
+    while (length--) {
+      key = keys[length];
+      if (!(b.hasOwnProperty(key) && eq(a[key], b[key], aStack, bStack))) return false;
+    }
+  }
+
+  aStack.pop();
+  bStack.pop();
+  return true;
+}
+
+console.log(eq(0, 0)); // true
+console.log(eq(0, -0)); // false
 
 console.log(eq(NaN, NaN)); // true
 console.log(eq(Number(NaN), Number(NaN))); // true
@@ -2410,7 +2425,7 @@ b = { foo: { b: { foo: { c: { foo: null } } } } };
 a.foo.b.foo.c.foo = a;
 b.foo.b.foo.c.foo = b;
 
-console.log(eq(a, b)) // true
+console.log(eq(a, b)); // true
 ```
 
 # 函数柯里化
@@ -2421,15 +2436,15 @@ console.log(eq(a, b)) // true
 
 ```js
 function add(a, b) {
-    return a + b;
+  return a + b;
 }
 
 // 执行 add 函数，一次传入两个参数即可
-add(1, 2) // 3
+add(1, 2); // 3
 
 // 假设有一个 curry 函数可以做到柯里化
 var addCurry = curry(add);
-addCurry(1)(2) // 3
+addCurry(1)(2); // 3
 ```
 
 ## 用途
@@ -2441,26 +2456,26 @@ addCurry(1)(2) // 3
 ```js
 // 示意而已
 function ajax(type, url, data) {
-    var xhr = new XMLHttpRequest();
-    xhr.open(type, url, true);
-    xhr.send(data);
+  var xhr = new XMLHttpRequest();
+  xhr.open(type, url, true);
+  xhr.send(data);
 }
 
 // 虽然 ajax 这个函数非常通用，但在重复调用的时候参数冗余
-ajax('POST', 'www.test.com', "name=kevin")
-ajax('POST', 'www.test2.com', "name=kevin")
-ajax('POST', 'www.test3.com', "name=kevin")
+ajax('POST', 'www.test.com', 'name=kevin');
+ajax('POST', 'www.test2.com', 'name=kevin');
+ajax('POST', 'www.test3.com', 'name=kevin');
 
 // 利用 curry
 var ajaxCurry = curry(ajax);
 
 // 以 POST 类型请求数据
 var post = ajaxCurry('POST');
-post('www.test.com', "name=kevin");
+post('www.test.com', 'name=kevin');
 
 // 以 POST 类型请求来自于 www.test.com 的数据
 var postFromTest = post('www.test.com');
-postFromTest("name=kevin");
+postFromTest('name=kevin');
 ```
 
 想想 jQuery 虽然有 `$.ajax` 这样通用的方法，但是也有 `$.get` 和 `$.post` 的语法糖。(当然 jQuery 底层是否是这样做的，我就没有研究了)。
@@ -2476,25 +2491,25 @@ curry 的这种用途可以理解为：参数复用。本质上是降低通用�
 比如我们有这样一段数据：
 
 ```js
-var person = [{name: 'kevin'}, {name: 'daisy'}]
+var person = [{ name: 'kevin' }, { name: 'daisy' }];
 ```
 
 如果我们要获取所有的 name 值，我们可以这样做：
 
 ```js
-var name = person.map(function (item) {
-    return item.name;
-})
+var name = person.map(function(item) {
+  return item.name;
+});
 ```
 
 不过如果我们有 curry 函数：
 
 ```js
-var prop = curry(function (key, obj) {
-    return obj[key]
+var prop = curry(function(key, obj) {
+  return obj[key];
 });
 
-var name = person.map(prop('name'))
+var name = person.map(prop('name'));
 ```
 
 我们为了获取 name 属性还要再编写一个 prop 函数，是不是又麻烦了些？
@@ -2513,12 +2528,12 @@ person.map(prop('name')) 就好像直白的告诉你：person 对象遍历(map)�
 
 ```js
 // 第一版
-var curry = function (fn) {
-    var args = [].slice.call(arguments, 1);
-    return function() {
-        var newArgs = args.concat([].slice.call(arguments));
-        return fn.apply(this, newArgs);
-    };
+var curry = function(fn) {
+  var args = [].slice.call(arguments, 1);
+  return function() {
+    var newArgs = args.concat([].slice.call(arguments));
+    return fn.apply(this, newArgs);
+  };
 };
 ```
 
@@ -2526,17 +2541,17 @@ var curry = function (fn) {
 
 ```js
 function add(a, b) {
-    return a + b;
+  return a + b;
 }
 
 var addCurry = curry(add, 1, 2);
-addCurry() // 3
+addCurry(); // 3
 //或者
 var addCurry = curry(add, 1);
-addCurry(2) // 3
+addCurry(2); // 3
 //或者
 var addCurry = curry(add);
-addCurry(1, 2) // 3
+addCurry(1, 2); // 3
 ```
 
 已经有柯里化的感觉了，但是还没有达到要求，不过我们可以把这个函数用作辅助函数，帮助我们写真正的 curry 函数。
@@ -2546,26 +2561,25 @@ addCurry(1, 2) // 3
 ```js
 // 第二版
 function sub_curry(fn) {
-    var args = [].slice.call(arguments, 1);
-    return function() {
-        return fn.apply(this, args.concat([].slice.call(arguments)));
-    };
+  var args = [].slice.call(arguments, 1);
+  return function() {
+    return fn.apply(this, args.concat([].slice.call(arguments)));
+  };
 }
 
 function curry(fn, length) {
+  length = length || fn.length;
 
-    length = length || fn.length;
+  var slice = Array.prototype.slice;
 
-    var slice = Array.prototype.slice;
-
-    return function() {
-        if (arguments.length < length) {
-            var combined = [fn].concat(slice.call(arguments));
-            return curry(sub_curry.apply(this, combined), length - arguments.length);
-        } else {
-            return fn.apply(this, arguments);
-        }
-    };
+  return function() {
+    if (arguments.length < length) {
+      var combined = [fn].concat(slice.call(arguments));
+      return curry(sub_curry.apply(this, combined), length - arguments.length);
+    } else {
+      return fn.apply(this, arguments);
+    }
+  };
 }
 ```
 
@@ -2573,13 +2587,13 @@ function curry(fn, length) {
 
 ```js
 var fn = curry(function(a, b, c) {
-    return [a, b, c];
+  return [a, b, c];
 });
 
-fn("a", "b", "c") // ["a", "b", "c"]
-fn("a", "b")("c") // ["a", "b", "c"]
-fn("a")("b")("c") // ["a", "b", "c"]
-fn("a")("b", "c") // ["a", "b", "c"]
+fn('a', 'b', 'c'); // ["a", "b", "c"]
+fn('a', 'b')('c'); // ["a", "b", "c"]
+fn('a')('b')('c'); // ["a", "b", "c"]
+fn('a')('b', 'c'); // ["a", "b", "c"]
 ```
 
 效果已经达到我们的预期，然而这个 curry 函数的实现好难理解呐……
@@ -2588,30 +2602,29 @@ fn("a")("b", "c") // ["a", "b", "c"]
 
 ```js
 function sub_curry(fn) {
-    return function() {
-        return fn()
-    }
+  return function() {
+    return fn();
+  };
 }
 
 function curry(fn, length) {
-    length = length || 4;
-    return function() {
-        if (length > 1) {
-            return curry(sub_curry(fn), --length)
-        }
-        else {
-            return fn()
-        }
+  length = length || 4;
+  return function() {
+    if (length > 1) {
+      return curry(sub_curry(fn), --length);
+    } else {
+      return fn();
     }
+  };
 }
 
 var fn0 = function() {
-    console.log(1)
-}
+  console.log(1);
+};
 
-var fn1 = curry(fn0)
+var fn1 = curry(fn0);
 
-fn1()()()() // 1
+fn1()()()(); // 1
 ```
 
 大家先从理解这个 curry 函数开始。
@@ -2619,50 +2632,53 @@ fn1()()()() // 1
 当执行 fn1() 时，函数返回：
 
 ```js
-curry(sub_curry(fn0))
+curry(sub_curry(fn0));
 // 相当于
-curry(function(){
-    return fn0()
-})
+curry(function() {
+  return fn0();
+});
 ```
 
 当执行 fn1()() 时，函数返回：
 
 ```js
-curry(sub_curry(function(){
-    return fn0()
-}))
+curry(
+  sub_curry(function() {
+    return fn0();
+  })
+);
 // 相当于
-curry(function(){
-    return (function(){
-        return fn0()
-    })()
-})
+curry(function() {
+  return (function() {
+    return fn0();
+  })();
+});
 // 相当于
-curry(function(){
-    return fn0()
-})
+curry(function() {
+  return fn0();
+});
 ```
 
 当执行 fn1()()() 时，函数返回：
 
 ```js
 // 跟 fn1()() 的分析过程一样
-curry(function(){
-    return fn0()
-})
+curry(function() {
+  return fn0();
+});
 ```
 
 当执行 fn1()()()() 时，因为此时 length > 2 为 false，所以执行 fn()：
 
 ```js
-fn()
+fn()(
+  // 相当于
+  function() {
+    return fn0();
+  }
+)();
 // 相当于
-(function(){
-    return fn0()
-})()
-// 相当于
-fn0()
+fn0();
 // 执行 fn0 函数，打印 1
 ```
 
@@ -2670,12 +2686,12 @@ fn0()
 
 ```js
 var fn0 = function(a, b, c, d) {
-    return [a, b, c, d];
-}
+  return [a, b, c, d];
+};
 
 var fn1 = curry(fn0);
 
-fn1("a", "b")("c")("d")
+fn1('a', 'b')('c')('d');
 ```
 
 当执行 fn1("a", "b") 时：
@@ -2733,41 +2749,36 @@ fn0("a", "b", "c", "d")
 
 ```js
 function curry(fn, args) {
-    var length = fn.length;
+  var length = fn.length;
 
-    args = args || [];
+  args = args || [];
 
-    return function() {
+  return function() {
+    var _args = args.slice(0),
+      arg,
+      i;
 
-        var _args = args.slice(0),
+    for (i = 0; i < arguments.length; i++) {
+      arg = arguments[i];
 
-            arg, i;
-
-        for (i = 0; i < arguments.length; i++) {
-
-            arg = arguments[i];
-
-            _args.push(arg);
-
-        }
-        if (_args.length < length) {
-            return curry.call(this, fn, _args);
-        }
-        else {
-            return fn.apply(this, _args);
-        }
+      _args.push(arg);
     }
+    if (_args.length < length) {
+      return curry.call(this, fn, _args);
+    } else {
+      return fn.apply(this, _args);
+    }
+  };
 }
 
-
 var fn = curry(function(a, b, c) {
-    console.log([a, b, c]);
+  console.log([a, b, c]);
 });
 
-fn("a", "b", "c") // ["a", "b", "c"]
-fn("a", "b")("c") // ["a", "b", "c"]
-fn("a")("b")("c") // ["a", "b", "c"]
-fn("a")("b", "c") // ["a", "b", "c"]
+fn('a', 'b', 'c'); // ["a", "b", "c"]
+fn('a', 'b')('c'); // ["a", "b", "c"]
+fn('a')('b')('c'); // ["a", "b", "c"]
+fn('a')('b', 'c'); // ["a", "b", "c"]
 ```
 
 或许大家觉得这种方式更好理解，又能实现一样的效果，为什么不直接就讲这种呢？
@@ -2782,10 +2793,10 @@ curry 函数写到这里其实已经很完善了，但是注意这个函数的�
 
 ```js
 var fn = curry(function(a, b, c) {
-    console.log([a, b, c]);
+  console.log([a, b, c]);
 });
 
-fn("a", _, "c")("b") // ["a", "b", "c"]
+fn('a', _, 'c')('b'); // ["a", "b", "c"]
 ```
 
 我们直接看第三版的代码：
@@ -2793,65 +2804,63 @@ fn("a", _, "c")("b") // ["a", "b", "c"]
 ```js
 // 第三版
 function curry(fn, args, holes) {
-    length = fn.length;
+  length = fn.length;
 
-    args = args || [];
+  args = args || [];
 
-    holes = holes || [];
+  holes = holes || [];
 
-    return function() {
+  return function() {
+    var _args = args.slice(0),
+      _holes = holes.slice(0),
+      argsLen = args.length,
+      holesLen = holes.length,
+      arg,
+      i,
+      index = 0;
 
-        var _args = args.slice(0),
-            _holes = holes.slice(0),
-            argsLen = args.length,
-            holesLen = holes.length,
-            arg, i, index = 0;
-
-        for (i = 0; i < arguments.length; i++) {
-            arg = arguments[i];
-            // 处理类似 fn(1, _, _, 4)(_, 3) 这种情况，index 需要指向 holes 正确的下标
-            if (arg === _ && holesLen) {
-                index++
-                if (index > holesLen) {
-                    _args.push(arg);
-                    _holes.push(argsLen - 1 + index - holesLen)
-                }
-            }
-            // 处理类似 fn(1)(_) 这种情况
-            else if (arg === _) {
-                _args.push(arg);
-                _holes.push(argsLen + i);
-            }
-            // 处理类似 fn(_, 2)(1) 这种情况
-            else if (holesLen) {
-                // fn(_, 2)(_, 3)
-                if (index >= holesLen) {
-                    _args.push(arg);
-                }
-                // fn(_, 2)(1) 用参数 1 替换占位符
-                else {
-                    _args.splice(_holes[index], 1, arg);
-                    _holes.splice(index, 1)
-                }
-            }
-            else {
-                _args.push(arg);
-            }
-
+    for (i = 0; i < arguments.length; i++) {
+      arg = arguments[i];
+      // 处理类似 fn(1, _, _, 4)(_, 3) 这种情况，index 需要指向 holes 正确的下标
+      if (arg === _ && holesLen) {
+        index++;
+        if (index > holesLen) {
+          _args.push(arg);
+          _holes.push(argsLen - 1 + index - holesLen);
         }
-        if (_holes.length || _args.length < length) {
-            return curry.call(this, fn, _args, _holes);
+      }
+      // 处理类似 fn(1)(_) 这种情况
+      else if (arg === _) {
+        _args.push(arg);
+        _holes.push(argsLen + i);
+      }
+      // 处理类似 fn(_, 2)(1) 这种情况
+      else if (holesLen) {
+        // fn(_, 2)(_, 3)
+        if (index >= holesLen) {
+          _args.push(arg);
         }
+        // fn(_, 2)(1) 用参数 1 替换占位符
         else {
-            return fn.apply(this, _args);
+          _args.splice(_holes[index], 1, arg);
+          _holes.splice(index, 1);
         }
+      } else {
+        _args.push(arg);
+      }
     }
+    if (_holes.length || _args.length < length) {
+      return curry.call(this, fn, _args, _holes);
+    } else {
+      return fn.apply(this, _args);
+    }
+  };
 }
 
 var _ = {};
 
 var fn = curry(function(a, b, c, d, e) {
-    console.log([a, b, c, d, e]);
+  console.log([a, b, c, d, e]);
 });
 
 // 验证 输出全部都是 [1, 2, 3, 4, 5]
@@ -2860,7 +2869,7 @@ fn(_, 2, 3, 4, 5)(1);
 fn(1, _, 3, 4, 5)(2);
 fn(1, _, 3)(_, 4)(2)(5);
 fn(1, _, _, 4)(_, 3)(2)(5);
-fn(_, 2)(_, _, 4)(1)(3)(5)
+fn(_, 2)(_, _, 4)(1)(3)(5);
 ```
 
 ## 总结
@@ -2870,11 +2879,7 @@ fn(_, 2)(_, _, 4)(1)(3)(5)
 ## 简短写法
 
 ```js
-var curry = fn =>
-    judge = (...args) =>
-        args.length === fn.length
-            ? fn(...args)
-            : (arg) => judge(...args, arg)
+var curry = (fn) => (judge = (...args) => (args.length === fn.length ? fn(...args) : (arg) => judge(...args, arg)));
 ```
 
 # 偏函数
@@ -2887,23 +2892,23 @@ var curry = fn =>
 
 ```js
 function add(a, b) {
-    return a + b;
+  return a + b;
 }
 
 // 执行 add 函数，一次传入两个参数即可
-add(1, 2) // 3
+add(1, 2); // 3
 
 // 假设有一个 partial 函数可以做到局部应用
 var addOne = partial(add, 1);
 
-addOne(2) // 3
+addOne(2); // 3
 ```
 
 个人觉得翻译成“局部应用”或许更贴切些，以下全部使用“局部应用”。
 
 ## 柯里化与局部应用
 
-如果看过上一篇文章《JavaScript专题之柯里化》，实际上你会发现这个例子和柯里化太像了，所以两者到底是有什么区别呢？
+如果看过上一篇文章《JavaScript 专题之柯里化》，实际上你会发现这个例子和柯里化太像了，所以两者到底是有什么区别呢？
 
 其实也很明显：
 
@@ -2923,12 +2928,12 @@ addOne(2) // 3
 
 ```js
 function add(a, b) {
-    return a + b;
+  return a + b;
 }
 
 var addOne = add.bind(null, 1);
 
-addOne(2) // 3
+addOne(2); // 3
 ```
 
 然而使用 bind 我们还是改变了 this 指向，我们要写一个不改变 this 指向的方法。
@@ -2941,19 +2946,19 @@ addOne(2) // 3
 // 第一版
 // 似曾相识的代码
 function partial(fn) {
-    var args = [].slice.call(arguments, 1);
-    return function() {
-        var newArgs = args.concat([].slice.call(arguments));
-        return fn.apply(this, newArgs);
-    };
-};
+  var args = [].slice.call(arguments, 1);
+  return function() {
+    var newArgs = args.concat([].slice.call(arguments));
+    return fn.apply(this, newArgs);
+  };
+}
 ```
 
 我们来写个 demo 验证下 this 的指向：
 
 ```js
 function add(a, b) {
-    return a + b + this.value;
+  return a + b + this.value;
 }
 
 // var addOne = add.bind(null, 1);
@@ -2961,9 +2966,9 @@ var addOne = partial(add, 1);
 
 var value = 1;
 var obj = {
-    value: 2,
-    addOne: addOne
-}
+  value: 2,
+  addOne: addOne
+};
 obj.addOne(2); // ???
 // 使用 bind 时，结果为 4
 // 使用 partial 时，结果为 5
@@ -2978,22 +2983,25 @@ obj.addOne(2); // ???
 var _ = {};
 
 function partial(fn) {
-    var args = [].slice.call(arguments, 1);
-    return function() {
-        var position = 0, len = args.length;
-        for(var i = 0; i < len; i++) {
-            args[i] = args[i] === _ ? arguments[position++] : args[i]
-        }
-        while(position < arguments.length) args.push(arguments[position++]);
-        return fn.apply(this, args);
-    };
-};
+  var args = [].slice.call(arguments, 1);
+  return function() {
+    var position = 0,
+      len = args.length;
+    for (var i = 0; i < len; i++) {
+      args[i] = args[i] === _ ? arguments[position++] : args[i];
+    }
+    while (position < arguments.length) args.push(arguments[position++]);
+    return fn.apply(this, args);
+  };
+}
 ```
 
 我们验证一下：
 
 ```js
-var subtract = function(a, b) { return b - a; };
+var subtract = function(a, b) {
+  return b - a;
+};
 subFrom20 = partial(subtract, _, 20);
 subFrom20(5);
 ```
@@ -3007,9 +3015,9 @@ subFrom20(5);
 ```js
 var t;
 function foo() {
-    if (t) return t;
-    t = new Date()
-    return t;
+  if (t) return t;
+  t = new Date();
+  return t;
 }
 ```
 
@@ -3019,12 +3027,12 @@ function foo() {
 
 ```js
 var foo = (function() {
-    var t;
-    return function() {
-        if (t) return t;
-        t = new Date();
-        return t;
-    }
+  var t;
+  return function() {
+    if (t) return t;
+    t = new Date();
+    return t;
+  };
 })();
 ```
 
@@ -3036,9 +3044,9 @@ var foo = (function() {
 
 ```js
 function foo() {
-    if (foo.t) return foo.t;
-    foo.t = new Date();
-    return foo.t;
+  if (foo.t) return foo.t;
+  foo.t = new Date();
+  return foo.t;
 }
 ```
 
@@ -3050,12 +3058,12 @@ function foo() {
 
 ```js
 var foo = function() {
-    var t = new Date();
-    // 运行一次后，以后只会调用这个函数
-    foo = function() {
-        return t;
-    };
-    return foo();
+  var t = new Date();
+  // 运行一次后，以后只会调用这个函数
+  foo = function() {
+    return t;
+  };
+  return foo();
 };
 ```
 
@@ -3066,12 +3074,11 @@ DOM 事件添加中，为了兼容现代浏览器和 IE 浏览器，我们需要
 ```js
 // 简化写法
 function addEvent(type, el, fn) {
-    if (window.addEventListener) {
-        el.addEventListener(type, fn, false);
-    }
-    else if (window.attachEvent) {
-        el.attachEvent('on' + type, fn);
-    }
+  if (window.addEventListener) {
+    el.addEventListener(type, fn, false);
+  } else if (window.attachEvent) {
+    el.attachEvent('on' + type, fn);
+  }
 }
 ```
 
@@ -3081,33 +3088,31 @@ function addEvent(type, el, fn) {
 
 ```js
 function addEvent(type, el, fn) {
-    if (window.addEventListener) {
-        addEvent = function(type, el, fn) {
-            el.addEventListener(type, fn, false);
-        }
-    }
-    else if (window.attachEvent) {
-        addEvent = function(type, el, fn) {
-            el.attachEvent('on' + type, fn);
-        }
-    }
+  if (window.addEventListener) {
+    addEvent = function(type, el, fn) {
+      el.addEventListener(type, fn, false);
+    };
+  } else if (window.attachEvent) {
+    addEvent = function(type, el, fn) {
+      el.attachEvent('on' + type, fn);
+    };
+  }
 }
 ```
 
 当然我们也可以使用闭包的形式：
 
 ```js
-var addEvent = (function(){
-    if (window.addEventListener) {
-        return function (type, el, fn) {
-            el.addEventListener(type, fn, false);
-        }
-    }
-    else if(window.attachEvent){
-        return function (type, el, fn) {
-            el.attachEvent('on' + type, fn);
-        }
-    }
+var addEvent = (function() {
+  if (window.addEventListener) {
+    return function(type, el, fn) {
+      el.addEventListener(type, fn, false);
+    };
+  } else if (window.attachEvent) {
+    return function(type, el, fn) {
+      el.attachEvent('on' + type, fn);
+    };
+  }
 })();
 ```
 
@@ -3120,11 +3125,15 @@ var addEvent = (function(){
 ## 尝试
 
 ```js
-var toUpperCase = function(x) { return x.toUpperCase(); };
-var hello = function(x) { return 'HELLO, ' + x; };
+var toUpperCase = function(x) {
+  return x.toUpperCase();
+};
+var hello = function(x) {
+  return 'HELLO, ' + x;
+};
 
 var greet = function(x) {
-    return hello(toUpperCase(x));
+  return hello(toUpperCase(x));
 };
 
 greet('kevin');
@@ -3138,16 +3147,19 @@ greet('kevin');
 
 ```js
 var compose = function(f, g) {
-    return function(x) {
-        return f(g(x));
-    };
+  return function(x) {
+    return f(g(x));
+  };
 };
 ```
 
 greet 函数就可以被优化为：
 
 ```js
-var greet = compose(hello, toUpperCase);
+var greet = compose(
+  hello,
+  toUpperCase
+);
 greet('kevin');
 ```
 
@@ -3156,13 +3168,27 @@ greet('kevin');
 但是现在的 compose 函数也只是能支持两个参数，如果有更多的步骤呢？我们岂不是要这样做：
 
 ```js
-compose(d, compose(c, compose(b, a)))
+compose(
+  d,
+  compose(
+    c,
+    compose(
+      b,
+      a
+    )
+  )
+);
 ```
 
 为什么我们不写一个帅气的 compose 函数支持传入多个函数呢？这样就变成了：
 
 ```js
-compose(d, c, b, a)
+compose(
+  d,
+  c,
+  b,
+  a
+);
 ```
 
 ## compose
@@ -3171,15 +3197,15 @@ compose(d, c, b, a)
 
 ```js
 function compose() {
-    var args = arguments;
-    var start = args.length - 1;
-    return function() {
-        var i = start;
-        var result = args[start].apply(this, arguments);
-        while (i--) result = args[i].call(this, result);
-        return result;
-    };
-};
+  var args = arguments;
+  var start = args.length - 1;
+  return function() {
+    var i = start;
+    var result = args[start].apply(this, arguments);
+    while (i--) result = args[i].call(this, result);
+    return result;
+  };
+}
 ```
 
 现在的 compose 函数已经可以支持多个函数了，然而有了这个又有什么用呢？
@@ -3195,39 +3221,73 @@ pointfree 指的是函数无须提及将要操作的数据是什么样的。依�
 
 // 非 pointfree，因为提到了数据：name
 var greet = function(name) {
-    return ('hello ' + name).toUpperCase();
-}
+  return ('hello ' + name).toUpperCase();
+};
 
 // pointfree
 // 先定义基本运算，这些可以封装起来复用
-var toUpperCase = function(x) { return x.toUpperCase(); };
-var hello = function(x) { return 'HELLO, ' + x; };
+var toUpperCase = function(x) {
+  return x.toUpperCase();
+};
+var hello = function(x) {
+  return 'HELLO, ' + x;
+};
 
-var greet = compose(hello, toUpperCase);
+var greet = compose(
+  hello,
+  toUpperCase
+);
 greet('kevin');
 ```
 
-我们再举个稍微复杂一点的例子，为了方便书写，我们需要借助在《JavaScript专题之函数柯里化》中写到的 curry 函数：
+我们再举个稍微复杂一点的例子，为了方便书写，我们需要借助在《JavaScript 专题之函数柯里化》中写到的 curry 函数：
 
 ```js
 // 需求：输入 'kevin daisy kelly'，返回 'K.D.K'
 
 // 非 pointfree，因为提到了数据：name
-var initials = function (name) {
-    return name.split(' ').map(compose(toUpperCase, head)).join('. ');
+var initials = function(name) {
+  return name
+    .split(' ')
+    .map(
+      compose(
+        toUpperCase,
+        head
+      )
+    )
+    .join('. ');
 };
 
 // pointfree
 // 先定义基本运算
-var split = curry(function(separator, str) { return str.split(separator) })
-var head = function(str) { return str.slice(0, 1) }
-var toUpperCase = function(str) { return str.toUpperCase() }
-var join = curry(function(separator, arr) { return arr.join(separator) })
-var map = curry(function(fn, arr) { return arr.map(fn) })
+var split = curry(function(separator, str) {
+  return str.split(separator);
+});
+var head = function(str) {
+  return str.slice(0, 1);
+};
+var toUpperCase = function(str) {
+  return str.toUpperCase();
+};
+var join = curry(function(separator, arr) {
+  return arr.join(separator);
+});
+var map = curry(function(fn, arr) {
+  return arr.map(fn);
+});
 
-var initials = compose(join('.'), map(compose(toUpperCase, head)), split(' '));
+var initials = compose(
+  join('.'),
+  map(
+    compose(
+      toUpperCase,
+      head
+    )
+  ),
+  split(' ')
+);
 
-initials("kevin daisy kelly");
+initials('kevin daisy kelly');
 ```
 
 从这个例子中我们可以看到，利用柯里化（curry）和函数组合 (compose) 非常有助于实现 pointfree。
@@ -3236,7 +3296,16 @@ initials("kevin daisy kelly");
 
 ```js
 // 使用 ramda.js
-var initials = R.compose(R.join('.'), R.map(R.compose(R.toUpper, R.head)), R.split(' '));
+var initials = R.compose(
+  R.join('.'),
+  R.map(
+    R.compose(
+      R.toUpper,
+      R.head
+    )
+  ),
+  R.split(' ')
+);
 ```
 
 而且你也会发现：
@@ -3255,27 +3324,63 @@ var initials = R.compose(R.join('.'), R.map(R.compose(R.toUpper, R.head)), R.spl
 
 ```js
 var data = {
-    result: "SUCCESS",
-    tasks: [
-        {id: 104, complete: false,            priority: "high",
-                  dueDate: "2013-11-29",      username: "Scott",
-                  title: "Do something",      created: "9/22/2013"},
-        {id: 105, complete: false,            priority: "medium",
-                  dueDate: "2013-11-22",      username: "Lena",
-                  title: "Do something else", created: "9/22/2013"},
-        {id: 107, complete: true,             priority: "high",
-                  dueDate: "2013-11-22",      username: "Mike",
-                  title: "Fix the foo",       created: "9/22/2013"},
-        {id: 108, complete: false,            priority: "low",
-                  dueDate: "2013-11-15",      username: "Punam",
-                  title: "Adjust the bar",    created: "9/25/2013"},
-        {id: 110, complete: false,            priority: "medium",
-                  dueDate: "2013-11-15",      username: "Scott",
-                  title: "Rename everything", created: "10/2/2013"},
-        {id: 112, complete: true,             priority: "high",
-                  dueDate: "2013-11-27",      username: "Lena",
-                  title: "Alter all quuxes",  created: "10/5/2013"}
-    ]
+  result: 'SUCCESS',
+  tasks: [
+    {
+      id: 104,
+      complete: false,
+      priority: 'high',
+      dueDate: '2013-11-29',
+      username: 'Scott',
+      title: 'Do something',
+      created: '9/22/2013'
+    },
+    {
+      id: 105,
+      complete: false,
+      priority: 'medium',
+      dueDate: '2013-11-22',
+      username: 'Lena',
+      title: 'Do something else',
+      created: '9/22/2013'
+    },
+    {
+      id: 107,
+      complete: true,
+      priority: 'high',
+      dueDate: '2013-11-22',
+      username: 'Mike',
+      title: 'Fix the foo',
+      created: '9/22/2013'
+    },
+    {
+      id: 108,
+      complete: false,
+      priority: 'low',
+      dueDate: '2013-11-15',
+      username: 'Punam',
+      title: 'Adjust the bar',
+      created: '9/25/2013'
+    },
+    {
+      id: 110,
+      complete: false,
+      priority: 'medium',
+      dueDate: '2013-11-15',
+      username: 'Scott',
+      title: 'Rename everything',
+      created: '10/2/2013'
+    },
+    {
+      id: 112,
+      complete: true,
+      priority: 'high',
+      dueDate: '2013-11-27',
+      username: 'Lena',
+      title: 'Alter all quuxes',
+      created: '10/5/2013'
+    }
+  ]
 };
 ```
 
@@ -3285,11 +3390,9 @@ var data = {
 
 ```js
 [
-    {id: 110, title: "Rename everything", 
-        dueDate: "2013-11-15", priority: "medium"},
-    {id: 104, title: "Do something", 
-        dueDate: "2013-11-29", priority: "high"}
-]
+  { id: 110, title: 'Rename everything', dueDate: '2013-11-15', priority: 'medium' },
+  { id: 104, title: 'Do something', dueDate: '2013-11-29', priority: 'high' }
+];
 ```
 
 普通的方式为：
@@ -3297,48 +3400,48 @@ var data = {
 ```js
 // 第一版 过程式编程
 var fetchData = function() {
-    // 模拟
-    return Promise.resolve(data)
+  // 模拟
+  return Promise.resolve(data);
 };
 
 var getIncompleteTaskSummaries = function(membername) {
-     return fetchData()
-         .then(function(data) {
-             return data.tasks;
-         })
-         .then(function(tasks) {
-             return tasks.filter(function(task) {
-                 return task.username == membername
-             })
-         })
-         .then(function(tasks) {
-             return tasks.filter(function(task) {
-                 return !task.complete
-             })
-         })
-         .then(function(tasks) {
-             return tasks.map(function(task) {
-                 return {
-                     id: task.id,
-                     dueDate: task.dueDate,
-                     title: task.title,
-                     priority: task.priority
-                 }
-             })
-         })
-         .then(function(tasks) {
-             return tasks.sort(function(first, second) {
-                 var a = first.dueDate,
-                     b = second.dueDate;
-                 return a < b ? -1 : a > b ? 1 : 0;
-             });
-         })
-         .then(function(task) {
-             console.log(task)
-         })
+  return fetchData()
+    .then(function(data) {
+      return data.tasks;
+    })
+    .then(function(tasks) {
+      return tasks.filter(function(task) {
+        return task.username == membername;
+      });
+    })
+    .then(function(tasks) {
+      return tasks.filter(function(task) {
+        return !task.complete;
+      });
+    })
+    .then(function(tasks) {
+      return tasks.map(function(task) {
+        return {
+          id: task.id,
+          dueDate: task.dueDate,
+          title: task.title,
+          priority: task.priority
+        };
+      });
+    })
+    .then(function(tasks) {
+      return tasks.sort(function(first, second) {
+        var a = first.dueDate,
+          b = second.dueDate;
+        return a < b ? -1 : a > b ? 1 : 0;
+      });
+    })
+    .then(function(task) {
+      console.log(task);
+    });
 };
 
-getIncompleteTaskSummaries('Scott')
+getIncompleteTaskSummaries('Scott');
 ```
 
 如果使用 pointfree 模式：
@@ -3346,53 +3449,53 @@ getIncompleteTaskSummaries('Scott')
 ```js
 // 第二版 pointfree 改写
 var fetchData = function() {
-    return Promise.resolve(data)
+  return Promise.resolve(data);
 };
 
 // 编写基本函数
 var prop = curry(function(name, obj) {
-    return obj[name];
+  return obj[name];
 });
 
 var propEq = curry(function(name, val, obj) {
-    return obj[name] === val;
+  return obj[name] === val;
 });
 
 var filter = curry(function(fn, arr) {
-    return arr.filter(fn)
+  return arr.filter(fn);
 });
 
 var map = curry(function(fn, arr) {
-    return arr.map(fn)
+  return arr.map(fn);
 });
 
-var pick = curry(function(args, obj){
-    var result = {};
-    for (var i = 0; i < args.length; i++) {
-        result[args[i]] = obj[args[i]]
-    }
-    return result;
+var pick = curry(function(args, obj) {
+  var result = {};
+  for (var i = 0; i < args.length; i++) {
+    result[args[i]] = obj[args[i]];
+  }
+  return result;
 });
 
 var sortBy = curry(function(fn, arr) {
-    return arr.sort(function(a, b){
-        var a = fn(a),
-            b = fn(b);
-        return a < b ? -1 : a > b ? 1 : 0;
-    })
+  return arr.sort(function(a, b) {
+    var a = fn(a),
+      b = fn(b);
+    return a < b ? -1 : a > b ? 1 : 0;
+  });
 });
 
 var getIncompleteTaskSummaries = function(membername) {
-    return fetchData()
-        .then(prop('tasks'))
-        .then(filter(propEq('username', membername)))
-        .then(filter(propEq('complete', false)))
-        .then(map(pick(['id', 'dueDate', 'title', 'priority'])))
-        .then(sortBy(prop('dueDate')))
-        .then(console.log)
+  return fetchData()
+    .then(prop('tasks'))
+    .then(filter(propEq('username', membername)))
+    .then(filter(propEq('complete', false)))
+    .then(map(pick(['id', 'dueDate', 'title', 'priority'])))
+    .then(sortBy(prop('dueDate')))
+    .then(console.log);
 };
 
-getIncompleteTaskSummaries('Scott')
+getIncompleteTaskSummaries('Scott');
 ```
 
 如果直接使用 ramda.js，你可以省去编写基本函数:
@@ -3400,20 +3503,20 @@ getIncompleteTaskSummaries('Scott')
 ```js
 // 第三版 使用 ramda.js
 var fetchData = function() {
-    return Promise.resolve(data)
+  return Promise.resolve(data);
 };
 
 var getIncompleteTaskSummaries = function(membername) {
-    return fetchData()
-        .then(R.prop('tasks'))
-        .then(R.filter(R.propEq('username', membername)))
-        .then(R.filter(R.propEq('complete', false)))
-        .then(R.map(R.pick(['id', 'dueDate', 'title', 'priority'])))
-        .then(R.sortBy(R.prop('dueDate')))
-        .then(console.log)
+  return fetchData()
+    .then(R.prop('tasks'))
+    .then(R.filter(R.propEq('username', membername)))
+    .then(R.filter(R.propEq('complete', false)))
+    .then(R.map(R.pick(['id', 'dueDate', 'title', 'priority'])))
+    .then(R.sortBy(R.prop('dueDate')))
+    .then(console.log);
 };
 
-getIncompleteTaskSummaries('Scott')
+getIncompleteTaskSummaries('Scott');
 ```
 
 当然了，利用 compose，你也可以这样写：
@@ -3421,23 +3524,23 @@ getIncompleteTaskSummaries('Scott')
 ```js
 // 第四版 使用 compose
 var fetchData = function() {
-    return Promise.resolve(data)
+  return Promise.resolve(data);
 };
 
 var getIncompleteTaskSummaries = function(membername) {
-    return fetchData()
-        .then(R.compose(
-            console.log,
-            R.sortBy(R.prop('dueDate')),
-            R.map(R.pick(['id', 'dueDate', 'title', 'priority'])
-            ),
-            R.filter(R.propEq('complete', false)),
-            R.filter(R.propEq('username', membername)),
-            R.prop('tasks'),
-        ))
+  return fetchData().then(
+    R.compose(
+      console.log,
+      R.sortBy(R.prop('dueDate')),
+      R.map(R.pick(['id', 'dueDate', 'title', 'priority'])),
+      R.filter(R.propEq('complete', false)),
+      R.filter(R.propEq('username', membername)),
+      R.prop('tasks')
+    )
+  );
 };
 
-getIncompleteTaskSummaries('Scott')
+getIncompleteTaskSummaries('Scott');
 ```
 
 compose 是从右到左依此执行，当然你也可以写一个从左到右的版本，但是从右向左执行更加能够反映数学上的含义。
@@ -3467,14 +3570,14 @@ var getIncompleteTaskSummaries = function(membername) {
 
 ```js
 function add(a, b) {
-    return a + b;
+  return a + b;
 }
 
 // 假设 memoize 可以实现函数记忆
 var memoizedAdd = memoize(add);
 
-memoizedAdd(1, 2) // 3
-memoizedAdd(1, 2) // 相同的参数，第二次调用时，从缓存中取出数据，而非重新计算一次
+memoizedAdd(1, 2); // 3
+memoizedAdd(1, 2); // 相同的参数，第二次调用时，从缓存中取出数据，而非重新计算一次
 ```
 
 ## 原理
@@ -3488,15 +3591,15 @@ memoizedAdd(1, 2) // 相同的参数，第二次调用时，从缓存中取出�
 ```js
 // 第一版 (来自《JavaScript权威指南》)
 function memoize(f) {
-    var cache = {};
-    return function(){
-        var key = arguments.length + Array.prototype.join.call(arguments, ",");
-        if (key in cache) {
-            return cache[key]
-        } else {
-            return cache[key] = f.apply(this, arguments)
-        }
+  var cache = {};
+  return function() {
+    var key = arguments.length + Array.prototype.join.call(arguments, ',');
+    if (key in cache) {
+      return cache[key];
+    } else {
+      return (cache[key] = f.apply(this, arguments));
     }
+  };
 }
 ```
 
@@ -3504,22 +3607,22 @@ function memoize(f) {
 
 ```js
 var add = function(a, b, c) {
-  return a + b + c
-}
+  return a + b + c;
+};
 
-var memoizedAdd = memoize(add)
+var memoizedAdd = memoize(add);
 
-console.time('use memoize')
-for(var i = 0; i < 100000; i++) {
-    memoizedAdd(1, 2, 3)
+console.time('use memoize');
+for (var i = 0; i < 100000; i++) {
+  memoizedAdd(1, 2, 3);
 }
-console.timeEnd('use memoize')
+console.timeEnd('use memoize');
 
-console.time('not use memoize')
-for(var i = 0; i < 100000; i++) {
-    add(1, 2, 3)
+console.time('not use memoize');
+for (var i = 0; i < 100000; i++) {
+  add(1, 2, 3);
 }
-console.timeEnd('not use memoize')
+console.timeEnd('not use memoize');
 ```
 
 在 Chrome 中，使用 memoize 大约耗时 60ms，如果我们不使用函数记忆，大约耗时 1.3 ms 左右。
@@ -3537,14 +3640,14 @@ console.timeEnd('not use memoize')
 因为第一版使用了 join 方法，我们很容易想到当参数是对象的时候，就会自动调用 toString 方法转换成 [Object object]，再拼接字符串作为 key 值。我们写个 demo 验证一下这个问题：
 
 ```js
-var propValue = function(obj){
-    return obj.value
-}
+var propValue = function(obj) {
+  return obj.value;
+};
 
-var memoizedAdd = memoize(propValue)
+var memoizedAdd = memoize(propValue);
 
-console.log(memoizedAdd({value: 1})) // 1
-console.log(memoizedAdd({value: 2})) // 1
+console.log(memoizedAdd({ value: 1 })); // 1
+console.log(memoizedAdd({ value: 2 })); // 1
 ```
 
 两者都返回了 1，显然是有问题的，所以我们看看 underscore 的 memoize 函数是如何实现的：
@@ -3552,16 +3655,16 @@ console.log(memoizedAdd({value: 2})) // 1
 ```js
 // 第二版 (来自 underscore 的实现)
 var memoize = function(func, hasher) {
-    var memoize = function(key) {
-        var cache = memoize.cache;
-        var address = '' + (hasher ? hasher.apply(this, arguments) : key);
-        if (!cache[address]) {
-            cache[address] = func.apply(this, arguments);
-        }
-        return cache[address];
-    };
-    memoize.cache = {};
-    return memoize;
+  var memoize = function(key) {
+    var cache = memoize.cache;
+    var address = '' + (hasher ? hasher.apply(this, arguments) : key);
+    if (!cache[address]) {
+      cache[address] = func.apply(this, arguments);
+    }
+    return cache[address];
+  };
+  memoize.cache = {};
+  return memoize;
 };
 ```
 
@@ -3569,25 +3672,25 @@ var memoize = function(func, hasher) {
 
 ```js
 var add = function(a, b, c) {
-  return a + b + c
-}
+  return a + b + c;
+};
 
-var memoizedAdd = memoize(add)
+var memoizedAdd = memoize(add);
 
-memoizedAdd(1, 2, 3) // 6
-memoizedAdd(1, 2, 4) // 6
+memoizedAdd(1, 2, 3); // 6
+memoizedAdd(1, 2, 4); // 6
 ```
 
 肯定是有问题的，如果要支持多参数，我们就需要传入 hasher 函数，自定义存储的 key 值。所以我们考虑使用 JSON.stringify：
 
 ```js
-var memoizedAdd = memoize(add, function(){
-    var args = Array.prototype.slice.call(arguments)
-    return JSON.stringify(args)
-})
+var memoizedAdd = memoize(add, function() {
+  var args = Array.prototype.slice.call(arguments);
+  return JSON.stringify(args);
+});
 
-console.log(memoizedAdd(1, 2, 3)) // 6
-console.log(memoizedAdd(1, 2, 4)) // 7
+console.log(memoizedAdd(1, 2, 3)); // 6
+console.log(memoizedAdd(1, 2, 4)); // 7
 ```
 
 如果使用 JSON.stringify，参数是对象的问题也可以得到解决，因为存储的是对象序列化后的字符串。
@@ -3599,14 +3702,14 @@ console.log(memoizedAdd(1, 2, 4)) // 7
 ```js
 var count = 0;
 var fibonacci = function(n) {
-    count++;
-    return n < 2? n : fibonacci(n-1) + fibonacci(n-2);
+  count++;
+  return n < 2 ? n : fibonacci(n - 1) + fibonacci(n - 2);
 };
 for (var i = 0; i <= 10; i++) {
-    fibonacci(i)
+  fibonacci(i);
 }
 
-console.log(count) // 453
+console.log(count); // 453
 ```
 
 我们会发现最后的 count 数为 453，也就是说 fibonacci 函数被调用了 453 次！也许你会想，我只是循环到了 10，为什么就被调用了这么多次，所以我们来具体分析下：
@@ -3642,17 +3745,17 @@ console.log(count) // 453
 ```js
 var count = 0;
 var fibonacci = function(n) {
-    count++;
-    return n < 2 ? n : fibonacci(n - 1) + fibonacci(n - 2);
+  count++;
+  return n < 2 ? n : fibonacci(n - 1) + fibonacci(n - 2);
 };
 
-fibonacci = memoize(fibonacci)
+fibonacci = memoize(fibonacci);
 
 for (var i = 0; i <= 10; i++) {
-    fibonacci(i)
+  fibonacci(i);
 }
 
-console.log(count) // 12
+console.log(count); // 12
 ```
 
 我们会发现最后的总次数为 12 次，因为使用了函数记忆，调用次数从 453 次降低为了 12 次!
@@ -3679,21 +3782,21 @@ console.log(count) // 12
 
 ```js
 function factorial(n) {
-    if (n == 1) return n;
-    return n * factorial(n - 1)
+  if (n == 1) return n;
+  return n * factorial(n - 1);
 }
 
-console.log(factorial(5)) // 5 * 4 * 3 * 2 * 1 = 120
+console.log(factorial(5)); // 5 * 4 * 3 * 2 * 1 = 120
 ```
 
 ## 斐波那契数列
 
 ```js
-function fibonacci(n){
-    return n < 2 ? n : fibonacci(n - 1) + fibonacci(n - 2);
+function fibonacci(n) {
+  return n < 2 ? n : fibonacci(n - 1) + fibonacci(n - 2);
 }
 
-console.log(fibonacci(5)) // 1 1 2 3 5
+console.log(fibonacci(5)); // 1 1 2 3 5
 ```
 
 ## 递归条件
@@ -3726,7 +3829,7 @@ console.log(fibonacci(5)) // 1 1 2 3 5
 ```js
 // 尾调用
 function f(x) {
-    return g(x);
+  return g(x);
 }
 ```
 
@@ -3735,7 +3838,7 @@ function f(x) {
 ```js
 // 非尾调用
 function f(x) {
-    return g(x) + 1;
+  return g(x) + 1;
 }
 ```
 
@@ -3791,11 +3894,11 @@ ECStack.pop();
 // factorial(1, 24)
 // 24
 function factorial(n, res) {
-    if (n == 1) return res;
-    return factorial(n - 1, n * res)
+  if (n == 1) return res;
+  return factorial(n - 1, n * res);
 }
 
-console.log(factorial(4, 1)) // 24
+console.log(factorial(4, 1)); // 24
 ```
 
 然而这个很奇怪呐……我们计算 4 的阶乘，结果函数要传入 4 和 1，我就不能只传入一个 4 吗？
@@ -3803,9 +3906,9 @@ console.log(factorial(4, 1)) // 24
 这个时候就要用到 partial 函数了：
 
 ```js
-var newFactorial = partial(factorial, _, 1)
+var newFactorial = partial(factorial, _, 1);
 
-newFactorial(4) // 24
+newFactorial(4); // 24
 ```
 
 # 乱序
@@ -3819,11 +3922,11 @@ newFactorial(4) // 24
 ```js
 var values = [1, 2, 3, 4, 5];
 
-values.sort(function(){
-    return Math.random() - 0.5;
+values.sort(function() {
+  return Math.random() - 0.5;
 });
 
-console.log(values)
+console.log(values);
 ```
 
 Math.random() - 0.5 随机得到一个正数、负数或是 0，如果是正数则降序排列，如果是负数则升序排列，如果是 0 就不变，然后不断的升序或者降序，最终得到一个乱序的数组。
@@ -3834,16 +3937,14 @@ Math.random() - 0.5 随机得到一个正数、负数或是 0，如果是正数�
 var times = [0, 0, 0, 0, 0];
 
 for (var i = 0; i < 100000; i++) {
-    
-    let arr = [1, 2, 3, 4, 5];
-    
-    arr.sort(() => Math.random() - 0.5);
-    
-    times[arr[4]-1]++;
+  let arr = [1, 2, 3, 4, 5];
 
+  arr.sort(() => Math.random() - 0.5);
+
+  times[arr[4] - 1]++;
 }
 
-console.log(times)
+console.log(times);
 ```
 
 测试原理是：将 [1, 2, 3, 4, 5] 乱序 10 万次，计算乱序后的数组的最后一个元素是 1、2、3、4、5 的次数分别是多少。
@@ -3851,7 +3952,7 @@ console.log(times)
 一次随机的结果为：
 
 ```js
-[30636, 30906, 20456, 11743, 6259]
+[30636, 30906, 20456, 11743, 6259];
 ```
 
 该结果表示 10 万次中，数组乱序后的最后一个元素是 1 的情况共有 30636 次，是 2 的情况共有 30906 次，其他依此类推。
@@ -3874,20 +3975,20 @@ console.log(times)
 
 ```js
 function InsertionSort(a, from, to) {
-    for (var i = from + 1; i < to; i++) {
-        var element = a[i];
-        for (var j = i - 1; j >= from; j--) {
-            var tmp = a[j];
-            var order = comparefn(tmp, element);
-            if (order > 0) {
-                a[j + 1] = tmp;
-            } else {
-                break;
-            }
-        }
-        a[j + 1] = element;
+  for (var i = from + 1; i < to; i++) {
+    var element = a[i];
+    for (var j = i - 1; j >= from; j--) {
+      var tmp = a[j];
+      var order = comparefn(tmp, element);
+      if (order > 0) {
+        a[j + 1] = tmp;
+      } else {
+        break;
+      }
     }
-};
+    a[j + 1] = element;
+  }
+}
 ```
 
 其原理在于将第一个元素视为有序序列，遍历数组，将之后的元素依次插入这个构建的有序序列中。
@@ -3905,8 +4006,8 @@ function InsertionSort(a, from, to) {
 ```js
 var values = [1, 2, 3];
 
-values.sort(function(){
-    return Math.random() - 0.5;
+values.sort(function() {
+  return Math.random() - 0.5;
 });
 ```
 
@@ -3971,20 +4072,19 @@ var times = 100000;
 var res = {};
 
 for (var i = 0; i < times; i++) {
-    
-    var arr = [1, 2, 3];
-    arr.sort(() => Math.random() - 0.5);
-    
-    var key = JSON.stringify(arr);
-    res[key] ? res[key]++ :  res[key] = 1;
+  var arr = [1, 2, 3];
+  arr.sort(() => Math.random() - 0.5);
+
+  var key = JSON.stringify(arr);
+  res[key] ? res[key]++ : (res[key] = 1);
 }
 
 // 为了方便展示，转换成百分比
 for (var key in res) {
-    res[key] = res[key] / times * 100 + '%'
+  res[key] = (res[key] / times) * 100 + '%';
 }
 
-console.log(res)
+console.log(res);
 ```
 
 这是一次随机的结果：
@@ -4005,14 +4105,14 @@ console.log(res)
 
 ```js
 function shuffle(a) {
-    var j, x, i;
-    for (i = a.length; i; i--) {
-        j = Math.floor(Math.random() * i);
-        x = a[i - 1];
-        a[i - 1] = a[j];
-        a[j] = x;
-    }
-    return a;
+  var j, x, i;
+  for (i = a.length; i; i--) {
+    j = Math.floor(Math.random() * i);
+    x = a[i - 1];
+    a[i - 1] = a[j];
+    a[j] = x;
+  }
+  return a;
 }
 ```
 
@@ -4022,11 +4122,11 @@ function shuffle(a) {
 
 ```js
 function shuffle(a) {
-    for (let i = a.length; i; i--) {
-        let j = Math.floor(Math.random() * i);
-        [a[i - 1], a[j]] = [a[j], a[i - 1]];
-    }
-    return a;
+  for (let i = a.length; i; i--) {
+    let j = Math.floor(Math.random() * i);
+    [a[i - 1], a[j]] = [a[j], a[i - 1]];
+  }
+  return a;
 }
 ```
 
@@ -4037,18 +4137,18 @@ var times = 100000;
 var res = {};
 
 for (var i = 0; i < times; i++) {
-    var arr = shuffle([1, 2, 3]);
+  var arr = shuffle([1, 2, 3]);
 
-    var key = JSON.stringify(arr);
-    res[key] ? res[key]++ :  res[key] = 1;
+  var key = JSON.stringify(arr);
+  res[key] ? res[key]++ : (res[key] = 1);
 }
 
 // 为了方便展示，转换成百分比
 for (var key in res) {
-    res[key] = res[key] / times * 100 + '%'
+  res[key] = (res[key] / times) * 100 + '%';
 }
 
-console.log(res)
+console.log(res);
 ```
 
 这是一次随机的结果：
@@ -4079,20 +4179,20 @@ v8 是 Chrome 的 JavaScript 引擎，其中关于数组的排序完全采用了
 
 ```js
 function insertionSort(arr) {
-    for (var i = 1; i < arr.length; i++) {
-        var element = arr[i];
-        for (var j = i - 1; j >= 0; j--) {
-            var tmp = arr[j];
-            var order = tmp - element;
-            if (order > 0) {
-                arr[j + 1] = tmp;
-            } else {
-                break;
-            }
-        }
-        arr[j + 1] = element;
+  for (var i = 1; i < arr.length; i++) {
+    var element = arr[i];
+    for (var j = i - 1; j >= 0; j--) {
+      var tmp = arr[j];
+      var order = tmp - element;
+      if (order > 0) {
+        arr[j + 1] = tmp;
+      } else {
+        break;
+      }
     }
-    return arr;
+    arr[j + 1] = element;
+  }
+  return arr;
 }
 
 var arr = [6, 5, 4, 3, 2, 1];
@@ -4149,22 +4249,24 @@ console.log(insertionSort(arr));
 
 ```js
 var quickSort = function(arr) {
-　　if (arr.length <= 1) { return arr; }
-    // 取数组的中间元素作为基准
-　　var pivotIndex = Math.floor(arr.length / 2);
-　　var pivot = arr.splice(pivotIndex, 1)[0];
+  if (arr.length <= 1) {
+    return arr;
+  }
+  // 取数组的中间元素作为基准
+  var pivotIndex = Math.floor(arr.length / 2);
+  var pivot = arr.splice(pivotIndex, 1)[0];
 
-　　var left = [];
-　　var right = [];
+  var left = [];
+  var right = [];
 
-　　for (var i = 0; i < arr.length; i++){
-　　　　if (arr[i] < pivot) {
-　　　　　　left.push(arr[i]);
-　　　　} else {
-　　　　　　right.push(arr[i]);
-　　　　}
-　　}
-　　return quickSort(left).concat([pivot], quickSort(right));
+  for (var i = 0; i < arr.length; i++) {
+    if (arr[i] < pivot) {
+      left.push(arr[i]);
+    } else {
+      right.push(arr[i]);
+    }
+  }
+  return quickSort(left).concat([pivot], quickSort(right));
 };
 ```
 
@@ -4180,42 +4282,42 @@ var quickSort = function(arr) {
 
 ```js
 function quickSort(arr) {
-    // 交换元素
-    function swap(arr, a, b) {
-        var temp = arr[a];
-        arr[a] = arr[b];
-        arr[b] = temp;
+  // 交换元素
+  function swap(arr, a, b) {
+    var temp = arr[a];
+    arr[a] = arr[b];
+    arr[b] = temp;
+  }
+
+  function partition(arr, left, right) {
+    var pivot = arr[left];
+    var storeIndex = left;
+
+    for (var i = left + 1; i <= right; i++) {
+      if (arr[i] < pivot) {
+        swap(arr, ++storeIndex, i);
+      }
     }
 
-    function partition(arr, left, right) {
-        var pivot = arr[left];
-        var storeIndex = left;
+    swap(arr, left, storeIndex);
 
-        for (var i = left + 1; i <= right; i++) {
-            if (arr[i] < pivot) {
-                swap(arr, ++storeIndex, i);
-            }
-        }
+    return storeIndex;
+  }
 
-        swap(arr, left, storeIndex);
-
-        return storeIndex;
+  function sort(arr, left, right) {
+    if (left < right) {
+      var storeIndex = partition(arr, left, right);
+      sort(arr, left, storeIndex - 1);
+      sort(arr, storeIndex + 1, right);
     }
+  }
 
-    function sort(arr, left, right) {
-        if (left < right) {
-            var storeIndex = partition(arr, left, right);
-            sort(arr, left, storeIndex - 1);
-            sort(arr, storeIndex + 1, right);
-        }
-    }
+  sort(arr, 0, arr.length - 1);
 
-    sort(arr, 0, arr.length - 1);
-
-    return arr;
+  return arr;
 }
 
-console.log(quickSort([6, 7, 3, 4, 1, 5, 9, 2, 8]))
+console.log(quickSort([6, 7, 3, 4, 1, 5, 9, 2, 8]));
 ```
 
 ### 稳定性
@@ -4257,26 +4359,26 @@ third_index = from + ((to - from) >> 1);
 ```js
 // 简单处理过
 function GetThirdIndex(a, from, to) {
-    var t_array = new Array();
+  var t_array = new Array();
 
-    // & 位运算符
-    var increment = 200 + ((to - from) & 15);
+  // & 位运算符
+  var increment = 200 + ((to - from) & 15);
 
-    var j = 0;
-    from += 1;
-    to -= 1;
+  var j = 0;
+  from += 1;
+  to -= 1;
 
-    for (var i = from; i < to; i += increment) {
-        t_array[j] = [i, a[i]];
-        j++;
-    }
-    // 对随机挑选的这些值进行排序
-    t_array.sort(function(a, b) {
-        return comparefn(a[1], b[1]);
-    });
-    // 取中间值的下标
-    var third_index = t_array[t_array.length >> 1][0];
-    return third_index;
+  for (var i = from; i < to; i += increment) {
+    t_array[j] = [i, a[i]];
+    j++;
+  }
+  // 对随机挑选的这些值进行排序
+  t_array.sort(function(a, b) {
+    return comparefn(a[1], b[1]);
+  });
+  // 取中间值的下标
+  var third_index = t_array[t_array.length >> 1][0];
+  return third_index;
 }
 ```
 
@@ -4300,126 +4402,123 @@ function GetThirdIndex(a, from, to) {
 
 ```js
 function InsertionSort(a, from, to) {
-    for (var i = from + 1; i < to; i++) {
-        var element = a[i];
-        for (var j = i - 1; j >= from; j--) {
-            var tmp = a[j];
-            var order = comparefn(tmp, element);
-            if (order > 0) {
-                a[j + 1] = tmp;
-            } else {
-                break;
-            }
-        }
-        a[j + 1] = element;
+  for (var i = from + 1; i < to; i++) {
+    var element = a[i];
+    for (var j = i - 1; j >= from; j--) {
+      var tmp = a[j];
+      var order = comparefn(tmp, element);
+      if (order > 0) {
+        a[j + 1] = tmp;
+      } else {
+        break;
+      }
     }
-};
-
+    a[j + 1] = element;
+  }
+}
 
 function QuickSort(a, from, to) {
-
-    var third_index = 0;
-    while (true) {
-            // Insertion sort is faster for short arrays.
-        if (to - from <= 10) {
-            InsertionSort(a, from, to);
-            return;
-        }
-        if (to - from > 1000) {
-            third_index = GetThirdIndex(a, from, to);
-        } else {
-            third_index = from + ((to - from) >> 1);
-        }
-        // Find a pivot as the median of first, last and middle element.
-        var v0 = a[from];
-        var v1 = a[to - 1];
-        var v2 = a[third_index];
-
-        var c01 = comparefn(v0, v1);
-        if (c01 > 0) {
-            // v1 < v0, so swap them.
-            var tmp = v0;
-            v0 = v1;
-            v1 = tmp;
-        } // v0 <= v1.
-        var c02 = comparefn(v0, v2);
-        if (c02 >= 0) {
-            // v2 <= v0 <= v1.
-            var tmp = v0;
-            v0 = v2;
-            v2 = v1;
-            v1 = tmp;
-        } else {
-            // v0 <= v1 && v0 < v2
-            var c12 = comparefn(v1, v2);
-            if (c12 > 0) {
-                // v0 <= v2 < v1
-                var tmp = v1;
-                v1 = v2;
-                v2 = tmp;
-            }
-        }
-
-        // v0 <= v1 <= v2
-        a[from] = v0;
-        a[to - 1] = v2;
-
-        var pivot = v1;
-
-        var low_end = from + 1; // Upper bound of elements lower than pivot.
-        var high_start = to - 1; // Lower bound of elements greater than pivot.
-
-        a[third_index] = a[low_end];
-        a[low_end] = pivot;
-
-        // From low_end to i are elements equal to pivot.
-        // From i to high_start are elements that haven't been compared yet.
-
-        partition: for (var i = low_end + 1; i < high_start; i++) {
-            var element = a[i];
-            var order = comparefn(element, pivot);
-            if (order < 0) {
-                a[i] = a[low_end];
-                a[low_end] = element;
-                low_end++;
-            } else if (order > 0) {
-                do {
-                    high_start--;
-                    if (high_start == i) break partition;
-                    var top_elem = a[high_start];
-                    order = comparefn(top_elem, pivot);
-                } while (order > 0);
-
-                a[i] = a[high_start];
-                a[high_start] = element;
-                if (order < 0) {
-                    element = a[i];
-                    a[i] = a[low_end];
-                    a[low_end] = element;
-                    low_end++;
-                }
-            }
-        }
-
-
-        if (to - high_start < low_end - from) {
-            QuickSort(a, high_start, to);
-            to = low_end;
-        } else {
-            QuickSort(a, from, low_end);
-            from = high_start;
-        }
+  var third_index = 0;
+  while (true) {
+    // Insertion sort is faster for short arrays.
+    if (to - from <= 10) {
+      InsertionSort(a, from, to);
+      return;
     }
+    if (to - from > 1000) {
+      third_index = GetThirdIndex(a, from, to);
+    } else {
+      third_index = from + ((to - from) >> 1);
+    }
+    // Find a pivot as the median of first, last and middle element.
+    var v0 = a[from];
+    var v1 = a[to - 1];
+    var v2 = a[third_index];
+
+    var c01 = comparefn(v0, v1);
+    if (c01 > 0) {
+      // v1 < v0, so swap them.
+      var tmp = v0;
+      v0 = v1;
+      v1 = tmp;
+    } // v0 <= v1.
+    var c02 = comparefn(v0, v2);
+    if (c02 >= 0) {
+      // v2 <= v0 <= v1.
+      var tmp = v0;
+      v0 = v2;
+      v2 = v1;
+      v1 = tmp;
+    } else {
+      // v0 <= v1 && v0 < v2
+      var c12 = comparefn(v1, v2);
+      if (c12 > 0) {
+        // v0 <= v2 < v1
+        var tmp = v1;
+        v1 = v2;
+        v2 = tmp;
+      }
+    }
+
+    // v0 <= v1 <= v2
+    a[from] = v0;
+    a[to - 1] = v2;
+
+    var pivot = v1;
+
+    var low_end = from + 1; // Upper bound of elements lower than pivot.
+    var high_start = to - 1; // Lower bound of elements greater than pivot.
+
+    a[third_index] = a[low_end];
+    a[low_end] = pivot;
+
+    // From low_end to i are elements equal to pivot.
+    // From i to high_start are elements that haven't been compared yet.
+
+    partition: for (var i = low_end + 1; i < high_start; i++) {
+      var element = a[i];
+      var order = comparefn(element, pivot);
+      if (order < 0) {
+        a[i] = a[low_end];
+        a[low_end] = element;
+        low_end++;
+      } else if (order > 0) {
+        do {
+          high_start--;
+          if (high_start == i) break partition;
+          var top_elem = a[high_start];
+          order = comparefn(top_elem, pivot);
+        } while (order > 0);
+
+        a[i] = a[high_start];
+        a[high_start] = element;
+        if (order < 0) {
+          element = a[i];
+          a[i] = a[low_end];
+          a[low_end] = element;
+          low_end++;
+        }
+      }
+    }
+
+    if (to - high_start < low_end - from) {
+      QuickSort(a, high_start, to);
+      to = low_end;
+    } else {
+      QuickSort(a, from, low_end);
+      from = high_start;
+    }
+  }
 }
 
 var arr = [10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0];
 
 function comparefn(a, b) {
-    return a - b
+  return a - b;
 }
 
-QuickSort(arr, 0, arr.length)
-console.log(arr)
+QuickSort(arr, 0, arr.length);
+console.log(arr);
 ```
 
 我们以数组 [10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0] 为例，分析执行的过程。
@@ -4433,51 +4532,49 @@ console.log(arr)
 ```js
 // 假设代码执行到这里，为了方便演示，我们直接设置 low_end 等变量的值
 // 可以直接复制到浏览器中查看数组变换效果
-var a = [0, 5, 8, 7, 6, 9, 4, 3, 2, 1, 10]
+var a = [0, 5, 8, 7, 6, 9, 4, 3, 2, 1, 10];
 var low_end = 1;
 var high_start = 10;
 var pivot = 5;
 
-console.log('起始数组为', a)
+console.log('起始数组为', a);
 
 partition: for (var i = low_end + 1; i < high_start; i++) {
+  var element = a[i];
+  console.log('循环当前的元素为：', a[i]);
+  var order = element - pivot;
 
-    var element = a[i];
-    console.log('循环当前的元素为：', a[i])
-    var order = element - pivot;
+  if (order < 0) {
+    a[i] = a[low_end];
+    a[low_end] = element;
+    low_end++;
+    console.log(a);
+  } else if (order > 0) {
+    do {
+      high_start--;
+      if (high_start == i) break partition;
+      var top_elem = a[high_start];
+      order = top_elem - pivot;
+    } while (order > 0);
+
+    a[i] = a[high_start];
+    a[high_start] = element;
+
+    console.log(a);
 
     if (order < 0) {
-        a[i] = a[low_end];
-        a[low_end] = element;
-        low_end++;
-        console.log(a)
+      element = a[i];
+      a[i] = a[low_end];
+      a[low_end] = element;
+      low_end++;
     }
-    else if (order > 0) {
-        do {
-            high_start--;
-            if (high_start == i) break partition;
-            var top_elem = a[high_start];
-            order = top_elem - pivot;
-        } while (order > 0);
-
-        a[i] = a[high_start];
-        a[high_start] = element;
-
-        console.log(a)
-
-        if (order < 0) {
-            element = a[i];
-            a[i] = a[low_end];
-            a[low_end] = element;
-            low_end++;
-        }
-        console.log(a)
-    }
+    console.log(a);
+  }
 }
 
-console.log('最后的结果为', a)
-console.log(low_end)
-console.log(high_start)
+console.log('最后的结果为', a);
+console.log(low_end);
+console.log(high_start);
 ```
 
 6. 此时数组为 [0, 5, 8, 7, 6, 9, 4, 3, 2, 1, 10]，循环从第三个元素开始，a[i] 的值为 8，因为大于基准值 5，即 order > 0，开始执行 do while 循环，do while 循环的目的在于倒序查找元素，找到第一个小于基准值的元素，然后让这个元素跟 a[i] 的位置交换。第一个小于基准值的元素为 1，然后 1 与 8 交换，数组变成 [0, 5, 1, 7, 6, 9, 4, 3, 2, 8, 10]。high_start 的值是为了记录倒序查找到哪里了。

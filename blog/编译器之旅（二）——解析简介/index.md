@@ -2,7 +2,7 @@
 title: 编译器之旅（二）——解析简介
 date: 2020-2-27 09:57:06
 categories:
-- 计算机基础
+  - 计算机基础
 tags: 编译原理, 语法分析
 path: /tour-of-compiler-analysis-introduction/
 ---
@@ -32,7 +32,7 @@ number:  T_INTLIT
 竖线将语法中的选项分开，因此含义是：
 
 - 表达式可以只是一个数字，或者
-- 一个表达式是两个用'*'标记分隔的表达式，或者
+- 一个表达式是两个用'\*'标记分隔的表达式，或者
 - 一个表达式是两个用'/'标记分隔的表达式，或者
 - 一个表达式是两个用'+'标记分隔的表达式，或者
 - 一个表达式是两个由'-'标记分隔的表达式
@@ -85,7 +85,7 @@ struct ASTnode {
 };
 ```
 
-## 建立AST节点和树
+## 建立 AST 节点和树
 
 tree.c 具有构建 AST 的功能，最通用的函数 mkastnode() 接受 AST 节点中四个字段的值。它分配节点，填充字段值并返回指向该节点的指针：
 
@@ -97,9 +97,9 @@ tree.c 具有构建 AST 的功能，最通用的函数 mkastnode() 接受 AST �
 // AST tree functions
 // Build and return a generic AST node
 struct ASTnode *mkastnode(
-  int op, 
+  int op,
   struct ASTnode *left,
-  struct ASTnode *right, 
+  struct ASTnode *right,
   int intvalue
 ) {
   struct ASTnode *n;
@@ -129,11 +129,11 @@ struct ASTnode *mkastunary(int op, struct ASTnode *left, int intvalue) {
 }
 ```
 
-## AST的目的
+## AST 的目的
 
 我们将使用 AST 来存储我们认识的每个表达式，以便以后可以递归遍历它以计算表达式的最终值，但需要处理数学运算符的优先级，这是一个例子。
 
-考虑一下表达式 2 * 3 + 4 * 5。现在，乘法比加法具有更高的优先级。因此，我们希望将乘法操作数绑定在一起并在执行加法之前执行这些操作。
+考虑一下表达式 2 _ 3 + 4 _ 5。现在，乘法比加法具有更高的优先级。因此，我们希望将乘法操作数绑定在一起并在执行加法之前执行这些操作。
 
 如果我们生成的 AST 树看起来像这样：
 
@@ -153,7 +153,7 @@ struct ASTnode *mkastunary(int op, struct ASTnode *left, int intvalue) {
 
 ## 表达式解析器
 
-现在，我们可以将扫描仪中的令牌值重新用作 AST 节点操作值，但是我想将令牌和 AST 节点的概念分开。因此，首先我将具有一个将令牌值映射到 AST 节点操作值的函数与解析器的其余部分一起位于expr.c：
+现在，我们可以将扫描仪中的令牌值重新用作 AST 节点操作值，但是我想将令牌和 AST 节点的概念分开。因此，首先我将具有一个将令牌值映射到 AST 节点操作值的函数与解析器的其余部分一起位于 expr.c：
 
 ```c
 // 把 token 元素转换为 AST 操作
@@ -240,7 +240,7 @@ struct ASTnode *binexpr(void) {
 }
 ```
 
-请注意在此解析器代码中，没有任何地方可以处理不同的运算符优先级。就目前而言，该代码将所有运算符都视为具有相同的优先级。如果您在解析表达式时遵循代码 2 * 3 + 4 * 5，则会看到它构建了这个 AST：
+请注意在此解析器代码中，没有任何地方可以处理不同的运算符优先级。就目前而言，该代码将所有运算符都视为具有相同的优先级。如果您在解析表达式时遵循代码 2 _ 3 + 4 _ 5，则会看到它构建了这个 AST：
 
 ```
   *
@@ -258,7 +258,7 @@ struct ASTnode *binexpr(void) {
 
 ## 解释树
 
-现在我们有了（错误的）AST树，让我们编写一些代码来解释它。同样，我们将编写递归代码遍历树。这是伪代码：
+现在我们有了（错误的）AST 树，让我们编写一些代码来解释它。同样，我们将编写递归代码遍历树。这是伪代码：
 
 ```
 interpretTree:
@@ -268,7 +268,7 @@ interpretTree:
   on the two sub-tree values, and return this value
 ```
 
-返回正确的AST树：
+返回正确的 AST 树：
 
 ```
       +
@@ -349,7 +349,7 @@ int interpretAST(struct ASTnode *n) {
 
 ## 构建解析器
 
-这里还有其他一些代码，例如main()对解释器的调用：
+这里还有其他一些代码，例如 main()对解释器的调用：
 
 ```c
 scan(&Token); // Get the first token from the input

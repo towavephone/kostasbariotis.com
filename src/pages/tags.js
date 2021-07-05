@@ -13,7 +13,7 @@ export default function Tags({ data }) {
 
   edges.forEach(({ node }) => {
     if (node.frontmatter.tags) {
-      node.frontmatter.tags.split(', ').forEach(tag => {
+      node.frontmatter.tags.split(', ').forEach((tag) => {
         if (!tags[tag]) {
           tags[tag] = 1;
         } else {
@@ -24,7 +24,7 @@ export default function Tags({ data }) {
   });
 
   const tagsArr = [];
-  Object.keys(tags).forEach(tagName => {
+  Object.keys(tags).forEach((tagName) => {
     tagsArr.push({ size: tags[tagName], tagName });
   });
 
@@ -40,17 +40,17 @@ export default function Tags({ data }) {
         title={`标签`}
         description={'标签'}
         noIndex={false}
-        tags=""
+        tags=''
       />
-      <section className="blog container about tags">
-        <div className="medium-8 medium-offset-2 large-10 large-offset-1 post-meta">
-          <header className="header">
-            <div className="row text-center">
+      <section className='blog container about tags'>
+        <div className='medium-8 medium-offset-2 large-10 large-offset-1 post-meta'>
+          <header className='header'>
+            <div className='row text-center'>
               <h3>文章标签</h3>
             </div>
           </header>
           <Separator />
-          <main role="main">
+          <main role='main'>
             <TagsComponent tags={tagsArr} />
           </main>
         </div>
@@ -60,7 +60,7 @@ export default function Tags({ data }) {
 }
 
 Tags.propTypes = {
-  data: PropTypes.object,
+  data: PropTypes.object
 };
 
 export const tagsPageQuery = graphql`

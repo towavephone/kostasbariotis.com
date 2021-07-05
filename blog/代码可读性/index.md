@@ -6,6 +6,7 @@ tags: 面试, 编码实践, 代码可读性
 path: /code-readability/
 date: 2018-04-04 13:26:44
 ---
+
 # 一、可读性的重要性
 
 编程有很大一部分时间是在阅读代码，不仅要阅读自己的代码，而且要阅读别人的代码。因此，可读性良好的代码能够大大提高编程效率。
@@ -14,18 +15,16 @@ date: 2018-04-04 13:26:44
 
 只有在核心领域为了效率才可以放弃可读性，否则可读性是第一位。
 
-
-
 # 二、用名字表达代码含义
 
 一些比较有表达力的单词：
 
-|  单词 |  可替代单词 |
-| --- | --- |
-|  send | deliver、dispatch、announce、distribute、route  |
-| find  |  search、extract、locate、recover |
-| start| launch、create、begin、open|
-| make | create、set up、build、generate、compose、add、new |
+| 单词  | 可替代单词                                         |
+| ----- | -------------------------------------------------- |
+| send  | deliver、dispatch、announce、distribute、route     |
+| find  | search、extract、locate、recover                   |
+| start | launch、create、begin、open                        |
+| make  | create、set up、build、generate、compose、add、new |
 
 使用 i、j、k 作为循环迭代器的名字过于简单，user_i、member_i 这种名字会更有表达力。因为循环层次越多，代码越难理解，有表达力的迭代器名字可读性会更高
 
@@ -69,12 +68,12 @@ int c = 111; // 注释
 
 用 TODO 等做标记：
 
-| 标记 | 用法 |
-|---|---|
-|TODO| 待做 |
-|FIXME| 待修复 |
-|HACH| 粗糙的解决方案 |
-|XXX| 危险！这里有重要的问题 |
+| 标记  | 用法                   |
+| ----- | ---------------------- |
+| TODO  | 待做                   |
+| FIXME | 待修复                 |
+| HACH  | 粗糙的解决方案         |
+| XXX   | 危险！这里有重要的问题 |
 
 # 六、如何编写注释
 
@@ -198,58 +197,58 @@ JavaScript 可以用闭包减小作用域。以下代码中 submit_form 是函�
 ```js
 submitted = false;
 var submit_form = function(form_name) {
-    if(submitted) {
-        return;
-    }
-    submitted = true;
+  if (submitted) {
+    return;
+  }
+  submitted = true;
 };
 ```
 
 ```js
 var submit_form = (function() {
-    var submitted = false;
-    return function(form_name) {
-        if(submitted) {
-            return;
-        }
-        submitted = true;
+  var submitted = false;
+  return function(form_name) {
+    if (submitted) {
+      return;
     }
-}());  // () 使得外层匿名函数立即执行
+    submitted = true;
+  };
+})(); // () 使得外层匿名函数立即执行
 ```
 
 JavaScript 中没有用 var 声明的变量都是全局变量，而全局变量很容易造成迷惑，因此应当总是用 var 来声明变量。
 
 变量定义的位置应当离它使用的位置最近。
 
-**实例解析** 
+**实例解析**
 
 在一个网页中有以下文本输入字段：
 
 ```html
-<input type = "text" id = "input1" value = "a">
-<input type = "text" id = "input2" value = "b">
-<input type = "text" id = "input3" value = "">
-<input type = "text" id = "input4" value = "d">
+<input type="text" id="input1" value="a" />
+<input type="text" id="input2" value="b" />
+<input type="text" id="input3" value="" />
+<input type="text" id="input4" value="d" />
 ```
 
 现在要接受一个字符串并把它放到第一个空的 input 字段中，初始实现如下：
 
 ```js
 var setFirstEmptyInput = function(new_alue) {
-    var found = false;
-    var i = 1;
-    var elem = document.getElementById('input' + i);
-    while(elem != null) {
-        if(elem.value === '') {
-            found = true;
-            break;
-        }
-        i++;
-        elem = document.getElementById('input' + i);
+  var found = false;
+  var i = 1;
+  var elem = document.getElementById('input' + i);
+  while (elem != null) {
+    if (elem.value === '') {
+      found = true;
+      break;
     }
-    if(found) elem.value = new_value;
-    return elem;
-}
+    i++;
+    elem = document.getElementById('input' + i);
+  }
+  if (found) elem.value = new_value;
+  return elem;
+};
 ```
 
 以上实现有以下问题：
@@ -260,16 +259,16 @@ var setFirstEmptyInput = function(new_alue) {
 
 ```js
 var setFirstEmptyInput = function(new_value) {
-    for(var i = 1; true; i++) {
-        var elem = document.getElementById('input' + i);
-        if(elem === null) {
-            return null;
-        }
-        if(elem.value === '') {
-            elem.value = new_value;
-            return elem;
-        }
+  for (var i = 1; true; i++) {
+    var elem = document.getElementById('input' + i);
+    if (elem === null) {
+      return null;
     }
+    if (elem.value === '') {
+      elem.value = new_value;
+      return elem;
+    }
+  }
 };
 ```
 

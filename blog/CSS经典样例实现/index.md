@@ -9,20 +9,20 @@ tags: 前端, CSS, CSS实践
 
 ![](2018-10-30-16-17-43.png)
 
-假设单标签是一个div:
+假设单标签是一个 div:
 
 ```html
 <div></div>
 ```
 
-定义如下通用CSS：
+定义如下通用 CSS：
 
 ```css
 div {
-  position:relative;
-  width:200px;
-  height:60px;
-  background:#ddd;
+  position: relative;
+  width: 200px;
+  height: 60px;
+  background: #ddd;
 }
 ```
 
@@ -30,35 +30,35 @@ div {
 
 ```css
 div {
-  border-left:5px solid deeppink;
+  border-left: 5px solid deeppink;
 }
 ```
 
 ## 使用伪元素
 
 ```css
-div::after{
-  content:"";
-  width:5px;
-  height:60px;
-  position:absolute;
-  top:0;
-  left:0;
-  background:deeppink;
+div::after {
+  content: '';
+  width: 5px;
+  height: 60px;
+  position: absolute;
+  top: 0;
+  left: 0;
+  background: deeppink;
 }
 ```
 
-## 使用具有相对特性的无依赖的absolute绝对定位
+## 使用具有相对特性的无依赖的 absolute 绝对定位
 
-父元素去掉position:relative属性
+父元素去掉 position:relative 属性
 
 ```css
-div::after{
-  content:"";
-  width:5px;
-  height:60px;
-  position:absolute;
-  background:deeppink;
+div::after {
+  content: '';
+  width: 5px;
+  height: 60px;
+  position: absolute;
+  background: deeppink;
 }
 ```
 
@@ -67,67 +67,66 @@ div::after{
 box-shadow: 水平阴影位置 垂直阴影位置 模糊距离 阴影的尺寸 阴影的颜色 内部阴影
 
 ```css
-div{
-  box-shadow:-5px 0px 0 0 deeppink;
+div {
+  box-shadow: -5px 0px 0 0 deeppink;
 }
 ```
 
-## 内box-shadow
+## 内 box-shadow
 
 ```css
-div{
-  box-shadow:inset 5px 0px 0 0 deeppink;
+div {
+  box-shadow: inset 5px 0px 0 0 deeppink;
 }
 ```
 
 ## drop-shadow
 
 ```css
-div{
-  filter:drop-shadow(-5px 0 0 deeppink);
+div {
+  filter: drop-shadow(-5px 0 0 deeppink);
 }
 ```
 
 ## 渐变 linearGradient
 
-/* 从下到上，从蓝色开始渐变、到高度40%位置是绿色渐变开始、最后以红色结束 */
-linear-gradient(0deg, blue, green 40%, red);
+/_ 从下到上，从蓝色开始渐变、到高度 40%位置是绿色渐变开始、最后以红色结束 _/ linear-gradient(0deg, blue, green 40%, red);
 
 ```css
-div{
-  background-image:linear-gradient(90deg, deeppink 0px, deeppink 5px, transparent 5px);
+div {
+  background-image: linear-gradient(90deg, deeppink 0px, deeppink 5px, transparent 5px);
 }
 ```
 
 ## 轮廓 outline（未实现)
 
 ```css
-div{
-  height:50px;
-  outline:5px solid deeppink;
+div {
+  height: 50px;
+  outline: 5px solid deeppink;
 }
-div{
-  position:absolute;
-  content:"";
-  top:-5px;
-  bottom:-5px;
-  right:-5px;
-  left:0;
-  background:#ddd;
+div {
+  position: absolute;
+  content: '';
+  top: -5px;
+  bottom: -5px;
+  right: -5px;
+  left: 0;
+  background: #ddd;
 }
 ```
 
 ## 滚动条
 
 ```css
-div{
-  width:205px;
-  background:deeppink;
-  overflow-y:scroll;
+div {
+  width: 205px;
+  background: deeppink;
+  overflow-y: scroll;
 }
-div::-webkit-scrollbar{
+div::-webkit-scrollbar {
   width: 200px;
-  background-color:#ddd;
+  background-color: #ddd;
 }
 ```
 
@@ -139,11 +138,11 @@ div::-webkit-scrollbar{
 <div></div>
 ```
 
-定义如下通用CSS：
+定义如下通用 CSS：
 
 ```css
-div{
-  position:relative;
+div {
+  position: relative;
   width: 180px;
   height: 180px;
 }
@@ -152,38 +151,38 @@ div{
 ## 从 border 开始填充，伪元素设置白色背景色填充 div
 
 ```css
-div{
-  background:#9c27b0;
-  border:20px dashed #2196f3;
+div {
+  background: #9c27b0;
+  border: 20px dashed #2196f3;
 }
-div::after{
-  content:"";
-  position:absolute;
-  top:0;
-  left:0;
-  bottom:0;
-  right:0;
-  background:#fff;
+div::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  background: #fff;
 }
 ```
 
-## 使用伪元素背景色从 border-box 开始填充，使用 div 的背景色填充中间 padding-box区域
+## 使用伪元素背景色从 border-box 开始填充，使用 div 的背景色填充中间 padding-box 区域
 
 ```css
-div{
-  background:#fff;
-  background-clip:padding-box;
-  border:20px dashed #cccc99;
+div {
+  background: #fff;
+  background-clip: padding-box;
+  border: 20px dashed #cccc99;
 }
-div::before{
-  content:"";
-  position:absolute;
-  top:-20px;
-  left:-20px;
-  bottom:-20px;
-  right:-20px;
-  background:#996699;
-  z-index:-1;
+div::before {
+  content: '';
+  position: absolute;
+  top: -20px;
+  left: -20px;
+  bottom: -20px;
+  right: -20px;
+  background: #996699;
+  z-index: -1;
 }
 ```
 
@@ -194,27 +193,27 @@ z-index 看上去其实很简单，根据 z-index 的高低决定层叠的优先
 ```html
 <div class="container">
   <div class="inline-block">#divA display:inline-block</div>
-  <div class="float"> #divB float:left</div>
+  <div class="float">#divB float:left</div>
 </div>
 ```
 
 ```css
-.container{
-  position:relative;
-  background:#ddd;
+.container {
+  position: relative;
+  background: #ddd;
 }
-.container > div{
-  width:200px;
-  height:200px;
+.container > div {
+  width: 200px;
+  height: 200px;
 }
-.float{
-  float:left;
-  background-color:deeppink;
+.float {
+  float: left;
+  background-color: deeppink;
 }
-.inline-block{
-  display:inline-block;
-  background-color:yellowgreen;
-  margin-left:-100px;
+.inline-block {
+  display: inline-block;
+  background-color: yellowgreen;
+  margin-left: -100px;
 }
 ```
 
@@ -225,23 +224,23 @@ z-index 看上去其实很简单，根据 z-index 的高低决定层叠的优先
 下面我们修改一下题目，给两个 div ，增加一个 opacity:
 
 ```css
-.container{
-  position:relative;
-  background:#ddd;
+.container {
+  position: relative;
+  background: #ddd;
 }
-.container > div{
-  width:200px;
-  height:200px;
-  opacity:0.9; // 注意这里，增加一个 opacity
+.container > div {
+  width: 200px;
+  height: 200px;
+  opacity: 0.9; // 注意这里，增加一个 opacity
 }
-.float{
-  float:left;
-  background-color:deeppink;
+.float {
+  float: left;
+  background-color: deeppink;
 }
-.inline-block{
-  display:inline-block;
-  background-color:yellowgreen;
-  margin-left:-100px;
+.inline-block {
+  display: inline-block;
+  background-color: yellowgreen;
+  margin-left: -100px;
 }
 ```
 
@@ -257,8 +256,8 @@ z-index 看上去其实很简单，根据 z-index 的高低决定层叠的优先
 - opacity 属性值小于 1 的元素（参考 the specification for opacity）
 - transform 属性值不为"none"的元素
 - mix-blend-mode 属性值不为"normal"的元素
-- filter值不为“none”的元素，
-- perspective值不为“none”的元素
+- filter 值不为“none”的元素，
+- perspective 值不为“none”的元素
 - isolation 属性被设置为 "isolate"的元素
 - position: fixed
 - 在 will-change 中指定了任意 CSS 属性，即便你没有直接指定这些属性的值
@@ -281,7 +280,7 @@ z-index 看上去其实很简单，根据 z-index 的高低决定层叠的优先
 ## -webkit-box-reflect
 
 ```css
-div{
+div {
   -webkit-box-reflect: below;
 }
 ```
@@ -290,7 +289,7 @@ div{
 
 ```css
 div::after {
-  content: "";
+  content: '';
   position: absolute;
   top: 100%;
   left: 0;
@@ -321,12 +320,12 @@ p {
   text-align: left;
 }
 
-h2{
+h2 {
   text-align: center;
 }
 
 em {
-  overflow : hidden;
+  overflow: hidden;
   text-overflow: ellipsis;
   display: -webkit-box;
   -webkit-line-clamp: 2;
@@ -336,7 +335,7 @@ em {
 
 超出两行省略，主要用到如下几个：
 
-- display: -webkit-box; // 设置display，将对象作为弹性伸缩盒子模型显示
+- display: -webkit-box; // 设置 display，将对象作为弹性伸缩盒子模型显示
 - -webkit-line-clamp: 2; // 限制在一个块元素显示的文本的行数
 - -webkit-box-orient: vertical; // 规定框的子元素应该被水平或垂直排列
 
@@ -354,25 +353,25 @@ em {
 ```
 
 ```css
-h2{
-  position:relative;
-  line-height:30px;
+h2 {
+  position: relative;
+  line-height: 30px;
 }
-p{
-  overflow : hidden;
+p {
+  overflow: hidden;
   text-overflow: ellipsis;
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
 }
-.pesudo{
-  position:absolute;
-  width:100%;
-  height:30px;
-  overflow:hidden;
-  top:0;
-  background:#ddd;
-  text-align:center;
+.pesudo {
+  position: absolute;
+  width: 100%;
+  height: 30px;
+  overflow: hidden;
+  top: 0;
+  background: #ddd;
+  text-align: center;
 }
 ```
 
@@ -391,44 +390,44 @@ p{
     <i>4</i>
     <i>5</i>
   </div>
-</div>  
+</div>
 ```
 
 ```css
-.justify{
+.justify {
   text-align: justify;
   text-align-last: justify; // 新增这一行
 }
 
-.justify i{
-  width:24px;
-  line-height:24px;
-  display:inline-block;
-  text-align:center;
-  border-radius:50%;
+.justify i {
+  width: 24px;
+  line-height: 24px;
+  display: inline-block;
+  text-align: center;
+  border-radius: 50%;
 }
 ```
 
 ![](2018-11-05-15-14-46.png)
 
-由于text-align-last兼容性太低，故使用伪元素
+由于 text-align-last 兼容性太低，故使用伪元素
 
 ```css
-.justify{
+.justify {
   text-align: justify;
 }
 
-.justify i{
-  width:24px;
-  line-height:24px;
-  display:inline-block;
-  text-align:center;
-  border-radius:50%;
+.justify i {
+  width: 24px;
+  line-height: 24px;
+  display: inline-block;
+  text-align: center;
+  border-radius: 50%;
 }
 
 /* 制造假的第二行 */
-.justify:after{ 
-  content: "";
+.justify:after {
+  content: '';
   display: inline-block;
   position: relative;
   width: 100%;
@@ -443,8 +442,8 @@ p{
 
 ```css
 /* 使用伪类选择器，选择第 3n 个元素去掉边框 */
-li:nth-child(3n){
-  border-right:none;
+li:nth-child(3n) {
+  border-right: none;
 }
 ```
 
@@ -465,22 +464,22 @@ li:nth-child(3n){
 ```
 
 ```css
-.ul-container, 
-ul{
-  width:300px;
+.ul-container,
+ul {
+  width: 300px;
 }
 
-li{
-  float:left;
-  width:99px;
-  border-left:1px solid #999;
+li {
+  float: left;
+  width: 99px;
+  border-left: 1px solid #999;
 }
 
-.ul-container{
-  overflow:hidden;
+.ul-container {
+  overflow: hidden;
 }
 
-ul{
-  margin-left:-1px;
+ul {
+  margin-left: -1px;
 }
 ```

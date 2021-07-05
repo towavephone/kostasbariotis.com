@@ -33,8 +33,7 @@ tags: 前端, CSS, CSS世界
 
 stacking level，决定了同一个层叠上下文中元素在 z 轴上的显示顺序。
 
-所有的元素都有层叠水平，包括层叠上下文元素，也包括普通元素。然而，对
-普通元素的层叠水平探讨只局限在当前层叠上下文元素中。为什么呢？因为不如此就没有意义。层叠上下文本身就是一个强力的“层叠结界”，而普通元素的层叠水平是无法突破这个结界和结界外的元素去较量层叠水平的。
+所有的元素都有层叠水平，包括层叠上下文元素，也包括普通元素。然而，对普通元素的层叠水平探讨只局限在当前层叠上下文元素中。为什么呢？因为不如此就没有意义。层叠上下文本身就是一个强力的“层叠结界”，而普通元素的层叠水平是无法突破这个结界和结界外的元素去较量层叠水平的。
 
 需要注意的是，诸位千万不要把层叠水平和 CSS 的 z-index 属性混为一谈。尽管某些情况下 z-index 确实可以影响层叠水平，但是只限于定位元素以及 flex 盒子的孩子元素；而层叠水平所有的元素都存在。
 
@@ -145,7 +144,7 @@ CSS3 新世界的出现除了带来了新属性，还对过去的很多规则发
 4. 元素 mix-blend-mode 值不是 normal。
 5. 元素的 filter 值不是 none。
 6. 元素的 isolation 值是 isolate。
-7. 元素的 will-change 属性值为上面 2～6 的任意一个（如 will-change:opacity、will-chang:transform 等）。
+7. 元素的 will-change 属性值为上面 2 ～ 6 的任意一个（如 will-change:opacity、will-chang:transform 等）。
 8. 元素的 -webkit-overflow-scrolling 设为 touch。
 
 ## 层叠上下文与层叠顺序
@@ -159,18 +158,16 @@ CSS3 新世界的出现除了带来了新属性，还对过去的很多规则发
 
 ![](2020-01-10-11-06-57.png)
 
-这下大家应该知道为什么定位元素会层叠在普通元素的上面了吧？其根本原因就是：元素一旦成为定位元素，其 z-index 就会自动生效，此时其 z-index 就是默认的 auto，也就是 0 级别，根据上面的层叠顺序表，就会覆盖inline或block或float元素。而不支持 z-index 的层叠上下文元素天然是 z-index:auto 级别，也就意味着，层叠上下文元素和定位元素是一个层叠顺序的，于是当它们发生层叠的时候，遵循的是“后来居上”准则。
+这下大家应该知道为什么定位元素会层叠在普通元素的上面了吧？其根本原因就是：元素一旦成为定位元素，其 z-index 就会自动生效，此时其 z-index 就是默认的 auto，也就是 0 级别，根据上面的层叠顺序表，就会覆盖 inline 或 block 或 float 元素。而不支持 z-index 的层叠上下文元素天然是 z-index:auto 级别，也就意味着，层叠上下文元素和定位元素是一个层叠顺序的，于是当它们发生层叠的时候，遵循的是“后来居上”准则。
 
 ```html
-<img src="1.jpg" style="position:relative" />
-<img src="2.jpg" style="transform:scale(1);" />
+<img src="1.jpg" style="position:relative" /> <img src="2.jpg" style="transform:scale(1);" />
 ```
 
 这符合“后来居上”准则，“美景”覆盖在“美女”之上，如图 7-8 所示。
 
 ```html
-<img src="2.jpg" style="transform:scale(1);" />
-<img src="1.jpg" style="position:relative" />
+<img src="2.jpg" style="transform:scale(1);" /> <img src="1.jpg" style="position:relative" />
 ```
 
 这同样符合“后来居上”准则，“美女”覆盖在“美景”之上，如图 7-9 所示。
@@ -241,7 +238,7 @@ z-index 是支持负值的，例如 z-index:-1 或者 z-index:-99999 都是可�
 
 此时.box 是一个普普通通的元素，图片元素所在的层叠上下文元素一定是 .box 的某个祖先元素。好了，知道这么多足够了，现在再回顾一下刚刚出现的图 7-13 所示的这张图。
 
-图7-13 中非常明显地标明了 z-index 负值在 block 元素的下面。本例中，图片是 z-index 负值元素，.box 是 block 元素，也就是图片应该在 .box 元素的后面显示，因此，图片会被 .box 元素的蓝色背景覆盖。最后的结果确实如此，如图 7-14 所示。
+图 7-13 中非常明显地标明了 z-index 负值在 block 元素的下面。本例中，图片是 z-index 负值元素，.box 是 block 元素，也就是图片应该在 .box 元素的后面显示，因此，图片会被 .box 元素的蓝色背景覆盖。最后的结果确实如此，如图 7-14 所示。
 
 ![](2020-01-10-11-26-27.png)
 
@@ -270,106 +267,103 @@ CSS3 transform 可以让元素具有新的层叠上下文，于是，对照图 7
 
 1. **可访问性隐藏。**z-index 负值可以隐藏元素，只需要层叠上下文内的某一个父元素加个背景色就可以。它与 clip 隐藏相比的一个优势是，元素无须绝对定位，设置 position:relative 也可以隐藏，另一个优势是它对原来的布局以及元素的行为没有任何影响，而 clip 隐藏会导致控件 focus 的焦点发生细微的变化，在特定条件下是有体验问题的。它的不足之处就是不具有普遍适用性，需要其他元素配合进行隐藏。
 2. **IE8 下的多背景模拟。**CSS3 中有一个多背景特性，就是一个 background 可以写多个背景图。虽然 IE8 浏览器不支持多背景特性，但是 IE8 浏览器支持伪元素，于是，IE8 理论上也能实现多背景，这个背景最多 3 个，好在绝大多数场景 3 个背景图足矣。最麻烦的其实是这个伪元素生成的背景一定是使用 absolute 绝对定位，以免影响内容的布局。于是问题来了，绝对定位会覆盖常规的元素，此时则必须借助 z-index 负值，核心 CSS 代码如下：
-    ```css
-    .box {
-      background-image: (1.png);
-      position: relative;
-      z-index: 0; /* 创建层叠上下文 */
-    }
 
-    .box:before,
-    .box:after {
-      content: '';
-      position: absolute;
-      z-index: -1;
-    }
+   ```css
+   .box {
+     background-image: (1png);
+     position: relative;
+     z-index: 0; /* 创建层叠上下文 */
+   }
 
-    .box:before {
-      background-image: (2.png);
-    }
+   .box:before,
+   .box:after {
+     content: '';
+     position: absolute;
+     z-index: -1;
+   }
 
-    .box:after {
-      background-image: (3.png);
-    }
-    ```
-    此时，就算.box 元素里面是纯文字，伪元素图片照样在文字下面，如此广泛的适用场景使上面的处理几乎可以作为通用的多背景模拟实现准则来实现了：
+   .box:before {
+     background-image: (2png);
+   }
 
-    ```html
-    <div class="box">我是一段纯文字...</div>
-    ```
-3. **定位在元素的后面。**我们直接看一个模拟纸张效果的例子，该效果的亮点是纸张的边角有卷起来的效果，因为底边的阴影看起来更有角度，如图 7-17 所示。
-    ![](2020-01-10-11-32-52.png)
+   .box:after {
+     background-image: (3png);
+   }
+   ```
 
-    HTML 结构大致如下：
+   此时，就算.box 元素里面是纯文字，伪元素图片照样在文字下面，如此广泛的适用场景使上面的处理几乎可以作为通用的多背景模拟实现准则来实现了：
 
-    ```html
-    <div class="container">
-      <div class="page">标题和内容</div>
-    </div>
-    ```
+   ```html
+   <div class="box">我是一段纯文字...</div>
+   ```
 
-    其中，.container 是灰色背景元素，.page 是黄色背景的纸张元素，关键 CSS 如下：
+3. **定位在元素的后面。**我们直接看一个模拟纸张效果的例子，该效果的亮点是纸张的边角有卷起来的效果，因为底边的阴影看起来更有角度，如图 7-17 所示。 ![](2020-01-10-11-32-52.png)
 
-    ```css
-    .container {
-      background-color: #666;
-      /* 创建层叠上下文 */
-      position: relative;
-      z-index: 0;
-    }
+   HTML 结构大致如下：
 
-    .page {
-      background-color: #f4f39e;
-      position: relative;
-    }
+   ```html
+   <div class="container">
+     <div class="page">标题和内容</div>
+   </div>
+   ```
 
-    /* 边角卷边阴影 */
-    .page:before,
-    .page:after {
-      content: "";
-      width: 90%;
-      height: 20%;
-      box-shadow: 0 8px 16px rgba(0,0,0,.3);
-      position: absolute;
-      /* 层叠上下文（灰色背景）之上，定位元素（黄色纸张）之下 */
-      z-index: -1;
-    }
+   其中，.container 是灰色背景元素，.page 是黄色背景的纸张元素，关键 CSS 如下：
 
-    /* 边角卷边阴影定位和角度控制 */
-    .page:before {
-      transform: skew(-15deg) rotate(-5deg);
-      transform-origin: left bottom;
-      left: 0;
-      bottom: 0;
-    }
+   ```css
+   .container {
+     background-color: #666;
+     /* 创建层叠上下文 */
+     position: relative;
+     z-index: 0;
+   }
 
-    .page:after {
-      transform: skew(15deg) rotate(5deg);
-      transform-origin: right bottom;
-      right: 0;
-      bottom: 0;
-    }
-    ```
+   .page {
+     background-color: #f4f39e;
+     position: relative;
+   }
 
-    .container 灰色背景通过 position:relative;z-index:0 创建了层叠上下文，.page 仅有 position:relative 而没有设置 z-index 值，因此只能算 z-index:auto 程度的定位元素，于是，z-index:-1 两个边角阴影就完美地藏在了层叠上下文（灰色背景）之上、普通定位元素（黄色纸张）之下（如图 7-18 所示标注），隐藏了丑陋的细节，展示了完美的边角阴影，实现了最终细腻的样式效果。
+   /* 边角卷边阴影 */
+   .page:before,
+   .page:after {
+     content: '';
+     width: 90%;
+     height: 20%;
+     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+     position: absolute;
+     /* 层叠上下文（灰色背景）之上，定位元素（黄色纸张）之下 */
+     z-index: -1;
+   }
 
-    ![](2020-01-10-11-38-57.png)
+   /* 边角卷边阴影定位和角度控制 */
+   .page:before {
+     transform: skew(-15deg) rotate(-5deg);
+     transform-origin: left bottom;
+     left: 0;
+     bottom: 0;
+   }
+
+   .page:after {
+     transform: skew(15deg) rotate(5deg);
+     transform-origin: right bottom;
+     right: 0;
+     bottom: 0;
+   }
+   ```
+
+   .container 灰色背景通过 position:relative;z-index:0 创建了层叠上下文，.page 仅有 position:relative 而没有设置 z-index 值，因此只能算 z-index:auto 程度的定位元素，于是，z-index:-1 两个边角阴影就完美地藏在了层叠上下文（灰色背景）之上、普通定位元素（黄色纸张）之下（如图 7-18 所示标注），隐藏了丑陋的细节，展示了完美的边角阴影，实现了最终细腻的样式效果。
+
+   ![](2020-01-10-11-38-57.png)
 
 # z-index“不犯二”准则
 
 此准则内容如下：对于非浮层元素，避免设置 z-index 值，z-index 值没有任何道理需要超过 2。
 
-1. 定位元素一旦设置了 z-index 值，就从普通定位元素变成了层叠上下文元素，相互间的层叠顺序就发生了根本的变化，很容易出现设置了巨大的 z-index 值也无法覆盖其他元
-素的问题。
-2. 避免 z-index “一山比一山高”的样式混乱问题。此问题多发生在多人协作以及后期维护的时候。例如，A 小图标定位，习惯性写了个 z-index:9；B 一看，自己原来的实现被覆
-盖了，立马写了个 z-index:99；结果比弹框组件层级还高，那还得了，立马弹框组件来一个 z-index:999999；谁知后来，弹框中又要有出错提示效果……显然，最后项目的 z-index
-层级管理就是一团糟。
+1. 定位元素一旦设置了 z-index 值，就从普通定位元素变成了层叠上下文元素，相互间的层叠顺序就发生了根本的变化，很容易出现设置了巨大的 z-index 值也无法覆盖其他元素的问题。
+2. 避免 z-index “一山比一山高”的样式混乱问题。此问题多发生在多人协作以及后期维护的时候。例如，A 小图标定位，习惯性写了个 z-index:9；B 一看，自己原来的实现被覆盖了，立马写了个 z-index:99；结果比弹框组件层级还高，那还得了，立马弹框组件来一个 z-index:999999；谁知后来，弹框中又要有出错提示效果……显然，最后项目的 z-index 层级管理就是一团糟。
 
-如果真的了解了本章的内容，你就会发现，原来自己的代码中很大一部分 z-index 设置都是多余的，不仅浪费代码，还埋下样式问题风险，尤其那种使用 absolute 绝对定位必使用
-z-index 的做法是最愚蠢的。
+如果真的了解了本章的内容，你就会发现，原来自己的代码中很大一部分 z-index 设置都是多余的，不仅浪费代码，还埋下样式问题风险，尤其那种使用 absolute 绝对定位必使用 z-index 的做法是最愚蠢的。
 
-如果 DOM 顺序确实无法调整，不得不使用 z-index 值，请记住，z-index 不要超过 2，不是不能，而是没有必要。我从业这么多年，遇到很多很复杂的与定位相关的交互场景，但
-z-index 最多止步于 2。如果你的定位发现必须 z-index:3 或者以上才能满足效果，建议你检查自己的代码，试试应用“relative 的最小化原则”来实现，试试利用元素原生的层叠顺序进行层级控制，等等。
+如果 DOM 顺序确实无法调整，不得不使用 z-index 值，请记住，z-index 不要超过 2，不是不能，而是没有必要。我从业这么多年，遇到很多很复杂的与定位相关的交互场景，但 z-index 最多止步于 2。如果你的定位发现必须 z-index:3 或者以上才能满足效果，建议你检查自己的代码，试试应用“relative 的最小化原则”来实现，试试利用元素原生的层叠顺序进行层级控制，等等。
 
 很重要的一点，我这里的“不犯二”准则，并不包括那些在页面上飘来飘去的元素定位，弹框、出错提示、一些下拉效果等都不受这一准则限制。
 

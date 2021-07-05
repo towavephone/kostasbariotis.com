@@ -4,24 +4,23 @@ path: /css-center/
 date: 2017-11-20 23:01:05
 tags: 前端, CSS, 居中
 ---
+
 # 水平居中设置-行内元素
 
 > - 如果被设置元素为文本、图片等行内元素时，水平居中是通过给父元素设置 <code>text-align:center</code> 来实现的。
 
 # 水平居中设置-定宽块状元素
 
-> - 满足定宽和块状两个条件的元素是可以通过设置<code>左右margin</code>值为<code>auto</code>来实现居中的。
-
-
+> - 满足定宽和块状两个条件的元素是可以通过设置<code>左右 margin</code>值为<code>auto</code>来实现居中的。
 
 # 水平居中总结-不定宽块状元素方法
 
-> - 加入 <code>table</code> 标签 
+> - 加入 <code>table</code> 标签
 
 ```css
-{
-    display:table; 
-    margin:0 auto;
+ {
+  display: table;
+  margin: 0 auto;
 }
 ```
 
@@ -37,14 +36,14 @@ tags: 前端, CSS, 居中
 > - 使用插入<code>table</code>(包括<code>tbody、tr、td</code>)标签，同时设置 <code>vertical-align：middle</code>。
 > - 或者采用以下样式
 
-```css 
-{
-    display:table-cell;
-    vertical-align:middle;
-} 
+```css
+ {
+  display: table-cell;
+  vertical-align: middle;
+}
 ```
 
-# 隐性改变display类型
+# 隐性改变 display 类型
 
 > - <code>position : absolute </code>
 > - <code>float : left 或 float:right </code>

@@ -14,30 +14,30 @@ export default function Drafts({ data }) {
   let length = edges.length;
   let [...posts] = edges;
   posts.length = 3;
-  posts = posts.map(post => post.node);
+  posts = posts.map((post) => post.node);
   return (
     <div>
       <MetaTags
         siteUrl={siteUrl}
         path={'/drafts'}
         title={`草稿`}
-        tags=""
+        tags=''
         description={'这些是未完成的草稿页'}
         noIndex={true}
       />
-      <section className="blog container">
-        <div className="medium-8 medium-offset-2 large-10 large-offset-1">
-          <header className="header">草稿</header>
-          <p className="drafts-description">这些是未完成的草稿页</p>
+      <section className='blog container'>
+        <div className='medium-8 medium-offset-2 large-10 large-offset-1'>
+          <header className='header'>草稿</header>
+          <p className='drafts-description'>这些是未完成的草稿页</p>
           <Separator />
-          <div className="posts">
+          <div className='posts'>
             <Posts posts={posts} />
             <Separator />
-            <article className="post text-right">
-              <header className="post-head">
+            <article className='post text-right'>
+              <header className='post-head'>
                 {length > 3 ? (
-                  <h3 className="post-title">
-                    <GatsbyLink to="/drafts/page/1">阅读更多 &gt;</GatsbyLink>
+                  <h3 className='post-title'>
+                    <GatsbyLink to='/drafts/page/1'>阅读更多 &gt;</GatsbyLink>
                   </h3>
                 ) : null}
               </header>
@@ -50,7 +50,7 @@ export default function Drafts({ data }) {
 }
 
 Drafts.propTypes = {
-  data: PropTypes.object,
+  data: PropTypes.object
 };
 
 export const pageQuery = graphql`

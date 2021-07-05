@@ -7,11 +7,11 @@ tags: 前端, CSS, CSS知识点
 
 # 产生的条件
 
-对于14像素大小的字体是没有本篇所要探讨的单（复）选框与文字对齐的问题的。（见下图）
+对于 14 像素大小的字体是没有本篇所要探讨的单（复）选框与文字对齐的问题的。（见下图）
 
 ![](2019-12-31-10-07-51.png)
 
-但是，对于12像素大小的文字，则就存在对齐问题了，尤其在Firefox火狐浏览器以及chrome谷歌浏览器下。（见下图）
+但是，对于 12 像素大小的文字，则就存在对齐问题了，尤其在 Firefox 火狐浏览器以及 chrome 谷歌浏览器下。（见下图）
 
 ![](2019-12-31-10-08-02.png)
 
@@ -21,9 +21,9 @@ tags: 前端, CSS, CSS知识点
 
 ## vertical-align: text-bottom
 
-css代码如下：vertical-align:text-bottom; margin-bottom:2px; margin-bottom:-2px\9;
+css 代码如下：vertical-align:text-bottom; margin-bottom:2px; margin-bottom:-2px\9;
 
-结果如下图（以IE6浏览器和Firefox浏览器示例）：
+结果如下图（以 IE6 浏览器和 Firefox 浏览器示例）：
 
 ![](2019-12-31-10-09-31.png)
 
@@ -31,9 +31,9 @@ css代码如下：vertical-align:text-bottom; margin-bottom:2px; margin-bottom:-
 
 ## vertical-align:text-top
 
-css代码如下：height:13px; vertical-align:text-top; margin-top:0;
+css 代码如下：height:13px; vertical-align:text-top; margin-top:0;
 
-结果如下图（以IE7浏览器和chrome浏览器截图示例）：
+结果如下图（以 IE7 浏览器和 chrome 浏览器截图示例）：
 
 ![](2019-12-31-10-10-12.png)
 
@@ -41,9 +41,9 @@ css代码如下：height:13px; vertical-align:text-top; margin-top:0;
 
 ## vertical-align:bottom
 
-css代码如下：height:15px; vertical-align:bottom; margin-bottom:3px; margin-top:-1px;
+css 代码如下：height:15px; vertical-align:bottom; margin-bottom:3px; margin-top:-1px;
 
-结果如下图（以IE6和Firefox浏览器截图做示例）：
+结果如下图（以 IE6 和 Firefox 浏览器截图做示例）：
 
 ![](2019-12-31-10-10-57.png)
 
@@ -51,8 +51,7 @@ css代码如下：height:15px; vertical-align:bottom; margin-bottom:3px; margin-
 
 ## vertical-align:top
 
-css代码如下：height:14px; vertical-align:top;
-结果如下图（chrome下文字略微偏上，其他浏览器下很完美，以IE7和chrome浏览器示例）：
+css 代码如下：height:14px; vertical-align:top; 结果如下图（chrome 下文字略微偏上，其他浏览器下很完美，以 IE7 和 chrome 浏览器示例）：
 
 ![](2019-12-31-10-11-57.png)
 
@@ -60,8 +59,7 @@ css代码如下：height:14px; vertical-align:top;
 
 ## vertical-align:middle
 
-css代码如下：vertical-align:middle; margin-top:-2px; margin-bottom:1px;
-结果如下截图（以IE6和Firefox示例）：
+css 代码如下：vertical-align:middle; margin-top:-2px; margin-bottom:1px; 结果如下截图（以 IE6 和 Firefox 示例）：
 
 ![](2019-12-31-10-13-22.png)
 
@@ -69,4 +67,4 @@ css代码如下：vertical-align:middle; margin-top:-2px; margin-bottom:1px;
 
 # 总结
 
-vertical-align:bottom和vertical-align:middle从兼容性，代码的利用率，css的消耗等来讲都是我非常推荐的两种方法
+vertical-align:bottom 和 vertical-align:middle 从兼容性，代码的利用率，css 的消耗等来讲都是我非常推荐的两种方法

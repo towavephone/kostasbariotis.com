@@ -11,7 +11,7 @@ constructor 返回创建实例对象时构造函数的引用（即 对象.constr
 
 ```js
 function Parent(age) {
-    this.age = age;
+  this.age = age;
 }
 
 var p = new Parent(50);
@@ -26,28 +26,28 @@ p.constructor === Object; // false
 ```js
 // 普通函数
 function parent2(age) {
-    this.age = age;
+  this.age = age;
 }
 var p2 = parent2(50);
 // undefined
 
 // 普通函数
 function parent3(age) {
-    return {
-        age: age
-    }
+  return {
+    age: age
+  };
 }
 var p3 = parent3(50);
 p3.constructor === Object; // true
-p3.constructor === Object.prototype.constructor // true
+p3.constructor === Object.prototype.constructor; // true
 ```
 
-## Symbol的构造函数
+## Symbol 的构造函数
 
 Symbol 是基本数据类型，但作为构造函数来说它并不完整，因为它不支持语法 new Symbol()，Chrome 认为其不是构造函数，如果要生成实例直接使用 Symbol()
 
 ```js
-new Symbol(123); // Symbol is not a constructor 
+new Symbol(123); // Symbol is not a constructor
 
 Symbol(123); // Symbol(123)
 ```
@@ -55,11 +55,11 @@ Symbol(123); // Symbol(123)
 虽然是基本数据类型，但 Symbol(123) 实例可以获取 constructor 属性值
 
 ```js
-var sym = Symbol(123); 
-console.log( sym );
+var sym = Symbol(123);
+console.log(sym);
 // Symbol(123)
 
-console.log( sym.constructor );
+console.log(sym.constructor);
 // ƒ Symbol() { [native code] }
 ```
 
@@ -71,10 +71,10 @@ console.log( sym.constructor );
 
 ```js
 function Foo() {
-    this.value = 42;
+  this.value = 42;
 }
 Foo.prototype = {
-    method: function() {}
+  method: function() {}
 };
 
 function Bar() {}
@@ -88,7 +88,7 @@ Bar.prototype.constructor === Object; // true
 // 修正 Bar.prototype.constructor 为 Bar 本身
 // Bar.prototype.constructor = Bar;
 
-var test = new Bar() // 创建 Bar 的一个新实例
+var test = new Bar(); // 创建 Bar 的一个新实例
 console.log(test);
 ```
 
@@ -97,15 +97,15 @@ console.log(test);
 对于基本类型来说是只读的，比如 1、“muyiy”、true、Symbol，当然 null 和 undefined 是没有 constructor 属性的。
 
 ```js
-function Type() { };
-var	types = [1, "muyiy", true, Symbol(123)];
+function Type() {}
+var types = [1, 'muyiy', true, Symbol(123)];
 
-for(var i = 0; i < types.length; i++) {
-	types[i].constructor = Type;
-	types[i] = [ types[i].constructor, types[i] instanceof Type, types[i].toString() ];
-};
+for (var i = 0; i < types.length; i++) {
+  types[i].constructor = Type;
+  types[i] = [types[i].constructor, types[i] instanceof Type, types[i].toString()];
+}
 
-console.log( types.join("\n") );
+console.log(types.join('\n'));
 // function Number() { [native code] }, false, 1
 // function String() { [native code] }, false, muyiy
 // function Boolean() { [native code] }, false, true
@@ -120,15 +120,15 @@ console.log( types.join("\n") );
 function create() {
   // 1、创建一个空的对象
   var obj = new Object(),
-  // 2、获得构造函数，同时删除 arguments 中第一个参数
-  Con = [].shift.call(arguments);
+    // 2、获得构造函数，同时删除 arguments 中第一个参数
+    Con = [].shift.call(arguments);
   // 3、链接到原型，obj 可以访问构造函数原型中的属性
   Object.setPrototypeOf(obj, Con.prototype); // obj.__proto__ = Con.prototype 没有这个效率高
   // 4、绑定 this 实现继承，obj 可以访问到构造函数中的属性
   var ret = Con.apply(obj, arguments);
   // 5、优先返回构造函数返回的对象
   return ret instanceof Object ? ret : obj;
-};
+}
 ```
 
 # 原型
@@ -151,7 +151,7 @@ JavaScript 是一种基于原型的语言 (prototype-based language)，这个和
 
 ![](2019-03-12-14-07-10.png)
 
-`__proto__` 发音 dunder proto，最先被 Firefox使用，后来在 ES6 被列为 Javascript 的标准内建属性。
+`__proto__` 发音 dunder proto，最先被 Firefox 使用，后来在 ES6 被列为 Javascript 的标准内建属性。
 
 [[Prototype]] 是对象的一个内部属性，外部代码无法直接访问。
 
@@ -164,7 +164,7 @@ JavaScript 是一种基于原型的语言 (prototype-based language)，这个和
 ```js
 function Parent() {}
 var p = new Parent();
-p.__proto__ === Parent.prototype
+p.__proto__ === Parent.prototype;
 // true
 ```
 
@@ -176,26 +176,26 @@ p.__proto__ === Parent.prototype
 
 `__proto__` 属性在 ES6 时才被标准化，以确保 Web 浏览器的兼容性，但是不推荐使用，除了标准化的原因之外还有性能问题。为了更好的支持，推荐使用 Object.getPrototypeOf()。
 
->通过改变一个对象的 [[Prototype]] 属性来改变和继承属性会对性能造成非常严重的影响，并且性能消耗的时间也不是简单的花费在 `obj.__proto__` = ... 语句上, 它还会影响到所有继承自该 [[Prototype]] 的对象，如果你关心性能，你就不应该修改一个对象的 [[Prototype]]。
+> 通过改变一个对象的 [[Prototype]] 属性来改变和继承属性会对性能造成非常严重的影响，并且性能消耗的时间也不是简单的花费在 `obj.__proto__` = ... 语句上, 它还会影响到所有继承自该 [[Prototype]] 的对象，如果你关心性能，你就不应该修改一个对象的 [[Prototype]]。
 
 如果要读取或修改对象的 [[Prototype]] 属性，建议使用如下方案，但是此时设置对象的 [[Prototype]] 依旧是一个缓慢的操作，如果性能是一个问题，就要避免这种操作。
 
 ```js
 // 获取
-Object.getPrototypeOf()
-Reflect.getPrototypeOf()
+Object.getPrototypeOf();
+Reflect.getPrototypeOf();
 
 // 修改
-Object.setPrototypeOf()
-Reflect.setPrototypeOf()
+Object.setPrototypeOf();
+Reflect.setPrototypeOf();
 ```
 
 如果要创建一个新对象，同时继承另一个对象的 [[Prototype]] ，推荐使用 Object.create()。
 
 ```js
 function Parent() {
-    age: 50
-};
+  age: 50;
+}
 var p = new Parent();
 // 相当于 Object.setPrototypeOf(child, p.constructor), child.__proto__ = p.constructor
 var child = Object.create(p);
@@ -209,15 +209,15 @@ var child = Object.create(p);
 
 ```js
 function create() {
-    // 1、获得构造函数，同时删除 arguments 中第一个参数
-    Con = [].shift.call(arguments);
-    // 2、创建一个空的对象并链接到原型，obj 可以访问构造函数原型中的属性
-    var obj = Object.create(Con.prototype);
-    // 3、绑定 this 实现继承，obj 可以访问到构造函数中的属性
-    var ret = Con.apply(obj, arguments);
-    // 4、优先返回构造函数返回的对象
-    return ret instanceof Object ? ret : obj;
-};
+  // 1、获得构造函数，同时删除 arguments 中第一个参数
+  Con = [].shift.call(arguments);
+  // 2、创建一个空的对象并链接到原型，obj 可以访问构造函数原型中的属性
+  var obj = Object.create(Con.prototype);
+  // 3、绑定 this 实现继承，obj 可以访问到构造函数中的属性
+  var ret = Con.apply(obj, arguments);
+  // 4、优先返回构造函数返回的对象
+  return ret instanceof Object ? ret : obj;
+}
 ```
 
 # 原型链
@@ -226,7 +226,7 @@ function create() {
 
 ```js
 function Parent(age) {
-    this.age = age;
+  this.age = age;
 }
 
 var p = new Parent(50);
@@ -243,11 +243,11 @@ p.constructor === Parent; // true
 
 ```js
 function Parent(age) {
-    this.age = age;
+  this.age = age;
 }
 var p = new Parent(50);
 
-p;	// Parent {age: 50}
+p; // Parent {age: 50}
 p.__proto__ === Parent.prototype; // true
 p.__proto__.__proto__ === Object.prototype; // true
 p.__proto__.__proto__.__proto__ === null; // true

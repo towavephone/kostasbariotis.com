@@ -3,9 +3,9 @@ import GatsbyLink from 'gatsby-link';
 import PropTypes from 'prop-types';
 
 const Tags = ({ tags }) => (
-  <ul className="tags list-inline text-center">
+  <ul className='tags list-inline text-center'>
     {tags &&
-      tags.map(obj => (
+      tags.map((obj) => (
         <li key={obj.tagName}>
           <GatsbyLink to={`/tag/${obj.tagName}/`}>
             {obj.tagName}({obj.size})
@@ -16,7 +16,7 @@ const Tags = ({ tags }) => (
 );
 
 Tags.propTypes = {
-  tags: PropTypes.arrayOf(PropTypes.object),
+  tags: PropTypes.arrayOf(PropTypes.object)
 };
 
 export default Tags;

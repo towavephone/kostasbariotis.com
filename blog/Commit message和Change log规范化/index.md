@@ -5,7 +5,7 @@ path: /commit-message/
 tags: Git, git规范化
 ---
 
-## [commitizen](https://github.com/commitizen/cz-cli)：规范commit mesage的命令行工具
+## [commitizen](https://github.com/commitizen/cz-cli)：规范 commit mesage 的命令行工具
 
 ### 效果
 
@@ -21,7 +21,7 @@ npm install --save-dev commitizen
 
 ### package.json
 
-在package.json添加脚本运行，最好不要用commit，容易和husky插件冲突
+在 package.json 添加脚本运行，最好不要用 commit，容易和 husky 插件冲突
 
 ```bash
 // package.json
@@ -31,10 +31,9 @@ npm install --save-dev commitizen
   }
 ```
 
-可以添加markdown标签
-[![Commitizen friendly](https://img.shields.io/badge/commitizen-friendly-brightgreen.svg)](http://commitizen.github.io/cz-cli/)
+可以添加 markdown 标签 [![Commitizen friendly](https://img.shields.io/badge/commitizen-friendly-brightgreen.svg)](http://commitizen.github.io/cz-cli/)
 
-## [commitlint](https://github.com/marionebl/commitlint)：commit mesage lint工具
+## [commitlint](https://github.com/marionebl/commitlint)：commit mesage lint 工具
 
 ### 效果
 
@@ -55,7 +54,7 @@ echo "module.exports = {extends: ['@commitlint/config-conventional']}" > commitl
 
 ### package.json
 
-在package.json添加脚本运行
+在 package.json 添加脚本运行
 
 ```bash
 {
@@ -66,7 +65,7 @@ echo "module.exports = {extends: ['@commitlint/config-conventional']}" > commitl
 }
 ```
 
-## [conventional-changelog-cli](https://github.com/conventional-changelog/conventional-changelog/tree/master/packages/conventional-changelog-cli)：生成Change.log工具（需满足规范）
+## [conventional-changelog-cli](https://github.com/conventional-changelog/conventional-changelog/tree/master/packages/conventional-changelog-cli)：生成 Change.log 工具（需满足规范）
 
 ### 效果
 
@@ -89,7 +88,7 @@ cd my-project
 ./node_modules/.bin/conventional-changelog -p angular -i CHANGELOG.md -s
 ```
 
-加上-r 0参数覆盖以前记录，建议初次生成时加上
+加上-r 0 参数覆盖以前记录，建议初次生成时加上
 
 ```bash
 conventional-changelog -p angular -i CHANGELOG.md -s -r 0
@@ -97,13 +96,13 @@ conventional-changelog -p angular -i CHANGELOG.md -s -r 0
 
 ### package.json
 
-在package.json添加脚本运行
+在 package.json 添加脚本运行
 
 ```bash
 "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s -r 0".
 ```
 
-## 建议配置的package.json
+## 建议配置的 package.json
 
 ```bash
 "scripts": {

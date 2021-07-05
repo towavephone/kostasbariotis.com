@@ -2,17 +2,19 @@
 title: 前端性能优化最佳实践
 date: 2018-1-5 23:49:44
 categories:
-- 前端
+  - 前端
 tags: 面试, 前端, 前端性能优化
 path: /front-end-performance-optimization/
 ---
+
 本文主要考量客户端性能、服务器端和网络性能，内容框架来自 Yahoo Developer Network，包含 7 个类别共 35 条前端性能优化最佳实践，在此基础上补充了一些相关或者更符合主流技术的内容。
 
 同时，建议关注及时更新的 Google 性能优化指南。
 
 前端性能的一个重要指标是页面加载时间，不仅事关用户体验，也是搜索引擎排名考虑的一个因素。
 
->- 来自 Google 的数据表明，一个有 10 条数据 0.4 秒能加载完的页面，变成 30 条数据 0.9 秒加载完之后，流量和广告收入下降 90%。
+> - 来自 Google 的数据表明，一个有 10 条数据 0.4 秒能加载完的页面，变成 30 条数据 0.9 秒加载完之后，流量和广告收入下降 90%。
+
 - Google Map 首页文件大小从 100KB 减小到 70-80KB 后，流量在第一周涨了 10%，接下来的三周涨了 25%。
 - 亚马逊的数据表明：加载时间增加 100 毫秒，销量就下降 1%。
 
@@ -27,29 +29,29 @@ Web 前端 80% 的响应时间花在图片、样式、脚本等资源下载上�
 通过简洁的设计减少页面所需资源，进而减少 HTTP 请求，这是最直接的方式，前提是你的 Boss、设计师同事不打死你。所以，还是另辟蹊径吧：
 
 - 合并 JavaScript、CSS 等文件；
- - 服务器端（CDN）自动合并
- - 基于 Node.js 的文件合并工具一抓一大把
-- 使用CSS Sprite：将背景图片合并成一个文件，通过background-image 和 background-position 控制显示；
- - Sprite Cow
- - Spritebox
+- 服务器端（CDN）自动合并
+- 基于 Node.js 的文件合并工具一抓一大把
+- 使用 CSS Sprite：将背景图片合并成一个文件，通过 background-image 和 background-position 控制显示；
+- Sprite Cow
+- Spritebox
 
->逐步被 Icon Font 和 SVG Sprite 取代。
+> 逐步被 Icon Font 和 SVG Sprite 取代。
 
 - Image Map：合并图片，然后使用坐标映射不同的区域（演示）。
 
->缺点：仅适用于相连的图片；设置坐标过程乏味且易出错；可访性问题。不推荐使用这种过时的技术。
+> 缺点：仅适用于相连的图片；设置坐标过程乏味且易出错；可访性问题。不推荐使用这种过时的技术。
 
 - Inline Assets：使用 Data URI scheme 将图片嵌入 HTML 或者 CSS 中；或者将 CSS、JS、图片直接嵌入 HTML 中。
 
->会增加文件大小，也可能产生浏览器兼容及其他性能问题（有待整理补充）。
+> 会增加文件大小，也可能产生浏览器兼容及其他性能问题（有待整理补充）。
 
->未来的趋势是使用内嵌 SVG。
+> 未来的趋势是使用内嵌 SVG。
 
 - 内容分片，将请求划分到不同的域名上。
 
->HTTP/2 通过多路复用大幅降低了多个请求的开销。通过数据分帧层，客户端和服务器之间只需要建立一个 TCP 连接，即可同时收发多个文件，而且，该连接在相当长的时间周期内保持打开（持久化），以便复用。
+> HTTP/2 通过多路复用大幅降低了多个请求的开销。通过数据分帧层，客户端和服务器之间只需要建立一个 TCP 连接，即可同时收发多个文件，而且，该连接在相当长的时间周期内保持打开（持久化），以便复用。
 
->HTTP/2 的新特性意味着上述优化实践不再适用，但考虑到客户端对 HTTP/2 的支持覆盖程度，还需根据实际数据权衡。
+> HTTP/2 的新特性意味着上述优化实践不再适用，但考虑到客户端对 HTTP/2 的支持覆盖程度，还需根据实际数据权衡。
 
 ### 减少 DNS 查询
 
@@ -68,9 +70,7 @@ Web 前端 80% 的响应时间花在图片、样式、脚本等资源下载上�
 HTTP 重定向通过 301/302 状态码实现。
 
 ```html
-HTTP/1.1 301 Moved Permanently
-Location: http://example.com/newuri
-Content-Type: text/html
+HTTP/1.1 301 Moved Permanently Location: http://example.com/newuri Content-Type: text/html
 ```
 
 客户端收到服务器的重定向响应后，会根据响应头中 Location 的地址再次发送请求。重定向会影响用户体验，尤其是多次重定向时，用户在一段时间内看不到任何内容，只看到浏览器进度条一直在刷新。
@@ -115,13 +115,13 @@ Ajax 可以提高用户体验。但「异步」不意味着「及时」，优化
 
 - 有条件预先加载：根据用户行为预判用户去向，预载相关资源。比如 search.yahoo.com 开始输入时会有额外的资源加载。
 
->Chrome 等浏览器的地址栏也有类似的机制。
+> Chrome 等浏览器的地址栏也有类似的机制。
 
 - 有「阴谋」的预先加载：页面即将上线新版前预先加载新版内容。网站改版后由于缓存、使用习惯等原因，会有旧版的网站更快更流畅的反馈。为缓解这一问题，在新版上线之前，旧版可以利用空闲提前加载一些新版的资源缓存到客户端，以便新版正式上线后更快的载入（好一个「心机猿」:scream:）。
 
->「双十一」、「黑五」这类促销日来临之前，也可以预先下载一些相关资源到客户端（浏览器、App 等），有效利用浏览器缓存和本地存储，降低活动当日请求压力，提高用户体验。
+> 「双十一」、「黑五」这类促销日来临之前，也可以预先下载一些相关资源到客户端（浏览器、App 等），有效利用浏览器缓存和本地存储，降低活动当日请求压力，提高用户体验。
 
->TODO: Prefetch 相关细节
+> TODO: Prefetch 相关细节
 
 - Resource Hints Spec
 
@@ -173,7 +173,7 @@ document.getElementsByTagName('*').length;
 
 - 阻塞页面 load 事件触发；
 
->Iframe 完全加载以后，父页面才会触发 load 事件。 Safari、Chrome 中通过 JavaScript 动态设置 iframe src 可以避免这个问题。
+> Iframe 完全加载以后，父页面才会触发 load 事件。 Safari、Chrome 中通过 JavaScript 动态设置 iframe src 可以避免这个问题。
 
 - 缺乏语义。
 
@@ -191,9 +191,7 @@ HTTP 请求很昂贵，返回无效的响应（如 404 未找到）完全没必�
 
 服务器相关优化设置可参考 H5BP 相关项目：
 
-[Nginx HTTP server boilerplate configs](https://github.com/h5bp/server-configs-nginx)
-[Apache HTTP server boilerplate configs](https://github.com/h5bp/server-configs-apache)
-[IIS Web.Config Boilerplates](https://github.com/h5bp/server-configs-iis)
+[Nginx HTTP server boilerplate configs](https://github.com/h5bp/server-configs-nginx) [Apache HTTP server boilerplate configs](https://github.com/h5bp/server-configs-apache) [IIS Web.Config Boilerplates](https://github.com/h5bp/server-configs-iis)
 
 ### 使用 CDN
 
@@ -208,12 +206,11 @@ HTTP 请求很昂贵，返回无效的响应（如 404 未找到）完全没必�
 
 > Cache-Control 头在 HTTP/1.1 规范中定义，取代了之前用来定义响应缓存策略的头（例如 Expires、Pragma）。当前的所有浏览器都支持 Cache-Control，因此，使用它就够了。
 
->鉴于静态内容和动态内容不同的缓存策略，实践中一般会把二者部署在不同的服务器（域名）以方便管理。
+> 鉴于静态内容和动态内容不同的缓存策略，实践中一般会把二者部署在不同的服务器（域名）以方便管理。
 
 参考链接：
 
-[HTTP 缓存 | Web Fundamentals - Google Developers](https://developers.google.com/web/fundamentals/performance/optimizing-content-efficiency/http-caching?hl=zh-cn)
-[H5BP - Server Configs](https://github.com/h5bp/server-configs)
+[HTTP 缓存 | Web Fundamentals - Google Developers](https://developers.google.com/web/fundamentals/performance/optimizing-content-efficiency/http-caching?hl=zh-cn) [H5BP - Server Configs](https://github.com/h5bp/server-configs)
 
 ### 启用 Gzip
 
@@ -235,7 +232,7 @@ Etag 通过文件版本标识，方便服务器判断请求的内容是否有更
 
 ### 尽早输出（flush）缓冲
 
-用户请求页面时，服务器通常需要花费 200 ~ 500 毫秒来组合 HTML 页面。在此期间，浏览器处于空闲、等待数据状态。使用PHP 中的 flush() 函数，可以发送部分已经准备好的 HTML 到浏览器，以便服务器还在忙于处理剩余页面时，浏览器可以提前开始获取资源。
+用户请求页面时，服务器通常需要花费 200 ~ 500 毫秒来组合 HTML 页面。在此期间，浏览器处于空闲、等待数据状态。使用 PHP 中的 flush() 函数，可以发送部分已经准备好的 HTML 到浏览器，以便服务器还在忙于处理剩余页面时，浏览器可以提前开始获取资源。
 
 可以考虑在 `</head>` 之后输出一次缓冲，HTML head 一般比较容易生成，先发送以便浏览器开始获取 `<head>` 里引用的 CSS 等资源。
 
@@ -270,8 +267,8 @@ HTML:
 JavaScript：
 
 ```js
-var img = new Image(); 
-img.src = "";
+var img = new Image();
+img.src = '';
 ```
 
 虽然 src 属性为空字符串，但浏览器仍然会向服务器发起一个 HTTP 请求：
@@ -280,7 +277,7 @@ img.src = "";
 - Safari、Chrome、Firefox 向页面本身发送请求；
 - Opera 不执行任何操作。
 
->以上数据较老，当下主流版本可能会有改变。
+> 以上数据较老，当下主流版本可能会有改变。
 
 空 src 产生请求的后果不容小觑：
 
@@ -293,7 +290,8 @@ img.src = "";
 参考链接：
 
 [Empty image src can destroy your site](https://www.nczonline.net/blog/2009/11/30/empty-image-src-can-destroy-your-site/)
->空的 href 属性也存在类似问题。用户点击空链接时，浏览器也会向服务器发送 HTTP 请求，可以通过 JavaScript 阻止空链接的默认的行为。
+
+> 空的 href 属性也存在类似问题。用户点击空链接时，浏览器也会向服务器发送 HTTP 请求，可以通过 JavaScript 阻止空链接的默认的行为。
 
 ## Cookie
 
@@ -308,7 +306,7 @@ Cookie 被用于身份认证、个性化设置等诸多用途。Cookie 通过 HT
 
 更多细节参考 [When the Cookie Crumbles。](http://yuiblog.com/blog/2007/03/01/performance-research-part-3/)
 
->HTTP/2 首部压缩在客户端和服务器端使用「首部表」来跟踪和存储之前发送的键值对，对于相同的数据，不再随每次请求和响应发送。
+> HTTP/2 首部压缩在客户端和服务器端使用「首部表」来跟踪和存储之前发送的键值对，对于相同的数据，不再随每次请求和响应发送。
 
 ### 静态资源使用无 Cookie 域名
 
@@ -330,7 +328,7 @@ CSS 表达式可以在 CSS 里执行 JavaScript，仅 IE5-IE7 支持，IE8 标�
 
 CSS 表达式超出预期的频繁执行，页面滚动、鼠标移动时都会不断执行，带来很大的性能损耗。
 
->IE7 及更低版本的浏览器已经逐渐成为历史，忘记它吧。
+> IE7 及更低版本的浏览器已经逐渐成为历史，忘记它吧。
 
 ### 使用 <link> 替代 @import
 
@@ -340,8 +338,7 @@ CSS 表达式超出预期的频繁执行，页面滚动、鼠标移动时都会�
 
 AlphaImageLoader 为 IE5.5-IE8 专有的技术，和 CSS 表达式一样，放进博物馆吧。
 
->注意：
-这里所说的不是 CSS3 Filter，参考文章 Understanding CSS Filter Effects
+> 注意：这里所说的不是 CSS3 Filter，参考文章 Understanding CSS Filter Effects
 
 ## JavaScript
 
@@ -364,9 +361,7 @@ AlphaImageLoader 为 IE5.5-IE8 专有的技术，和 CSS 表达式一样，放�
 
 压缩代码可以移除非功能性的字符（注释、空格、空行等），减少文件大小，提高载入速度。
 
->得益于 Node.js 的流行，开源社区涌现出许多高效、易用的前端优化工具，JavaScript 和 CSS 压缩类的，不敢说多如牛毛，多如鸡毛倒是一点不夸张，如 [UglifyJS 2](https://github.com/mishoo/UglifyJS2)、csso、cssnano 等。
->对于内嵌的 CSS 和 JavaScript，也可以通过 htmlmin 等工具压缩。
->这些项目都有 Gulp、Webpack 等流行构建工具的配套版本。
+> 得益于 Node.js 的流行，开源社区涌现出许多高效、易用的前端优化工具，JavaScript 和 CSS 压缩类的，不敢说多如牛毛，多如鸡毛倒是一点不夸张，如 [UglifyJS 2](https://github.com/mishoo/UglifyJS2)、csso、cssnano 等。对于内嵌的 CSS 和 JavaScript，也可以通过 htmlmin 等工具压缩。这些项目都有 Gulp、Webpack 等流行构建工具的配套版本。
 
 ### 移除重复脚本
 
@@ -388,7 +383,7 @@ JavaScript 操作 DOM 很慢，尤其是 DOM 节点很多时。
 - 减少绑定事件监听的节点，如通过事件委托；
 - 尽早处理事件，在 DOMContentLoaded 即可进行，不用等到 load 以后。
 
->对于 resize、scroll 等触发频率极高的事件，应该通过 debounce 等机制降低处理程序执行频率。
+> 对于 resize、scroll 等触发频率极高的事件，应该通过 debounce 等机制降低处理程序执行频率。
 
 ## 图片
 
@@ -399,11 +394,11 @@ YDN 列出的相关工具 缺乏易用性，建议参考以下工具。
 - imagemin
 - ImageOptim
 
->TODO:
+> TODO:
 >
->- PNG 终极优化；
->- Webp 相关内容；
->- SVG 相关内容。
+> - PNG 终极优化；
+> - Webp 相关内容；
+> - SVG 相关内容。
 
 ### PNG 终极优化
 
@@ -412,15 +407,13 @@ YDN 列出的相关工具 缺乏易用性，建议参考以下工具。
 
 ### 优化 CSS Sprite
 
-水平排列 Sprite 中的图片，垂直排列会增加图片大小；
-Spirite 中把颜色较近的组合在一起可以降低颜色数，理想状况是低于 256 色以适用 PNG8 格式；
-不要在 Spirite 的图像中间留有较大空隙。减少空隙虽然不太影响文件大小，但可以降低用户代理把图片解压为像素图的内存消耗，对移动设备更友好。
+水平排列 Sprite 中的图片，垂直排列会增加图片大小； Spirite 中把颜色较近的组合在一起可以降低颜色数，理想状况是低于 256 色以适用 PNG8 格式；不要在 Spirite 的图像中间留有较大空隙。减少空隙虽然不太影响文件大小，但可以降低用户代理把图片解压为像素图的内存消耗，对移动设备更友好。
 
 ### 不要在 HTML 中缩放图片
 
 不要使用 `<img>` 的 width、height 缩放图片，如果用到小图片，就使用相应大小的图片。
 
->很多 CMS 和 CDN 都提供图片裁切功能。
+> 很多 CMS 和 CDN 都提供图片裁切功能。
 
 ### 使用体积小、可缓存的 favicon.ico
 
@@ -432,18 +425,17 @@ Favicon.ico 一般存放在网站根目录下，无论是否在页面中设置�
 - 尽量小，最好小于 1K；
 - 设置较长的过期时间。
 
->对于较新的浏览器，可以使用 PNG 格式的 favicon。
+> 对于较新的浏览器，可以使用 PNG 格式的 favicon。
 
 参考链接：
 
 Favicons, Touch Icons, Tile Icons, etc. Which Do You Need?
 
->图片相关补充
-设置图片的宽和高，以免浏览器按照「猜」的宽高给图片保留的区域和实际宽高差异，产生重绘。
+> 图片相关补充设置图片的宽和高，以免浏览器按照「猜」的宽高给图片保留的区域和实际宽高差异，产生重绘。
 
 ## 移动端
 
->移动端优化相关内容有待进一步整理补充。
+> 移动端优化相关内容有待进一步整理补充。
 
 ### [保持单个文件小于 25 KB](https://developer.yahoo.com/performance/rules.html#under25)
 

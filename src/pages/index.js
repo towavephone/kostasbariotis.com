@@ -19,41 +19,30 @@ export default function Index({ data }) {
   // 注意此处需深拷贝，否则再次回到首页看不到阅读更多
   let [...posts] = edges;
   posts.length = 3;
-  posts = posts.map(post => post.node);
+  posts = posts.map((post) => post.node);
 
   return (
     <div>
       <WebPageSchema title={author} description={description} url={siteUrl} />
-      <MetaTags
-        noIndex={false}
-        tags=""
-        title={'首页'}
-        description={description}
-        siteUrl={siteUrl}
-        path={'/'}
-      />
-      <section className="blog container">
-        <div className="medium-8 medium-offset-2 large-10 large-offset-1">
-          <div className="blog-header">
-            <GatsbyLink to="/" className="blog-header__link" itemProp="name">
-              <Img
-                className="header-avatar blog-header__img"
-                alt={author}
-                sizes={data.file.childImageSharp.sizes}
-              />
+      <MetaTags noIndex={false} tags='' title={'首页'} description={description} siteUrl={siteUrl} path={'/'} />
+      <section className='blog container'>
+        <div className='medium-8 medium-offset-2 large-10 large-offset-1'>
+          <div className='blog-header'>
+            <GatsbyLink to='/' className='blog-header__link' itemProp='name'>
+              <Img className='header-avatar blog-header__img' alt={author} sizes={data.file.childImageSharp.sizes} />
             </GatsbyLink>
             <h2>{author}</h2>
-            <p className="header-description" dangerouslySetInnerHTML={{ __html: description }} />
+            <p className='header-description' dangerouslySetInnerHTML={{ __html: description }} />
           </div>
-          <header className="header">最近文章</header>
+          <header className='header'>最近文章</header>
           <Separator />
-          <div className="posts">
+          <div className='posts'>
             <Posts posts={posts} />
             <Separator />
-            <article className="post text-right">
-              <header className="post-head">
-                <h3 className="post-title">
-                  {length > 3 ? <GatsbyLink to="/page/1">阅读更多 &gt;</GatsbyLink> : null}
+            <article className='post text-right'>
+              <header className='post-head'>
+                <h3 className='post-title'>
+                  {length > 3 ? <GatsbyLink to='/page/1'>阅读更多 &gt;</GatsbyLink> : null}
                 </h3>
               </header>
             </article>
@@ -65,7 +54,7 @@ export default function Index({ data }) {
 }
 
 Index.propTypes = {
-  data: PropTypes.object,
+  data: PropTypes.object
 };
 
 export const pageQuery = graphql`

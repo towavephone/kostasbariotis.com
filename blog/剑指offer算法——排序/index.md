@@ -2,10 +2,11 @@
 title: 剑指offer算法题——排序
 date: 2018-2-25 17:18:54
 categories:
-- 面试
+  - 面试
 tags: 面试, 算法
 path: /offer-sort/
 ---
+
 ## 快速排序
 
 ### 递归式
@@ -80,8 +81,6 @@ int main()
 
 ```
 
-
-
 ### 非递归式
 
 ```cpp
@@ -115,4 +114,3 @@ void quickSort(int a[], int left, int right) {
     }
 }
 ```
-

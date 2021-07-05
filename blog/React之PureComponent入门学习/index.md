@@ -2,7 +2,7 @@
 title: React之PureComponent入门学习
 date: 2019-9-19 19:44:14
 categories:
-- 前端
+  - 前端
 tags: 前端, React, PureComponent
 path: /react-purecomponent-practice-learn/
 ---
@@ -15,14 +15,12 @@ path: /react-purecomponent-practice-learn/
 class Counter extends React.PureComponent {
   constructor(props) {
     super(props);
-    this.state = {count: 1};
+    this.state = { count: 1 };
   }
 
   render() {
     return (
-      <button
-        color={this.props.color}
-        onClick={() => this.setState(state => ({count: state.count + 1}))}>
+      <button color={this.props.color} onClick={() => this.setState((state) => ({ count: state.count + 1 }))}>
         Count: {this.state.count}
       </button>
     );
@@ -42,16 +40,16 @@ class Counter extends React.PureComponent {
 
 - **可能出现的问题及解决方案**
 
-  当props 或 state 为 **复杂的数据结构** （例如：嵌套对象和数组）时，因为 `React.PureComponent` 仅仅是 **浅比较** ，可能会渲染出 **错误的结果** 。这时有 **两种解决方案** ：
+  当 props 或 state 为 **复杂的数据结构** （例如：嵌套对象和数组）时，因为 `React.PureComponent` 仅仅是 **浅比较** ，可能会渲染出 **错误的结果** 。这时有 **两种解决方案** ：
 
-  - 当 **知道** 有深度数据结构更新时，可以直接调用 **forceUpdate**  强制更新
-  - 考虑使用  [immutable objects](https://facebook.github.io/immutable-js/) （不可突变的对象），实现快速的比较对象
+  - 当 **知道** 有深度数据结构更新时，可以直接调用 **forceUpdate** 强制更新
+  - 考虑使用 [immutable objects](https://facebook.github.io/immutable-js/) （不可突变的对象），实现快速的比较对象
 
 - **注意**
 
   `React.PureComponent` 中的 `shouldComponentUpdate()` 将跳过所有子组件树的 props 更新（具体原因参考 [Hooks 与 React 生命周期](https://github.com/sisterAn/blog/issues/34)：即：更新阶段，由父至子去判断是否需要重新渲染），所以使用 React.PureComponent 的组件，它的所有 **子组件也必须都为 React.PureComponent** 。
 
-# PureComponent 与 Stateless Functional Component 
+# PureComponent 与 Stateless Functional Component
 
 对于 React 开发人员来说，知道何时在代码中使用 **Component**，**PureComponent ** 和 **Stateless Functional Component** 非常重要。
 
@@ -62,10 +60,7 @@ class Counter extends React.PureComponent {
 输入输出数据完全由 `props` 决定，而且不会产生任何副作用。
 
 ```js
-const Button = props =>
-  <button onClick={props.onClick}>
-    {props.text}
-  </button>
+const Button = (props) => <button onClick={props.onClick}>{props.text}</button>;
 ```
 
 无状态组件可以通过减少继承 `Component` 而来的生命周期函数而达到性能优化的效果。从本质上来说，无状态组件就是一个单纯的 `render` 函数，所以无状态组件的缺点也是显而易见的。因为它没有 `shouldComponentUpdate` 生命周期函数，所以每次 `state` 更新，它都会重新绘制 `render` 函数。
@@ -125,12 +120,7 @@ export default React.memo(MyComponent, areEqual);
 
 ```js
 // FriendsItem 在父组件引用样式
-<FriendsItem
-  key={friend.id}
-  name={friend.name}
-  id={friend.id}
-  onDeleteClick={() => this.deleteFriends(friend.id)}
-/> 
+<FriendsItem key={friend.id} name={friend.name} id={friend.id} onDeleteClick={() => this.deleteFriends(friend.id)} />
 // 在父组件中绑定
 // 父组件在 props 中传递了一个箭头函数。箭头函数在每次 render 时都会重新分配（和使用 bind 的方式相同）
 ```
@@ -141,14 +131,14 @@ export default React.memo(MyComponent, areEqual);
 // 其中 FriendsItem 为 PureComponent
 class FriendsItem extends React.PureComponent {
   render() {
-    const { name, onDeleteClick } = this.props
-    console.log(`FriendsItem：${name} 渲染`)
+    const { name, onDeleteClick } = this.props;
+    console.log(`FriendsItem：${name} 渲染`);
     return (
       <div>
         <span>{name}</span>
         <button onClick={onDeleteClick}>删除</button>
       </div>
-    )   
+    );
   }
 }
 // 每次点击删除操作时，未删除的 FriendsItem 都将被重新渲染
@@ -158,20 +148,15 @@ class FriendsItem extends React.PureComponent {
 
 这种在 `FriendsItem` 直接调用 `() => this.deleteFriends(friend.id)`，看起来操作更简单，逻辑更清晰，但它有一个有一个最大的弊端，甚至打破了像 `shouldComponentUpdate` 和 `PureComponent` 这样的性能优化。
 
-这是因为：父组件在 `render` 声明了一个函数`onDeleteClick`，每次父组件渲染都会重新生成新的函数。因此，每次父组件重新渲染，都会给每个子组件 `FriendsItem` 传递不同的 `props`，导致每个子组件都会重新渲染， 即使 `FriendsItem` 为 `PureComponent`。　
+这是因为：父组件在 `render` 声明了一个函数`onDeleteClick`，每次父组件渲染都会重新生成新的函数。因此，每次父组件重新渲染，都会给每个子组件 `FriendsItem` 传递不同的 `props`，导致每个子组件都会重新渲染， 即使 `FriendsItem` 为 `PureComponent`。
 
 **避免在 render 方法里创建函数并使用它。它会打破了像 shouldComponentUpdate 和 PureComponent 这样的性能优化。**
 
-要解决这个问题，只需要将原本在父组件上的绑定放到子组件上即可。`FriendsItem ` 将始终具有相同的 `props`，并且永远不会导致不必要的重新渲染。
+要解决这个问题，只需要将原本在父组件上的绑定放到子组件上即可。`FriendsItem` 将始终具有相同的 `props`，并且永远不会导致不必要的重新渲染。
 
 ```js
 // FriendsItem 在父组件引用样式
-<FriendsItem 
-  key={friend.id} 
-  id={friend.id} 
-  name={friend.name} 
-  onClick={this.deleteFriends} 
-/>
+<FriendsItem key={friend.id} id={friend.id} name={friend.name} onClick={this.deleteFriends} />
 ```
 
 `FriendsItem`:
@@ -179,17 +164,17 @@ class FriendsItem extends React.PureComponent {
 ```js
 class FriendsItem extends React.PureComponent {
   onDeleteClick = () => {
-    this.props.onClick(this.props.id)
-  } // 在子组件中绑定
+    this.props.onClick(this.props.id);
+  }; // 在子组件中绑定
   render() {
-    const { name } = this.props
-    console.log(`FriendsItem：${name} 渲染`)
+    const { name } = this.props;
+    console.log(`FriendsItem：${name} 渲染`);
     return (
       <div>
         <span>{name}</span>
         <button onClick={this.onDeleteClick}>删除</button>
       </div>
-    )   
+    );
   }
 }
 // 每次点击删除操作时，FriendsItem 都不会被重新渲染
@@ -207,7 +192,7 @@ class FriendsItem extends React.PureComponent {
 render() {
   const { posts } = this.props
   // 在渲染函数中生成 topTen，并渲染
-  const topTen = [...posts].sort((a, b) => 
+  const topTen = [...posts].sort((a, b) =>
     b.likes - a.likes).slice(0, 9)
   return //...
 }
@@ -284,7 +269,7 @@ pureComponentPrototype.constructor = PureComponent;
 Object.assign(pureComponentPrototype, Component.prototype);
 
 // 唯一的区别，原型上添加了 isPureReactComponent 属性去表示该 Component 是 PureComponent
-// 在后续组件渲染的时候，react-dom 会去判断 isPureReactComponent 这个属性，来确定是否浅比较 props、status 实现更新 
+// 在后续组件渲染的时候，react-dom 会去判断 isPureReactComponent 这个属性，来确定是否浅比较 props、status 实现更新
 /** 在 ReactFiberClassComponent.js 中，有对 isPureReactComponent 的判断
  if (ctor.prototype && ctor.prototype.isPureReactComponent) {
     return (
@@ -299,24 +284,14 @@ pureComponentPrototype.isPureReactComponent = true;
 
 ```js
 // ReactFiberClassComponent.js
-function checkShouldComponentUpdate(
-  workInProgress,
-  ctor,
-  oldProps,
-  newProps,
-  oldState,
-  newState,
-  nextContext,
-) {
+function checkShouldComponentUpdate(workInProgress, ctor, oldProps, newProps, oldState, newState, nextContext) {
   // ...
   if (ctor.prototype && ctor.prototype.isPureReactComponent) {
     // 如果是纯组件，比较新老 props、state
     // 返回 true，重新渲染，
     // 即 shallowEqual props 返回 false，或 shallowEqual state 返回 false
-    return (
-      !shallowEqual(oldProps, newProps) || !shallowEqual(oldState, newState)
-    );
-  } 
+    return !shallowEqual(oldProps, newProps) || !shallowEqual(oldState, newState);
+  }
   return true;
 }
 ```
@@ -335,19 +310,14 @@ function shallowEqual(objA: mixed, objB: mixed): boolean {
     return true;
   }
 
-  if (
-    typeof objA !== 'object' ||
-    objA === null ||
-    typeof objB !== 'object' ||
-    objB === null
-  ) {
+  if (typeof objA !== 'object' || objA === null || typeof objB !== 'object' || objB === null) {
     return false;
   }
-    
+
   // 参数列表
   const keysA = Object.keys(objA);
   const keysB = Object.keys(objB);
-    
+
   // 参数列表长度不相同
   if (keysA.length !== keysB.length) {
     return false;
@@ -355,10 +325,7 @@ function shallowEqual(objA: mixed, objB: mixed): boolean {
 
   // 比较参数列表每一个参数，但仅比较一层
   for (let i = 0; i < keysA.length; i++) {
-    if (
-      !hasOwnProperty.call(objB, keysA[i]) ||
-      !is(objA[keysA[i]], objB[keysA[i]])
-    ) {
+    if (!hasOwnProperty.call(objB, keysA[i]) || !is(objA[keysA[i]], objB[keysA[i]])) {
       return false;
     }
   }
@@ -367,7 +334,7 @@ function shallowEqual(objA: mixed, objB: mixed): boolean {
 }
 ```
 
-## 附：Object.is（来自MDN）
+## 附：Object.is（来自 MDN）
 
 `Object.is()` 判断两个值是否[相同](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Equality_comparisons_and_sameness)。
 
@@ -387,4 +354,3 @@ function shallowEqual(objA: mixed, objB: mixed): boolean {
   - 都是负零 `-0`
   - 都是 [`NaN`](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/NaN)
   - 都是除零和 [`NaN`](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/NaN) 外的其它同一个数字
-  

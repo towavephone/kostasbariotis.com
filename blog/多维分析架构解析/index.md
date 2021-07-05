@@ -14,8 +14,8 @@ src\client\components\derive-analytic
 │   ├── indice-item-list.jsx
 │   ├── indice-item-list.styl
 │   ├── indice-selector-modal.jsx
-│   ├── indice-selector-modal.styl        
-│   ├── indice-selector-setting-modal.jsx 
+│   ├── indice-selector-modal.styl
+│   ├── indice-selector-setting-modal.jsx
 │   ├── indice-selector-setting-modal.styl
 │   ├── indice-selector.jsx
 │   ├── indices-inspector.jsx
@@ -51,4 +51,3 @@ src\client\components\derive-analytic
 动态 saga model 绑定工具，使用 key 来实现切换 model
 
 SliceChartFacade 多组件映射
-

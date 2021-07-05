@@ -40,14 +40,14 @@ tags: 前端, 设计模式, React
 ```jsx
 import SmileFace from './yaoming_simile.png';
 
-const Joke = ({value}) => {
+const Joke = ({ value }) => {
   return (
     <div>
       <img src={SmileFace} />
-      {value || 'loading...' }
+      {value || 'loading...'}
     </div>
   );
-}
+};
 ```
 
 ### PureComponent
@@ -64,7 +64,7 @@ class Joke extends React.PureComponent {
     return (
       <div>
         <img src={SmileFace} />
-        {this.props.value || 'loading...' }
+        {this.props.value || 'loading...'}
       </div>
     );
   }
@@ -79,10 +79,10 @@ class Joke extends React.PureComponent {
 
 ```jsx
 const Joke = React.memo(() => (
-    <div>
-        <img src={SmileFace} />
-        {this.props.value || 'loading...' }
-    </div>
+  <div>
+    <img src={SmileFace} />
+    {this.props.value || 'loading...'}
+  </div>
 ));
 ```
 
@@ -143,7 +143,7 @@ const withLogin = (Component) => {
     } else {
       return null;
     }
-  }
+  };
 
   return NewComponent;
 };
@@ -173,9 +173,9 @@ const withLoginAndLogout = (ComponentForLogin, ComponentForLogout) => {
     if (getUserId()) {
       return <ComponentForLogin {...props} />;
     } else {
-      return <ComponentForLogout{...props} />;
+      return <ComponentForLogout {...props} />;
     }
-  }
+  };
   return NewComponent;
 };
 ```
@@ -183,10 +183,7 @@ const withLoginAndLogout = (ComponentForLogin, ComponentForLogout) => {
 有了上面的 withLoginAndLogout，就可以产生根据用户登录状态显示不同的内容。
 
 ```jsx
-const TopButtons = withLoginAndLogout(
-  LogoutButton,
-  LoginButton
-);
+const TopButtons = withLoginAndLogout(LogoutButton, LoginButton);
 ```
 
 ### 链式调用高阶组件
@@ -208,10 +205,14 @@ const SuperX = X3; //最终的SuperX具备三个高阶组件的超能力
 const SuperX = withThree(withTwo(withOne(X)));
 ```
 
-对于 X 而言，它被高阶组件包装了，至于被一个高阶组件包装，还是被 N 个高阶组件包装，没有什么差别。而高阶组件本身就是一个纯函数，纯函数是可以组合使用的，所以，我们其实可以把多个高阶组件组合为一个高阶组件，然后用这一个高阶组件去包装X，代码如下：
+对于 X 而言，它被高阶组件包装了，至于被一个高阶组件包装，还是被 N 个高阶组件包装，没有什么差别。而高阶组件本身就是一个纯函数，纯函数是可以组合使用的，所以，我们其实可以把多个高阶组件组合为一个高阶组件，然后用这一个高阶组件去包装 X，代码如下：
 
 ```jsx
-const hoc = compose(withThree, withTwo, withOne);
+const hoc = compose(
+  withThree,
+  withTwo,
+  withOne
+);
 const SuperX = hoc(X);
 ```
 
@@ -220,14 +221,14 @@ const SuperX = hoc(X);
 ```jsx
 export default function compose(...funcs) {
   if (funcs.length === 0) {
-    return arg => arg
+    return (arg) => arg;
   }
 
   if (funcs.length === 1) {
-    return funcs[0]
+    return funcs[0];
   }
 
-  return funcs.reduce((a, b) => (...args) => a(b(...args)))
+  return funcs.reduce((a, b) => (...args) => a(b(...args)));
 }
 ```
 
@@ -247,10 +248,10 @@ React 组件可以当做积木一样组合使用，现在有了 compose，我们
 const withExample = (Component) => {
   const NewComponent = (props) => {
     return <Component {...props} />;
-  }
-  
+  };
+
   NewComponent.displayName = `withExample(${Component.displayName || Component.name || 'Component'})`;
-  
+
   return NewCompoennt;
 };
 ```
@@ -266,8 +267,8 @@ const withExample = (Component) => {
 ```jsx
 const Example = () => {
   const EnhancedFoo = withExample(Foo);
-  return <EnhancedFoo />
-}
+  return <EnhancedFoo />;
+};
 ```
 
 像上面这样写，每一次渲染 Example，都会用高阶组件产生一个新的组件，虽然都叫做 EnhancedFoo，但是对 React 来说是一个全新的东西，在重新渲染的时候不会重用之前的虚拟 DOM，会造成极大的浪费。
@@ -278,8 +279,8 @@ const Example = () => {
 const EnhancedFoo = withExample(Foo);
 
 const Example = () => {
-  return <EnhancedFoo />
-}
+  return <EnhancedFoo />;
+};
 ```
 
 总之，高阶组件是重用代码的一种方式，但并不是唯一方式，在下一小节，我们会介绍一种更加精妙的方式。
@@ -296,11 +297,7 @@ const Example = () => {
 
 ```jsx
 const RenderAll = (props) => {
-  return(
-     <React.Fragment>
-     	{props.children(props)}
-     </React.Fragment>
-  );
+  return <React.Fragment>{props.children(props)}</React.Fragment>;
 };
 ```
 
@@ -309,9 +306,7 @@ const RenderAll = (props) => {
 使用 RenderAll 的代码如下：
 
 ```jsx
-<RenderAll>
-  {() => <h1>hello world</h1>}
-</RenderAll>
+<RenderAll>{() => <h1>hello world</h1>}</RenderAll>
 ```
 
 可以看到，RenderAll 的子组件，也就是夹在 RenderAll 标签之间的部分，其实是一个函数。这个函数渲染出 `<h1>hello world</h1>`，这就是上面使用 RenderAll 渲染出来的结果。
@@ -329,12 +324,8 @@ const Login = (props) => {
   const userName = getUserName();
 
   if (userName) {
-    const allProps = {userName, ...props};
-    return (
-      <React.Fragment>
-        {props.children(allProps)}
-      </React.Fragment>
-    );
+    const allProps = { userName, ...props };
+    return <React.Fragment>{props.children(allProps)}</React.Fragment>;
   } else {
     return null;
   }
@@ -348,36 +339,28 @@ const Login = (props) => {
 一个使用上面 Login 的 JSX 代码示例如下：
 
 ```jsx
-<Login>
- {({userName}) => <h1>Hello {userName}</h1>}
-</Login>
+<Login>{({ userName }) => <h1>Hello {userName}</h1>}</Login>
 ```
 
 对于名为`程墨Morgan`的用户登录，上面的 JSX 会产生 `<h1>Hello 程墨Morgan</h1>`。
 
 ### 不局限于 children
 
-在上面的例子中，作为 render 方法的 props 就是 children，在我写的《深入浅出React和Redux》中，将这种模式称为“以函数为子组件（function as child）”的模式，这可以算是 render props 的一种具体形式，也就利用 children 这个 props 来作为函数传递。
+在上面的例子中，作为 render 方法的 props 就是 children，在我写的《深入浅出 React 和 Redux》中，将这种模式称为“以函数为子组件（function as child）”的模式，这可以算是 render props 的一种具体形式，也就利用 children 这个 props 来作为函数传递。
 
 实际上，render props 这个模式不必局限于 children 这一个 props，任何一个 props 都可以作为函数，也可以利用多个 props 来作为函数。
 
 我们来扩展 Login，不光在用户登录时显示一些东西，也可以定制用户没有登录时显示的东西，我们把这个组件叫做 Auth，对应代码如下：
 
 ```js
-const Auth= (props) => {
+const Auth = (props) => {
   const userName = getUserName();
 
   if (userName) {
-    const allProps = {userName, ...props};
-    return (
-      <React.Fragment>
-        {props.login(allProps)}
-      </React.Fragment>
-    );
+    const allProps = { userName, ...props };
+    return <React.Fragment>{props.login(allProps)}</React.Fragment>;
   } else {
-    <React.Fragment>
-      {props.nologin(props)}
-    </React.Fragment>
+    <React.Fragment>{props.nologin(props)}</React.Fragment>;
   }
 };
 ```
@@ -385,10 +368,7 @@ const Auth= (props) => {
 使用 Auth 的话，可以分别通过 login 和 nologin 两个 props 来指定用户登录或者没登录时显示什么，用法如下：
 
 ```js
-<Auth 
-  login={({userName}) => <h1>Hello {userName}</h1>}
-  nologin={() => <h1>Please login</h1>}
-/>
+<Auth login={({ userName }) => <h1>Hello {userName}</h1>} nologin={() => <h1>Please login</h1>} />
 ```
 
 ### 依赖注入
@@ -414,28 +394,26 @@ const withLogin = (Component) => {
   const NewComponent = (props) => {
     const userName = getUserName();
     if (userName) {
-      return <Component {...props} userName={userName}/>;
+      return <Component {...props} userName={userName} />;
     } else {
       return null;
     }
-  }
+  };
 
   return NewComponent;
 };
 ```
 
-这就要求被 withLogin 包住的组件要接受 userName 这个props。可是，假如有一个现成的 React 组件不接受 userName，却接受名为 name 的 props 作为用户名，这就麻烦了。我们就不能直接用 withLogin 包住这个 React 组件，还要再造一个组件来做 userName 到 name 的映射，十分费事。
+这就要求被 withLogin 包住的组件要接受 userName 这个 props。可是，假如有一个现成的 React 组件不接受 userName，却接受名为 name 的 props 作为用户名，这就麻烦了。我们就不能直接用 withLogin 包住这个 React 组件，还要再造一个组件来做 userName 到 name 的映射，十分费事。
 
 对于应用 render props 的 Login，就不存在这个问题，接受 name 不接受 userName 是吗？这样写就好了：
 
 ```jsx
 <Login>
-  {
-    (props) => {
-      const {userName} = props;
-      return <TheComponent {...props} name={userName} />
-    }
-  }
+  {(props) => {
+    const { userName } = props;
+    return <TheComponent {...props} name={userName} />;
+  }}
 </Login>
 ```
 
@@ -503,11 +481,7 @@ class ThemeProvider extends React.Component {
   }
 
   render() {
-    return (
-      <React.Fragment>
-        {this.props.children}
-      </React.Fragment>
-    );
+    return <React.Fragment>{this.props.children}</React.Fragment>;
   }
 }
 
@@ -522,7 +496,7 @@ ThemeProvider.childContextTypes = {
 
 ```json
 {
-  theme: {
+  "theme": {
     //一个对象
   }
 }
@@ -533,18 +507,14 @@ ThemeProvider.childContextTypes = {
 ```jsx
 class Subject extends React.Component {
   render() {
-    const {mainColor} = this.context.theme;
-    return (
-      <h1 style={{color: mainColor}}>
-        {this.props.children}
-      </h1>
-    );
+    const { mainColor } = this.context.theme;
+    return <h1 style={{ color: mainColor }}>{this.props.children}</h1>;
   }
 }
 
 Subject.contextTypes = {
   theme: PropTypes.object
-}
+};
 ```
 
 在 Subject 的 render 函数中，可以通过 this.context 访问到“上下文”数据，因为 ThemeProvider 提供的“上下文”包含 theme 字段，所以可以直接访问 this.context.theme。
@@ -561,12 +531,8 @@ React 这么要求，是考虑到“上下文”可能会嵌套，就是一个�
 
 ```jsx
 const Paragraph = (props, context) => {
-  const {textColor} = context.theme;
-  return (
-    <p style={{color: textColor}}>
-      {props.children}
-    </p>
-  );
+  const { textColor } = context.theme;
+  return <p style={{ color: textColor }}>{props.children}</p>;
 };
 
 Paragraph.contextTypes = {
@@ -586,9 +552,7 @@ Paragraph.contextTypes = {
 const Page = () => (
   <div>
     <Subject>这是标题</Subject>
-    <Paragraph>
-      这是正文
-    </Paragraph>
+    <Paragraph>这是正文</Paragraph>
   </div>
 );
 ```
@@ -596,7 +560,7 @@ const Page = () => (
 上面的组件 Page 使用了 Subject 和 Paragraph，现在我们想要定制样式主题，只需要在 Page 或者任何需要应用这个主题的组件外面包上 ThemeProvider，对应的 JSX 代码如下：
 
 ```jsx
-<ThemeProvider value={{mainColor: 'green', textColor: 'red'}} >
+<ThemeProvider value={{ mainColor: 'green', textColor: 'red' }}>
   <Page />
 </ThemeProvider>
 ```
@@ -605,7 +569,7 @@ const Page = () => (
 
 ![](2019-03-21-19-30-01.png)
 
-当我们需要改变一个样式主题的时候，改变传给 ThemeProvider的 value 值就搞定了。
+当我们需要改变一个样式主题的时候，改变传给 ThemeProvider 的 value 值就搞定了。
 
 #### React v16.3.0 之后的提供者模式
 
@@ -632,15 +596,7 @@ const ThemeConsumer = ThemeContext.Consumer;
 class Subject extends React.Component {
   render() {
     return (
-      <ThemeConsumer>
-        {
-          (theme) => (
-            <h1 style={{color: theme.mainColor}}>
-              {this.props.children}
-            </h1>
-          )
-        }
-      </ThemeConsumer>
+      <ThemeConsumer>{(theme) => <h1 style={{ color: theme.mainColor }}>{this.props.children}</h1>}</ThemeConsumer>
     );
   }
 }
@@ -654,24 +610,14 @@ class Subject extends React.Component {
 
 ```jsx
 const Paragraph = (props, context) => {
-  return (
-    <ThemeConsumer>
-      {
-        (theme) => (
-          <p style={{color: theme.textColor}}>
-            {props.children}
-          </p>
-          )
-      }
-    </ThemeConsumer>
-  );
+  return <ThemeConsumer>{(theme) => <p style={{ color: theme.textColor }}>{props.children}</p>}</ThemeConsumer>;
 };
 ```
 
 实现 Page 的方式并没有变化，而应用 ThemeProvider 的代码和之前也完全一样:
 
 ```jsx
-<ThemeProvider value={{mainColor: 'green', textColor: 'red'}} >
+<ThemeProvider value={{ mainColor: 'green', textColor: 'red' }}>
   <Page />
 </ThemeProvider>
 ```
@@ -713,7 +659,7 @@ const Paragraph = (props, context) => {
 ```jsx
 <TabItem active={true} onClick={this.onClick}>One</TabItem>
 <TabItem active={false} onClick={this.onClick}>Two</TabItem>
-<TabItem active={false} onClick={this.onClick}>Three</TabItem> 
+<TabItem active={false} onClick={this.onClick}>Three</TabItem>
 ```
 
 上面的 TabItem 组件接受 active 这个 props，如果 true 代表当前是选中状态，当然可以工作，但是，也存在大问题：
@@ -726,9 +672,9 @@ const Paragraph = (props, context) => {
 
 ```jsx
 <Tabs>
-   <TabItem>One</TabItem>
-   <TabItem>Two</TabItem>
-   <TabItem>Three</TabItem>
+  <TabItem>One</TabItem>
+  <TabItem>Two</TabItem>
+  <TabItem>Three</TabItem>
 </Tabs>
 ```
 
@@ -746,11 +692,11 @@ const Paragraph = (props, context) => {
 
 ```jsx
 const TabItem = (props) => {
-  const {active, onClick} = props;
+  const { active, onClick } = props;
   const tabStyle = {
     'max-width': '150px',
     color: active ? 'red' : 'green',
-    border: active ? '1px red solid' : '0px',
+    border: active ? '1px red solid' : '0px'
   };
   return (
     <h1 style={tabStyle} onClick={onClick}>
@@ -785,26 +731,22 @@ Tabs 虽然可以访问到作为 props 的 children，但是到手的 children �
 ```jsx
 class Tabs extends React.Component {
   state = {
-    activeIndex:  0
-  }
+    activeIndex: 0
+  };
 
   render() {
     const newChildren = React.Children.map(this.props.children, (child, index) => {
       if (child.type) {
         return React.cloneElement(child, {
           active: this.state.activeIndex === index,
-          onClick: () => this.setState({activeIndex: index})
+          onClick: () => this.setState({ activeIndex: index })
         });
       } else {
         return child;
       }
     });
 
-    return (
-      <Fragment>
-        {newChildren}
-      </Fragment>
-    );
+    return <Fragment>{newChildren}</Fragment>;
   }
 }
 ```

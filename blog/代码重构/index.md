@@ -6,6 +6,7 @@ tags: 面试, 编码实践, 代码重构
 path: /code-restructure/
 date: 2018-04-04 13:11:28
 ---
+
 # 一、第一个案例
 
 如果你发现自己需要为程序添加一个特性，而代码结构使你无法很方便地达成目的，那就先重构这个程序。
@@ -14,9 +15,7 @@ date: 2018-04-04 13:11:28
 
 重构需要以微小的步伐修改程序，如果重构过程发生错误，很容易就能发现错误。
 
-
-
-**案例分析** 
+**案例分析**
 
 影片出租店应用程序，需要计算每位顾客的消费金额。
 
@@ -254,7 +253,7 @@ Extract Method 会把很多参数和临时变量都当做参数，可以用 Repl
 
 ## 16. 中间人
 
->  Middle Man
+> Middle Man
 
 中间人负责处理委托给它的操作，如果一个类中有过多的函数都委托给其它类，那就是过度运用委托，应当 Remove Middle Man，直接与负责的对象打交道。
 
@@ -405,7 +404,7 @@ if(isMacOS && isIEBrower && wasInitialized() && wasResized) {
 
 ## 7. 移除对参数的赋值
 
->  Remove Assigments to Parameters
+> Remove Assigments to Parameters
 
 以一个临时变量取代对该参数的赋值。
 
@@ -798,7 +797,6 @@ double getSpeed() {
 ```
 
 ![](1c8432c8-2552-457f-b117-1da36c697221.jpg)
-
 
 ## 7. 引入 Null 对象
 

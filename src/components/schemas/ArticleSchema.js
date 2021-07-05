@@ -19,12 +19,12 @@ export default function ArticleSchema({ authorName, title, description, date }) 
       }
     }
   }`;
-  return <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: data }} />;
+  return <script type='application/ld+json' dangerouslySetInnerHTML={{ __html: data }} />;
 }
 
 ArticleSchema.propTypes = {
   authorName: PropTypes.string,
   title: PropTypes.string,
   description: PropTypes.string,
-  date: PropTypes.string,
+  date: PropTypes.string
 };

@@ -70,10 +70,10 @@ function App() {
       i am
       <span>KaSong</span>
     </div>
-  )
+  );
 }
 
-ReactDOM.render(<App />, document.getElementById("root"));
+ReactDOM.render(<App />, document.getElementById('root'));
 ```
 
 对应的 Fiber 树结构：
@@ -112,11 +112,7 @@ render 阶段会依次执行：
 #### 从传参看方法执行
 
 ```js
-function beginWork(
-  current: Fiber | null,
-  workInProgress: Fiber,
-  renderLanes: Lanes,
-): Fiber | null {
+function beginWork(current: Fiber | null, workInProgress: Fiber, renderLanes: Lanes): Fiber | null {
   // ...省略函数体
 }
 ```
@@ -139,43 +135,34 @@ function beginWork(
 - mount 时：除 fiberRootNode 以外，current === null。会根据 fiber.tag 不同，创建不同类型的子 Fiber 节点
 
 ```js
-function beginWork(
-  current: Fiber | null,
-  workInProgress: Fiber,
-  renderLanes: Lanes
-): Fiber | null {
-
+function beginWork(current: Fiber | null, workInProgress: Fiber, renderLanes: Lanes): Fiber | null {
   // update 时：如果 current 存在可能存在优化路径
   // 可以复用 current（即上一次更新的 Fiber 节点）
   if (current !== null) {
     // ...省略
 
     // 复用 current
-    return bailoutOnAlreadyFinishedWork(
-      current,
-      workInProgress,
-      renderLanes,
-    );
+    return bailoutOnAlreadyFinishedWork(current, workInProgress, renderLanes);
   } else {
     didReceiveUpdate = false;
   }
 
   // mount 时：根据 tag 不同，创建不同的子 Fiber 节点
   switch (workInProgress.tag) {
-    case IndeterminateComponent: 
-      // ...省略
-    case LazyComponent: 
-      // ...省略
-    case FunctionComponent: 
-      // ...省略
-    case ClassComponent: 
-      // ...省略
+    case IndeterminateComponent:
+    // ...省略
+    case LazyComponent:
+    // ...省略
+    case FunctionComponent:
+    // ...省略
+    case ClassComponent:
+    // ...省略
     case HostRoot:
-      // ...省略
+    // ...省略
     case HostComponent:
-      // ...省略
+    // ...省略
     case HostText:
-      // ...省略
+    // ...省略
     // ...省略其他类型
   }
 }
@@ -190,31 +177,25 @@ function beginWork(
 
 ```js
 if (current !== null) {
-    const oldProps = current.memoizedProps;
-    const newProps = workInProgress.pendingProps;
+  const oldProps = current.memoizedProps;
+  const newProps = workInProgress.pendingProps;
 
-    if (
-      oldProps !== newProps ||
-      hasLegacyContextChanged() ||
-      (__DEV__ ? workInProgress.type !== current.type : false)
+  if (oldProps !== newProps || hasLegacyContextChanged() || (__DEV__ ? workInProgress.type !== current.type : false)) {
+    didReceiveUpdate = true;
+  } else if (!includesSomeLane(renderLanes, updateLanes)) {
+    didReceiveUpdate = false;
+    switch (
+      workInProgress.tag
+      // 省略处理
     ) {
-      didReceiveUpdate = true;
-    } else if (!includesSomeLane(renderLanes, updateLanes)) {
-      didReceiveUpdate = false;
-      switch (workInProgress.tag) {
-        // 省略处理
-      }
-      return bailoutOnAlreadyFinishedWork(
-        current,
-        workInProgress,
-        renderLanes,
-      );
-    } else {
-      didReceiveUpdate = false;
     }
+    return bailoutOnAlreadyFinishedWork(current, workInProgress, renderLanes);
   } else {
     didReceiveUpdate = false;
   }
+} else {
+  didReceiveUpdate = false;
+}
 ```
 
 ### mount 时
@@ -223,25 +204,25 @@ if (current !== null) {
 
 我们可以看到，根据 fiber.tag 不同，进入不同类型 Fiber 的创建逻辑。
 
-可以从[这里](https://github.com/facebook/react/blob/1fb18e22ae66fdb1dc127347e169e73948778e5a/packages/react-reconciler/src/ReactWorkTags.js)看到tag对应的组件类型
+可以从[这里](https://github.com/facebook/react/blob/1fb18e22ae66fdb1dc127347e169e73948778e5a/packages/react-reconciler/src/ReactWorkTags.js)看到 tag 对应的组件类型
 
 ```js
 // mount 时：根据 tag 不同，创建不同的 Fiber 节点
 switch (workInProgress.tag) {
-  case IndeterminateComponent: 
-    // ...省略
-  case LazyComponent: 
-    // ...省略
-  case FunctionComponent: 
-    // ...省略
-  case ClassComponent: 
-    // ...省略
+  case IndeterminateComponent:
+  // ...省略
+  case LazyComponent:
+  // ...省略
+  case FunctionComponent:
+  // ...省略
+  case ClassComponent:
+  // ...省略
   case HostRoot:
-    // ...省略
+  // ...省略
   case HostComponent:
-    // ...省略
+  // ...省略
   case HostText:
-    // ...省略
+  // ...省略
   // ...省略其他类型
 }
 ```
@@ -256,28 +237,13 @@ switch (workInProgress.tag) {
 - 对于 update 的组件，他会将当前组件与该组件在上次更新时对应的 Fiber 节点比较（也就是俗称的 Diff 算法），将比较的结果生成新 Fiber 节点
 
 ```js
-export function reconcileChildren(
-  current: Fiber | null,
-  workInProgress: Fiber,
-  nextChildren: any,
-  renderLanes: Lanes
-) {
+export function reconcileChildren(current: Fiber | null, workInProgress: Fiber, nextChildren: any, renderLanes: Lanes) {
   if (current === null) {
     // 对于mount的组件
-    workInProgress.child = mountChildFibers(
-      workInProgress,
-      null,
-      nextChildren,
-      renderLanes,
-    );
+    workInProgress.child = mountChildFibers(workInProgress, null, nextChildren, renderLanes);
   } else {
     // 对于update的组件
-    workInProgress.child = reconcileChildFibers(
-      workInProgress,
-      current.child,
-      nextChildren,
-      renderLanes,
-    );
+    workInProgress.child = reconcileChildFibers(workInProgress, current.child, nextChildren, renderLanes);
   }
 }
 ```
@@ -286,9 +252,9 @@ export function reconcileChildren(
 
 不论走哪个逻辑，最终他会生成新的子 Fiber 节点并赋值给 workInProgress.child，作为本次 beginWork 返回值，并作为下次 performUnitOfWork 执行时 workInProgress 的传参。
 
->注意
+> 注意
 >
->值得一提的是，mountChildFibers 与 reconcileChildFibers 这两个方法的逻辑基本一致。唯一的区别是：reconcileChildFibers 会为生成的 Fiber 节点带上 effectTag 属性，而 mountChildFibers 不会。
+> 值得一提的是，mountChildFibers 与 reconcileChildFibers 这两个方法的逻辑基本一致。唯一的区别是：reconcileChildFibers 会为生成的 Fiber 节点带上 effectTag 属性，而 mountChildFibers 不会。
 
 ### effectTag
 
@@ -338,7 +304,7 @@ beginWork 流程图
 
 这一节让我们看看 completeWork 会做什么工作。
 
-你可以从[这里](https://github.com/facebook/react/blob/1fb18e22ae66fdb1dc127347e169e73948778e5a/packages/react-reconciler/src/ReactFiberCompleteWork.new.js#L673)看到completeWork方法定义。
+你可以从[这里](https://github.com/facebook/react/blob/1fb18e22ae66fdb1dc127347e169e73948778e5a/packages/react-reconciler/src/ReactFiberCompleteWork.new.js#L673)看到 completeWork 方法定义。
 
 ### 流程概览
 
@@ -419,13 +385,7 @@ case HostComponent: {
 ```js
 if (current !== null && workInProgress.stateNode != null) {
   // update的情况
-  updateHostComponent(
-    current,
-    workInProgress,
-    type,
-    newProps,
-    rootContainerInstance,
-  );
+  updateHostComponent(current, workInProgress, type, newProps, rootContainerInstance);
 }
 ```
 
@@ -456,33 +416,19 @@ workInProgress.updateQueue = (updatePayload: any);
 
 const currentHostContext = getHostContext();
 // 为 fiber 创建对应 DOM 节点
-const instance = createInstance(
-    type,
-    newProps,
-    rootContainerInstance,
-    currentHostContext,
-    workInProgress,
-  );
+const instance = createInstance(type, newProps, rootContainerInstance, currentHostContext, workInProgress);
 // 将子孙 DOM 节点插入刚生成的 DOM 节点中
 appendAllChildren(instance, workInProgress, false, false);
 // DOM 节点赋值给 fiber.stateNode
 workInProgress.stateNode = instance;
 
 // 与 update 逻辑中的 updateHostComponent 类似的处理 props 的过程
-if (
-  finalizeInitialChildren(
-    instance,
-    type,
-    newProps,
-    rootContainerInstance,
-    currentHostContext,
-  )
-) {
+if (finalizeInitialChildren(instance, type, newProps, rootContainerInstance, currentHostContext)) {
   markUpdate(workInProgress);
 }
 ```
 
-还记得上一节我们讲到：mount 时只会在 rootFiber 存在 Placement effectTag。那么 commit 阶段是如何通过一次插入 DOM 操作（对应一个Placement effectTag）将整棵 DOM 树插入页面的呢？
+还记得上一节我们讲到：mount 时只会在 rootFiber 存在 Placement effectTag。那么 commit 阶段是如何通过一次插入 DOM 操作（对应一个 Placement effectTag）将整棵 DOM 树插入页面的呢？
 
 原因就在于 completeWork 中的 appendAllChildren 方法。
 
@@ -500,7 +446,7 @@ if (
 
 effectList 中第一个 Fiber 节点保存在 fiber.firstEffect，最后一个元素保存在 fiber.lastEffect。
 
-类似 appendAllChildren，在“归”阶段，所有有 effectTag 的 Fiber 节点都会被追加在 effectList中，最终形成一条以 rootFiber.firstEffect 为起点的单向链表。
+类似 appendAllChildren，在“归”阶段，所有有 effectTag 的 Fiber 节点都会被追加在 effectList 中，最终形成一条以 rootFiber.firstEffect 为起点的单向链表。
 
 ```
                        nextEffect         nextEffect
@@ -515,7 +461,7 @@ rootFiber.firstEffect -----------> fiber -----------> fiber
 
 ### 流程结尾
 
-至此，render 阶段全部工作完成。在 performSyncWorkOnRoot 函数中 fiberRootNode 被传递给 commitRoot  方法，开启 commit 阶段工作流程。
+至此，render 阶段全部工作完成。在 performSyncWorkOnRoot 函数中 fiberRootNode 被传递给 commitRoot 方法，开启 commit 阶段工作流程。
 
 ```js
 commitRoot(root);
@@ -589,10 +535,7 @@ markRootFinished(root, remainingLanes);
 
 // 清除已完成的 discrete updates，例如：用户鼠标点击触发的更新。
 if (rootsWithPendingDiscreteUpdates !== null) {
-  if (
-    !hasDiscreteLanes(remainingLanes) &&
-    rootsWithPendingDiscreteUpdates.has(root)
-  ) {
+  if (!hasDiscreteLanes(remainingLanes) && rootsWithPendingDiscreteUpdates.has(root)) {
     rootsWithPendingDiscreteUpdates.delete(root);
   }
 }
@@ -641,7 +584,8 @@ if (rootDoesHavePassiveEffects) {
   rootWithPendingPassiveEffects = root;
   pendingPassiveEffectsLanes = lanes;
   pendingPassiveEffectsRenderPriority = renderPriorityLevel;
-} else {}
+} else {
+}
 
 // 性能优化相关
 if (remainingLanes !== NoLanes) {
@@ -662,13 +606,12 @@ if (enableSchedulerTracing) {
 // ...检测无限循环的同步任务
 if (remainingLanes === SyncLane) {
   // ...
-} 
+}
 
 // 在离开 commitRoot 函数前调用，触发一次新的调度，确保任何附加的任务被调度
 ensureRootIsScheduled(root, now());
 
 // ...处理未捕获错误及老版本遗留的边界问题
-
 
 // 执行同步任务，这样同步任务不需要等到下次事件循环再执行
 // 比如在 componentDidMount 中执行 setState 创建的更新会在这里被同步执行
@@ -684,15 +627,17 @@ return null;
 
 1. useEffect 相关的处理。
 
-    我们会在讲解 layout 阶段时讲解。
+   我们会在讲解 layout 阶段时讲解。
+
 2. 性能追踪相关。
 
-    源码里有很多和 interaction 相关的变量。他们都和追踪 React 渲染时间、性能相关，在 [Profiler API](https://zh-hans.reactjs.org/docs/profiler.html) 和 [DevTools](https://github.com/facebook/react-devtools/pull/1069) 中使用。
+   源码里有很多和 interaction 相关的变量。他们都和追踪 React 渲染时间、性能相关，在 [Profiler API](https://zh-hans.reactjs.org/docs/profiler.html) 和 [DevTools](https://github.com/facebook/react-devtools/pull/1069) 中使用。
 
-    你可以在这里看到 [interaction](https://gist.github.com/bvaughn/8de925562903afd2e7a12554adcdda16#overview) 的定义
+   你可以在这里看到 [interaction](https://gist.github.com/bvaughn/8de925562903afd2e7a12554adcdda16#overview) 的定义
+
 3. 在 commit 阶段会触发一些生命周期钩子（如 componentDidXXX）和 hook（如 useLayoutEffect、useEffect）。
 
-    在这些回调方法中可能触发新的更新，新的更新会开启新的 render-commit 流程。
+   在这些回调方法中可能触发新的更新，新的更新会开启新的 render-commit 流程。
 
 ## before mutation 阶段
 
@@ -784,11 +729,11 @@ commitBeforeMutationEffectOnFiber 是 commitBeforeMutationLifeCycles 的别名�
 
 你可以在[这里](https://github.com/facebook/react/blob/1fb18e22ae66fdb1dc127347e169e73948778e5a/packages/react-reconciler/src/ReactFiberCommitWork.old.js#L222)看到这段逻辑
 
-从 Reactv16 开始，componentWillXXX 钩子前增加了 UNSAFE_ 前缀。
+从 Reactv16 开始，componentWillXXX 钩子前增加了 UNSAFE\_ 前缀。
 
 究其原因，是因为 Stack Reconciler 重构为 Fiber Reconciler 后，render 阶段的任务可能中断/重新开始，对应的组件在 render 阶段的生命周期钩子（即 componentWillXXX）可能触发多次。
 
-这种行为和 Reactv15 不一致，所以标记为 UNSAFE_。
+这种行为和 Reactv15 不一致，所以标记为 UNSAFE\_。
 
 更详细的解释参照[这里](https://juejin.im/post/6847902224287285255#comment)
 
@@ -905,7 +850,6 @@ do {
 function commitMutationEffects(root: FiberRoot, renderPriorityLevel) {
   // 遍历 effectList
   while (nextEffect !== null) {
-
     const effectTag = nextEffect.effectTag;
 
     // 根据 ContentReset effectTag 重置文字节点
@@ -922,8 +866,7 @@ function commitMutationEffects(root: FiberRoot, renderPriorityLevel) {
     }
 
     // 根据 effectTag 分别处理
-    const primaryEffectTag =
-      effectTag & (Placement | Update | Deletion | Hydrating);
+    const primaryEffectTag = effectTag & (Placement | Update | Deletion | Hydrating);
     switch (primaryEffectTag) {
       // 插入DOM
       case Placement: {
@@ -992,26 +935,28 @@ commitMutationEffects 会遍历 effectList，对每个 Fiber 节点执行如下�
 
 1. 获取父级 DOM 节点。其中 finishedWork 为传入的 Fiber 节点。
 
-    ```js
-    const parentFiber = getHostParentFiber(finishedWork);
-    // 父级 DOM 节点
-    const parentStateNode = parentFiber.stateNode;
-    ```
+   ```js
+   const parentFiber = getHostParentFiber(finishedWork);
+   // 父级 DOM 节点
+   const parentStateNode = parentFiber.stateNode;
+   ```
+
 2. 获取 Fiber 节点的 DOM 兄弟节点
 
-    ```js
-    const before = getHostSibling(finishedWork);
-    ```
+   ```js
+   const before = getHostSibling(finishedWork);
+   ```
+
 3. 根据 DOM 兄弟节点是否存在决定调用 parentNode.insertBefore 或 parentNode.appendChild 执行 DOM 插入操作。
 
-    ```js
-    // parentStateNode 是否是 rootFiber
-    if (isContainer) {
-      insertOrAppendPlacementNodeIntoContainer(finishedWork, before, parent);
-    } else {
-      insertOrAppendPlacementNode(finishedWork, before, parent);
-    }
-    ```
+   ```js
+   // parentStateNode 是否是 rootFiber
+   if (isContainer) {
+     insertOrAppendPlacementNodeIntoContainer(finishedWork, before, parent);
+   } else {
+     insertOrAppendPlacementNode(finishedWork, before, parent);
+   }
+   ```
 
 值得注意的是，getHostSibling（获取兄弟 DOM 节点）的执行很耗时，当在同一个父 Fiber 节点下依次执行多个插入操作，getHostSibling 算法的复杂度为指数级。
 
@@ -1035,7 +980,7 @@ function App() {
 ReactDOM.render(<App/>, document.getElementById('root'));
 ```
 
-对应的 Fiber 树和 DOM树 结构为：
+对应的 Fiber 树和 DOM 树 结构为：
 
 ```
 // Fiber树
@@ -1053,20 +998,20 @@ function App() {
   return (
     <div>
       <p></p>
-      <Item/>
+      <Item />
     </div>
-  )
+  );
 }
 ```
 
-对应的Fiber树和DOM树结构为：
+对应的 Fiber 树和 DOM 树结构为：
 
 ```
 // Fiber树
           child      child      child
-rootFiber -----> App -----> div -----> p 
+rootFiber -----> App -----> div -----> p
                                        | sibling       child
-                                       | -------> Item -----> li 
+                                       | -------> Item -----> li
 // DOM树
 #root ---> div ---> p
              |
@@ -1103,8 +1048,8 @@ useLayoutEffect(() => {
 
   return () => {
     // ...这就是销毁函数
-  }
-})
+  };
+});
 ```
 
 你不需要很了解 useLayoutEffect，我们会在下一节详细介绍。你只需要知道在 mutation 阶段会执行 useLayoutEffect 的销毁函数。
@@ -1125,14 +1070,14 @@ for (let i = 0; i < updatePayload.length; i += 2) {
   // 处理 style
   if (propKey === STYLE) {
     setValueForStyles(domElement, propValue);
-  // 处理 DANGEROUSLY_SET_INNER_HTML
+    // 处理 DANGEROUSLY_SET_INNER_HTML
   } else if (propKey === DANGEROUSLY_SET_INNER_HTML) {
     setInnerHTML(domElement, propValue);
-  // 处理 children
+    // 处理 children
   } else if (propKey === CHILDREN) {
     setTextContent(domElement, propValue);
   } else {
-  // 处理剩余 props
+    // 处理剩余 props
     setValueForProperty(domElement, propKey, propValue, isCustomComponentTag);
   }
 }
@@ -1174,7 +1119,7 @@ do {
   try {
     commitLayoutEffects(root, lanes);
   } catch (error) {
-    invariant(nextEffect !== null, "Should be working on an effect.");
+    invariant(nextEffect !== null, 'Should be working on an effect.');
     captureCommitPhaseError(nextEffect, error);
     nextEffect = nextEffect.nextEffect;
   }
@@ -1223,33 +1168,34 @@ commitLayoutEffectOnFiber 方法会根据 fiber.tag 对不同类型的节点分�
 
 - 对于 ClassComponent，他会通过 `current === null` 区分是 mount 还是 update，调用 componentDidMount 或 componentDidUpdate。
 
-    触发状态更新的 this.setState 如果赋值了第二个参数回调函数，也会在此时调用。
+  触发状态更新的 this.setState 如果赋值了第二个参数回调函数，也会在此时调用。
 
-    ```js
-    this.setState({ xxx: 1 }, () => {
-      console.log("i am update~");
-    });
-    ```
+  ```js
+  this.setState({ xxx: 1 }, () => {
+    console.log('i am update~');
+  });
+  ```
+
 - 对于 FunctionComponent 及相关类型，他会调用 useLayoutEffect hook 的回调函数，调度 useEffect 的销毁与回调函数
 
-    相关类型指特殊处理后的 FunctionComponent，比如 ForwardRef、React.memo 包裹的 FunctionComponent
+  相关类型指特殊处理后的 FunctionComponent，比如 ForwardRef、React.memo 包裹的 FunctionComponent
 
-    ```js
-    switch (finishedWork.tag) {
-      // 以下都是 FunctionComponent 及相关类型
-      case FunctionComponent:
-      case ForwardRef:
-      case SimpleMemoComponent:
-      case Block: {
-        // 执行 useLayoutEffect 的回调函数
-        commitHookEffectListMount(HookLayout | HookHasEffect, finishedWork);
-        // 调度 useEffect 的销毁函数与回调函数
-        schedulePassiveEffects(finishedWork);
-        return;
-    }
-    ```
-  
-    > 你可以从[这里](https://github.com/facebook/react/blob/1fb18e22ae66fdb1dc127347e169e73948778e5a/packages/react-reconciler/src/ReactFiberCommitWork.old.js#L465-L491)看到这段代码
+  ```js
+  switch (finishedWork.tag) {
+    // 以下都是 FunctionComponent 及相关类型
+    case FunctionComponent:
+    case ForwardRef:
+    case SimpleMemoComponent:
+    case Block: {
+      // 执行 useLayoutEffect 的回调函数
+      commitHookEffectListMount(HookLayout | HookHasEffect, finishedWork);
+      // 调度 useEffect 的销毁函数与回调函数
+      schedulePassiveEffects(finishedWork);
+      return;
+  }
+  ```
+
+  > 你可以从[这里](https://github.com/facebook/react/blob/1fb18e22ae66fdb1dc127347e169e73948778e5a/packages/react-reconciler/src/ReactFiberCommitWork.old.js#L465-L491)看到这段代码
 
 在上一节介绍过，mutation 阶段会执行 useLayoutEffect hook 的销毁函数。
 
@@ -1261,11 +1207,11 @@ commitLayoutEffectOnFiber 方法会根据 fiber.tag 对不同类型的节点分�
 
 - 对于 HostRoot，即 rootFiber，如果赋值了第三个参数回调函数，也会在此时调用。
 
-    ```js
-    ReactDOM.render(<App />, document.querySelector("#root"), function() {
-      console.log("i am mount~");
-    });
-    ```
+  ```js
+  ReactDOM.render(<App />, document.querySelector('#root'), function() {
+    console.log('i am mount~');
+  });
+  ```
 
 ### commitAttachRef
 
@@ -1289,7 +1235,7 @@ function commitAttachRef(finishedWork: Fiber) {
         instanceToUse = instance;
     }
 
-    if (typeof ref === "function") {
+    if (typeof ref === 'function') {
       // 如果 ref 是函数形式，调用回调函数
       ref(instanceToUse);
     } else {

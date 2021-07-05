@@ -14,17 +14,17 @@ export default function Search({ data }) {
         title={`搜索`}
         description={'搜索'}
         noIndex={false}
-        tags=""
+        tags=''
       />
-      <section className="blog container about search">
-        <div className="medium-8 medium-offset-2 large-10 large-offset-1">
-          <header className="header">
-            <div className="row text-center">
+      <section className='blog container about search'>
+        <div className='medium-8 medium-offset-2 large-10 large-offset-1'>
+          <header className='header'>
+            <div className='row text-center'>
               <h3>文章搜索</h3>
             </div>
           </header>
           <Separator />
-          <main role="main">
+          <main role='main'>
             <SearchComponent algolia={data.site.siteMetadata.algolia} />
           </main>
         </div>
@@ -34,7 +34,7 @@ export default function Search({ data }) {
 }
 
 Search.propTypes = {
-  data: PropTypes.object,
+  data: PropTypes.object
 };
 
 export const searchPageQuery = graphql`

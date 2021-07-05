@@ -81,8 +81,7 @@ NSR 将 SSR 渲染的过程分发到了各个用户的端中，在减少了后�
 
 # 客户端 PWA
 
-在实际测试以及和浏览器团队的同学了解和沟通中，service-worker 在 webview 实现性能并没有想象中好。在某项目下掉 sw 后，整体大盘访问速度整体反而提升上升了大概 300ms。
-这对 hybrid 应用而言，就提出了一项新的思路和挑战，能否在客户端上实现一套基本的 service-worker api？从而达到和 web 标准相兼容。这里也只是一种思路和想法，有大量待探索的问题点，比如 webview sw 具体的性能现状，未来的支持情况呢，自行实现的成本，及最终带来的效果和价值等。
+在实际测试以及和浏览器团队的同学了解和沟通中，service-worker 在 webview 实现性能并没有想象中好。在某项目下掉 sw 后，整体大盘访问速度整体反而提升上升了大概 300ms。这对 hybrid 应用而言，就提出了一项新的思路和挑战，能否在客户端上实现一套基本的 service-worker api？从而达到和 web 标准相兼容。这里也只是一种思路和想法，有大量待探索的问题点，比如 webview sw 具体的性能现状，未来的支持情况呢，自行实现的成本，及最终带来的效果和价值等。
 
 # 小程序化
 
@@ -177,22 +176,22 @@ export default interface IRestart{
 
 ```js
 class Page {
-    next: PageFlow|null;
-    cache: {
-        start: (() => Promise<any>)[];
-        end: (() => Promise<any>)[];
-    };
-    waitStart(callback: () => Promise<any>) {
-        this.cache.start.push(callback);
-    };
-    waitEnd(callback: () => Promise<any>) {
-        this.cache.end.push(callback);
-    };
-    setNext(flow: PageFlow) {
-        this.next = flow;
-        return flow;
-    }
-    // ...
+  next: PageFlow | null;
+  cache: {
+    start: (() => Promise<any>)[],
+    end: (() => Promise<any>)[]
+  };
+  waitStart(callback: () => Promise<any>) {
+    this.cache.start.push(callback);
+  }
+  waitEnd(callback: () => Promise<any>) {
+    this.cache.end.push(callback);
+  }
+  setNext(flow: PageFlow) {
+    this.next = flow;
+    return flow;
+  }
+  // ...
 }
 ```
 
@@ -205,20 +204,20 @@ class Page {
 ```js
 // 模块加载器
 class ServiceLoader {
-    source: CONFIG;
-    loaded: boolean;    // 是否已加载
-    initialized: boolean;   // 是否已初始
-    module: any;
-    constructor(source: CONFIG) {
-        this.loaded = false;
-        this.initialized = false;
-        // ...
-    }
-    async load(params?: any): Promise<any> {
-        // ..load module
-        return this.module;
-    }
-    //...
+  source: CONFIG;
+  loaded: boolean; // 是否已加载
+  initialized: boolean; // 是否已初始
+  module: any;
+  constructor(source: CONFIG) {
+    this.loaded = false;
+    this.initialized = false;
+    // ...
+  }
+  async load(params?: any): Promise<any> {
+    // ..load module
+    return this.module;
+  }
+  //...
 }
 ```
 
@@ -283,4 +282,3 @@ initA () {
 # 待优化的问题
 
 容器化方案用各种预创建 webview 的方式换取了打开速度，app 内存占用上会比未使用容器化方案要大非常多，webview 的释放时机、预加载数据的策略优化，以及从客户端到 web 端，如何更好的做内存管理是接下来需要进一步优化的点。
-

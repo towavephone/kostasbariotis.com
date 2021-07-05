@@ -20,12 +20,12 @@ function Promise(fn) {
       this.data = value;
       this.cbs.forEach((cb) => cb(value));
     });
-  }
+  };
 
   fn(resolve);
 }
 
-Promise.prototype.then = function (onResolved) {
+Promise.prototype.then = function(onResolved) {
   return new Promise((resolve) => {
     this.cbs.push(() => {
       const res = onResolved(this.data);
@@ -47,15 +47,15 @@ new Promise((resolve) => {
     resolve(1);
   }, 500);
 })
-.then((res) => {
-  console.log(res);
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      resolve(2);
-    }, 500);
-  });
-})
-.then(console.log);
+  .then((res) => {
+    console.log(res);
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        resolve(2);
+      }, 500);
+    });
+  })
+  .then(console.log);
 ```
 
 本文将围绕这个最核心的案例来讲，这段代码的表现如下：
@@ -83,9 +83,9 @@ function Promise(fn) {
       this.data = value;
       this.cbs.forEach((cb) => cb(value));
     });
-  }
+  };
 
-  // 执行用户传入的函数 
+  // 执行用户传入的函数
   // 并且把 resolve 方法交给用户执行
   fn(resolve);
 }
@@ -112,7 +112,7 @@ new Promise(fn);
 这里是最重要的 then 实现，链式调用全靠它：
 
 ```js
-Promise.prototype.then = function (onResolved) {
+Promise.prototype.then = function(onResolved) {
   // 这里叫做 promise2
   return new Promise((resolve) => {
     this.cbs.push(() => {
@@ -153,6 +153,7 @@ promise1.then((res) => {
 ```
 
 注意这里的命名：
+
 1. 我们把 new Promise 返回的实例叫做 promise1
 2. 在 Promise.prototype.then 的实现中，我们构造了一个新的 promise 返回，叫它 promise2
 3. 在用户调用 then 方法的时候，用户手动构造了一个 promise 并且返回，用来做异步的操作，叫它 user promise
@@ -162,7 +163,7 @@ promise1.then((res) => {
 而 promise2 的传入的 fn 函数执行了一个 this.cbs.push()，其实是往 promise1 的 cbs 数组中 push 了一个函数，等待后续执行。
 
 ```js
-Promise.prototype.then = function (onResolved) {
+Promise.prototype.then = function(onResolved) {
   // 这里叫做promise2
   return new Promise((resolve) => {
     // 这里的this其实是promise1
@@ -178,26 +179,26 @@ Promise.prototype.then = function (onResolved) {
 return new Promise((resolve) => {
   this.cbs.push(() => {
     // onResolved 就对应 then 传入的函数
-    const res = onResolved(this.data)
+    const res = onResolved(this.data);
     // 例子中的情况 用户自己返回了一个user promise
     if (res instanceof Promise) {
       // user promise 的情况
       // 用户会自己决定何时 resolve promise2
       // 只有 promise2 被 resolve 以后
       // then 下面的链式调用函数才会继续执行
-      res.then(resolve)
+      res.then(resolve);
     } else {
-      resolve(res)
+      resolve(res);
     }
-  })
-})
+  });
+});
 ```
 
 如果用户传入给 then 的 onResolved 方法返回的是个 user promise，那么这个 user promise 里用户会自己去在合适的时机 resolve promise2，那么进而这里的 res.then(resolve) 中的 resolve 就会被执行：
 
 ```js
 if (res instanceof Promise) {
-    res.then(resolve)
+  res.then(resolve);
 }
 ```
 
@@ -210,23 +211,22 @@ new Promise((resolve) => {
     resolve(1);
   }, 500);
 })
-// then1
-.then((res) => {
-  console.log(res);
-  // user promise
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      // resolve2
-      resolve(2);
-    }, 500);
-  });
-})
-// then2
-.then(console.log);
+  // then1
+  .then((res) => {
+    console.log(res);
+    // user promise
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        // resolve2
+        resolve(2);
+      }, 500);
+    });
+  })
+  // then2
+  .then(console.log);
 ```
 
-then1 这一整块其实返回的是 promise2，那么 then2 其实本质上是 promise2.then(console.log)，
-也就是说 then2 注册的回调函数，其实进入了 promise2 的 cbs 回调数组里，又因为我们刚刚知道，resolve2 调用了之后，user promise 会被 resolve，进而触发 promise2 被 resolve，进而 promise2 里的 cbs 数组被依次触发。
+then1 这一整块其实返回的是 promise2，那么 then2 其实本质上是 promise2.then(console.log)，也就是说 then2 注册的回调函数，其实进入了 promise2 的 cbs 回调数组里，又因为我们刚刚知道，resolve2 调用了之后，user promise 会被 resolve，进而触发 promise2 被 resolve，进而 promise2 里的 cbs 数组被依次触发。
 
 这样就实现了用户自己写的 resolve2 执行完毕后，then2 里的逻辑才会继续执行，也就是异步链式调用。
 
@@ -236,16 +236,16 @@ then1 这一整块其实返回的是 promise2，那么 then2 其实本质上是 
 
 1. 只有一个 then 方法，没有 catch，race，all 等方法，甚至没有构造函数
 
-    Promise 标准中仅指定了 Promise 对象的 then 方法的行为，其它一切我们常见的方法/函数都并没有指定，包括 catch，race，all 等常用方法，甚至也没有指定该如何构造出一个 Promise 对象，另外 then 也没有一般实现中（Q, $q等）所支持的第三个参数，一般称 onProgress
+   Promise 标准中仅指定了 Promise 对象的 then 方法的行为，其它一切我们常见的方法/函数都并没有指定，包括 catch，race，all 等常用方法，甚至也没有指定该如何构造出一个 Promise 对象，另外 then 也没有一般实现中（Q, \$q 等）所支持的第三个参数，一般称 onProgress
 
 2. then 方法返回一个新的 Promise
 
-    Promise 的 then 方法返回一个新的 Promise，而不是返回 this，此处在下文会有更多解释
+   Promise 的 then 方法返回一个新的 Promise，而不是返回 this，此处在下文会有更多解释
 
-    ```js
-    promise2 = promise1.then(alert)
-    promise2 != promise1 // true
-    ```
+   ```js
+   promise2 = promise1.then(alert);
+   promise2 != promise1; // true
+   ```
 
 3. 不同 Promise 的实现需要可以相互调用(interoperable)
 4. Promise 的初始状态为 pending，它可以由此状态转换为 fulfilled（本文为了一致把此状态叫做 resolved）或者 rejected，一旦状态确定，就不可以再次转换为其它状态，状态确定的过程称为 settle
@@ -261,20 +261,20 @@ var promise = new Promise(function(resolve, reject) {
     如果操作成功，调用 resolve 并传入 value
     如果操作失败，调用 reject 并传入 reason
   */
-})
+});
 ```
 
 我们先实现构造函数的框架如下：
 
 ```js
 function Promise(executor) {
-  var self = this
-  self.status = 'pending' // Promise 当前的状态
-  self.data = undefined  // Promise 的值
-  self.onResolvedCallback = [] // Promise resolve 时的回调函数集，因为在 Promise 结束之前有可能有多个回调添加到它上面
-  self.onRejectedCallback = [] // Promise reject 时的回调函数集，因为在 Promise 结束之前有可能有多个回调添加到它上面
+  var self = this;
+  self.status = 'pending'; // Promise 当前的状态
+  self.data = undefined; // Promise 的值
+  self.onResolvedCallback = []; // Promise resolve 时的回调函数集，因为在 Promise 结束之前有可能有多个回调添加到它上面
+  self.onRejectedCallback = []; // Promise reject 时的回调函数集，因为在 Promise 结束之前有可能有多个回调添加到它上面
 
-  executor(resolve, reject) // 执行 executor 并传入相应的参数
+  executor(resolve, reject); // 执行 executor 并传入相应的参数
 }
 ```
 
@@ -283,32 +283,31 @@ function Promise(executor) {
 1. 我们给 executor 函数传了两个参数：resolve 和 reject，这两个参数目前还没有定义
 2. executor 有可能会出错（throw），类似下面这样，而如果 executor 出错，Promise 应该被其 throw 出的值 reject：
 
-    ```js
-    new Promise(function(resolve, reject) {
-      throw 2
-    })
-    ```
+   ```js
+   new Promise(function(resolve, reject) {
+     throw 2;
+   });
+   ```
 
 所以我们需要在构造函数里定义 resolve 和 reject 这两个函数：
 
 ```js
 function Promise(executor) {
-  var self = this
-  self.status = 'pending' // Promise 当前的状态
-  self.data = undefined  // Promise 的值
-  self.onResolvedCallback = [] // Promise resolve 时的回调函数集，因为在 Promise 结束之前有可能有多个回调添加到它上面
-  self.onRejectedCallback = [] // Promise reject 时的回调函数集，因为在 Promise 结束之前有可能有多个回调添加到它上面
+  var self = this;
+  self.status = 'pending'; // Promise 当前的状态
+  self.data = undefined; // Promise 的值
+  self.onResolvedCallback = []; // Promise resolve 时的回调函数集，因为在 Promise 结束之前有可能有多个回调添加到它上面
+  self.onRejectedCallback = []; // Promise reject 时的回调函数集，因为在 Promise 结束之前有可能有多个回调添加到它上面
 
-  function resolve(value) {
-  }
+  function resolve(value) {}
 
-  function reject(reason) {
-  }
+  function reject(reason) {}
 
-  try { // 考虑到执行 executor 的过程中有可能出错，所以我们用 try/catch 块给包起来，并且在出错后以 catch 到的值 reject 掉这个 Promise
-    executor(resolve, reject) // 执行executor
-  } catch(e) {
-    reject(e)
+  try {
+    // 考虑到执行 executor 的过程中有可能出错，所以我们用 try/catch 块给包起来，并且在出错后以 catch 到的值 reject 掉这个 Promise
+    executor(resolve, reject); // 执行executor
+  } catch (e) {
+    reject(e);
   }
 }
 ```
@@ -316,15 +315,13 @@ function Promise(executor) {
 有人可能会问，resolve 和 reject 这两个函数能不能不定义在构造函数里呢？考虑到我们在 executor 函数里是以 resolve(value)，reject(reason) 的形式调用的这两个函数，而不是以 resolve.call(promise, value)，reject.call(promise, reason) 这种形式调用的，所以这两个函数在调用时的内部也必然有一个隐含的 this，也就是说，要么这两个函数是经过 bind 后传给了 executor，要么它们定义在构造函数的内部，使用 self 来访问所属的 Promise 对象。所以如果我们想把这两个函数定义在构造函数的外部，确实是可以这么写的：
 
 ```js
-function resolve() {
-}
-function reject() {
-}
+function resolve() {}
+function reject() {}
 function Promise(executor) {
   try {
-    executor(resolve.bind(this), reject.bind(this))
-  } catch(e) {
-    reject.bind(this)(e)
+    executor(resolve.bind(this), reject.bind(this));
+  } catch (e) {
+    reject.bind(this)(e);
   }
 }
 ```
@@ -341,20 +338,20 @@ function Promise(executor) {
 
   function resolve(value) {
     if (self.status === 'pending') {
-      self.status = 'resolved'
-      self.data = value
-      for(var i = 0; i < self.onResolvedCallback.length; i++) {
-        self.onResolvedCallback[i](value)
+      self.status = 'resolved';
+      self.data = value;
+      for (var i = 0; i < self.onResolvedCallback.length; i++) {
+        self.onResolvedCallback[i](value);
       }
     }
   }
 
   function reject(reason) {
     if (self.status === 'pending') {
-      self.status = 'rejected'
-      self.data = reason
-      for(var i = 0; i < self.onRejectedCallback.length; i++) {
-        self.onRejectedCallback[i](reason)
+      self.status = 'rejected';
+      self.data = reason;
+      for (var i = 0; i < self.onRejectedCallback.length; i++) {
+        self.onRejectedCallback[i](reason);
       }
     }
   }

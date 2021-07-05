@@ -1,36 +1,36 @@
-@import "variables";
+@import 'variables';
 
 .footer-social {
-    padding: $vpadding * 2 0;
-    font-size: 0.9em;
-    ul.social {
-        font-size: 0.5em;
-        text-align: center;
-        padding: 0;
-        a {
-            text-decoration: none;
-        }
-        li {
-            display: inline-block;
-            width: 2em;
-            height: 2em;
-            font-size: 3em;
-            text-align: center;
-            line-height: 2em;
-            -webkit-border-radius: 50%;
-            border-radius: 50%;
-            margin: 0.5em;
-            transition: all .1s ease;
-            &:hover,
-            &:focus {
-                -webkit-transform: rotate(360deg);
-                -moz-transform: rotate(360deg);
-                -ms-transform: rotate(360deg);
-                transform: rotate(360deg);
-                a {
-                    text-decoration: none;
-                }
-            }
-        }
+  padding: $vpadding * 2 0;
+  font-size: 0.9em;
+  ul.social {
+    font-size: 0.5em;
+    text-align: center;
+    padding: 0;
+    a {
+      text-decoration: none;
     }
+    li {
+      display: inline-block;
+      width: 2em;
+      height: 2em;
+      font-size: 3em;
+      text-align: center;
+      line-height: 2em;
+      -webkit-border-radius: 50%;
+      border-radius: 50%;
+      margin: 0.5em;
+      transition: all 0.1s ease;
+      &:hover,
+      &:focus {
+        -webkit-transform: rotate(360deg);
+        -moz-transform: rotate(360deg);
+        -ms-transform: rotate(360deg);
+        transform: rotate(360deg);
+        a {
+          text-decoration: none;
+        }
+      }
+    }
+  }
 }

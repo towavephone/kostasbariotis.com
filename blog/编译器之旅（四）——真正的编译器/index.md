@@ -2,7 +2,7 @@
 title: 编译器之旅（四）——真正的编译器
 date: 2020-3-3 10:44:03
 categories:
-- 计算机基础
+  - 计算机基础
 tags: 编译原理, 代码生成
 path: /tour-of-compiler-real-compiler/
 ---
@@ -117,7 +117,7 @@ if (n->right) rightreg = genAST(n->right);
 
 ## 调用 genAST()
 
-genAST() 只会计算赋予它的表达式的值，我们需要打印出最终的计算结果。我们还需要用一些前导代码（preamble）和一些尾随代码（postamble）包装生成的汇编代码，这是通过以下其他功能完成的gen.c：
+genAST() 只会计算赋予它的表达式的值，我们需要打印出最终的计算结果。我们还需要用一些前导代码（preamble）和一些尾随代码（postamble）包装生成的汇编代码，这是通过以下其他功能完成的 gen.c：
 
 ```c
 void generatecode(struct ASTnode *n) {
@@ -132,7 +132,7 @@ void generatecode(struct ASTnode *n) {
 
 ## x86-64 代码生成器
 
-那就是通用代码生成器，现在我们需要看看一些实际的汇编代码的生成。目前我的目标是x86-64 CPU，因为它仍然是最常见的 Linux 平台之一，因此打开 cg.c 并开始浏览。
+那就是通用代码生成器，现在我们需要看看一些实际的汇编代码的生成。目前我的目标是 x86-64 CPU，因为它仍然是最常见的 Linux 平台之一，因此打开 cg.c 并开始浏览。
 
 ### 分配寄存器
 
@@ -240,7 +240,7 @@ int cgdiv(int r1, int r2) {
 
 我不会提供代码 cgpreamble()，但其中也包含开始代码 main()，以便我们可以汇编输出文件以获得完整的程序代码（cgpostamble() 此处也未提供）只是调用 exit(0) 以结束程序。
 
-但是，这里是cgprintint()：
+但是，这里是 cgprintint()：
 
 ```c
 void cgprintint(int r) {
@@ -263,13 +263,13 @@ Linux x86-64 期望函数的第一个参数在 %rdi 寄存器中，因此我们�
 ## 输出
 
 ```
-cc -o comp1 -g cg.c expr.c gen.c interp.c main.c scan.c tree.c 
+cc -o comp1 -g cg.c expr.c gen.c interp.c main.c scan.c tree.c
 
-$ make test 
-./comp1 input01 
-15 
-cc -o out out.s 
-./out 
+$ make test
+./comp1 input01
+15
+cc -o out out.s
+./out
 15
 ```
 
@@ -327,6 +327,6 @@ main:
 
 从解释器更改为通用代码生成器是微不足道的，但是随后我们不得不编写一些代码以生成实际的程序集输出，为此我们必须考虑如何分配寄存器：目前我们有一个幼稚的解决方案。我们还必须处理一些 x86-64 的怪异 idivq 指令。
 
-我还没有谈到的是：为什么要为表达式生成 AST 呢？当然，cgadd() 当我们在Pratt解析器中命中“+”令牌时，我们可能会调用，其他运算符也是如此。我要让您考虑一下，但是我将在一到两步之后再讲一遍。
+我还没有谈到的是：为什么要为表达式生成 AST 呢？当然，cgadd() 当我们在 Pratt 解析器中命中“+”令牌时，我们可能会调用，其他运算符也是如此。我要让您考虑一下，但是我将在一到两步之后再讲一遍。
 
 在编译器编写过程的下一部分中，我们将在语言中添加一些语句，以使其开始类似于适当的计算机语言。

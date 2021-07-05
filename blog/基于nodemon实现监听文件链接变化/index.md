@@ -18,12 +18,12 @@ tags: 后端, nodejs, nodemon, 预研
 
 # 技术选型
 
-|选型|优点|缺点|
-|:--:|:--:|:--:|
-|直接在 node_modules 目录下开发|主项目已实现对 node_modules 下扩展项目的监听|每次 npm install 都要重新新建项目|
-|gulp 文件同步|有第三方插件|需要多运行一个文件同步脚本|
-|npm link|不需要多运行一个脚本|需要每次手动重启主项目来让后端代码生效|
-|nodemon + npm link|监听到扩展项目变化自动重启|每次 npm install 都要重新 npm link|
+| 选型 | 优点 | 缺点 |
+| :-: | :-: | :-: |
+| 直接在 node_modules 目录下开发 | 主项目已实现对 node_modules 下扩展项目的监听 | 每次 npm install 都要重新新建项目 |
+| gulp 文件同步 | 有第三方插件 | 需要多运行一个文件同步脚本 |
+| npm link | 不需要多运行一个脚本 | 需要每次手动重启主项目来让后端代码生效 |
+| nodemon + npm link | 监听到扩展项目变化自动重启 | 每次 npm install 都要重新 npm link |
 
 # 解决过程
 
@@ -37,45 +37,43 @@ tags: 后端, nodejs, nodemon, 预研
 module.exports = {
   //同步文件更改到指定目录
   syncTo: '../主项目/node_modules/扩展项目/extend'
-}
+};
 ```
 
 ./gulpfile.js
 
 ```js
-const gulp = require('gulp')
-const fileSync = require('gulp-file-sync')
-const {syncTo} = require('./config')
-const mkdirp = require('mkdirp')
-const fs = require('fs')
-const watch = require('gulp-watch')
-const run = require('run-sequence')
+const gulp = require('gulp');
+const fileSync = require('gulp-file-sync');
+const { syncTo } = require('./config');
+const mkdirp = require('mkdirp');
+const fs = require('fs');
+const watch = require('gulp-watch');
+const run = require('run-sequence');
 
 gulp.task('sync', function() {
   try {
-    let state = fs.statSync(syncTo)
+    let state = fs.statSync(syncTo);
     if (!state.isDirectory()) {
-      mkdirp(syncTo)
+      mkdirp(syncTo);
     }
   } catch (e) {
-    console.log(e)
-    mkdirp(syncTo)
+    console.log(e);
+    mkdirp(syncTo);
   }
 
-  fileSync('extend', syncTo)
-})
+  fileSync('extend', syncTo);
+});
 
 gulp.task('watch-extend', function() {
-  watch([
-    './extend/**',
-  ], function() {
-    run('sync')
-  })
-})
+  watch(['./extend/**'], function() {
+    run('sync');
+  });
+});
 
-gulp.task('watch', ['watch-extend'])
+gulp.task('watch', ['watch-extend']);
 
-gulp.task('default', ['sync', 'watch'])
+gulp.task('default', ['sync', 'watch']);
 ```
 
 ## nodemon + npm link
@@ -94,21 +92,21 @@ package.json
 ```json
 {
   "scripts": {
-    "dev:server": "node bin/nodemon.js --config nodemon.json ./bin/www",
-  },
+    "dev:server": "node bin/nodemon.js --config nodemon.json ./bin/www"
+  }
 }
 ```
 
 bin\nodemon.js
 
 ```js
-const nodemon = require('nodemon')
-const nodemonCli = require('nodemon/lib/cli')
-const options = nodemonCli.parse(process.argv)
-const glob = require('glob')
-const fs = require('fs')
-const lodash = require('lodash')
-const path = require('path')
+const nodemon = require('nodemon');
+const nodemonCli = require('nodemon/lib/cli');
+const options = nodemonCli.parse(process.argv);
+const glob = require('glob');
+const fs = require('fs');
+const lodash = require('lodash');
+const path = require('path');
 
 // "watchSymbolLink": [
 //   {
@@ -120,46 +118,46 @@ const path = require('path')
 // "watchSymbolLink": [
 //    "node_modules/sugo-analytics-extend-*",
 // ],
-const { configFile, ...optionsRest } = options
+const { configFile, ...optionsRest } = options;
 
-const nodemonJsonPath = path.join(process.cwd(), configFile)
+const nodemonJsonPath = path.join(process.cwd(), configFile);
 
-const nodemonJson = require(nodemonJsonPath)
+const nodemonJson = require(nodemonJsonPath);
 
-const { watch, watchSymbolLink = [], ...nodemonJsonRest } = nodemonJson
+const { watch, watchSymbolLink = [], ...nodemonJsonRest } = nodemonJson;
 
-const dirs = []
+const dirs = [];
 
-watchSymbolLink.forEach(item => {
-  const { url, path: linkPath = '' } = lodash.isObject(item) ? item : { url: item }
+watchSymbolLink.forEach((item) => {
+  const { url, path: linkPath = '' } = lodash.isObject(item) ? item : { url: item };
   const paths = glob
     .sync(url)
-    .filter(a => fs.lstatSync(a).isSymbolicLink())
-    .map(a => path.join(fs.realpathSync(a), linkPath))
-  dirs.push(...paths)
-})
+    .filter((a) => fs.lstatSync(a).isSymbolicLink())
+    .map((a) => path.join(fs.realpathSync(a), linkPath));
+  dirs.push(...paths);
+});
 
 const opts = {
   ...optionsRest,
   ...nodemonJsonRest,
   watch: [...watch, ...dirs]
-}
+};
 
 // console.log(opts)
 
-nodemon(opts)
+nodemon(opts);
 
-nodemon.on('quit', function () {
-  process.exit()
-})
+nodemon.on('quit', function() {
+  process.exit();
+});
 
-const packageJsonPath = path.join(process.cwd(), 'package.json')
+const packageJsonPath = path.join(process.cwd(), 'package.json');
 
 // checks for available update and returns an instance
-const pkg = JSON.parse(fs.readFileSync(packageJsonPath))
+const pkg = JSON.parse(fs.readFileSync(packageJsonPath));
 
 if (pkg.version.indexOf('0.0.0') !== 0 && options.noUpdateNotifier !== true) {
-  require('update-notifier')({ pkg }).notify()
+  require('update-notifier')({ pkg }).notify();
 }
 ```
 
@@ -176,7 +174,13 @@ nodemon.json
   "events": {
     "restart": "osascript -e 'display notification \"App restarted due to:\n'$FILENAME'\" with title \"nodemon\"'"
   },
-  "watch": ["src/server", "src/common", "config.default.js", "node_modules/sugo-analytics-extend-*/extend/app/**/*", "config.js"],
+  "watch": [
+    "src/server",
+    "src/common",
+    "config.default.js",
+    "node_modules/sugo-analytics-extend-*/extend/app/**/*",
+    "config.js"
+  ],
   "watchSymbolLink": [
     {
       "url": "node_modules/sugo-analytics-extend-*",

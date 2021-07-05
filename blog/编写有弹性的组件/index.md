@@ -31,7 +31,7 @@ class Button extends React.Component {
   };
   render() {
     const { color } = this.state; // 🔴 `color` is stale!
-    return <button className={"Button-" + color}>{this.props.children}</button>;
+    return <button className={'Button-' + color}>{this.props.children}</button>;
   }
 }
 ```
@@ -44,7 +44,7 @@ class Button extends React.Component {
 function Button({ color, children }) {
   return (
     // ✅ `color` is always fresh!
-    <button className={"Button-" + color}>{children}</button>
+    <button className={'Button-' + color}>{children}</button>
   );
 }
 ```
@@ -81,7 +81,7 @@ class SearchResults extends React.Component {
     // Do the fetching...
   }
   getFetchUrl() {
-    return "http://myapi/results?query" + this.props.query; // ✅ Updates are handled
+    return 'http://myapi/results?query' + this.props.query; // ✅ Updates are handled
   }
   render() {
     // ...
@@ -103,7 +103,7 @@ function SearchResults({ query }) {
   const [currentPage, setCurrentPage] = useState(0);
 
   const getFetchUrl = useCallback(() => {
-    return "http://myapi/results?query=" + query + "&page=" + currentPage;
+    return 'http://myapi/results?query=' + query + '&page=' + currentPage;
   }, [currentPage, query]);
 
   useEffect(() => {
@@ -133,10 +133,7 @@ class Button extends React.Component {
     const onClick = this.props.onClick; // 🔴 Doesn't reflect updates
     const textColor = slowlyCalculateTextColor(this.props.color);
     return (
-      <button
-        onClick={onClick}
-        className={"Button-" + this.props.color + " Button-text-" + textColor}
-      >
+      <button onClick={onClick} className={'Button-' + this.props.color + ' Button-text-' + textColor}>
         {this.props.children}
       </button>
     );
@@ -156,7 +153,7 @@ class MyForm extends React.Component {
     return (
       <>
         <h1>Hello!</h1>
-        <Button color="green" onClick={this.handleClick}>
+        <Button color='green' onClick={this.handleClick}>
           Press me
         </Button>
       </>
@@ -181,7 +178,7 @@ class MyForm extends React.Component {
       <>
         <h1>Hello!</h1>
         <Button
-          color="green"
+          color='green'
           onClick={
             // 🔴 Button ignores updates to the onClick prop
             this.state.isEnabled ? this.handleClick : null
@@ -198,9 +195,9 @@ class MyForm extends React.Component {
 `onClick` 随机在 `null` 与 `this.handleClick` 之间切换。
 
 ```jsx
-drafts.map(draft => (
+drafts.map((draft) => (
   <Button
-    color="blue"
+    color='blue'
     key={draft.id}
     onClick={
       // 🔴 Button ignores updates to the onClick prop
@@ -230,13 +227,13 @@ drafts.map(draft => (
 // 🤔 Should prevent unnecessary re-renders... right?
 class TextInput extends React.PureComponent {
   state = {
-    value: ""
+    value: ''
   };
   // 🔴 Resets local state on every parent render
   componentWillReceiveProps(nextProps) {
     this.setState({ value: nextProps.value });
   }
-  handleChange = e => {
+  handleChange = (e) => {
     this.setState({ value: e.target.value });
   };
   render() {
@@ -271,7 +268,7 @@ ReactDOM.render(
     <MyApp />
     <MyApp />
   </>,
-  document.getElementById("root")
+  document.getElementById('root')
 );
 ```
 
@@ -442,7 +439,7 @@ const Name = memo(function Name(props) {
 
 ```jsx
 function Form() {
-  const [text, updateText] = useState("");
+  const [text, updateText] = useState('');
 
   const handleSubmit = useCallback(() => {
     const currentText = text;
@@ -451,7 +448,7 @@ function Form() {
 
   return (
     <>
-      <input value={text} onChange={e => updateText(e.target.value)} />
+      <input value={text} onChange={(e) => updateText(e.target.value)} />
       <ExpensiveTree onSubmit={handleSubmit} />
     </>
   );
@@ -462,7 +459,7 @@ function Form() {
 
 ```jsx
 function Form() {
-  const [text, updateText] = useState("");
+  const [text, updateText] = useState('');
   const textRef = useRef();
 
   useEffect(() => {
@@ -476,7 +473,7 @@ function Form() {
 
   return (
     <>
-      <input value={text} onChange={e => updateText(e.target.value)} />
+      <input value={text} onChange={(e) => updateText(e.target.value)} />
       <ExpensiveTree onSubmit={handleSubmit} />
     </>
   );
@@ -487,7 +484,7 @@ function Form() {
 
 ```jsx
 function Form() {
-  const [text, updateText] = useState("");
+  const [text, updateText] = useState('');
   // Will be memoized even if `text` changes:
   const handleSubmit = useEventCallback(() => {
     alert(text);
@@ -495,7 +492,7 @@ function Form() {
 
   return (
     <>
-      <input value={text} onChange={e => updateText(e.target.value)} />
+      <input value={text} onChange={(e) => updateText(e.target.value)} />
       <ExpensiveTree onSubmit={handleSubmit} />
     </>
   );
@@ -503,7 +500,7 @@ function Form() {
 
 function useEventCallback(fn, dependencies) {
   const ref = useRef(() => {
-    throw new Error("Cannot call an event handler while rendering.");
+    throw new Error('Cannot call an event handler while rendering.');
   });
 
   useEffect(() => {
@@ -528,11 +525,11 @@ function useEventCallback(fn, dependencies) {
 ```tsx
 const reducer = (state, action) => {
   switch (action.type) {
-    case "increment":
+    case 'increment':
       return { value: state.value + 1 };
-    case "decrement":
+    case 'decrement':
       return { value: state.value - 1 };
-    case "incrementAmount":
+    case 'incrementAmount':
       return { value: state.value + action.amount };
     default:
       throw new Error();
@@ -547,13 +544,13 @@ const [state, dispatch] = useReducer(reducer, { value: 0 });
 比如我们创建一个拥有复数 key 的 `useState`:
 
 ```jsx
-const [state, setState] = useState({ count: 0, name: "nick" });
+const [state, setState] = useState({ count: 0, name: 'nick' });
 
 // 修改 count
-setState(state => ({ ...state, count: 1 }));
+setState((state) => ({ ...state, count: 1 }));
 
 // 修改 name
-setState(state => ({ ...state, name: "jack" }));
+setState((state) => ({ ...state, name: 'jack' }));
 ```
 
 利用 `useReducer` 实现相似的功能：
@@ -563,13 +560,13 @@ function reducer(state, action) {
   return action(state);
 }
 
-const [state, dispatch] = useReducer(reducer, { count: 0, name: "nick" });
+const [state, dispatch] = useReducer(reducer, { count: 0, name: 'nick' });
 
 // 修改 count
-dispatch(state => ({ ...state, count: 1 }));
+dispatch((state) => ({ ...state, count: 1 }));
 
 // 修改 name
-dispatch(state => ({ ...state, name: "jack" }));
+dispatch((state) => ({ ...state, name: 'jack' }));
 ```
 
 因此针对如上情况，我们可能滥用了 `useReducer`，建议直接用 `useState` 代替。
@@ -581,5 +578,3 @@ dispatch(state => ({ ...state, name: "jack" }));
 这个约定对代码质量很重要，而且难以通过 lint 规则或简单肉眼观察加以识别，因此推广起来还是有不小难度。
 
 总的来说，Function Component 带来了更优雅的代码体验，但是对团队协作的要求也更高了。
-
-

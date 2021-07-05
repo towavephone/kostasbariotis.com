@@ -2,7 +2,7 @@
 title: 插件机制、拦截器、中间件
 date: 2021-1-13 11:21:46
 categories:
-- 前端
+  - 前端
 tags: 前端, JS, 高级前端
 path: /plug-interceptor-middleware/
 ---
@@ -22,10 +22,10 @@ axios 的拦截器机制用流程图来表示其实就是这样的：
 ![](res/2021-01-13-11-28-36.png)
 
 ```js
-const axios = config => {
+const axios = (config) => {
   if (config.error) {
     return Promise.reject({
-      error: "error in axios"
+      error: 'error in axios'
     });
   } else {
     return Promise.resolve({
@@ -102,7 +102,7 @@ axios.useResponseInterceptor = (resolved, rejected) => {
 };
 
 // 运行拦截器
-axios.run = config => {
+axios.run = (config) => {
   const chain = [
     {
       resolved: axios,
@@ -111,12 +111,12 @@ axios.run = config => {
   ];
 
   // 把请求拦截器往数组头部推
-  axios.interceptors.request.forEach(interceptor => {
+  axios.interceptors.request.forEach((interceptor) => {
     chain.unshift(interceptor);
   });
 
   // 把响应拦截器往数组尾部推
-  axios.interceptors.response.forEach(interceptor => {
+  axios.interceptors.response.forEach((interceptor) => {
     chain.push(interceptor);
   });
 
@@ -181,22 +181,22 @@ promise 就会把这个链从上而下的执行了。
 以这样的一段测试代码为例：
 
 ```js
-axios.useRequestInterceptor(config => {
+axios.useRequestInterceptor((config) => {
   return {
     ...config,
-    extraParams1: "extraParams1"
+    extraParams1: 'extraParams1'
   };
 });
 
-axios.useRequestInterceptor(config => {
+axios.useRequestInterceptor((config) => {
   return {
     ...config,
-    extraParams2: "extraParams2"
+    extraParams2: 'extraParams2'
   };
 });
 
 axios.useResponseInterceptor(
-  resp => {
+  (resp) => {
     const {
       extraParams1,
       extraParams2,
@@ -204,33 +204,35 @@ axios.useResponseInterceptor(
     } = resp;
     return `${extraParams1} ${extraParams2} ${message}`;
   },
-  error => {
-    console.log("error", error);
+  (error) => {
+    console.log('error', error);
   }
 );
 ```
 
 1. 成功的调用
 
-    在成功的调用下输出 `result1: extraParams1 extraParams2 message1`
-    ```js
-    (async function() {
-      const result = await axios.run({
-        message: "message1"
-      });
-      console.log("result1: ", result);
-    })();
-    ```
+   在成功的调用下输出 `result1: extraParams1 extraParams2 message1`
+
+   ```js
+   (async function() {
+     const result = await axios.run({
+       message: 'message1'
+     });
+     console.log('result1: ', result);
+   })();
+   ```
+
 2. 失败的调用
 
-    ```js
-    (async function() {
-      const result = await axios.run({
-        error: true
-      });
-      console.log("result3: ", result);
-    })();
-    ```
+   ```js
+   (async function() {
+     const result = await axios.run({
+       error: true
+     });
+     console.log('result3: ', result);
+   })();
+   ```
 
 在失败的调用下，则进入响应拦截器的 rejected 分支：
 
@@ -282,12 +284,7 @@ after action add
 来简单实现一下：
 
 ```js
-import {
-  Actions,
-  ActionSubscribers,
-  ActionSubscriber,
-  ActionArguments
-} from "./vuex.type";
+import { Actions, ActionSubscribers, ActionSubscriber, ActionArguments } from './vuex.type';
 
 class Vuex {
   state = {};
@@ -304,14 +301,14 @@ class Vuex {
 
   dispatch(action) {
     // action前置监听器
-    this._actionSubscribers.forEach(sub => sub.before(action, this.state));
+    this._actionSubscribers.forEach((sub) => sub.before(action, this.state));
 
     const { type, payload } = action;
 
     // 执行action
     this.action[type](this.state, payload).then(() => {
       // action后置监听器
-      this._actionSubscribers.forEach(sub => sub.after(action, this.state));
+      this._actionSubscribers.forEach((sub) => sub.after(action, this.state));
     });
   }
 
@@ -342,7 +339,7 @@ store.subscribeAction({
 });
 
 store.dispatch({
-  type: "add",
+  type: 'add',
   payload: 2
 });
 ```
@@ -368,8 +365,7 @@ function compose(...funcs: Function[]) {
 }
 ```
 
-简单理解的话，就是 `compose(fn1, fn2, fn3) (...args) = > fn1(fn2(fn3(...args)))`
-它是一种高阶聚合函数，相当于把 fn3 先执行，然后把结果传给 fn2 再执行，再把结果交给 fn1 去执行。
+简单理解的话，就是 `compose(fn1, fn2, fn3) (...args) = > fn1(fn2(fn3(...args)))` 它是一种高阶聚合函数，相当于把 fn3 先执行，然后把结果传给 fn2 再执行，再把结果交给 fn1 去执行。
 
 有了这个前置知识，就可以很轻易的实现 redux 的中间件机制了。
 
@@ -380,7 +376,7 @@ function compose(...funcs: Function[]) {
 以 logMiddleware 为例，这个 middleware 接受原始的 redux dispatch，返回的是
 
 ```js
-const typeLogMiddleware = dispatch => {
+const typeLogMiddleware = (dispatch) => {
   // 返回的其实还是一个结构相同的dispatch，接受的参数也相同
   // 只是把原始的dispatch包在里面了而已。
   return ({ type, ...args }) => {
@@ -410,8 +406,8 @@ function createStore(reducer, middlewares) {
 
   // 初始化一个随意的 dispatch，要求外部在 type 匹配不到的时候返回初始状态
   // 在这个 dispatch 后 currentState 就有值了。
-  dispatch({ 
-    type: "INIT" 
+  dispatch({
+    type: 'INIT'
   });
 
   let enhancedDispatch = dispatch;
@@ -433,16 +429,16 @@ function createStore(reducer, middlewares) {
 ```js
 // 使用
 
-const otherDummyMiddleware = dispatch => {
+const otherDummyMiddleware = (dispatch) => {
   // 返回一个新的 dispatch
-  return action => {
+  return (action) => {
     console.log(`type in dummy is ${type}`);
     return dispatch(action);
   };
 };
 
 // 这个 dispatch 其实是 otherDummyMiddleware 执行后返回 otherDummyDispatch
-const typeLogMiddleware = dispatch => {
+const typeLogMiddleware = (dispatch) => {
   // 返回一个新的 dispatch
   return ({ type, ...args }) => {
     console.log(`type is ${type}`);
@@ -451,13 +447,10 @@ const typeLogMiddleware = dispatch => {
 };
 
 // 中间件从右往左执行，相当于 typeLogMiddleware(otherDummyMiddleware(dispatch))
-const counterStore = createStore(counterReducer, [
-  typeLogMiddleware,
-  otherDummyMiddleware
-]);
+const counterStore = createStore(counterReducer, [typeLogMiddleware, otherDummyMiddleware]);
 
 console.log(counterStore.getState().count);
-counterStore.dispatch({ type: "add", payload: 2 });
+counterStore.dispatch({ type: 'add', payload: 2 });
 console.log(counterStore.getState().count);
 
 // 输出：
@@ -597,14 +590,14 @@ console.log(`res is ${JSON.stringify(ctx.res)}`);
 // 用来测试全局错误中间件
 // 注释掉这一个中间件 服务才能正常响应
 app.use(async (ctx, next) => {
-  throw new Error("oops! error!");
+  throw new Error('oops! error!');
 });
 ```
 
 最后要调用启动函数：
 
 ```js
-app.start({ req: "ssh" });
+app.start({ req: 'ssh' });
 ```
 
 控制台打印出结果：
@@ -618,8 +611,8 @@ res is {"code":200,"result":"req ssh success"}
 # 总结
 
 1. axios 把用户注册的每个拦截器构造成一个 promise.then 所接受的参数，在运行时把所有的拦截器按照一个 promise 链的形式以此执行。
-    1. 在发送到服务端之前，config 已经是请求拦截器处理过后的结果
-    2. 服务器响应结果后，response 会经过响应拦截器，最后用户拿到的就是处理过后的结果了。
+   1. 在发送到服务端之前，config 已经是请求拦截器处理过后的结果
+   2. 服务器响应结果后，response 会经过响应拦截器，最后用户拿到的就是处理过后的结果了。
 2. vuex 的实现最为简单，就是提供了两个回调函数，vuex 内部在合适的时机去调用（我个人感觉大部分的库提供这样的机制也足够了）。
 3. redux 的源码里写的最复杂最绕，它的中间件机制本质上就是用高阶函数不断的把 dispatch 包装再包装，形成套娃。本文实现的已经是精简了 n 倍以后的结果了，不过复杂的实现也是为了很多权衡和考量，Dan 对于闭包和高阶函数的运用已经炉火纯青了，只是外人去看源码有点头秃...
 4. koa 的洋葱模型实现的很精妙，和 redux 有相似之处，但是在源码理解和使用上个人感觉更优于 redux 的中间件。

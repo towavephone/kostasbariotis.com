@@ -2,7 +2,7 @@
 title: JS风格指南
 date: 2021-1-14 11:11:10
 categories:
-- 前端
+  - 前端
 tags: JS风格, 代码风格, 高级前端
 path: /clean-code-js/
 ---
@@ -20,11 +20,13 @@ path: /clean-code-js/
 ## 使用有意义，可读性好的变量名
 
 **反例**:
+
 ```javascript
 var yyyymmdstr = moment().format('YYYY/MM/DD');
 ```
 
 **正例**:
+
 ```javascript
 var yearMonthDay = moment().format('YYYY/MM/DD');
 ```
@@ -36,18 +38,21 @@ var yearMonthDay = moment().format('YYYY/MM/DD');
 在声明一个常量时，该常量在整个程序中都应该是不可变的。
 
 **反例**:
+
 ```javascript
-var FIRST_US_PRESIDENT = "George Washington";
+var FIRST_US_PRESIDENT = 'George Washington';
 ```
 
 **正例**:
+
 ```javascript
-const FIRST_US_PRESIDENT = "George Washington";
+const FIRST_US_PRESIDENT = 'George Washington';
 ```
 
 ## 对功能类似的变量名采用统一的命名风格
 
 **反例**:
+
 ```javascript
 getUserInfo();
 getClientData();
@@ -55,6 +60,7 @@ getCustomerRecord();
 ```
 
 **正例**:
+
 ```javascript
 getUser();
 ```
@@ -64,6 +70,7 @@ getUser();
 我们需要阅读的代码远比自己写的要多，使代码拥有良好的可读性且易于检索非常重要。阅读变量名晦涩难懂的代码对读者来说是一种相当糟糕的体验，让你的变量名易于检索。
 
 **反例**:
+
 ```javascript
 // 525600 是什么?
 for (var i = 0; i < 525600; i++) {
@@ -72,6 +79,7 @@ for (var i = 0; i < 525600; i++) {
 ```
 
 **正例**:
+
 ```javascript
 // Declare them as capitalized `var` globals.
 var MINUTES_IN_A_YEAR = 525600;
@@ -83,16 +91,18 @@ for (var i = 0; i < MINUTES_IN_A_YEAR; i++) {
 ## 使用说明变量(即有意义的变量名)
 
 **反例**:
+
 ```javascript
 const cityStateRegex = /^(.+)[,\\s]+(.+?)\s*(\d{5})?$/;
 saveCityState(cityStateRegex.match(cityStateRegex)[1], cityStateRegex.match(cityStateRegex)[2]);
 ```
 
 **正例**:
+
 ```javascript
 const ADDRESS = 'One Infinite Loop, Cupertino 95014';
 var cityStateRegex = /^(.+)[,\\s]+(.+?)\s*(\d{5})?$/;
-var match = ADDRESS.match(cityStateRegex)
+var match = ADDRESS.match(cityStateRegex);
 var city = match[1];
 var state = match[2];
 saveCityState(city, state);
@@ -103,6 +113,7 @@ saveCityState(city, state);
 显式优于隐式。
 
 **反例**:
+
 ```javascript
 var locations = ['Austin', 'New York', 'San Francisco'];
 locations.forEach((l) => {
@@ -117,6 +128,7 @@ locations.forEach((l) => {
 ```
 
 **正例**:
+
 ```javascript
 var locations = ['Austin', 'New York', 'San Francisco'];
 locations.forEach((location) => {
@@ -134,6 +146,7 @@ locations.forEach((location) => {
 当类/对象名已经有意义时，对其变量进行命名不需要再次重复。
 
 **反例**:
+
 ```javascript
 var Car = {
   carMake: 'Honda',
@@ -147,6 +160,7 @@ function paintCar(car) {
 ```
 
 **正例**:
+
 ```javascript
 var Car = {
   make: 'Honda',
@@ -162,6 +176,7 @@ function paintCar(car) {
 ## 避免无意义的条件判断
 
 **反例**:
+
 ```javascript
 function createMicrobrewery(name) {
   var breweryName;
@@ -174,9 +189,10 @@ function createMicrobrewery(name) {
 ```
 
 **正例**:
+
 ```javascript
 function createMicrobrewery(name) {
-  var breweryName = name || 'Hipster Brew Co.'
+  var breweryName = name || 'Hipster Brew Co.';
 }
 ```
 
@@ -191,6 +207,7 @@ function createMicrobrewery(name) {
 JS 定义对象非常方便，当需要多个参数时，可以使用一个对象进行替代。
 
 **反例**:
+
 ```javascript
 function createMenu(title, body, buttonText, cancellable) {
   ...
@@ -198,6 +215,7 @@ function createMenu(title, body, buttonText, cancellable) {
 ```
 
 **正例**:
+
 ```javascript
 var menuConfig = {
   title: 'Foo',
@@ -218,9 +236,10 @@ function createMenu(menuConfig) {
 功能不单一的函数将导致难以重构、测试和理解。功能单一的函数易于重构，并使代码更加干净。
 
 **反例**:
+
 ```javascript
 function emailClients(clients) {
-  clients.forEach(client => {
+  clients.forEach((client) => {
     let clientRecord = database.lookup(client);
     if (clientRecord.isActive()) {
       email(client);
@@ -230,9 +249,10 @@ function emailClients(clients) {
 ```
 
 **正例**:
+
 ```javascript
 function emailClients(clients) {
-  clients.forEach(client => {
+  clients.forEach((client) => {
     emailClientIfNeeded(client);
   });
 }
@@ -252,6 +272,7 @@ function isClientActive(client) {
 ## 函数名应明确表明其功能
 
 **反例**:
+
 ```javascript
 function dateAdd(date, month) {
   // ...
@@ -264,6 +285,7 @@ dateAdd(date, 1);
 ```
 
 **正例**:
+
 ```javascript
 function dateAddMonth(date, month) {
   // ...
@@ -278,6 +300,7 @@ dateAddMonth(date, 1);
 当函数的需要的抽象多于一层时通常意味着函数功能过于复杂，需将其进行分解以提高其可重用性和可测试性。
 
 **反例**:
+
 ```javascript
 function parseBetterJSAlternative(code) {
   let REGEXES = [
@@ -289,7 +312,7 @@ function parseBetterJSAlternative(code) {
   REGEXES.forEach((REGEX) => {
     statements.forEach((statement) => {
       // ...
-    })
+    });
   });
 
   let ast;
@@ -299,11 +322,12 @@ function parseBetterJSAlternative(code) {
 
   ast.forEach((node) => {
     // parse...
-  })
+  });
 }
 ```
 
 **正例**:
+
 ```javascript
 function tokenize(code) {
   let REGEXES = [
@@ -315,7 +339,7 @@ function tokenize(code) {
   REGEXES.forEach((REGEX) => {
     statements.forEach((statement) => {
       // ...
-    })
+    });
   });
 
   return tokens;
@@ -335,7 +359,7 @@ function parseBetterJSAlternative(code) {
   let ast = lexer(tokens);
   ast.forEach((node) => {
     // parse...
-  })
+  });
 }
 ```
 
@@ -346,9 +370,10 @@ function parseBetterJSAlternative(code) {
 这种做法毫无意义且潜在危险极大。重复的代码意味着逻辑变化时需要对不止一处进行修改。JS 弱类型的特点使得函数拥有更强的普适性。好好利用这一优点吧。
 
 **反例**:
+
 ```javascript
 function showDeveloperList(developers) {
-  developers.forEach(developer => {
+  developers.forEach((developer) => {
     var expectedSalary = developer.calculateExpectedSalary();
     var experience = developer.getExperience();
     var githubLink = developer.getGithubLink();
@@ -363,7 +388,7 @@ function showDeveloperList(developers) {
 }
 
 function showManagerList(managers) {
-  managers.forEach(manager => {
+  managers.forEach((manager) => {
     var expectedSalary = manager.calculateExpectedSalary();
     var experience = manager.getExperience();
     var portfolio = manager.getMBAProjects();
@@ -379,9 +404,10 @@ function showManagerList(managers) {
 ```
 
 **正例**:
+
 ```javascript
 function showList(employees) {
-  employees.forEach(employee => {
+  employees.forEach((employee) => {
     var expectedSalary = employee.calculateExpectedSalary();
     var experience = employee.getExperience();
     var portfolio;
@@ -406,6 +432,7 @@ function showList(employees) {
 ## 采用默认参数精简代码
 
 **反例**:
+
 ```javascript
 function writeForumComment(subject, body) {
   subject = subject || 'No Subject';
@@ -414,6 +441,7 @@ function writeForumComment(subject, body) {
 ```
 
 **正例**:
+
 ```javascript
 function writeForumComment(subject = 'No subject', body = 'No text') {
   ...
@@ -423,41 +451,45 @@ function writeForumComment(subject = 'No subject', body = 'No text') {
 ## 使用 Object.assign 设置默认对象
 
 **反例**:
+
 ```javascript
 var menuConfig = {
   title: null,
   body: 'Bar',
   buttonText: null,
   cancellable: true
-}
+};
 
 function createMenu(config) {
-  config.title = config.title || 'Foo'
-  config.body = config.body || 'Bar'
-  config.buttonText = config.buttonText || 'Baz'
+  config.title = config.title || 'Foo';
+  config.body = config.body || 'Bar';
+  config.buttonText = config.buttonText || 'Baz';
   config.cancellable = config.cancellable === undefined ? config.cancellable : true;
-
 }
 
 createMenu(menuConfig);
 ```
 
 **正例**:
+
 ```javascript
 var menuConfig = {
   title: 'Order',
   // User did not include 'body' key
   buttonText: 'Send',
   cancellable: true
-}
+};
 
 function createMenu(config) {
-  config = Object.assign({
-    title: 'Foo',
-    body: 'Bar',
-    buttonText: 'Baz',
-    cancellable: true
-  }, config);
+  config = Object.assign(
+    {
+      title: 'Foo',
+      body: 'Bar',
+      buttonText: 'Baz',
+      cancellable: true
+    },
+    config
+  );
 
   // config now equals: {title: "Order", body: "Bar", buttonText: "Send", cancellable: true}
   // ...
@@ -471,6 +503,7 @@ createMenu(menuConfig);
 这通常意味着函数的功能的单一性已经被破坏。此时应考虑对函数进行再次划分。
 
 **反例**:
+
 ```javascript
 function createFile(name, temp) {
   if (temp) {
@@ -482,6 +515,7 @@ function createFile(name, temp) {
 ```
 
 **正例**:
+
 ```javascript
 function createTempFile(name) {
   fs.create('./temp/' + name);
@@ -500,6 +534,7 @@ function createFile(name) {
 程序在某些情况下确实需要副作用这一行为，如先前例子中的写文件。这时应该将这些功能集中在一起，不要用多个函数/类修改某个文件，用且只用一个 service 完成这一需求。
 
 **反例**:
+
 ```javascript
 // Global variable referenced by following function.
 // If we had another function that used this name, now it'd be an array and it could break it.
@@ -515,12 +550,13 @@ console.log(name); // ['Ryan', 'McDermott'];
 ```
 
 **正例**:
+
 ```javascript
 function splitIntoFirstAndLastName(name) {
   return name.split(' ');
 }
 
-var name = 'Ryan McDermott'
+var name = 'Ryan McDermott';
 var newName = splitIntoFirstAndLastName(name);
 
 console.log(name); // 'Ryan McDermott';
@@ -536,6 +572,7 @@ console.log(newName); // ['Ryan', 'McDermott'];
 使用 ES6 中的 class 对全局的 Array 做简单的扩展显然是一个更棒的选择。
 
 **反例**:
+
 ```javascript
 Array.prototype.diff = function(comparisonArray) {
   var values = [];
@@ -552,10 +589,11 @@ Array.prototype.diff = function(comparisonArray) {
   }
 
   return values;
-}
+};
 ```
 
 **正例**:
+
 ```javascript
 class SuperArray extends Array {
   constructor(...args) {
@@ -586,18 +624,22 @@ class SuperArray extends Array {
 函数式的编程具有更干净且便于测试的特点。尽可能的使用这种风格吧。
 
 **反例**:
+
 ```javascript
 const programmerOutput = [
   {
     name: 'Uncle Bobby',
     linesOfCode: 500
-  }, {
+  },
+  {
     name: 'Suzie Q',
     linesOfCode: 1500
-  }, {
+  },
+  {
     name: 'Jimmy Gosling',
     linesOfCode: 150
-  }, {
+  },
+  {
     name: 'Gracie Hopper',
     linesOfCode: 1000
   }
@@ -611,18 +653,22 @@ for (var i = 0; i < programmerOutput.length; i++) {
 ```
 
 **正例**:
+
 ```javascript
 const programmerOutput = [
   {
     name: 'Uncle Bobby',
     linesOfCode: 500
-  }, {
+  },
+  {
     name: 'Suzie Q',
     linesOfCode: 1500
-  }, {
+  },
+  {
     name: 'Jimmy Gosling',
     linesOfCode: 150
-  }, {
+  },
+  {
     name: 'Gracie Hopper',
     linesOfCode: 1000
   }
@@ -636,6 +682,7 @@ var totalOutput = programmerOutput
 ## 封装判断条件
 
 **反例**:
+
 ```javascript
 if (fsm.state === 'fetching' && isEmpty(listNode)) {
   /// ...
@@ -643,6 +690,7 @@ if (fsm.state === 'fetching' && isEmpty(listNode)) {
 ```
 
 **正例**:
+
 ```javascript
 function shouldShowSpinner(fsm, listNode) {
   return fsm.state === 'fetching' && isEmpty(listNode);
@@ -656,6 +704,7 @@ if (shouldShowSpinner(fsmInstance, listNodeInstance)) {
 ## 避免“否定情况”的判断
 
 **反例**:
+
 ```javascript
 function isDOMNodeNotPresent(node) {
   // ...
@@ -667,6 +716,7 @@ if (!isDOMNodeNotPresent(node)) {
 ```
 
 **正例**:
+
 ```javascript
 function isDOMNodePresent(node) {
   // ...
@@ -686,6 +736,7 @@ if (isDOMNodePresent(node)) {
 第二个问题在于采用这种方式的原因是什么。答案是我们之前提到过的：保持函数功能的单一性。
 
 **反例**:
+
 ```javascript
 class Airplane {
   //...
@@ -703,6 +754,7 @@ class Airplane {
 ```
 
 **正例**:
+
 ```javascript
 class Airplane {
   //...
@@ -737,6 +789,7 @@ JS 是弱类型语言，这意味着函数可接受任意类型的参数。
 有时这会对你带来麻烦，你会对参数做一些类型判断。有许多方法可以避免这些情况。
 
 **反例**:
+
 ```javascript
 function travelToTexas(vehicle) {
   if (vehicle instanceof Bicycle) {
@@ -748,6 +801,7 @@ function travelToTexas(vehicle) {
 ```
 
 **正例**:
+
 ```javascript
 function travelToTexas(vehicle) {
   vehicle.move(this.currentLocation, new Location('texas'));
@@ -759,10 +813,10 @@ function travelToTexas(vehicle) {
 如果需处理的数据为字符串，整型，数组等类型，无法使用多态并仍有必要对其进行类型检测时，可以考虑使用 TypeScript。
 
 **反例**:
+
 ```javascript
 function combine(val1, val2) {
-  if (typeof val1 == "number" && typeof val2 == "number" ||
-      typeof val1 == "string" && typeof val2 == "string") {
+  if ((typeof val1 == 'number' && typeof val2 == 'number') || (typeof val1 == 'string' && typeof val2 == 'string')) {
     return val1 + val2;
   } else {
     throw new Error('Must be of type String or Number');
@@ -771,6 +825,7 @@ function combine(val1, val2) {
 ```
 
 **正例**:
+
 ```javascript
 function combine(val1, val2) {
   return val1 + val2;
@@ -784,8 +839,8 @@ function combine(val1, val2) {
 [这里可以找到许多真正需要优化的地方](https://github.com/petkaantonov/bluebird/wiki/Optimization-killers)
 
 **反例**:
-```javascript
 
+```javascript
 // 这里使用变量len是因为在老式浏览器中，
 // 直接使用正例中的方式会导致每次循环均重复计算list.length的值，
 // 而在现代浏览器中会自动完成优化，这一行为是没有必要的
@@ -795,6 +850,7 @@ for (var i = 0, len = list.length; i < len; i++) {
 ```
 
 **正例**:
+
 ```javascript
 for (var i = 0; i < list.length; i++) {
   // ...
@@ -806,6 +862,7 @@ for (var i = 0; i < list.length; i++) {
 不再被调用的代码应及时删除。
 
 **反例**:
+
 ```javascript
 function oldRequestModule(url) {
   // ...
@@ -820,6 +877,7 @@ inventoryTracker('apples', req, 'www.inventory-awesome.io');
 ```
 
 **正例**:
+
 ```javascript
 function newRequestModule(url) {
   // ...
@@ -845,10 +903,11 @@ JS 没有接口或类型，因此实现这一模式是很困难的，因为我�
 6. 从服务器获取数据时可以进行懒加载。
 
 **反例**:
+
 ```javascript
 class BankAccount {
   constructor() {
-	   this.balance = 1000;
+    this.balance = 1000;
   }
 }
 
@@ -859,17 +918,18 @@ bankAccount.balance = bankAccount.balance - 100;
 ```
 
 **正例**:
+
 ```javascript
 class BankAccount {
   constructor() {
-	   this.balance = 1000;
+    this.balance = 1000;
   }
 
   // It doesn't have to be prefixed with `get` or `set` to be a getter/setter
   withdraw(amount) {
-  	if (verifyAmountCanBeDeducted(amount)) {
-  	  this.balance -= amount;
-  	}
+    if (verifyAmountCanBeDeducted(amount)) {
+      this.balance -= amount;
+    }
   }
 }
 
@@ -884,15 +944,15 @@ bankAccount.withdraw(100);
 可以通过闭包完成
 
 **反例**:
-```javascript
 
+```javascript
 var Employee = function(name) {
   this.name = name;
-}
+};
 
 Employee.prototype.getName = function() {
   return this.name;
-}
+};
 
 var employee = new Employee('John Doe');
 console.log('Employee name: ' + employee.getName()); // Employee name: John Doe
@@ -901,6 +961,7 @@ console.log('Employee name: ' + employee.getName()); // Employee name: undefined
 ```
 
 **正例**:
+
 ```javascript
 var Employee = (function() {
   function Employee(name) {
@@ -910,7 +971,7 @@ var Employee = (function() {
   }
 
   return Employee;
-}());
+})();
 
 var employee = new Employee('John Doe');
 console.log('Employee name: ' + employee.getName()); // Employee name: John Doe
@@ -929,6 +990,7 @@ console.log('Employee name: ' + employee.getName()); // Employee name: John Doe
 最小化对一个类需要修改的次数是非常有必要的。如果一个类具有太多太杂的功能，当你对其中一小部分进行修改时，将很难想象到这一修改对代码库中依赖该类的其他模块会带来什么样的影响。
 
 **反例**:
+
 ```javascript
 class UserSettings {
   constructor(user) {
@@ -948,6 +1010,7 @@ class UserSettings {
 ```
 
 **正例**:
+
 ```javascript
 class UserAuth {
   constructor(user) {
@@ -962,7 +1025,7 @@ class UserAuth {
 class UserSettings {
   constructor(user) {
     this.user = user;
-    this.auth = new UserAuth(user)
+    this.auth = new UserAuth(user);
   }
 
   changeSettings(settings) {
@@ -980,6 +1043,7 @@ class UserSettings {
 这一原则指的是我们应允许用户方便的扩展我们代码模块的功能，而不需要打开 js 文件源码手动对其进行修改。
 
 **反例**:
+
 ```javascript
 class AjaxRequester {
   constructor() {
@@ -995,6 +1059,7 @@ class AjaxRequester {
 ```
 
 **正例**:
+
 ```javascript
 class AjaxRequester {
   constructor() {
@@ -1018,6 +1083,7 @@ class AjaxRequester {
 也就是说，如果有一个父类和一个子类，当采用子类替换父类时不应该产生错误的结果。
 
 **反例**:
+
 ```javascript
 class Rectangle {
   constructor() {
@@ -1068,7 +1134,7 @@ function renderLargeRectangles(rectangles) {
     rectangle.setHeight(5);
     let area = rectangle.getArea(); // BAD: Will return 25 for Square. Should be 20.
     rectangle.render(area);
-  })
+  });
 }
 
 let rectangles = [new Rectangle(), new Rectangle(), new Square()];
@@ -1076,6 +1142,7 @@ renderLargeRectangles(rectangles);
 ```
 
 **正例**:
+
 ```javascript
 class Shape {
   constructor() {}
@@ -1136,7 +1203,7 @@ function renderLargeShapes(shapes) {
 
     let area = shape.getArea();
     shape.render(area);
-  })
+  });
 }
 
 let shapes = [new Rectangle(), new Rectangle(), new Square()];
@@ -1150,6 +1217,7 @@ renderLargeShapes(shapes);
 在 JS 中，当一个类需要许多参数设置才能生成一个对象时，或许大多时候不需要设置这么多的参数。此时减少对配置参数数量的需求是有益的。
 
 **反例**:
+
 ```javascript
 class DOMTraverser {
   constructor(settings) {
@@ -1172,10 +1240,10 @@ let $ = new DOMTraverser({
   animationModule: function() {} // Most of the time, we won't need to animate when traversing.
   // ...
 });
-
 ```
 
 **正例**:
+
 ```javascript
 class DOMTraverser {
   constructor(settings) {
@@ -1216,6 +1284,7 @@ let $ = new DOMTraverser({
 2. 抽象接口应该脱离具体实现，具体实现应该依赖于抽象接口。
 
 **反例**:
+
 ```javascript
 class InventoryTracker {
   constructor(items) {
@@ -1248,6 +1317,7 @@ inventoryTracker.requestItems();
 ```
 
 **正例**:
+
 ```javascript
 class InventoryTracker {
   constructor(items, requester) {
@@ -1297,24 +1367,25 @@ inventoryTracker.requestItems();
 但是，当在需要更大更复杂的对象时，最好优先选择更小的 function 而非 classes。
 
 **反例**:
+
 ```javascript
 var Animal = function(age) {
-    if (!(this instanceof Animal)) {
-        throw new Error("Instantiate Animal with `new`");
-    }
+  if (!(this instanceof Animal)) {
+    throw new Error('Instantiate Animal with `new`');
+  }
 
-    this.age = age;
+  this.age = age;
 };
 
 Animal.prototype.move = function() {};
 
 var Mammal = function(age, furColor) {
-    if (!(this instanceof Mammal)) {
-        throw new Error("Instantiate Mammal with `new`");
-    }
+  if (!(this instanceof Mammal)) {
+    throw new Error('Instantiate Mammal with `new`');
+  }
 
-    Animal.call(this, age);
-    this.furColor = furColor;
+  Animal.call(this, age);
+  this.furColor = furColor;
 };
 
 Mammal.prototype = Object.create(Animal.prototype);
@@ -1322,12 +1393,12 @@ Mammal.prototype.constructor = Mammal;
 Mammal.prototype.liveBirth = function() {};
 
 var Human = function(age, furColor, languageSpoken) {
-    if (!(this instanceof Human)) {
-        throw new Error("Instantiate Human with `new`");
-    }
+  if (!(this instanceof Human)) {
+    throw new Error('Instantiate Human with `new`');
+  }
 
-    Mammal.call(this, age, furColor);
-    this.languageSpoken = languageSpoken;
+  Mammal.call(this, age, furColor);
+  this.languageSpoken = languageSpoken;
 };
 
 Human.prototype = Object.create(Mammal.prototype);
@@ -1336,31 +1407,32 @@ Human.prototype.speak = function() {};
 ```
 
 **正例**:
+
 ```javascript
 class Animal {
-    constructor(age) {
-        this.age = age;
-    }
+  constructor(age) {
+    this.age = age;
+  }
 
-    move() {}
+  move() {}
 }
 
 class Mammal extends Animal {
-    constructor(age, furColor) {
-        super(age);
-        this.furColor = furColor;
-    }
+  constructor(age, furColor) {
+    super(age);
+    this.furColor = furColor;
+  }
 
-    liveBirth() {}
+  liveBirth() {}
 }
 
 class Human extends Mammal {
-    constructor(age, furColor, languageSpoken) {
-        super(age, furColor);
-        this.languageSpoken = languageSpoken;
-    }
+  constructor(age, furColor, languageSpoken) {
+    super(age, furColor);
+    this.languageSpoken = languageSpoken;
+  }
 
-    speak() {}
+  speak() {}
 }
 ```
 
@@ -1373,6 +1445,7 @@ class Human extends Mammal {
 因此，我认为在 JS 中使用方法链是非常合适的。在 class 的函数中返回 this，能够方便的将类需要执行的多个方法链接起来。
 
 **反例**:
+
 ```javascript
 class Car {
   constructor() {
@@ -1401,11 +1474,12 @@ class Car {
 let car = new Car();
 car.setColor('pink');
 car.setMake('Ford');
-car.setModel('F-150')
+car.setModel('F-150');
 car.save();
 ```
 
 **正例**:
+
 ```javascript
 class Car {
   constructor() {
@@ -1457,6 +1531,7 @@ let car = new Car()
 3. 希望当基类改变时所有派生类都受到影响(如修改"all animals"移动时的卡路里消耗量)
 
 **反例**:
+
 ```javascript
 class Employee {
   constructor(name, email) {
@@ -1480,12 +1555,12 @@ class EmployeeTaxData extends Employee {
 ```
 
 **正例**:
+
 ```javascript
 class Employee {
   constructor(name, email) {
     this.name = name;
     this.email = email;
-
   }
 
   setTaxData(ssn, salary) {
@@ -1513,6 +1588,7 @@ class EmployeeTaxData {
 ## 单一的测试每个概念
 
 **反例**:
+
 ```javascript
 const assert = require('assert');
 
@@ -1536,6 +1612,7 @@ describe('MakeMomentJSGreatAgain', function() {
 ```
 
 **正例**:
+
 ```javascript
 const assert = require('assert');
 
@@ -1560,7 +1637,6 @@ describe('MakeMomentJSGreatAgain', function() {
 });
 ```
 
-
 # 并发
 
 ## 用 Promises 替代回调
@@ -1568,27 +1644,28 @@ describe('MakeMomentJSGreatAgain', function() {
 回调不够整洁并会造成大量的嵌套。ES6 内嵌了 Promises，使用它吧。
 
 **反例**:
+
 ```javascript
 require('request').get('https://en.wikipedia.org/wiki/Robert_Cecil_Martin', function(err, response) {
   if (err) {
     console.error(err);
-  }
-  else {
+  } else {
     require('fs').writeFile('article.html', response.body, function(err) {
       if (err) {
         console.error(err);
       } else {
         console.log('File written');
       }
-    })
+    });
   }
-})
-
+});
 ```
 
 **正例**:
+
 ```javascript
-require('request-promise').get('https://en.wikipedia.org/wiki/Robert_Cecil_Martin')
+require('request-promise')
+  .get('https://en.wikipedia.org/wiki/Robert_Cecil_Martin')
   .then(function(response) {
     return require('fs-promise').writeFile('article.html', response);
   })
@@ -1597,10 +1674,8 @@ require('request-promise').get('https://en.wikipedia.org/wiki/Robert_Cecil_Marti
   })
   .catch(function(err) {
     console.error(err);
-  })
-
+  });
 ```
-
 
 ## Async/Await 是较 Promises 更好的选择
 
@@ -1609,8 +1684,10 @@ Promises 是较回调而言更好的一种选择，但 ES7 中的 async 和 awai
 在能使用 ES7 特性的情况下可以尽量使用他们替代 Promises。
 
 **反例**:
+
 ```javascript
-require('request-promise').get('https://en.wikipedia.org/wiki/Robert_Cecil_Martin')
+require('request-promise')
+  .get('https://en.wikipedia.org/wiki/Robert_Cecil_Martin')
   .then(function(response) {
     return require('fs-promise').writeFile('article.html', response);
   })
@@ -1619,21 +1696,21 @@ require('request-promise').get('https://en.wikipedia.org/wiki/Robert_Cecil_Marti
   })
   .catch(function(err) {
     console.error(err);
-  })
-
+  });
 ```
 
 **正例**:
+
 ```javascript
 async function getCleanCodeArticle() {
   try {
-    var request = await require('request-promise')
+    var request = await require('request-promise');
     var response = await request.get('https://en.wikipedia.org/wiki/Robert_Cecil_Martin');
     var fileHandle = await require('fs-promise');
 
     await fileHandle.writeFile('article.html', response);
     console.log('File written');
-  } catch(err) {
+  } catch (err) {
     console.log(err);
   }
 }
@@ -1650,6 +1727,7 @@ async function getCleanCodeArticle() {
 代码中 `try/catch` 的意味着你认为这里可能出现一些错误，你应该对这些可能的错误存在相应的处理方案。
 
 **反例**:
+
 ```javascript
 try {
   functionThatMightThrow();
@@ -1659,6 +1737,7 @@ try {
 ```
 
 **正例**:
+
 ```javascript
 try {
   functionThatMightThrow();
@@ -1674,45 +1753,51 @@ try {
 ```
 
 ## 不要忽略被拒绝的 promises
+
 理由同 `try/catch`。
 
 **反例**:
+
 ```javascript
 getdata()
-.then(data => {
-  functionThatMightThrow(data);
-})
-.catch(error => {
-  console.log(error);
-});
+  .then((data) => {
+    functionThatMightThrow(data);
+  })
+  .catch((error) => {
+    console.log(error);
+  });
 ```
 
 **正例**:
+
 ```javascript
 getdata()
-.then(data => {
-  functionThatMightThrow(data);
-})
-.catch(error => {
-  // One option (more noisy than console.log):
-  console.error(error);
-  // Another option:
-  notifyUserOfError(error);
-  // Another option:
-  reportErrorToService(error);
-  // OR do all three!
-});
+  .then((data) => {
+    functionThatMightThrow(data);
+  })
+  .catch((error) => {
+    // One option (more noisy than console.log):
+    console.error(error);
+    // Another option:
+    notifyUserOfError(error);
+    // Another option:
+    reportErrorToService(error);
+    // OR do all three!
+  });
 ```
 
 # **格式化**
+
 格式化是一件主观的事。如同这里的许多规则一样，这里并没有一定/立刻需要遵守的规则。可以在[这里](http://standardjs.com/rules.html)完成格式的自动化。
 
 ## 大小写一致
+
 JS 是弱类型语言，合理的采用大小写可以告诉你关于变量/函数等的许多消息。
 
 这些规则是主观定义的，团队可以根据喜欢进行选择。重点在于无论选择何种风格，都需要注意保持一致性。
 
 **反例**:
+
 ```javascript
 var DAYS_IN_WEEK = 7;
 var daysInMonth = 30;
@@ -1728,6 +1813,7 @@ class Alpaca {}
 ```
 
 **正例**:
+
 ```javascript
 var DAYS_IN_WEEK = 7;
 var DAYS_IN_MONTH = 30;
@@ -1743,11 +1829,13 @@ class Alpaca {}
 ```
 
 ## 调用函数的函数和被调函数应放在较近的位置
+
 当函数间存在相互调用的情况时，应将两者置于较近的位置。
 
 理想情况下，应将调用其他函数的函数写在被调用函数的上方。
 
 **反例**:
+
 ```javascript
 class PerformanceReview {
   constructor(employee) {
@@ -1768,9 +1856,9 @@ class PerformanceReview {
   }
 
   perfReview() {
-      getPeerReviews();
-      getManagerReview();
-      getSelfReview();
+    getPeerReviews();
+    getManagerReview();
+    getSelfReview();
   }
 
   getManagerReview() {
@@ -1787,6 +1875,7 @@ review.perfReview();
 ```
 
 **正例**:
+
 ```javascript
 class PerformanceReview {
   constructor(employee) {
@@ -1794,9 +1883,9 @@ class PerformanceReview {
   }
 
   perfReview() {
-      getPeerReviews();
-      getManagerReview();
-      getSelfReview();
+    getPeerReviews();
+    getManagerReview();
+    getSelfReview();
   }
 
   getPeerReviews() {
@@ -1832,6 +1921,7 @@ review.perfReview();
 注释并不是必须的，好的代码是能够让人一目了然，不用过多无谓的注释。
 
 **反例**:
+
 ```javascript
 function hashIt(data) {
   // The hash
@@ -1845,7 +1935,7 @@ function hashIt(data) {
     // Get character code.
     var char = data.charCodeAt(i);
     // Make the hash
-    hash = ((hash << 5) - hash) + char;
+    hash = (hash << 5) - hash + char;
     // Convert to 32-bit integer
     hash = hash & hash;
   }
@@ -1853,21 +1943,20 @@ function hashIt(data) {
 ```
 
 **正例**:
-```javascript
 
+```javascript
 function hashIt(data) {
   var hash = 0;
   var length = data.length;
 
   for (var i = 0; i < length; i++) {
     var char = data.charCodeAt(i);
-    hash = ((hash << 5) - hash) + char;
+    hash = (hash << 5) - hash + char;
 
     // Convert to 32-bit integer
     hash = hash & hash;
   }
 }
-
 ```
 
 ## 不要在代码库中遗留被注释掉的代码
@@ -1875,6 +1964,7 @@ function hashIt(data) {
 版本控制的存在是有原因的。让旧代码存在于你的 history 里吧。
 
 **反例**:
+
 ```javascript
 doStuff();
 // doOtherStuff();
@@ -1883,6 +1973,7 @@ doStuff();
 ```
 
 **正例**:
+
 ```javascript
 doStuff();
 ```
@@ -1894,6 +1985,7 @@ doStuff();
 需要时可以使用 `git log` 获取历史版本。
 
 **反例**:
+
 ```javascript
 /**
  * 2016-12-20: Removed monads, didn't understand them (RM)
@@ -1907,6 +1999,7 @@ function combine(a, b) {
 ```
 
 **正例**:
+
 ```javascript
 function combine(a, b) {
   return a + b;
@@ -1918,6 +2011,7 @@ function combine(a, b) {
 这些东西通常只能代码麻烦，采用适当的缩进就可以了。
 
 **反例**:
+
 ```javascript
 ////////////////////////////////////////////////////////////////////////////////
 // Scope Model Instantiation
@@ -1936,6 +2030,7 @@ let actions = function() {
 ```
 
 **正例**:
+
 ```javascript
 let $scope.model = {
   menu: 'foo',
@@ -1952,6 +2047,7 @@ let actions = function() {
 将你的 `LICENSE` 文件置于源码目录树的根目录。
 
 **反例**:
+
 ```javascript
 /*
 The MIT License (MIT)
@@ -1983,6 +2079,7 @@ function calculateBill() {
 ```
 
 **正例**:
+
 ```javascript
 function calculateBill() {
   // ...

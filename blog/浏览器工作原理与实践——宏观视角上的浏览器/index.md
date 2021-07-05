@@ -1,10 +1,10 @@
 ---
-title: 浏览器工作原理与实践
+title: 浏览器工作原理与实践——宏观视角上的浏览器
 date: 2021-7-1 14:44:27
 categories:
   - 前端
 tags: 前端, JS, 高级前端
-path: /browser-working-principle-practice/
+path: /browser-working-principle-macro-view/
 ---
 
 # Chrome 架构
@@ -111,7 +111,7 @@ C = 7*8
 ```js
 function freeze() {
   while (1) {
-    console.log("freeze");
+    console.log('freeze');
   }
 }
 freeze();
@@ -457,7 +457,7 @@ curl -I geekbang.org
 
 从图中你可以看到，响应行返回的状态码是 301，状态 301 就是告诉浏览器，我需要重定向到另外一个网址，而需要重定向的网址正是包含在响应头的 Location 字段中，接下来，浏览器获取 Location 字段中的地址，并使用该地址重新导航，这就是一个完整重定向的执行流程。这也就解释了为什么输入的是 geekbang.org，最终打开的却是 https://www.geekbang.org 了。
 
-不过也不要认为这种跳转是必然的。如果你打开 https://12306.cn，你会发现这个站点是打不开的。这是因为12306的服务器并没有处理跳转，所以必须要手动输入完整的 https://www.12306.com 才能打开页面。
+不过也不要认为这种跳转是必然的。如果你打开 [https://12306.cn](https://12306.cn)，你会发现这个站点是打不开的。这是因为12306的服务器并没有处理跳转，所以必须要手动输入完整的 [https://www.12306.com](https://www.12306.com) 才能打开页面。
 
 ## 问题解答
 
@@ -597,7 +597,7 @@ If-None-Match:"4f80f-13c-3a1xb12a"
 那下面就来看看如何通过 JavaScript 来修改 DOM 的内容，在控制台中输入：
 
 ```js
-document.getElementsByTagName("p")[0].innerText = "black";
+document.getElementsByTagName('p')[0].innerText = 'black';
 ```
 
 这行代码的作用是把第一个 `<p>` 标签的内容修改为 black，具体执行结果你可以参考下图：
@@ -820,8 +820,7 @@ Chrome 在布局阶段需要完成两个任务：创建布局树和布局计算
       从上图我们可以看到，document层上有A和B层，而B层之上又有两个图层。这些图层组织在一起也是一颗树状结构。
     </p>
     <p>
-      图层树是基于布局树来创建的，为了找出哪些元素需要在哪些层中，渲染引擎会遍历布局树来创建层树（Update
-      LayerTree）。
+      图层树是基于布局树来创建的，为了找出哪些元素需要在哪些层中，渲染引擎会遍历布局树来创建层树（Update LayerTree）。
     </p>
   </div>
 </body>

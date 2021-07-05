@@ -2,7 +2,7 @@
 title: 编译器之旅（七）——比较运算符
 date: 2020-3-11 10:03:11
 categories:
-- 计算机基础
+  - 计算机基础
 tags: 编译原理, 比较运算符
 path: /tour-of-compiler-comparison-operators/
 ---
@@ -85,7 +85,7 @@ case '>':
 - 用 C 语言
 - 使用 SubC 编译器作为参考
 
-这意味着我正在为足够一部分 C 的子集（就像SubC）编写一个编译器，以便它可以自己编译。因此我应该使用普通的 C 运算符优先顺序，这意味着比较运算符的优先级高于乘法和除法。
+这意味着我正在为足够一部分 C 的子集（就像 SubC）编写一个编译器，以便它可以自己编译。因此我应该使用普通的 C 运算符优先顺序，这意味着比较运算符的优先级高于乘法和除法。
 
 我还意识到我用来将令牌映射到 AST 节点类型的 switch 语句只会变得更大，因此我决定重新排列 AST 节点类型，以便所有二进制运算符（在 defs.h 中）之间都具有 1:1 的映射：
 
@@ -154,14 +154,14 @@ cmpq %r8,%r9
 
 上面的 cmpq 指令执行 `%r9-%r8` 并设置几个状态标志，包括负标志和零标志，因此我们可以查看标志组合以查看比较结果：
 
-| 比较 | 操作 | 执行结果 |
-|------------|-----------|---------------|
-| %r8 == %r9 | %r9 - %r8 |  零         |
-| %r8 != %r9 | %r9 - %r8 |  不为零     |
-| %r8 > %r9  | %r9 - %r8 |  不为零，负数 |
-| %r8 < %r9  | %r9 - %r8 |  不为零，不为负 |
-| %r8 >= %r9 | %r9 - %r8 |  零或负 |
-| %r8 <= %r9 | %r9 - %r8 |  零或非负 |
+| 比较       | 操作      | 执行结果       |
+| ---------- | --------- | -------------- |
+| %r8 == %r9 | %r9 - %r8 | 零             |
+| %r8 != %r9 | %r9 - %r8 | 不为零         |
+| %r8 > %r9  | %r9 - %r8 | 不为零，负数   |
+| %r8 < %r9  | %r9 - %r8 | 不为零，不为负 |
+| %r8 >= %r9 | %r9 - %r8 | 零或负         |
+| %r8 <= %r9 | %r9 - %r8 | 零或非负       |
 
 问题是这些指令仅设置寄存器的最低字节，如果寄存器的最低位之外的其他位已置 1，则它们将保持置位状态。因此我们可以将变量设置为 1，但是如果它已经具有值 1000（十进制），那么现在它将是 1001，这不是我们想要的。
 
@@ -324,40 +324,40 @@ main:
         movq    $7, %r9
         cmpq    %r9, %r8
         setle   %r9b
-        andq    $255,%r9 
-        movq    %r9, x(%rip) 
-        movq    x(%rip), %r8 
-        movq    %r8, %rdi 
-        call    printint 
-        movq    $9, %r8 
-        movq    $7, %r9 
-        cmpq    %r9, %r8 
-        setg    %r9b 
-        andq    $255,%r9 
-        movq    %r9, x(%rip) 
-        movq    x(%rip), %r8 
-        movq    %r8, %rdi 
-        call    printint 
-        movq    $9, %r8 
-        movq    $7, %r9 
-        cmpq    %r9, %r8 
-        setge   %r9b 
-        andq    $255,%r9 
-        movq    %r9, x(%rip) 
-        movq    x(%rip), %r8 
-        movq    %r8, %rdi 
-        call    printint 
-        movq    $9, %r8 
-        movq    $7, %r9 
-        cmpq    %r9, %r8 
-        setne   %r9b 
-        andq    $255,%r9 
-        movq    %r9, x(%rip) 
-        movq    x(%rip), %r8 
-        movq    %r8, %rdi 
-        call    printint 
-        movl    $0, %eax 
-        popq    %rbp 
+        andq    $255,%r9
+        movq    %r9, x(%rip)
+        movq    x(%rip), %r8
+        movq    %r8, %rdi
+        call    printint
+        movq    $9, %r8
+        movq    $7, %r9
+        cmpq    %r9, %r8
+        setg    %r9b
+        andq    $255,%r9
+        movq    %r9, x(%rip)
+        movq    x(%rip), %r8
+        movq    %r8, %rdi
+        call    printint
+        movq    $9, %r8
+        movq    $7, %r9
+        cmpq    %r9, %r8
+        setge   %r9b
+        andq    $255,%r9
+        movq    %r9, x(%rip)
+        movq    x(%rip), %r8
+        movq    %r8, %rdi
+        call    printint
+        movq    $9, %r8
+        movq    $7, %r9
+        cmpq    %r9, %r8
+        setne   %r9b
+        andq    $255,%r9
+        movq    %r9, x(%rip)
+        movq    x(%rip), %r8
+        movq    %r8, %rdi
+        call    printint
+        movl    $0, %eax
+        popq    %rbp
         ret
 ```
 

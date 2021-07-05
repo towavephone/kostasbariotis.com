@@ -3,7 +3,7 @@ import GatsbyLink from 'gatsby-link';
 import PropTypes from 'prop-types';
 
 const CommaSeparatedTags = ({ tags }) => (
-  <div className="tags">
+  <div className='tags'>
     标签:{' '}
     {tags &&
       tags.split(', ').map((tag, index, array) => (
@@ -16,7 +16,7 @@ const CommaSeparatedTags = ({ tags }) => (
 );
 
 CommaSeparatedTags.propTypes = {
-  tags: PropTypes.string,
+  tags: PropTypes.string
 };
 
 export default CommaSeparatedTags;

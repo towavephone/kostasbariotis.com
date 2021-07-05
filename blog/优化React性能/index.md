@@ -4,10 +4,10 @@ date: 2017-12-13 10:13:24
 tags: 前端, React 性能
 path: /optimize-react/
 categories:
-- 前端
+  - 前端
 ---
 
-翻译转载：[Optimize React Performance](https://levelup.gitconnected.com/optimize-react-performance-c1a491ed9c36?ref=reddit&amp;utm_source=reddit&amp;utm_medium=react-12-12-2017)
+翻译转载：[Optimize React Performance](https://levelup.gitconnected.com/optimize-react-performance-c1a491ed9c36?ref=reddit&utm_source=reddit&utm_medium=react-12-12-2017)
 
 # 如何提高生产中的 React 性能，避免常见的错误
 
@@ -17,8 +17,6 @@ categories:
 2. 管理 shouldComponentUpdate
 3. 扩展 PureComponent 而不是 Component
 4. 建立生产
-
-
 
 # 衡量效率
 
@@ -40,25 +38,16 @@ function ListItem(props) {
 
 function UserList(props) {
   const users = props.users;
-  const listItems = users.map((user) =>
+  const listItems = users.map((user) => (
     // Correct! Key should be specified inside the array.
-    <ListItem key={user.id.toString()}
-              value={user.name} />
-  );
-  return (
-    <ul>
-      {listItems}
-    </ul>
-  );
+    <ListItem key={user.id.toString()} value={user.name} />
+  ));
+  return <ul>{listItems}</ul>;
 }
 
-const users = [ 
-  {id: 1, name: 'Khaleesi'} , 
-  {id: 2, name: 'Jon'}, 
-  {id: 3, name: 'Arya'}
-];
+const users = [{ id: 1, name: 'Khaleesi' }, { id: 2, name: 'Jon' }, { id: 3, name: 'Arya' }];
 
-<UserList users={users} />
+<UserList users={users} />;
 ```
 
 由于用户 ID 是唯一的，我们可以确信地使用它作为列表项的关键字。对于更实际的应用程序，我创建了一个 Postmate 的 feed 的模拟版本，当点击时从 DOM 中删除了一个商店。
@@ -86,19 +75,17 @@ React 提供 PureComponent 了管理 shouldComponentUpdate 开发人员的生命
 class CounterButton extends React.PureComponent {
   constructor(props) {
     super(props);
-    this.state = {count: 1};
+    this.state = { count: 1 };
     this.handleClick = this.handleClick.bind(this);
   }
-  
+
   handleClick() {
-    this.setState(state => ({count: state.count + 1}));
+    this.setState((state) => ({ count: state.count + 1 }));
   }
 
   render() {
     return (
-      <button
-        color={this.props.color}
-        onClick={this.handleClick}>
+      <button color={this.props.color} onClick={this.handleClick}>
         Count: {this.state.count}
       </button>
     );

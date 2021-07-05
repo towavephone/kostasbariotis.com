@@ -2,12 +2,12 @@
 title: React之createContext入门学习
 date: 2019-09-22 01:16:10
 categories:
-- 前端
+  - 前端
 tags: 前端, React, createContext
 path: /react-createContext-practice-learn/
 ---
 
-# 初识 context 
+# 初识 context
 
 在典型的 React 应用中， **数据** 是通过 props 属性显式的由父及子进行 **传递** 的，但这种方式，对于复杂情况（例如，跨多级传递，多个组件共享）来说，是极其繁琐的。
 
@@ -18,14 +18,10 @@ path: /react-createContext-practice-learn/
   ```js
   function Page(props) {
     // 你可以传递多个子组件，甚至会为这些子组件（children）封装多个单独的接口（slots）
-    const localeCom = (
-     	<span>{ props.locale }</span>
-    ) 
-    return (
-      <Content localeCom={localeCom} />
-    );
+    const localeCom = <span>{props.locale}</span>;
+    return <Content localeCom={localeCom} />;
   } // 这种情况下，只有顶层 Page 才知道 localeCom 的具体实现，实现了组件的控制反转
-  
+
   function Content(props) {
     return (
       <div>
@@ -33,12 +29,10 @@ path: /react-createContext-practice-learn/
       </div>
     );
   }
-  
+
   class FirstComponent extends React.Component {
     render() {
-      return (
-        <div>FirstComponent: {this.props.localeCom}</div>
-      );
+      return <div>FirstComponent: {this.props.localeCom}</div>;
     }
   }
   ```
@@ -55,20 +49,21 @@ path: /react-createContext-practice-learn/
   // context 会在每一个创建或使用 context 的组件上引入，所以，最好在单独一个文件中定义
   // 这里只做演示
   const LocaleContext = React.createContext('anan');
-  
+
   class App extends React.Component {
     render() {
       // 使用一个 Provider 来将当前的 name 传递给以下的组件树。
       // 无论多深，任何组件都能读取这个值。
       // 在这个例子中，我们将 “ananGe” 作为当前的值传递下去。
-      return ( // Provider 接收一个 value 属性，传递给消费组件
-        <LocaleContext.Provider value="ananGe">
+      return (
+        // Provider 接收一个 value 属性，传递给消费组件
+        <LocaleContext.Provider value='ananGe'>
           <Content />
         </LocaleContext.Provider>
       );
     }
   }
-  
+
   // 中间的组件再也不必指明往下传递 locale 了。
   // LocaleContext 分别在 FirstComponent 组件与 SecondComponent 的子组件 SubComponent 中使用
   function Content(props) {
@@ -79,7 +74,7 @@ path: /react-createContext-practice-learn/
       </div>
     );
   }
-  
+
   // 第一个子组件
   class FirstComponent extends React.Component {
     // 指定 contextType 读取当前的 locale context。
@@ -88,11 +83,13 @@ path: /react-createContext-practice-learn/
     static contextType = LocaleContext;
     render() {
       return (
-        <div>FirstComponent: <span>{ this.context }</span></div>
+        <div>
+          FirstComponent: <span>{this.context}</span>
+        </div>
       );
     }
   }
-  
+
   // 第二个子组件（中间件）
   function SecondComponent(props) {
     return (
@@ -106,7 +103,9 @@ path: /react-createContext-practice-learn/
     static contextType = LocaleContext;
     render() {
       return (
-        <div>SubComponent: <span>{ this.context }</span></div>
+        <div>
+          SubComponent: <span>{this.context}</span>
+        </div>
       ); // this.context 为传递过来的 value 值
     }
   }
@@ -130,7 +129,7 @@ path: /react-createContext-practice-learn/
     - Provider 接收一个 **value** 属性，传递给消费组件。
     - 一个 Provider 可以和 **多个消费组件** 有对应关系。多个 Provider 可以 **嵌套使用** ，里层的会覆盖外层的数据。
     - 当 Provider 的 value 值发生变化时，它内部的所有消费组件都会 **重新渲染** 。
-    - Provider 及其内部 consumer 组件都 **不受制于 shouldComponentUpdate**  函数，因此当 consumer 组件在其祖先组件退出更新的情况下也能更新。
+    - Provider 及其内部 consumer 组件都 **不受制于 shouldComponentUpdate** 函数，因此当 consumer 组件在其祖先组件退出更新的情况下也能更新。
     - 通过新旧值检测来确定变化，使用了与 **Object.is** （[Object.is MDN](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Object/is)） 相同的算法。
 
   - **Class.contextType**
@@ -140,7 +139,7 @@ path: /react-createContext-practice-learn/
     SubComponent.contextType = LocaleContext;
     // 使用 this.context 来消费最近 Context 上的那个值
     let value = this.context;
-    
+
     // 你可以使用这种方式来获取 context value，也可以使用 Context.Consumer 函数式订阅获取
     ```
 
@@ -166,23 +165,23 @@ path: /react-createContext-practice-learn/
 export const locales = {
   An: {
     name: 'an',
-    color: 'red',
+    color: 'red'
   },
   AnGe: {
     name: 'anGe',
-    color: 'green',
-  },
-}
+    color: 'green'
+  }
+};
 
 export const LocaleContext = React.createContext(
   locales.An // 默认值
-)
+);
 
 // 确保传递给 createContext 的默认值数据结构是调用的组件（consumers）所能匹配的！
 export const AddressContext = React.createContext({
   address: 'Shanghai',
-  updateAddress: () => {}, // Consumer 更新 Provider value 函数
-})
+  updateAddress: () => {} // Consumer 更新 Provider value 函数
+});
 ```
 
 **app.js**
@@ -194,42 +193,33 @@ import SubComponent from './SubComponent';
 class App extends React.Component {
   state = {
     locale: locales.An,
-    address: 'Beijing',
-  }
+    address: 'Beijing'
+  };
   // 更新 locale 函数
   changePerson = () => {
-    this.setState(state => ({
-      locale:
-        state.locale === locales.An
-          ? locales.AnGe
-          : locales.An,
+    this.setState((state) => ({
+      locale: state.locale === locales.An ? locales.AnGe : locales.An
     }));
-  }
+  };
   // 更新 address 函数
   updateAddress = () => {
-    this.setState(state => ({
-      address:
-        state.address === 'Beijing'
-          ? 'Shanghai'
-          : 'Beijing',
+    this.setState((state) => ({
+      address: state.address === 'Beijing' ? 'Shanghai' : 'Beijing'
     }));
-  }
+  };
 
   render() {
-    const {
-      locale,
-      address,
-    } = this.state
-    
+    const { locale, address } = this.state;
+
     // addressValue 包含了 updateAddress 更新函数
     const addressValue = {
       address: 'Beijing',
       updateAddress: this.updateAddress
-    }
+    };
     return (
       <div>
-        // 在 LocaleProvider 内部的 SubComponent 组件使用 state 中的 locale 值
-        // 当 LocaleProvider 的 value 值发生变化时，它内部的所有消费组件都会重新渲染
+        // 在 LocaleProvider 内部的 SubComponent 组件使用 state 中的 locale 值 // 当 LocaleProvider 的 value
+        值发生变化时，它内部的所有消费组件都会重新渲染
         <LocaleProvider.Provider value={locale}>
           // addressValue 都被传递进 AddressContext.Provider
           <AddressContext.Provider value={addressValue}>
@@ -247,11 +237,7 @@ class App extends React.Component {
 
 // 一个使用 SubComponent 的中间组件
 function Toolbar(props) {
-  return (
-    <SubComponent onClick={props.changePerson}>
-      Change Person
-    </SubComponent>
-  );
+  return <SubComponent onClick={props.changePerson}>Change Person</SubComponent>;
 }
 
 ReactDOM.render(<App />, document.root);
@@ -263,21 +249,21 @@ ReactDOM.render(<App />, document.root);
 import { LocaleContext, AddressContext } from './locale-context';
 
 class SubComponent extends React.Component {
-  
   render() {
     const props = this.props;
-    return ( // 一个组件可能会消费多个 context
+    return (
+      // 一个组件可能会消费多个 context
       <LocaleContext.Consumer>
-        {locale => (
-          <div
-            {...props}
-            style={{color: locale.color}}
-          >
+        {(locale) => (
+          <div {...props} style={{ color: locale.color }}>
             {locale.name}
-            <AddressContext.Consumer> // AddressContext.Consumer 可以从 context 中获取到 address 值 与 updateAddress 函数
-        	  {(address, updateAddress) => ( // 点击 button，执行 AddressContext.Provider 的 updateAddress 函数，更新 address
-        	    <button onClick={updateAddress}>{address}</button>
-    		  )}
+            <AddressContext.Consumer>
+              {' '}
+              // AddressContext.Consumer 可以从 context 中获取到 address 值 与 updateAddress 函数
+              {(
+                address,
+                updateAddress // 点击 button，执行 AddressContext.Provider 的 updateAddress 函数，更新 address
+              ) => <button onClick={updateAddress}>{address}</button>}
             </AddressContext.Consumer>
           </div>
         )}
@@ -294,18 +280,16 @@ export default SubComponent;
 ```js
 export function createContext<T>(
   defaultValue: T, // context 默认值
-  calculateChangedBits: ?(a: T, b: T) => number, // 计算新老 context 变化函数
+  calculateChangedBits: ?(a: T, b: T) => number // 计算新老 context 变化函数
 ): ReactContext<T> {
   if (calculateChangedBits === undefined) {
     calculateChangedBits = null;
   } else {
     if (__DEV__) {
       warningWithoutStack(
-        calculateChangedBits === null ||
-          typeof calculateChangedBits === 'function',
-        'createContext: Expected the optional second argument to be a ' +
-          'function. Instead received: %s',
-        calculateChangedBits,
+        calculateChangedBits === null || typeof calculateChangedBits === 'function',
+        'createContext: Expected the optional second argument to be a ' + 'function. Instead received: %s',
+        calculateChangedBits
       );
     }
   }
@@ -326,12 +310,13 @@ export function createContext<T>(
     _threadCount: 0,
     // These are circular
     Provider: (null: any), // context Provider
-    Consumer: (null: any), // context Consumer
+    Consumer: (null: any) // context Consumer
   };
 
-  context.Provider = { // context.Provider 的 _context 为 context
+  context.Provider = {
+    // context.Provider 的 _context 为 context
     $$typeof: REACT_PROVIDER_TYPE,
-    _context: context, 
+    _context: context
   };
 
   let hasWarnedAboutUsingNestedContextConsumers = false;
@@ -341,10 +326,11 @@ export function createContext<T>(
     // A separate object, but proxies back to the original context object for
     // backwards compatibility. It has a different $$typeof, so we can properly
     // warn for the incorrect usage of Context as a Consumer.
-    const Consumer = { //Consumer 的 _context 也为 context
+    const Consumer = {
+      //Consumer 的 _context 也为 context
       $$typeof: REACT_CONTEXT_TYPE,
-      _context: context, 
-      _calculateChangedBits: context._calculateChangedBits,
+      _context: context,
+      _calculateChangedBits: context._calculateChangedBits
     };
     // $FlowFixMe: Flow complains about not setting a value, which is intentional here
     Object.defineProperties(Consumer, {
@@ -355,14 +341,14 @@ export function createContext<T>(
             warning(
               false,
               'Rendering <Context.Consumer.Provider> is not supported and will be removed in ' +
-                'a future major release. Did you mean to render <Context.Provider> instead?',
+                'a future major release. Did you mean to render <Context.Provider> instead?'
             );
           }
           return context.Provider;
         },
         set(_Provider) {
           context.Provider = _Provider;
-        },
+        }
       },
       _currentValue: {
         get() {
@@ -370,7 +356,7 @@ export function createContext<T>(
         },
         set(_currentValue) {
           context._currentValue = _currentValue;
-        },
+        }
       },
       _currentValue2: {
         get() {
@@ -378,7 +364,7 @@ export function createContext<T>(
         },
         set(_currentValue2) {
           context._currentValue2 = _currentValue2;
-        },
+        }
       },
       _threadCount: {
         get() {
@@ -386,7 +372,7 @@ export function createContext<T>(
         },
         set(_threadCount) {
           context._threadCount = _threadCount;
-        },
+        }
       },
       Consumer: {
         get() {
@@ -395,12 +381,12 @@ export function createContext<T>(
             warning(
               false,
               'Rendering <Context.Consumer.Consumer> is not supported and will be removed in ' +
-                'a future major release. Did you mean to render <Context.Consumer> instead?',
+                'a future major release. Did you mean to render <Context.Consumer> instead?'
             );
           }
           return context.Consumer;
-        },
-      },
+        }
+      }
     });
     // $FlowFixMe: Flow complains about missing properties because it doesn't understand defineProperty
     context.Consumer = Consumer;

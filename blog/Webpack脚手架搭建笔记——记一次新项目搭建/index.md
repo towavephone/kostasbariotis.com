@@ -2,18 +2,18 @@
 title: Webpack脚手架搭建笔记——记一次新项目搭建
 date: 2019-10-10 21:46:40
 categories:
-- 前端
+  - 前端
 tags: 前端, 前端构建工具, webpack, 预研
 path: /webpack-template-new-project/
 ---
 
-接上文[Webpack升级优化——记一次产品端升级](/webpack-upgrade-about-product/)
+接上文[Webpack 升级优化——记一次产品端升级](/webpack-upgrade-about-product/)
 
 最近需要开发一个新产品，此时需要一个新框架来承载新产品的开发，根据前端主管的建议，建议我在他已经开发出的新框架上进行改造，这里记录一下改造的关键点
 
 # babel 编译兼容 IE
 
-在 .babelrc 文件里加上标红代码，防止ie某些方法报错
+在 .babelrc 文件里加上标红代码，防止 ie 某些方法报错
 
 ```js{36}
 {
@@ -66,7 +66,7 @@ path: /webpack-template-new-project/
 const shelljs = require('shelljs');
 
 shelljs.exec('cross-env NODE_ENV=development node boot/internals/scripts/analyze.js --color', {
-  stdio: 'inherit',
+  stdio: 'inherit'
 });
 ```
 
@@ -153,9 +153,9 @@ new LodashModuleReplacementPlugin({
 
 ---
 
-# react-loadable优化
+# react-loadable 优化
 
-## withRef方法报错
+## withRef 方法报错
 
 当 react-loadable 应用到组件为 function 类型，此时 withRef 方法会报错，因为 function 组件是没有 ref 的，此时要做下兼容处理
 
@@ -165,46 +165,46 @@ import Loadable from 'react-loadable';
 
 const LoaderCache = new Map();
 export default function loadComponent(loader, options) {
- let component = LoaderCache.get(loader);
- if (!component) {
-   component = Loadable({
-     loader,
-     loading: (props) => {
-       if (props.error) {// eslint-disable-line
-         if (window.location.host.indexOf('-dev') >= 0 && window.TURKEY && window.TURKEY.getProperty('serverUpdate')) {
-           window.TURKEY.run('serverUpdate');
-         }
-         console.error('[chunk loader]', props.error); // eslint-disable-line
-       }
-       return <div />;
-     },
-     render: (loaded, props) => {
-       const Component = loaded.default;
-       const { withRef, ...rest } = props; // eslint-disable-line
-       const { isPureReactComponent, isReactComponent } = Component.prototype;
-       let refProps = null;
-       if (isPureReactComponent || isReactComponent) {
-         refProps = {
-           ref: (r) => { withRef && withRef(r); },
-         };
-       }
-       return (<Component
-         {...refProps}
-         {...rest}
-       />);
-     },
-     ...options,
-   });
-   LoaderCache.set(loader, component);
-   // component.preload();
- }
- return component;
+  let component = LoaderCache.get(loader);
+  if (!component) {
+    component = Loadable({
+      loader,
+      loading: (props) => {
+        if (props.error) {
+          // eslint-disable-line
+          if (window.location.host.indexOf('-dev') >= 0 && window.TURKEY && window.TURKEY.getProperty('serverUpdate')) {
+            window.TURKEY.run('serverUpdate');
+          }
+          console.error('[chunk loader]', props.error); // eslint-disable-line
+        }
+        return <div />;
+      },
+      render: (loaded, props) => {
+        const Component = loaded.default;
+        const { withRef, ...rest } = props; // eslint-disable-line
+        const { isPureReactComponent, isReactComponent } = Component.prototype;
+        let refProps = null;
+        if (isPureReactComponent || isReactComponent) {
+          refProps = {
+            ref: (r) => {
+              withRef && withRef(r);
+            }
+          };
+        }
+        return <Component {...refProps} {...rest} />;
+      },
+      ...options
+    });
+    LoaderCache.set(loader, component);
+    // component.preload();
+  }
+  return component;
 }
 ```
 
-## 阻止setState
+## 阻止 setState
 
-因为组件卸载时继续网络请求会导致setState报错，因为采用的是promise方法，不能取消请求，所以需要在卸载时将setState置空，以下分别针对页面、组件级别将其置空
+因为组件卸载时继续网络请求会导致 setState 报错，因为采用的是 promise 方法，不能取消请求，所以需要在卸载时将 setState 置空，以下分别针对页面、组件级别将其置空
 
 ### 页面级别
 
@@ -220,7 +220,8 @@ export default function loadComponent(loader, options) {
     component = Loadable({
       loader,
       loading: (props) => {
-        if (props.error) {// eslint-disable-line
+        if (props.error) {
+          // eslint-disable-line
           if (window.location.host.indexOf('-dev') >= 0 && window.TURKEY && window.TURKEY.getProperty('serverUpdate')) {
             window.TURKEY.run('serverUpdate');
           }
@@ -248,15 +249,12 @@ export default function loadComponent(loader, options) {
                 };
                 cb && cb.call(r);
               };
-            },
+            }
           };
         }
-        return (<Component
-          {...refProps}
-          {...rest}
-        />);
+        return <Component {...refProps} {...rest} />;
       },
-      ...options,
+      ...options
     });
     LoaderCache.set(loader, component);
     // component.preload();
@@ -279,13 +277,17 @@ export default function preventSetState(WrappedComponent) {
         // eslint-disable-next-line no-useless-return
         return;
       };
-    }
+    };
 
     render() {
-      return (<WrappedComponent
-        ref={(r) => { this.wrappedComponent = r; }}
-        {...this.props}
-      />);
+      return (
+        <WrappedComponent
+          ref={(r) => {
+            this.wrappedComponent = r;
+          }}
+          {...this.props}
+        />
+      );
     }
   };
 }
@@ -297,8 +299,7 @@ export default function preventSetState(WrappedComponent) {
 import preventSetState from 'runtime/preventSetState';
 
 @preventSetState
-export default class Component extends React.PureComponent {
-}
+export default class Component extends React.PureComponent {}
 ```
 
 或者
@@ -306,8 +307,7 @@ export default class Component extends React.PureComponent {
 ```js
 import preventSetState from 'runtime/preventSetState';
 
-class Component extends React.PureComponent {
-}
+class Component extends React.PureComponent {}
 
 export default preventSetState(Component);
 ```
@@ -326,19 +326,19 @@ import styles from './styles.css';
 
 class ErrorBoundary extends Component {
   state = {
-    hasError: false,
-  }
+    hasError: false
+  };
 
   componentWillReceiveProps() {
     // 重置未报错状态
     this.setState({
-      hasError: false,
+      hasError: false
     });
   }
 
   componentDidCatch(error) {
     this.setState({
-      hasError: true,
+      hasError: true
     });
 
     console.error(error);
@@ -351,9 +351,7 @@ class ErrorBoundary extends Component {
     if (this.state.hasError) {
       return (
         <div className={styles.error}>
-          <div className={styles.title}>
-          抱歉，页面出错了！
-          </div>
+          <div className={styles.title}>抱歉，页面出错了！</div>
         </div>
       );
     }
@@ -362,13 +360,13 @@ class ErrorBoundary extends Component {
 }
 
 ErrorBoundary.propTypes = {
-  children: PropTypes.node,
+  children: PropTypes.node
 };
 
 export default ErrorBoundary;
 ```
 
-# stylelint无效
+# stylelint 无效
 
 package.json
 
@@ -376,7 +374,7 @@ package.json
 "lint:css": "stylelint src/**/*.css"
 ```
 
-当在苹果电脑上运行以上命令时，没有任何效果，即使css格式错误也直接通过，同时提交代码前的报错信息也没有颜色，需要做下特殊处理
+当在苹果电脑上运行以上命令时，没有任何效果，即使 css 格式错误也直接通过，同时提交代码前的报错信息也没有颜色，需要做下特殊处理
 
 ```bash
 "lint:css": "stylelint \"src/**/*.css\" --color" # src/**/*.css 双引号转义为了兼容苹果，--color 是为了执行 pre-commit 钩子即提交代码前也能让错误的信息有颜色

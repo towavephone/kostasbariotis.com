@@ -92,14 +92,14 @@ Object.defineProperty 也能实现基本操作的拦截和自定义，那为什�
   proxy1.mountProxySandbox();
   (function(window) {
     var a = 'this is proxySandbox1';
-    function b() {};
+    function b() {}
     console.log('代理沙箱1挂载后的a, b:', window.a, window.b); // undefined undefined
-  })(proxy1.proxy)
+  })(proxy1.proxy);
 
   proxy1.unmountProxySandbox();
   (function(window) {
     console.log('代理沙箱1卸载后的a, b:', window.a, window.b); // undefined undefined
-  })(proxy1.proxy)
+  })(proxy1.proxy);
   ```
 
   一种解决方案是不用 var 和 function 声明全局变量和全局函数，比如
@@ -110,8 +110,8 @@ Object.defineProperty 也能实现基本操作的拦截和自定义，那为什�
   window.a = 1; // 有效
 
   function b() {} // 失效
-  b = () => {} // 有效
-  window.b = () => {} // 有效
+  b = () => {}; // 有效
+  window.b = () => {}; // 有效
   ```
 
 ## css 样式隔离
@@ -188,7 +188,7 @@ export default function processTpl(tpl, baseURI) {
     template, // html 模板
     scripts, // js 脚本（内联、外联）
     styles, // css 样式表（内联、外联）
-    entry: entry || scripts[scripts.length - 1], // 子应用入口 js 脚本文件，如果没有默认以解析后的最后一个 js 脚本代替；
+    entry: entry || scripts[scripts.length - 1] // 子应用入口 js 脚本文件，如果没有默认以解析后的最后一个 js 脚本代替；
   };
 }
 ```
@@ -208,10 +208,7 @@ function getEmbedHTML(template, styles, opts = {}) {
   return getExternalStyleSheets(styles, fetch).then((styleSheets) => {
     embedHTML = styles.reduce((html, styleSrc, i) => {
       // 内联处理全部的css资源
-      html = html.replace(
-        genLinkReplaceSymbol(styleSrc),
-        `<style>/* ${styleSrc} */${styleSheets[i]}</style>`
-      );
+      html = html.replace(genLinkReplaceSymbol(styleSrc), `<style>/* ${styleSrc} */${styleSheets[i]}</style>`);
       return html;
     }, embedHTML);
     return embedHTML;
@@ -228,11 +225,7 @@ function getEmbedHTML(template, styles, opts = {}) {
 而 qiankun 则采用了另一种办法，首先同理会先通过 fetch 获取外联的 js 字符串。
 
 ```js
-export function getExternalScripts(
-  scripts,
-  fetch = defaultFetch,
-  errorCallback = () => {}
-) {
+export function getExternalScripts(scripts, fetch = defaultFetch, errorCallback = () => {}) {
   const fetchScript = (scriptUrl) => {
     // 通过 fetch 获取 js 资源，如果有缓存从缓存拿
     // 略
@@ -240,7 +233,7 @@ export function getExternalScripts(
 
   return Promise.all(
     scripts.map((script) => {
-      if (typeof script === "string") {
+      if (typeof script === 'string') {
         if (isInlineCode(script)) {
           // 获取内联的 js code
           return getInlineCode(script);
@@ -256,9 +249,7 @@ export function getExternalScripts(
           return {
             src,
             async: true,
-            content: new Promise((resolve, reject) =>
-              requestIdleCallback(() => fetchScript(src).then(resolve, reject))
-            ),
+            content: new Promise((resolve, reject) => requestIdleCallback(() => fetchScript(src).then(resolve, reject)))
           };
         }
 
@@ -273,9 +264,7 @@ export function getExternalScripts(
 
 ```js
 function getExecutableScript(scriptSrc, scriptText, proxy, strictGlobal) {
-  const sourceUrl = isInlineCode(scriptSrc)
-    ? ""
-    : `//# sourceURL=${scriptSrc}\n`;
+  const sourceUrl = isInlineCode(scriptSrc) ? '' : `//# sourceURL=${scriptSrc}\n`;
 
   window.proxy = proxy;
   return strictGlobal
@@ -294,11 +283,7 @@ function getExecutableScript(scriptSrc, scriptText, proxy, strictGlobal) {
 // get the lifecycle hooks from module exports
 // 上面说过的 eval 包裹 js 代码返回可执行的 bundle 就是 execScripts 主要做的事
 const scriptExports: any = await execScripts(global, !singular);
-const { bootstrap, mount, unmount, update } = getLifecyclesFromExports(
-  scriptExports,
-  appName,
-  global
-);
+const { bootstrap, mount, unmount, update } = getLifecyclesFromExports(scriptExports, appName, global);
 ```
 
 ## 清除 js 副作用

@@ -8,7 +8,7 @@ exports.onCreateNode = ({ node, boundActionCreators }) => {
     createNodeField({
       node,
       name: 'slug',
-      value: node.frontmatter.path,
+      value: node.frontmatter.path
     });
   }
 };
@@ -87,7 +87,7 @@ exports.createPages = ({ boundActionCreators, graphql }) => {
         }
       }
     }
-  `).then(results => {
+  `).then((results) => {
     if (results.errors) {
       return Promise.reject(results.errors);
     }
@@ -123,8 +123,8 @@ function generateContent(createPage, posts) {
       context: {
         mainPostPath: node.frontmatter.path,
         nextPostPath: next ? next.frontmatter.path : 'none',
-        prePostPath: pre ? pre.frontmatter.path : 'none',
-      },
+        prePostPath: pre ? pre.frontmatter.path : 'none'
+      }
     });
   });
 }
@@ -138,7 +138,7 @@ function createTagPages(createPage, edges) {
 
   edges.forEach(({ node }) => {
     if (node.frontmatter.tags) {
-      node.frontmatter.tags.split(', ').forEach(tag => {
+      node.frontmatter.tags.split(', ').forEach((tag) => {
         if (!posts[tag]) {
           posts[tag] = [];
         }
@@ -147,24 +147,21 @@ function createTagPages(createPage, edges) {
     }
   });
 
-  Object.keys(posts).forEach(tagName => {
+  Object.keys(posts).forEach((tagName) => {
     const pageSize = 5;
     const tagLength = posts[tagName].length;
     const pagesSum = Math.ceil(tagLength / pageSize);
     for (let page = 1; page <= pagesSum; page++) {
       createPage({
-        path:
-          page === 1
-            ? `/tag/${tagName.toLowerCase()}`
-            : `/tag/${tagName.toLowerCase()}/page/${page}`,
+        path: page === 1 ? `/tag/${tagName.toLowerCase()}` : `/tag/${tagName.toLowerCase()}/page/${page}`,
         component: tagTemplate,
         context: {
           posts: paginate(posts[tagName], pageSize, page),
           length: tagLength,
           tag: tagName,
           pagesSum,
-          page,
-        },
+          page
+        }
       });
     }
   });
@@ -190,8 +187,8 @@ function createPagination(createPage, edges, pathPrefix) {
         pagesSum,
         length,
         prevPath: page - 1 > 0 ? `${pathPrefix}/${page - 1}` : null,
-        nextPath: page + 1 <= pagesSum ? `${pathPrefix}/${page + 1}` : null,
-      },
+        nextPath: page + 1 <= pagesSum ? `${pathPrefix}/${page + 1}` : null
+      }
     });
   }
 }
@@ -204,14 +201,14 @@ exports.modifyWebpackConfig = ({ config, stage }) => {
   if (stage === 'build-html') {
     config.loader('null', {
       test: /gitalk/,
-      loader: 'null-loader',
+      loader: 'null-loader'
     });
   }
   // If production JavaScript and CSS build
   if (stage === 'build-javascript') {
     // Turn off source maps
     config.merge({
-      devtool: false,
+      devtool: false
     });
   }
 };

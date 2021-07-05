@@ -2,7 +2,7 @@
 title: 编译器之旅（五）——声明语句
 date: 2020-3-4 14:42:21
 categories:
-- 计算机基础
+  - 计算机基础
 tags: 编译原理, 声明语句
 path: /tour-of-compiler-declarative-statement/
 ---
@@ -18,7 +18,7 @@ print 18 - 6/3 + 4*2;
 
 # 准备
 
-## BNF语法说明
+## BNF 语法说明
 
 我们已经看到了表达式的 BNF 表示法，现在让我们为以上语句定义 BNF 语法：
 
@@ -258,7 +258,7 @@ exit(0);
 
 ```
 print 12 * 3;
-print 
+print
    18 - 2
       * 4; print
 1 + 2 +
@@ -274,10 +274,10 @@ cc -o comp1 -g cg.c expr.c gen.c main.c misc.c scan.c stmt.c tree.c
 # 执行并生成汇编文件
 ./comp1 input01
 # 编译汇编文件 out.s 到可执行文件 out
-cc -o out out.s 
-./out 
-36 
-10 
+cc -o out out.s
+./out
+36
+10
 25
 ```
 

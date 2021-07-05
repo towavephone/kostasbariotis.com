@@ -16,13 +16,9 @@ tags: 前端, CSS, 等高布局, 预研
 首先明确侧边栏左边 html 的结构，其中 html 采用 react 写法，css 采用 less 写法
 
 ```html
-<div className={styles.leftBody}>
-  <div className={styles.leftBodyTop}>
-    
-  </div>
-  <div className={styles.leftBodyBottom}>
-    
-  </div>
+<div className="{styles.leftBody}">
+  <div className="{styles.leftBodyTop}"></div>
+  <div className="{styles.leftBodyBottom}"></div>
 </div>
 ```
 
@@ -45,7 +41,8 @@ tags: 前端, CSS, 等高布局, 预研
     display: table-row; /* 占满剩余空间，自适应父类剩余高度 */
     vertical-align: top; /* 将内容放在顶部 */
 
-    &::before { /* 设置 display：table-row; 时，margin 和 padding 设置会失效，故这里用伪元素代替显示 */
+    &::before {
+      /* 设置 display：table-row; 时，margin 和 padding 设置会失效，故这里用伪元素代替显示 */
       content: '';
       display: block;
       width: 100%;
@@ -80,15 +77,11 @@ tags: 前端, CSS, 等高布局, 预研
 此方法需要对 html 做出改动
 
 ```html
-<div className={styles.leftBody}>
-  <div className={styles.leftBodyTop}>
-
-  </div>
-  <div className={styles.leftBodyBottom}>
-    <div className={styles.equalHeight} />
-    <div className={styles.content}>
-    
-    </div>
+<div className="{styles.leftBody}">
+  <div className="{styles.leftBodyTop}"></div>
+  <div className="{styles.leftBodyBottom}">
+    <div className="{styles.equalHeight}" />
+    <div className="{styles.content}"></div>
   </div>
 </div>
 ```

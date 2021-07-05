@@ -23,8 +23,8 @@ const queries = [
       data.allMarkdownRemark.edges.map(({ node }) => {
         node.objectID = node.frontmatter.path;
         return node;
-      }),
-  },
+      })
+  }
 ];
 
 module.exports = {
@@ -36,11 +36,9 @@ module.exports = {
     description: `前端工程师，黑猫女王控，欢迎勾搭，技术相关<a href="https://github.com/towavephone" target="_blank">@towavephone</a>，QQ闲聊<a href="tencent://AddContact/?fromId=45&fromSubId=1&subcmd=all&uin=634407147&website=www.oicqzone.com">@towave</a>，bili关注<a href="https://space.bilibili.com/11507708#/" target="_blank">@towave</a>`,
     algolia: {
       appId: process.env.ALGOLIA_APP_ID ? process.env.ALGOLIA_APP_ID : '',
-      searchOnlyApiKey: process.env.ALGOLIA_SEARCH_ONLY_API_KEY
-        ? process.env.ALGOLIA_SEARCH_ONLY_API_KEY
-        : '',
-      indexName: process.env.ALGOLIA_INDEX_NAME ? process.env.ALGOLIA_INDEX_NAME : '',
-    },
+      searchOnlyApiKey: process.env.ALGOLIA_SEARCH_ONLY_API_KEY ? process.env.ALGOLIA_SEARCH_ONLY_API_KEY : '',
+      indexName: process.env.ALGOLIA_INDEX_NAME ? process.env.ALGOLIA_INDEX_NAME : ''
+    }
   },
   plugins: [
     'gatsby-plugin-catch-links',
@@ -52,22 +50,22 @@ module.exports = {
         apiKey: process.env.ALGOLIA_ADMIN_API_KEY ? process.env.ALGOLIA_ADMIN_API_KEY : '',
         indexName: process.env.ALGOLIA_INDEX_NAME ? process.env.ALGOLIA_INDEX_NAME : '',
         queries,
-        chunkSize: 10000, // default: 1000
-      },
+        chunkSize: 10000 // default: 1000
+      }
     },
     {
       resolve: 'gatsby-source-filesystem',
       options: {
         path: `${__dirname}/blog`,
-        name: 'blog',
-      },
+        name: 'blog'
+      }
     },
     {
       resolve: 'gatsby-source-filesystem',
       options: {
         path: `${__dirname}/static/images`,
-        name: 'images',
-      },
+        name: 'images'
+      }
     },
     {
       resolve: 'gatsby-transformer-remark',
@@ -78,8 +76,8 @@ module.exports = {
             resolve: 'gatsby-remark-images',
             options: {
               maxWidth: 800,
-              backgroundColor: '#fafafa',
-            },
+              backgroundColor: '#fafafa'
+            }
           },
           'gatsby-remark-static-images',
           'gatsby-remark-copy-linked-files',
@@ -89,8 +87,8 @@ module.exports = {
           {
             resolve: `gatsby-remark-responsive-iframe`,
             options: {
-              wrapperStyle: `margin-bottom: 2em`,
-            },
+              wrapperStyle: `margin-bottom: 2em`
+            }
           },
           {
             resolve: `gatsby-remark-design-system`,
@@ -98,15 +96,15 @@ module.exports = {
               // Class prefix for all elements of the design system specimens
               // This prefix also needs to be set on wrapper components in your Gatsby project
               // Default value is 'grds' - so if you want you can leave out this option entirely
-              classPrefix: `grds`,
-            },
+              classPrefix: `grds`
+            }
           },
           {
             resolve: 'gatsby-remark-external-links',
             options: {
               target: '_blank',
-              rel: 'nofollow noreferrer noopener',
-            },
+              rel: 'nofollow noreferrer noopener'
+            }
           },
           {
             resolve: 'gatsby-remark-embed-snippet',
@@ -122,18 +120,18 @@ module.exports = {
 
               // Example code links are relative to this dir.
               // eg examples/path/to/file.js
-              directory: `${__dirname}/static/examples/`,
-            },
+              directory: `${__dirname}/static/examples/`
+            }
           },
           {
             resolve: `gatsby-remark-prismjs`,
             options: {
-              classPrefix: 'language-',
-            },
+              classPrefix: 'language-'
+            }
           },
-          `gatsby-remark-smartypants`,
-        ],
-      },
+          `gatsby-remark-smartypants`
+        ]
+      }
     },
     'gatsby-plugin-react-helmet',
     'gatsby-transformer-sharp',
@@ -150,40 +148,40 @@ module.exports = {
           {
             src: `/favicons/android-chrome-192x192.png`,
             sizes: `192x192`,
-            type: `image/png`,
+            type: `image/png`
           },
           {
             src: `/favicons/android-chrome-512x512.png`,
             sizes: `512x512`,
-            type: `image/png`,
+            type: `image/png`
           },
           {
             src: `/favicon/apple-touch-icon-180x180.png`,
             sizes: `180x180`,
-            type: `image/png`,
+            type: `image/png`
           },
           {
             src: `/favicon/favicon-96x96.png`,
             sizes: `96x96`,
-            type: `image/png`,
-          },
-        ],
-      },
+            type: `image/png`
+          }
+        ]
+      }
     },
     {
-      resolve: `gatsby-plugin-sitemap`,
+      resolve: `gatsby-plugin-sitemap`
     },
     {
       resolve: `gatsby-plugin-canonical-urls`,
       options: {
-        siteUrl: `https://blog.towavephone.com`,
-      },
+        siteUrl: `https://blog.towavephone.com`
+      }
     },
     {
       resolve: `gatsby-plugin-nprogress`,
       options: {
-        color: `tomato`,
-      },
+        color: `tomato`
+      }
     },
     {
       resolve: `gatsby-plugin-feed`,
@@ -203,27 +201,27 @@ module.exports = {
           {
             serialize: ({ query: { site, allMarkdownRemark } }) => {
               return allMarkdownRemark.edges
-                .filter(post => !post.node.frontmatter.draft)
-                .map(edge => {
+                .filter((post) => !post.node.frontmatter.draft)
+                .map((edge) => {
                   return Object.assign({}, edge.node.frontmatter, {
                     description: edge.node.excerpt,
                     url: site.siteMetadata.siteUrl + edge.node.frontmatter.path,
                     guid: site.siteMetadata.siteUrl + edge.node.frontmatter.path,
-                    custom_elements: [{ 'content:encoded': edge.node.html }],
+                    custom_elements: [{ 'content:encoded': edge.node.html }]
                   });
                 });
             },
             setup: ({
               query: {
-                site: { siteMetadata },
-              },
+                site: { siteMetadata }
+              }
             }) => {
               return {
                 title: siteMetadata.title,
                 description: siteMetadata.description,
                 feed_url: siteMetadata.siteUrl + `/rss.xml`,
                 site_url: siteMetadata.siteUrl,
-                generator: `GatsbyJS`,
+                generator: `GatsbyJS`
               };
             },
             query: `
@@ -247,11 +245,11 @@ module.exports = {
               }
             }
           `,
-            output: '/rss.xml',
-          },
-        ],
-      },
+            output: '/rss.xml'
+          }
+        ]
+      }
     },
-    'gatsby-plugin-offline',
-  ],
+    'gatsby-plugin-offline'
+  ]
 };

@@ -2,7 +2,7 @@
 title: 谨慎处理 Service Worker 的更新
 date: 2020-6-4 01:37:24
 categories:
-- 前端
+  - 前端
 tags: 前端, Service Worker
 path: /handle-service-worker-updates/
 ---
@@ -42,10 +42,10 @@ Service Worker 以其 `异步安装` 和 `持续运行` 两个特点，决定了
 在遭遇突发情况时，很容易想到通过“插队”的方式来解决问题，现实生活中的救护车消防车等特种车辆就采用了这种方案。SW 也给程序员提供了实现这种方案的可能性，那就是在 SW 内部的 self.skipWaiting() 方法。
 
 ```js
-self.addEventListener('install', event => {
-  self.skipWaiting()
+self.addEventListener('install', (event) => {
+  self.skipWaiting();
   // 预缓存其他静态内容
-})
+});
 ```
 
 ### 优点
@@ -77,7 +77,7 @@ self.addEventListener('install', event => {
 ```js
 navigator.serviceWorker.addEventListener('controllerchange', () => {
   window.location.reload();
-})
+});
 ```
 
 ### 优点
@@ -106,7 +106,7 @@ navigator.serviceWorker.addEventListener('controllerchange', () => {
 在使用 Chrome Dev Tools 的 Update on Reload 功能时，使用如上代码会引发无限的自我刷新。为了弥补这一点，需要添加一个 flag 判断一下，如下：
 
 ```js
-let refreshing = false
+let refreshing = false;
 navigator.serviceWorker.addEventListener('controllerchange', () => {
   if (refreshing) {
     return;
@@ -144,27 +144,30 @@ function emitUpdate() {
 }
 
 if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('/service-worker.js').then(function (reg) {
-    if (reg.waiting) {
-      emitUpdate();
-      return;
-    }
+  navigator.serviceWorker
+    .register('/service-worker.js')
+    .then(function(reg) {
+      if (reg.waiting) {
+        emitUpdate();
+        return;
+      }
 
-    reg.onupdatefound = function () {
-      var installingWorker = reg.installing;
-      installingWorker.onstatechange = function () {
-        switch (installingWorker.state) {
-          case 'installed':
-            if (navigator.serviceWorker.controller) {
-              emitUpdate();
-            }
-            break;
-        }
+      reg.onupdatefound = function() {
+        var installingWorker = reg.installing;
+        installingWorker.onstatechange = function() {
+          switch (installingWorker.state) {
+            case 'installed':
+              if (navigator.serviceWorker.controller) {
+                emitUpdate();
+              }
+              break;
+          }
+        };
       };
-    };
-  }).catch(function(e) {
-    console.error('Error during service worker registration:', e);
-  });
+    })
+    .catch(function(e) {
+      console.error('Error during service worker registration:', e);
+    });
 }
 ```
 
@@ -174,7 +177,7 @@ if ('serviceWorker' in navigator) {
 
 ```js
 try {
-  navigator.serviceWorker.getRegistration().then(reg => {
+  navigator.serviceWorker.getRegistration().then((reg) => {
     reg.waiting.postMessage('skipWaiting');
   });
 } catch (e) {
@@ -187,11 +190,11 @@ try {
 ```js
 // service-worker.js
 // SW 不再在 install 阶段执行 skipWaiting 了
-self.addEventListener('message', event => {
+self.addEventListener('message', (event) => {
   if (event.data === 'skipWaiting') {
     self.skipWaiting();
   }
-})
+});
 ```
 
 第 4 步和方法二一致，也是通过 navigator.serviceWorker 监听 controllerchange 事件来执行刷新操作，这里就不重复列出代码了。

@@ -2,7 +2,7 @@
 title: React之Component入门学习
 date: 2019-9-19 21:32:42
 categories:
-- 前端
+  - 前端
 tags: 前端, React, PureComponent
 path: /react-component-practice-learn/
 ---
@@ -18,13 +18,11 @@ path: /react-component-practice-learn/
 class Counter extends React.PureComponent {
   constructor(props) {
     super(props);
-    this.state = {count: 0};
+    this.state = { count: 0 };
   }
   render() {
     return (
-      <button onClick={() => this.setState(state => ({count: state.count + 1}))}>
-        Count: {this.state.count}
-      </button>
+      <button onClick={() => this.setState((state) => ({ count: state.count + 1 }))}>Count: {this.state.count}</button>
     );
   }
 }
@@ -34,17 +32,17 @@ class Counter extends React.PureComponent {
 
 ## 函数组件
 
-定义React组件的**最简单**方式就是定义一个函数组件，它接受单一的 props 并返回一个React元素。
+定义 React 组件的**最简单**方式就是定义一个函数组件，它接受单一的 props 并返回一个 React 元素。
 
 ```js
 // 函数组件
 function Counter(props) {
-    return <div>Counter: {props.count}</div>
+  return <div>Counter: {props.count}</div>;
 }
 // 类组件
 class Counter extends React.Component {
   render() {
-    return <div>Counter: {this.props.count}</div>
+    return <div>Counter: {this.props.count}</div>;
   }
 }
 ```
@@ -65,39 +63,31 @@ class Counter extends React.Component {
 ```js
 export default class AnForm extends React.Component {
   state = {
-    name: ""
-  }
+    name: ''
+  };
   handleSubmitClick = () => {
-    console.log("非受控组件: ", this._name.value);
-    console.log("受控组件: ", this.state.name);
-  }
+    console.log('非受控组件: ', this._name.value);
+    console.log('受控组件: ', this.state.name);
+  };
   handleChange = (e) => {
     this.setState({
       name: e.target.value
-    })
-  }
+    });
+  };
 
   render() {
     return (
       <form onSubmit={this.handleSubmitClick}>
-      <label>
-        非受控组件:
-        <input 
-        	type="text" 
-        	defaultValue="default" 
-        	ref={input => this._name = input} 
-        />
-      </label>
-      <label>
-        受控组件:
-        <input 
-        	type="text" 
-        	value={this.state.name} 
-        	onChange={this.handleChange}
-        />
-      </label>
-      <input type="submit" value="Submit" />
-    </form>
+        <label>
+          非受控组件:
+          <input type='text' defaultValue='default' ref={(input) => (this._name = input)} />
+        </label>
+        <label>
+          受控组件:
+          <input type='text' value={this.state.name} onChange={this.handleChange} />
+        </label>
+        <input type='submit' value='Submit' />
+      </form>
     );
   }
 }
@@ -105,31 +95,27 @@ export default class AnForm extends React.Component {
 
 ### 受控组件
 
-与 html 不同的是，在 React 中，`<input>`或`<select>`、`<textarea> `等这类组件，不会主动维持自身状态，并根据用户输入进行更新。它们都要绑定一个`onChange`事件；每当状态发生变化时，都要写入组件的 state 中，在 React 中被称为**受控组件**。
+与 html 不同的是，在 React 中，`<input>`或`<select>`、`<textarea>`等这类组件，不会主动维持自身状态，并根据用户输入进行更新。它们都要绑定一个`onChange`事件；每当状态发生变化时，都要写入组件的 state 中，在 React 中被称为**受控组件**。
 
 ```js
 export default class AnForm extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {value: ""};
+    this.state = { value: '' };
     this.handleChange = this.handleChange.bind(this);
   }
   handleChange(event) {
-    this.setState({value: event.target.value});
+    this.setState({ value: event.target.value });
   }
   render() {
-    return <input 
-      			type="text" 
-      			value={this.state.value} 
-      			onChange={this.handleChange} 
-      		/>;
+    return <input type='text' value={this.state.value} onChange={this.handleChange} />;
   }
 }
 ```
 
 - **onChange & value 模式**（单选按钮和复选按钮对应的是 checked props）
 
-- react通过这种方式**消除了组件的局部状态，**使得应用的整个**状态可控**。
+- react 通过这种方式**消除了组件的局部状态，**使得应用的整个**状态可控**。
 
 - 注意 `<input type="file" />`，它是一个**非受控组件**。
 
@@ -149,12 +135,12 @@ export default class AnForm extends React.Component {
 export default class AnForm extends Component {
   handleSubmitClick = () => {
     const name = this._name.value;
-  }
+  };
 
   render() {
     return (
       <div>
-        <input type="text" ref={input => this._name = input} />
+        <input type='text' ref={(input) => (this._name = input)} />
         <button onClick={this.handleSubmitClick}>Sign up</button>
       </div>
     );
@@ -168,15 +154,15 @@ export default class AnForm extends Component {
 
 - 使用场景
 
-  | 特征                                                         | 非受控组件 | 受控组件 |
-  | ------------------------------------------------------------ | ---------- | -------- |
-  | one-time value retrieval (e.g. on submit)                    | ✅          | ✅        |
-  | [validating on submit](https://goshakkk.name/submit-time-validation-react/) | ✅          | ✅        |
-  | [instant field validation](https://goshakkk.name/instant-form-fields-validation-react/) | ❌          | ✅        |
-  | [conditionally disabling submit button](https://goshakkk.name/form-recipe-disable-submit-button-react/) | ❌          | ✅        |
-  | enforcing input format                                       | ❌          | ✅        |
-  | several inputs for one piece of data                         | ❌          | ✅        |
-  | [dynamic inputs](https://goshakkk.name/array-form-inputs/)   | ❌          | ✅        |
+  | 特征 | 非受控组件 | 受控组件 |
+  | --- | --- | --- |
+  | one-time value retrieval (e.g. on submit) | ✅ | ✅ |
+  | [validating on submit](https://goshakkk.name/submit-time-validation-react/) | ✅ | ✅ |
+  | [instant field validation](https://goshakkk.name/instant-form-fields-validation-react/) | ❌ | ✅ |
+  | [conditionally disabling submit button](https://goshakkk.name/form-recipe-disable-submit-button-react/) | ❌ | ✅ |
+  | enforcing input format | ❌ | ✅ |
+  | several inputs for one piece of data | ❌ | ✅ |
+  | [dynamic inputs](https://goshakkk.name/array-form-inputs/) | ❌ | ✅ |
 
 ## 有状态组件与无状态组件
 
@@ -187,35 +173,28 @@ export default class AnForm extends Component {
 ```js
 export default class Counter extends React.Component {
   constructor(props) {
-    super(props)
-    this.state = { clicks: 0 }
-    this.handleClick = this.handleClick.bind(this)
+    super(props);
+    this.state = { clicks: 0 };
+    this.handleClick = this.handleClick.bind(this);
   }
   handleClick() {
-    this.setState(state => ({ clicks: state.clicks + 1 }))
+    this.setState((state) => ({ clicks: state.clicks + 1 }));
   }
   render() {
-    return (
-      <Button
-        onClick={this.handleClick}
-        text={`You've clicked me ${this.state.clicks} times!`}
-      />
-    )
+    return <Button onClick={this.handleClick} text={`You've clicked me ${this.state.clicks} times!`} />;
   }
 }
 ```
+
 ### 无状态组件
 
-输入输出数据完全由props决定，而且不会产生任何副作用。
+输入输出数据完全由 props 决定，而且不会产生任何副作用。
 
 ```js
-const Button = props =>
-  <button onClick={props.onClick}>
-    {props.text}
-  </button>
+const Button = (props) => <button onClick={props.onClick}>{props.text}</button>;
 ```
 
-- 无状态组件一般会搭配高阶组件（简称：HOC）一起使用，高阶组件用来托管state，Redux 框架就是通过 store 管理数据源和所有状态，其中所有负责展示的组件都使用无状态函数式的写法。
+- 无状态组件一般会搭配高阶组件（简称：HOC）一起使用，高阶组件用来托管 state，Redux 框架就是通过 store 管理数据源和所有状态，其中所有负责展示的组件都使用无状态函数式的写法。
 - 一个简单的 无状态(stateless) 按钮组件，仅依赖于 props(属性) ，这也称为**函数式组件**。
 
 ## 展示组件与容器组件
@@ -225,28 +204,30 @@ const Button = props =>
 展示组件指不关心数据是怎么加载和变动的，只关注于页面展示效果的组件。
 
 ```js
-class TodoList extends React.Component{
-    constructor(props){
-        super(props);
-    }
-    render(){
-        const {todos} = this.props;
-        return (<div>
-                <ul>
-                    {todos.map((item,index)=>{
-                        return <li key={item.id}>{item.name}</li>
-                    })}
-                </ul>
-            </div>)
-    }
+class TodoList extends React.Component {
+  constructor(props) {
+    super(props);
+  }
+  render() {
+    const { todos } = this.props;
+    return (
+      <div>
+        <ul>
+          {todos.map((item, index) => {
+            return <li key={item.id}>{item.name}</li>;
+          })}
+        </ul>
+      </div>
+    );
+  }
 }
 ```
 
 - 只能通过 **props** 的方式**接收数据和进行回调**(callback)操作。
-- **很少拥有自己的状态**，即使有也是用于展示UI状态的。
+- **很少拥有自己的状态**，即使有也是用于展示 UI 状态的。
 - 通常允许通过 **this.props.children** 方式来包含其他组件。
-- **内部可以包含展示组件和容器组件**，通常会包含一些自己的DOM标记和样式(style)
-- 对应用程序的其他部分没有依赖关系，例如Flux操作或store。
+- **内部可以包含展示组件和容器组件**，通常会包含一些自己的 DOM 标记和样式(style)
+- 对应用程序的其他部分没有依赖关系，例如 Flux 操作或 store。
 - 会被写成函数式组件除非该组件需要自己的状态，生命周期或者做一些性能优化。
 
 ### 容器组件
@@ -255,37 +236,39 @@ class TodoList extends React.Component{
 
 ```js
 //容器组件
-class TodoListContainer extends React.Component{
-    constructor(props){
-        super(props);
-        this.state = {
-            todos:[]
-        }
-        this.fetchData = this.fetchData.bind(this);
-    }
-    componentDidMount(){
-        this.fetchData();
-    }
-    fetchData(){
-        fetch('/api/todos').then(data =>{
-            this.setState({
-                todos:data
-            })
-        })
-    }
-    render(){
-        return (<div>
-                <TodoList todos={this.state.todos} />    
-            </div>)
-    }
+class TodoListContainer extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      todos: []
+    };
+    this.fetchData = this.fetchData.bind(this);
+  }
+  componentDidMount() {
+    this.fetchData();
+  }
+  fetchData() {
+    fetch('/api/todos').then((data) => {
+      this.setState({
+        todos: data
+      });
+    });
+  }
+  render() {
+    return (
+      <div>
+        <TodoList todos={this.state.todos} />
+      </div>
+    );
+  }
 }
 ```
 
-- **内部可以包含容器组件和展示组件**，但通常没有任何自己的DOM标记，除了一些包装divs，并且从不具有任何样式。
+- **内部可以包含容器组件和展示组件**，但通常没有任何自己的 DOM 标记，除了一些包装 divs，并且从不具有任何样式。
 - 提供数据和行为给其他的展示组件或容器组件。
 - 可以调用 Flux 操作并将它们作为回调函数（callback）提供给展示组件。
 - 往往是**有状态**的，因为它们倾向于**作为数据源**
-- 通常使用**高阶组件**生成，例如React Redux的connect()
+- 通常使用**高阶组件**生成，例如 React Redux 的 connect()
 
 ## 高阶组件
 
@@ -293,7 +276,7 @@ class TodoListContainer extends React.Component{
 
 对于**高阶组件**，它描述的便是接受 React 组件作为输入，输出一个新的 React 组件的组件。
 
-更通俗的描述为，高阶组件通过包裹（wrapped）被传入的 React 组件，经过一系列处理，最终返回一个**相对增强（enhanced）的 React 组件**，供其他组件调用。使我们的代码更具有复用性、逻辑性和抽象特性，它可以对 render 方法做劫持，也**可以控制  props 、state**。
+更通俗的描述为，高阶组件通过包裹（wrapped）被传入的 React 组件，经过一系列处理，最终返回一个**相对增强（enhanced）的 React 组件**，供其他组件调用。使我们的代码更具有复用性、逻辑性和抽象特性，它可以对 render 方法做劫持，也**可以控制 props 、state**。
 
 实现高阶组件的方法有以下两种：
 
@@ -310,7 +293,7 @@ export default function withHeader(WrappedComponent) {
       }
       // 透传props，并且传递新的newProps
       return <div>
-        <WrappedComponent {...this.props} {...newProps}/> 
+        <WrappedComponent {...this.props} {...newProps}/>
       </div>
     }
   }
@@ -331,7 +314,7 @@ export default function (WrappedComponent) {
 ```
 
 - 注意：不要在 HOC 内修改一个组件的原型（或以其它方式修改组件）
-- 贯穿传递不相关props属性给被包裹的组件，帮助确保高阶组件最大程度的灵活性和可重用性
+- 贯穿传递不相关 props 属性给被包裹的组件，帮助确保高阶组件最大程度的灵活性和可重用性
 - 应该使用**最大化的组合性**
 - 为了便于调试，可以选择一个显示名字，传达它是一个高阶组件的结果，`WrappedComponent.displayName || WrappedComponent.name || 'Component';`
 - **不要在 render() 方法中创建 HOC**，否则，每一次渲染，都会重新创建渲染 HOC
@@ -350,29 +333,27 @@ import React, { useState, useEffect } from 'react';
 function Example() {
   // 声明一个叫 "count" 的 state 变量
   const [count, setCount] = useState(0);
-    
-  useEffect(()=>{
+
+  useEffect(() => {
     // 需要在 componentDidMount 执行的内容
     return function cleanup() {
-      // 需要在 componentWillUnmount 执行的内容      
-  	}
-  }, [])
+      // 需要在 componentWillUnmount 执行的内容
+    };
+  }, []);
 
-  useEffect(() => { 
+  useEffect(() => {
     // 在 componentDidMount，以及 count 更改时 componentDidUpdate 执行的内容
-    document.title = 'You clicked ' + count + ' times'; 
+    document.title = 'You clicked ' + count + ' times';
     return () => {
       // 需要在 count 更改时 componentDidUpdate（先于 document.title = ... 执行，遵守先清理后更新）
-      // 以及 componentWillUnmount 执行的内容       
-    } // 当函数中 Cleanup 函数会按照在代码中定义的顺序先后执行，与函数本身的特性无关
+      // 以及 componentWillUnmount 执行的内容
+    }; // 当函数中 Cleanup 函数会按照在代码中定义的顺序先后执行，与函数本身的特性无关
   }, [count]); // 仅在 count 更改时更新
 
   return (
     <div>
       <p>You clicked {count} times</p>
-      <button onClick={() => setCount(count + 1)}>
-        Click me
-      </button>
+      <button onClick={() => setCount(count + 1)}>Click me</button>
     </div>
   );
 }
@@ -383,8 +364,8 @@ function Example() {
 - `useLayoutEffect` 与 `componentDidMount`、`componentDidUpdate` 的调用阶段是一样的。但是，我们推荐你**一开始先用 useEffect**，只有当它出问题的时候再尝试使用 `useLayoutEffect`
 - 与 `componentDidMount` 或 `componentDidUpdate` 不同的是，Hook 在浏览器完成布局与绘制**之后**，传给 `useEffect` 的函数会延迟调用，但会保证在任何新的渲染前执行
 - effect 的清除（cleanup）并不会读取“最新”的 props 。它只能读取到定义它的那次渲染中的 props 值
-- effect 中可以读取到最新的 count 状态值，并不是 count 的值在“不变”的effect中发生了改变，而是effect 函数本身在每一次渲染中都不相同
-- 在 class 组件生命周期的思维模型中，副作用的行为和渲染输出是不同的。UI渲染是被 props 和 state 驱动的，并且能确保步调一致，但副作用并不是这样。这是一类常见问题的来源。
+- effect 中可以读取到最新的 count 状态值，并不是 count 的值在“不变”的 effect 中发生了改变，而是 effect 函数本身在每一次渲染中都不相同
+- 在 class 组件生命周期的思维模型中，副作用的行为和渲染输出是不同的。UI 渲染是被 props 和 state 驱动的，并且能确保步调一致，但副作用并不是这样。这是一类常见问题的来源。
 - 而在 `useEffect` 的思维模型中，默认都是同步的。副作用变成了 React 数据流的一部分。对于每一个 `useEffect` 调用，一旦你处理正确，你的组件能够更好地处理边缘情况。
 
 # Component 源码解读
@@ -401,7 +382,7 @@ function Component(props, context, updater) {
   this.context = context; // 上下文 context
   // If a component has string refs, we will assign a different object later.
   // 初始化 refs，为 {}，主要在 stringRef 中使用，将 stringRef 节点的实例挂载在 this.refs 上
-  this.refs = emptyObject; 
+  this.refs = emptyObject;
   // We initialize the default updater but the real one gets injected by the
   // renderer.
   this.updater = updater || ReactNoopUpdateQueue; // updater
@@ -423,7 +404,7 @@ Component.prototype.isReactComponent = {};
  * `setState` 是通过队列形式来更新 state ，当 执行 `setState` 时，
  * 会把 state 浅合并后放入状态队列，然后批量执行，即它不是立即更新的。
  * 不过，你可以在 callback 回调函数中获取最新的值
- * 
+ *
  * 注意：对于异步渲染，我们应在 `getSnapshotBeforeUpdate` 中读取 `state`、`props`,
  * 而不是 `componentWillUpdate`
  *
@@ -437,43 +418,41 @@ Component.prototype.setState = function(partialState, callback) {
   // 当 partialState 状态为 object 或 function类型 或 null 时，
   // 执行 this.updater.enqueueSetState 方法，否则报错
   invariant(
-    typeof partialState === 'object' ||
-      typeof partialState === 'function' ||
-      partialState == null,
+    typeof partialState === 'object' || typeof partialState === 'function' || partialState == null,
     'setState(...): takes an object of state variables to update or a ' +
-      'function which returns an object of state variables.',
+      'function which returns an object of state variables.'
   );
   // 将 `setState` 事务放入队列中
-  this.updater.enqueueSetState(this, partialState, callback, 'setState'); 
+  this.updater.enqueueSetState(this, partialState, callback, 'setState');
 };
 
 /**
  * 强制更新，当且仅当当前不处于 DOM 事物（transaction）中才会被唤起
  * This should only be invoked when it is known with
  * certainty that we are **not** in a DOM transaction.
- * 
+ *
  * 默认情况下，当组件的state或props改变时，组件将重新渲染。
  * 如果你的`render()`方法依赖于一些其他的数据，
- * 你可以告诉React组件需要通过调用`forceUpdate()`重新渲染。 
+ * 你可以告诉React组件需要通过调用`forceUpdate()`重新渲染。
  * 调用`forceUpdate()`会导致组件跳过 `shouldComponentUpdate()`,
  * 直接调用 `render()`。但会调用 `componentWillUpdate` 和 `componentDidUpdate`。
- * 这将触发组件的正常生命周期方法,包括每个子组件的 shouldComponentUpdate() 方法。 
+ * 这将触发组件的正常生命周期方法,包括每个子组件的 shouldComponentUpdate() 方法。
  * forceUpdate 就是重新 render 。
  * 有些变量不在 state 上，当时你又想达到这个变量更新的时候，刷新 render ；
  * 或者 state 里的某个变量层次太深，更新的时候没有自动触发 render 。
  * 这些时候都可以手动调用 forceUpdate 自动触发 render
- * 
+ *
  * @param {?function} callback 更新完成后的回调函数.
  * @final
  * @protected
  */
 Component.prototype.forceUpdate = function(callback) {
   // updater 强制更新
-  this.updater.enqueueForceUpdate(this, callback, 'forceUpdate'); 
+  this.updater.enqueueForceUpdate(this, callback, 'forceUpdate');
 };
 ```
 
-其中 `this.refs`  值 `emptyObject` 为：
+其中 `this.refs` 值 `emptyObject` 为：
 
 ```js
 // 设置 refs 初始值为 {}
@@ -483,10 +462,9 @@ if (__DEV__) {
 }
 // Object.freeze() 冻结一个对象，被冻结的对象不能被修改（添加，删除，
 // 修改已有属性的可枚举性、可配置性、可写性与属性值，原型）；返回和传入的参数相同的对象。
-
 ```
 
-`ReactNoopUpdateQueue ` 为：
+`ReactNoopUpdateQueue` 为：
 
 ```js
 // ReactNoopUpdateQueue.js 文件
@@ -537,12 +515,7 @@ const ReactNoopUpdateQueue = {
    * @param {?string} callerName name of the calling function in the public API.
    * @internal
    */
-  enqueueReplaceState: function(
-    publicInstance,
-    completeState,
-    callback,
-    callerName,
-  ) {
+  enqueueReplaceState: function(publicInstance, completeState, callback, callerName) {
     warnNoop(publicInstance, 'replaceState');
   },
 
@@ -557,14 +530,9 @@ const ReactNoopUpdateQueue = {
    * @param {?string} Name of the calling function in the public API.
    * @internal
    */
-  enqueueSetState: function(
-    publicInstance,
-    partialState,
-    callback,
-    callerName,
-  ) {
+  enqueueSetState: function(publicInstance, partialState, callback, callerName) {
     warnNoop(publicInstance, 'setState');
-  },
+  }
 };
 
 export default ReactNoopUpdateQueue;
@@ -572,4 +540,4 @@ export default ReactNoopUpdateQueue;
 
 注意，React API 只是简单的功能介绍，具体的实现是在 react-dom 中，这是因为不同的平台，React API 是一致的，但不同的平台，渲染的流程是不同的，具体的 Component 渲染流程不一致，会根据具体的平台去定制。
 
-组件生命周期请参考  [Hooks 与 React 生命周期的关系](https://github.com/sisterAn/blog/issues/34)
+组件生命周期请参考 [Hooks 与 React 生命周期的关系](https://github.com/sisterAn/blog/issues/34)

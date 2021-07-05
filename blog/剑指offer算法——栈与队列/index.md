@@ -2,15 +2,14 @@
 title: 剑指offer算法题——栈与队列
 date: 2018-2-25 16:14:19
 categories:
-- 面试
+  - 面试
 tags: 面试, 算法
 path: /offer-stack-queue/
 ---
+
 ## 用两个栈实现队列
 
->题目描述：用两个栈来实现一个队列，完成队列的Push和Pop操作。 队列中的元素为int类型。
-
-
+> 题目描述：用两个栈来实现一个队列，完成队列的 Push 和 Pop 操作。 队列中的元素为 int 类型。
 
 ```cpp
 #include<iostream>

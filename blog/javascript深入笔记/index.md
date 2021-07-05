@@ -12,12 +12,10 @@ tags: 前端, JS, 高级前端
 我们先使用构造函数创建一个对象：
 
 ```js
-function Person() {
-
-}
+function Person() {}
 var person = new Person();
 person.name = 'Kevin';
-console.log(person.name) // Kevin
+console.log(person.name); // Kevin
 ```
 
 在这个例子中，Person 就是一个构造函数，我们使用 new 创建了一个实例对象 person。
@@ -29,23 +27,21 @@ console.log(person.name) // Kevin
 每个函数都有一个 prototype 属性，就是我们经常在各种例子中看到的那个 prototype ，比如：
 
 ```js
-function Person() {
-
-}
+function Person() {}
 // 虽然写在注释里，但是你要注意：
 // prototype是函数才会有的属性
 Person.prototype.name = 'Kevin';
 var person1 = new Person();
 var person2 = new Person();
-console.log(person1.name) // Kevin
-console.log(person2.name) // Kevin
+console.log(person1.name); // Kevin
+console.log(person2.name); // Kevin
 ```
 
 那这个函数的 prototype 属性到底指向的是什么呢？是这个函数的原型吗？
 
 其实，函数的 prototype 属性指向了一个对象，这个对象正是调用该构造函数而创建的实例的原型，也就是这个例子中的 person1 和 person2 的原型。
 
-那什么是原型呢？你可以这样理解：每一个JavaScript对象(null除外)在创建的时候就会与之关联另一个对象，这个对象就是我们所说的原型，每一个对象都会从原型"继承"属性。
+那什么是原型呢？你可以这样理解：每一个 JavaScript 对象(null 除外)在创建的时候就会与之关联另一个对象，这个对象就是我们所说的原型，每一个对象都会从原型"继承"属性。
 
 让我们用一张图表示构造函数和实例原型之间的关系：
 
@@ -62,9 +58,7 @@ console.log(person2.name) // Kevin
 为了证明这一点,我们可以在火狐或者谷歌中输入：
 
 ```js
-function Person() {
-
-}
+function Person() {}
 var person = new Person();
 console.log(person.__proto__ === Person.prototype); // true
 ```
@@ -82,9 +76,7 @@ console.log(person.__proto__ === Person.prototype); // true
 为了验证这一点，我们可以尝试：
 
 ```js
-function Person() {
-
-}
+function Person() {}
 console.log(Person === Person.prototype.constructor); // true
 ```
 
@@ -95,16 +87,14 @@ console.log(Person === Person.prototype.constructor); // true
 综上我们已经得出：
 
 ```js
-function Person() {
-
-}
+function Person() {}
 
 var person = new Person();
 
-console.log(person.__proto__ == Person.prototype) // true
-console.log(Person.prototype.constructor == Person) // true
+console.log(person.__proto__ == Person.prototype); // true
+console.log(Person.prototype.constructor == Person); // true
 // 顺便学习一个ES5的方法,可以获得对象的原型
-console.log(Object.getPrototypeOf(person) === Person.prototype) // true
+console.log(Object.getPrototypeOf(person) === Person.prototype); // true
 ```
 
 了解了构造函数、实例原型、和实例之间的关系，接下来我们讲讲实例和原型的关系：
@@ -114,24 +104,22 @@ console.log(Object.getPrototypeOf(person) === Person.prototype) // true
 当读取实例的属性时，如果找不到，就会查找与对象关联的原型中的属性，如果还查不到，就去找原型的原型，一直找到最顶层为止。
 
 ```js
-function Person() {
-
-}
+function Person() {}
 
 Person.prototype.name = 'Kevin';
 
 var person = new Person();
 
 person.name = 'Daisy';
-console.log(person.name) // Daisy
+console.log(person.name); // Daisy
 
 delete person.name;
-console.log(person.name) // Kevin
+console.log(person.name); // Kevin
 ```
 
 在这个例子中，我们给实例对象 person 添加了 name 属性，当我们打印 person.name 的时候，结果自然为 Daisy。
 
-但是当我们删除了 person 的 name 属性时，读取 person.name，从 person 对象中找不到 name 属性就会从 person 的原型也就是 `person.__proto__` ，也就是 Person.prototype中查找，幸运的是我们找到了 name 属性，结果为 Kevin。
+但是当我们删除了 person 的 name 属性时，读取 person.name，从 person 对象中找不到 name 属性就会从 person 的原型也就是 `person.__proto__` ，也就是 Person.prototype 中查找，幸运的是我们找到了 name 属性，结果为 Kevin。
 
 但是万一还没有找到呢？原型的原型又是什么呢？
 
@@ -141,8 +129,8 @@ console.log(person.name) // Kevin
 
 ```js
 var obj = new Object();
-obj.name = 'Kevin'
-console.log(obj.name) // Kevin
+obj.name = 'Kevin';
+console.log(obj.name); // Kevin
 ```
 
 其实原型对象就是通过 Object 构造函数生成的，结合之前所讲，实例的 `__proto__` 指向构造函数的 prototype ，所以我们再更新下关系图：
@@ -154,7 +142,7 @@ console.log(obj.name) // Kevin
 那 Object.prototype 的原型呢？
 
 ```js
-console.log(Object.prototype.__proto__ === null) // true
+console.log(Object.prototype.__proto__ === null); // true
 ```
 
 所以查找属性的时候查到 Object.prototype 就可以停止查找了。
@@ -174,9 +162,7 @@ console.log(Object.prototype.__proto__ === null) // true
 首先是 constructor 属性，我们看个例子：
 
 ```js
-function Person() {
-
-}
+function Person() {}
 var person = new Person();
 console.log(person.constructor === Person); // true
 ```
@@ -184,7 +170,7 @@ console.log(person.constructor === Person); // true
 当获取 person.constructor 时，其实 person 中并没有 constructor 属性，当不能读取到 constructor 属性时，会从 person 的原型也就是 Person.prototype 中读取，正好原型中有该属性，所以：
 
 ```js
-person.constructor === Person.prototype.constructor
+person.constructor === Person.prototype.constructor;
 ```
 
 ### `__proto__`
@@ -193,7 +179,7 @@ person.constructor === Person.prototype.constructor
 
 ### 真的是继承吗？
 
-最后是关于继承，前面我们讲到“每一个对象都会从原型‘继承’属性”，实际上，继承是一个十分具有迷惑性的说法，引用《你不知道的JavaScript》中的话，就是：
+最后是关于继承，前面我们讲到“每一个对象都会从原型‘继承’属性”，实际上，继承是一个十分具有迷惑性的说法，引用《你不知道的 JavaScript》中的话，就是：
 
 继承意味着复制操作，然而 JavaScript 默认并不会复制对象的属性，相反，JavaScript 只是在两个对象之间创建一个关联，这样，一个对象就可以通过委托访问另一个对象的属性和函数，所以与其叫继承，委托的说法反而更准确些。
 
@@ -219,12 +205,12 @@ JavaScript 采用词法作用域(lexical scoping)，也就是静态作用域。
 var value = 1;
 
 function foo() {
-    console.log(value);
+  console.log(value);
 }
 
 function bar() {
-    var value = 2;
-    foo();
+  var value = 2;
+  foo();
 }
 
 bar();
@@ -240,7 +226,7 @@ bar();
 
 执行 foo 函数，依然是从 foo 函数内部查找是否有局部变量 value。如果没有，就从调用函数的作用域，也就是 bar 函数内部查找 value 变量，所以结果会打印 2。
 
-前面我们已经说了，JavaScript采用的是静态作用域，所以这个例子的结果是 1。
+前面我们已经说了，JavaScript 采用的是静态作用域，所以这个例子的结果是 1。
 
 ## 动态作用域
 
@@ -262,28 +248,28 @@ bar
 
 ## 思考题
 
-最后，让我们看一个《JavaScript权威指南》中的例子：
+最后，让我们看一个《JavaScript 权威指南》中的例子：
 
 ```js
-var scope = "global scope";
-function checkscope(){
-    var scope = "local scope";
-    function f(){
-        return scope;
-    }
-    return f();
+var scope = 'global scope';
+function checkscope() {
+  var scope = 'local scope';
+  function f() {
+    return scope;
+  }
+  return f();
 }
 checkscope();
 ```
 
 ```js
-var scope = "global scope";
-function checkscope(){
-    var scope = "local scope";
-    function f(){
-        return scope;
-    }
-    return f;
+var scope = 'global scope';
+function checkscope() {
+  var scope = 'local scope';
+  function f() {
+    return scope;
+  }
+  return f;
 }
 checkscope()();
 ```
@@ -292,9 +278,9 @@ checkscope()();
 
 这里直接告诉大家结果，两段代码都会打印：local scope。
 
-原因也很简单，因为JavaScript采用的是词法作用域，函数的作用域基于函数创建的位置。
+原因也很简单，因为 JavaScript 采用的是词法作用域，函数的作用域基于函数创建的位置。
 
-而引用《JavaScript权威指南》的回答就是：
+而引用《JavaScript 权威指南》的回答就是：
 
 JavaScript 函数的执行用到了作用域链，这个作用域链是在函数定义的时候创建的。嵌套的函数 f() 定义在这个作用域链里，其中的变量 scope 一定是局部变量，不管何时何地执行函数 f()，这种绑定在执行 f() 时依然有效。
 
@@ -309,15 +295,15 @@ JavaScript 函数的执行用到了作用域链，这个作用域链是在函数
 如果要问到 JavaScript 代码执行顺序的话，想必写过 JavaScript 的开发者都会有个直观的印象，那就是顺序执行，毕竟：
 
 ```js
-var foo = function () {
+var foo = function() {
   console.log('foo1');
-}
+};
 
-foo();  // foo1
+foo(); // foo1
 
-var foo = function () {
+var foo = function() {
   console.log('foo2');
-}
+};
 
 foo(); // foo2
 ```
@@ -329,7 +315,7 @@ function foo() {
   console.log('foo1');
 }
 
-foo();  // foo2
+foo(); // foo2
 
 function foo() {
   console.log('foo2');
@@ -344,13 +330,13 @@ foo(); // foo2
 
 但是本文真正想让大家思考的是：这个“一段一段”中的“段”究竟是怎么划分的呢？
 
-到底JavaScript引擎遇到一段怎样的代码时才会做“准备工作”呢？
+到底 JavaScript 引擎遇到一段怎样的代码时才会做“准备工作”呢？
 
 ## 可执行代码
 
 这就要说到 JavaScript 的可执行代码(executable code)的类型有哪些了？
 
-其实很简单，就三种，全局代码、函数代码、eval代码。
+其实很简单，就三种，全局代码、函数代码、eval 代码。
 
 举个例子，当执行到一个函数的时候，就会进行准备工作，这里的“准备工作”，让我们用个更专业一点的说法，就叫做"执行上下文(execution context)"。
 
@@ -369,16 +355,14 @@ ECStack = [];
 试想当 JavaScript 开始要解释执行代码的时候，最先遇到的就是全局代码，所以初始化的时候首先就会向执行上下文栈压入一个全局执行上下文，我们用 globalContext 表示它，并且只有当整个应用程序结束的时候，ECStack 才会被清空，所以程序结束之前，ECStack 最底部永远有个 globalContext：
 
 ```js
-ECStack = [
-  globalContext
-];
+ECStack = [globalContext];
 ```
 
 现在 JavaScript 遇到下面的这段代码了：
 
 ```js
 function fun3() {
-  console.log('fun3')
+  console.log('fun3');
 }
 
 function fun2() {
@@ -423,25 +407,25 @@ ECStack.pop();
 好啦，现在我们已经了解了执行上下文栈是如何处理执行上下文的
 
 ```js
-var scope = "global scope";
-function checkscope(){
-    var scope = "local scope";
-    function f(){
-        return scope;
-    }
-    return f();
+var scope = 'global scope';
+function checkscope() {
+  var scope = 'local scope';
+  function f() {
+    return scope;
+  }
+  return f();
 }
 checkscope();
 ```
 
 ```js
-var scope = "global scope";
-function checkscope(){
-    var scope = "local scope";
-    function f(){
-        return scope;
-    }
-    return f;
+var scope = 'global scope';
+function checkscope() {
+  var scope = 'local scope';
+  function f() {
+    return scope;
+  }
+  return f;
 }
 checkscope()();
 ```
@@ -500,50 +484,50 @@ ECStack.pop();
 
 我们先了解一个概念，叫全局对象。在 W3School 中也有介绍：
 
->全局对象是预定义的对象，作为 JavaScript 的全局函数和全局属性的占位符。通过使用全局对象，可以访问所有其他所有预定义的对象、函数和属性。
+> 全局对象是预定义的对象，作为 JavaScript 的全局函数和全局属性的占位符。通过使用全局对象，可以访问所有其他所有预定义的对象、函数和属性。
 
->在顶层 JavaScript 代码中，可以用关键字 this 引用全局对象。因为全局对象是作用域链的头，这意味着所有非限定性的变量和函数名都会作为该对象的属性来查询。
+> 在顶层 JavaScript 代码中，可以用关键字 this 引用全局对象。因为全局对象是作用域链的头，这意味着所有非限定性的变量和函数名都会作为该对象的属性来查询。
 
->例如，当 JavaScript 代码引用 parseInt() 函数时，它引用的是全局对象的 parseInt 属性。全局对象是作用域链的头，还意味着在顶层 JavaScript 代码中声明的所有变量都将成为全局对象的属性。
+> 例如，当 JavaScript 代码引用 parseInt() 函数时，它引用的是全局对象的 parseInt 属性。全局对象是作用域链的头，还意味着在顶层 JavaScript 代码中声明的所有变量都将成为全局对象的属性。
 
 如果看的不是很懂的话，容我再来介绍下全局对象:
 
 1. 可以通过 this 引用，在客户端 JavaScript 中，全局对象就是 Window 对象。
 
-    ```js
-    console.log(this);
-    ```
+   ```js
+   console.log(this);
+   ```
 
 2. 全局对象是由 Object 构造函数实例化的一个对象。
 
-    ```js
-    console.log(this instanceof Object);
-    ```
+   ```js
+   console.log(this instanceof Object);
+   ```
 
 3. 预定义了一堆，嗯，一大堆函数和属性。
 
-    ```js
-    // 都能生效
-    console.log(Math.random());
-    console.log(this.Math.random());
-    ```
+   ```js
+   // 都能生效
+   console.log(Math.random());
+   console.log(this.Math.random());
+   ```
 
 4. 作为全局变量的宿主。
 
-    ```js
-    var a = 1;
-    console.log(this.a);
-    ```
+   ```js
+   var a = 1;
+   console.log(this.a);
+   ```
 
 5. 客户端 JavaScript 中，全局对象有 window 属性指向自身。
 
-    ```js
-    var a = 1;
-    console.log(window.a);
+   ```js
+   var a = 1;
+   console.log(window.a);
 
-    this.window.b = 2;
-    console.log(this.b);
-    ```
+   this.window.b = 2;
+   console.log(this.b);
+   ```
 
 花了一个大篇幅介绍全局对象，其实就想说：
 
@@ -663,10 +647,10 @@ bar(); // ???
 
 ```js
 AO = {
-   arguments: {
-      length: 0
-   }
-}
+  arguments: {
+    length: 0
+  }
+};
 ```
 
 没有 a 的值，然后就会到全局去找，全局也没有，所以会报错。
@@ -679,7 +663,7 @@ AO = {
 console.log(foo);
 
 function foo() {
-    console.log("foo");
+  console.log('foo');
 }
 
 var foo = 1;
@@ -693,18 +677,28 @@ var foo = 1;
 
 ```js
 // 函数声明
-function a(b, c){function b(){};var b;console.log(a, b, c);}
-a(1,2);
+function a(b, c) {
+  function b() {}
+  var b;
+  console.log(a, b, c);
+}
+a(1, 2);
 // 运行结果：ƒ a(b, c){function b(){};var b;console.log(a, b, c);} ƒ b(){} 2
 
 // 形式参数
-function a(b, c){var b;console.log(a, b, c);}
-a(1,2);
+function a(b, c) {
+  var b;
+  console.log(a, b, c);
+}
+a(1, 2);
 // 运行结果：ƒ a(b, c){var b;console.log(a, b, c);} 1 2
 
 // 变量声明
-function a(b, c){var d;console.log(a, b, d);}
-a(1,2);
+function a(b, c) {
+  var d;
+  console.log(a, b, d);
+}
+a(1, 2);
 // 运行结果：ƒ a(b, c){var d;console.log(a, b, d);} 1 undefined
 ```
 
@@ -774,10 +768,10 @@ Scope = [AO].concat([[Scope]]);
 以下面的例子为例，结合着之前讲的变量对象和执行上下文栈，我们来总结一下函数执行上下文中作用域链和变量对象的创建过程：
 
 ```js
-var scope = "global scope";
-function checkscope(){
-    var scope2 = 'local scope';
-    return scope2;
+var scope = 'global scope';
+function checkscope() {
+  var scope2 = 'local scope';
+  return scope2;
 }
 checkscope();
 ```
@@ -786,82 +780,77 @@ checkscope();
 
 1. checkscope 函数被创建，保存作用域链到内部属性[[scope]]
 
-    ```js
-    checkscope.[[scope]] = [
-        globalContext.VO
-    ];
-    ```
+   ```js
+   checkscope.[[scope]] = [
+       globalContext.VO
+   ];
+   ```
 
 2. 执行 checkscope 函数，创建 checkscope 函数执行上下文，checkscope 函数执行上下文被压入执行上下文栈
 
-    ```js
-    ECStack = [
-        checkscopeContext,
-        globalContext
-    ];
-    ```
+   ```js
+   ECStack = [checkscopeContext, globalContext];
+   ```
 
 3. checkscope 函数并不立刻执行，开始做准备工作，第一步：复制函数[[scope]]属性创建作用域链
 
-    ```js
-    checkscopeContext = {
-        Scope: checkscope.[[scope]],
-    }
-    ```
+   ```js
+   checkscopeContext = {
+       Scope: checkscope.[[scope]],
+   }
+   ```
 
 4. 第二步：用 arguments 创建活动对象，随后初始化活动对象，加入形参、函数声明、变量声明
 
-    ```js
-    checkscopeContext = {
-        AO: {
-            arguments: {
-                length: 0
-            },
-            scope2: undefined
-        }，
-        Scope: checkscope.[[scope]],
-    }
-    ```
+   ```js
+   checkscopeContext = {
+       AO: {
+           arguments: {
+               length: 0
+           },
+           scope2: undefined
+       }，
+       Scope: checkscope.[[scope]],
+   }
+   ```
 
 5. 第三步：将活动对象压入 checkscope 作用域链顶端
 
-    ```js
-    checkscopeContext = {
-        AO: {
-            arguments: {
-                length: 0
-            },
-            scope2: undefined
-        },
-        Scope: [AO, [[Scope]]]
-    }
-    ```
+   ```js
+   checkscopeContext = {
+     AO: {
+       arguments: {
+         length: 0
+       },
+       scope2: undefined
+     },
+     Scope: [AO, [[Scope]]]
+   };
+   ```
 
 6. 准备工作做完，开始执行函数，随着函数的执行，修改 AO 的属性值
 
-    ```js
-    checkscopeContext = {
-        AO: {
-            arguments: {
-                length: 0
-            },
-            scope2: 'local scope'
-        },
-        Scope: [AO, [[Scope]]]
-    }
-    ```
+   ```js
+   checkscopeContext = {
+     AO: {
+       arguments: {
+         length: 0
+       },
+       scope2: 'local scope'
+     },
+     Scope: [AO, [[Scope]]]
+   };
+   ```
 
 7. 查找到 scope2 的值，返回后函数执行完毕，函数上下文从执行上下文栈中弹出
 
-    ```js
-    ECStack = [
-      globalContext
-    ];
-    ```
+   ```js
+   ECStack = [globalContext];
+   ```
 
 # 从 ECMAScript 规范解读 this
 
-在《JavaScript深入之执行上下文栈》中讲到，当JavaScript代码执行一段可执行代码(executable code)时，会创建对应的执行上下文(execution context)。
+在《JavaScript 深入之执行上下文栈》中讲到，当 JavaScript 代码执行一段可执行代码(executable code)时，会创建对应的执行上下文(execution context)。
 
 对于每个执行上下文，都有三个重要属性
 
@@ -895,7 +884,7 @@ checkscope();
 
 ECMAScript 的类型分为语言类型和规范类型。
 
-ECMAScript 语言类型是开发者直接使用 ECMAScript 可以操作的，其实就是我们常说的Undefined, Null, Boolean, String, Number 和 Object。
+ECMAScript 语言类型是开发者直接使用 ECMAScript 可以操作的，其实就是我们常说的 Undefined, Null, Boolean, String, Number 和 Object。
 
 而规范类型相当于 meta-values，是用算法描述 ECMAScript 语言结构和 ECMAScript 语言类型的。规范类型包括：Reference, List, Completion, Property Descriptor, Property Identifier, Lexical Environment 和 Environment Record。
 
@@ -946,9 +935,9 @@ var foo = 1;
 
 // 对应的Reference是：
 var fooReference = {
-    base: EnvironmentRecord,
-    name: 'foo',
-    strict: false
+  base: EnvironmentRecord,
+  name: 'foo',
+  strict: false
 };
 ```
 
@@ -956,18 +945,18 @@ var fooReference = {
 
 ```js
 var foo = {
-    bar: function () {
-        return this;
-    }
+  bar: function() {
+    return this;
+  }
 };
- 
+
 foo.bar(); // foo
 
 // bar对应的Reference是：
 var BarReference = {
-    base: foo,
-    propertyName: 'bar',
-    strict: false
+  base: foo,
+  propertyName: 'bar',
+  strict: false
 };
 ```
 
@@ -976,13 +965,16 @@ var BarReference = {
 这两个方法很简单，简单看一看：
 
 1. GetBase
-    > GetBase(V). Returns the base value component of the reference V.
 
-    返回 reference 的 base value。
+   > GetBase(V). Returns the base value component of the reference V.
+
+   返回 reference 的 base value。
+
 2. IsPropertyReference
-    >IsPropertyReference(V). Returns true if either the base value is an object or HasPrimitiveBase(V) is true; otherwise returns false.
 
-    简单的理解：如果 base value 是一个对象，就返回true。
+   > IsPropertyReference(V). Returns true if either the base value is an object or HasPrimitiveBase(V) is true; otherwise returns false.
+
+   简单的理解：如果 base value 是一个对象，就返回 true。
 
 ## GetValue
 
@@ -994,12 +986,12 @@ var BarReference = {
 var foo = 1;
 
 var fooReference = {
-    base: EnvironmentRecord,
-    name: 'foo',
-    strict: false
+  base: EnvironmentRecord,
+  name: 'foo',
+  strict: false
 };
 
-GetValue(fooReference) // 1;
+GetValue(fooReference); // 1;
 ```
 
 GetValue 返回对象属性真正的值，但是要注意：
@@ -1019,12 +1011,13 @@ GetValue 返回对象属性真正的值，但是要注意：
 只看第一步、第六步、第七步：
 
 `1`. Let ref be the result of evaluating MemberExpression.  
-`6`. If Type(ref) is Reference, then  
+`6`. If Type(ref) is Reference, then
 
-    a. If IsPropertyReference(ref) is true, then  
+    a. If IsPropertyReference(ref) is true, then
       i.Let thisValue be GetBase(ref).
     b. Else, the base of ref is an Environment Record
       i.Let thisValue be the result of calling the ImplicitThisValue concrete method of GetBase(ref).
+
 `7`. Else, Type(ref) is not Reference.
 
      a. Let thisValue be undefined.
@@ -1034,9 +1027,9 @@ GetValue 返回对象属性真正的值，但是要注意：
 1. 计算 MemberExpression 的结果赋值给 ref
 2. 判断 ref 是不是一个 Reference 类型
 
-    1. 如果 ref 是 Reference，并且 IsPropertyReference(ref) 是 true, 那么 this 的值为 GetBase(ref)
-    2. 如果 ref 是 Reference，并且 base value 值是 Environment Record, 那么 this 的值为 ImplicitThisValue(ref)
-    3. 如果 ref 不是 Reference，那么 this 的值为 undefined
+   1. 如果 ref 是 Reference，并且 IsPropertyReference(ref) 是 true, 那么 this 的值为 GetBase(ref)
+   2. 如果 ref 是 Reference，并且 base value 值是 Environment Record, 那么 this 的值为 ImplicitThisValue(ref)
+   3. 如果 ref 不是 Reference，那么 this 的值为 undefined
 
 ## 具体分析
 
@@ -1048,7 +1041,7 @@ GetValue 返回对象属性真正的值，但是要注意：
 
 MemberExpression:
 
-- PrimaryExpression // 原始表达式 可以参见《JavaScript权威指南第四章》
+- PrimaryExpression // 原始表达式 可以参见《JavaScript 权威指南第四章》
 - FunctionExpression // 函数定义表达式
 - MemberExpression [ Expression ] // 属性访问表达式
 - MemberExpression . IdentifierName // 属性访问表达式
@@ -1058,24 +1051,24 @@ MemberExpression:
 
 ```js
 function foo() {
-    console.log(this)
+  console.log(this);
 }
 
 foo(); // MemberExpression 是 foo
 
 function foo() {
-    return function() {
-        console.log(this)
-    }
+  return function() {
+    console.log(this);
+  };
 }
 
 foo()(); // MemberExpression 是 foo()
 
 var foo = {
-    bar: function () {
-        return this;
-    }
-}
+  bar: function() {
+    return this;
+  }
+};
 
 foo.bar(); // MemberExpression 是 foo.bar
 ```
@@ -1093,15 +1086,15 @@ var value = 1;
 
 var foo = {
   value: 2,
-  bar: function () {
+  bar: function() {
     return this.value;
   }
-}
+};
 
 //示例1
 console.log(foo.bar());
 //示例2
-console.log((foo.bar)());
+console.log(foo.bar());
 //示例3
 console.log((foo.bar = foo.bar)());
 //示例4
@@ -1146,57 +1139,57 @@ base value 为 foo，是一个对象，所以 IsPropertyReference(ref) 结果为
 this = GetBase(ref)
 ```
 
-GetBase 也已经铺垫了，获得 base value 值，这个例子中就是 foo，所以 this 的值就是 foo，示例1的结果就是 2！
+GetBase 也已经铺垫了，获得 base value 值，这个例子中就是 foo，所以 this 的值就是 foo，示例 1 的结果就是 2！
 
 ### (foo.bar)()
 
-看示例2：
+看示例 2：
 
 ```js
-console.log((foo.bar)());
+console.log(foo.bar());
 ```
 
 foo.bar 被 () 包住，查看规范 11.1.6 The Grouping Operator
 
->Return the result of evaluating Expression. This may be of type Reference.
+> Return the result of evaluating Expression. This may be of type Reference.
 
->NOTE This algorithm does not apply GetValue to the result of evaluating Expression.
+> NOTE This algorithm does not apply GetValue to the result of evaluating Expression.
 
 实际上 () 并没有对 MemberExpression 进行计算，所以其实跟示例 1 的结果是一样的。
 
 ### (foo.bar = foo.bar)()
 
-看示例3，有赋值操作符，查看规范 11.13.1 Simple Assignment ( = ):
+看示例 3，有赋值操作符，查看规范 11.13.1 Simple Assignment ( = ):
 
 计算的第三步：
 
->3.Let rval be GetValue(rref).
+> 3.Let rval be GetValue(rref).
 
 因为使用了 GetValue，所以返回的值不是 Reference 类型，
 
 按照之前讲的判断逻辑：
 
->2.3 如果 ref 不是Reference，那么 this 的值为 undefined
+> 2.3 如果 ref 不是 Reference，那么 this 的值为 undefined
 
 this 为 undefined，非严格模式下，this 的值为 undefined 的时候，其值会被隐式转换为全局对象。
 
 ### (false || foo.bar)()
 
-看示例4，逻辑与算法，查看规范 11.11 Binary Logical Operators：
+看示例 4，逻辑与算法，查看规范 11.11 Binary Logical Operators：
 
 计算第二步：
 
->2.Let lval be GetValue(lref).
+> 2.Let lval be GetValue(lref).
 
 因为使用了 GetValue，所以返回的不是 Reference 类型，this 为 undefined
 
 ### (foo.bar, foo.bar)()
 
-看示例5，逗号操作符，查看规范11.14 Comma Operator ( , )
+看示例 5，逗号操作符，查看规范 11.14 Comma Operator ( , )
 
 计算第二步：
 
->2.Call GetValue(lref).
+> 2.Call GetValue(lref).
 
 因为使用了 GetValue，所以返回的不是 Reference 类型，this 为 undefined
 
@@ -1207,15 +1200,15 @@ var value = 1;
 
 var foo = {
   value: 2,
-  bar: function () {
+  bar: function() {
     return this.value;
   }
-}
+};
 
 //示例1
 console.log(foo.bar()); // 2
 //示例2
-console.log((foo.bar)()); // 2
+console.log(foo.bar()); // 2
 //示例3
 console.log((foo.bar = foo.bar)()); // 1
 //示例4
@@ -1232,31 +1225,31 @@ console.log((foo.bar, foo.bar)()); // 1
 
 ```js
 function foo() {
-    console.log(this)
+  console.log(this);
 }
 
-foo(); 
+foo();
 ```
 
 MemberExpression 是 foo，解析标识符，查看规范 10.3.1 Identifier Resolution，会返回一个 Reference 类型的值：
 
 ```js
 var fooReference = {
-    base: EnvironmentRecord,
-    name: 'foo',
-    strict: false
+  base: EnvironmentRecord,
+  name: 'foo',
+  strict: false
 };
 ```
 
 接下来进行判断：
 
->2.1 如果 ref 是 Reference，并且 IsPropertyReference(ref) 是 true, 那么 this 的值为 GetBase(ref)
+> 2.1 如果 ref 是 Reference，并且 IsPropertyReference(ref) 是 true, 那么 this 的值为 GetBase(ref)
 
 因为 base value 是 EnvironmentRecord，并不是一个 Object 类型，还记得前面讲过的 base value 的取值可能吗？ 只可能是 undefined, an Object, a Boolean, a String, a Number, 和 an environment record 中的一种。
 
 IsPropertyReference(ref) 的结果为 false，进入下个判断：
 
->2.2 如果 ref 是 Reference，并且 base value 值是 Environment Record, 那么 this 的值为 ImplicitThisValue(ref)
+> 2.2 如果 ref 是 Reference，并且 base value 值是 Environment Record, 那么 this 的值为 ImplicitThisValue(ref)
 
 base value 正是 Environment Record，所以会调用 ImplicitThisValue(ref)
 
@@ -1273,10 +1266,10 @@ var value = 1;
 
 var foo = {
   value: 2,
-  bar: function () {
+  bar: function() {
     return this.value;
   }
-}
+};
 console.log((false || foo.bar)()); // 1
 ```
 
@@ -1305,26 +1298,25 @@ console.log((false || foo.bar)()); // 1
 在词法作用域和动态作用域中，提出这样一道思考题：
 
 ```js
-var scope = "global scope";
-function checkscope(){
-    var scope = "local scope";
-    function f() {
-        return scope;
-    }
-    return f();
+var scope = 'global scope';
+function checkscope() {
+  var scope = 'local scope';
+  function f() {
+    return scope;
+  }
+  return f();
 }
 checkscope();
 ```
 
-
 ```js
-var scope = "global scope";
-function checkscope(){
-    var scope = "local scope";
-    function f() {
-        return scope;
-    }
-    return f;
+var scope = 'global scope';
+function checkscope() {
+  var scope = 'local scope';
+  function f() {
+    return scope;
+  }
+  return f;
 }
 checkscope()();
 ```
@@ -1338,13 +1330,13 @@ checkscope()();
 我们分析第一段代码：
 
 ```js
-var scope = "global scope";
-function checkscope(){
-    var scope = "local scope";
-    function f() {
-        return scope;
-    }
-    return f();
+var scope = 'global scope';
+function checkscope() {
+  var scope = 'local scope';
+  function f() {
+    return scope;
+  }
+  return f();
 }
 checkscope();
 ```
@@ -1353,123 +1345,105 @@ checkscope();
 
 1. 执行全局代码，创建全局执行上下文，全局上下文被压入执行上下文栈
 
-    ```js
-    ECStack = [
-      globalContext
-    ];
-    ```
+   ```js
+   ECStack = [globalContext];
+   ```
 
 2. 全局上下文初始化
 
-    ```js
-    globalContext = {
-      VO: [global],
-      Scope: [globalContext.VO],
-      this: globalContext.VO
-    }
-    ```
+   ```js
+   globalContext = {
+     VO: [global],
+     Scope: [globalContext.VO],
+     this: globalContext.VO
+   };
+   ```
 
 3. 初始化的同时，checkscope 函数被创建，保存作用域链到函数的内部属性[[scope]]
 
-    ```js
-    checkscope.[[scope]] = [
-      globalContext.VO
-    ];
-    ```
+   ```js
+   checkscope.[[scope]] = [
+     globalContext.VO
+   ];
+   ```
 
 4. 执行 checkscope 函数，创建 checkscope 函数执行上下文，checkscope 函数执行上下文被压入执行上下文栈
 
-    ```js
-    ECStack = [
-      checkscopeContext,
-      globalContext
-    ];
-    ```
+   ```js
+   ECStack = [checkscopeContext, globalContext];
+   ```
 
 5. checkscope 函数执行上下文初始化：
 
-    1. 复制函数 [[scope]] 属性创建作用域链
-    2. 用 arguments 创建活动对象
-    3. 初始化活动对象，即加入形参、函数声明、变量声明
-    4. 将活动对象压入 checkscope 作用域链顶端
+   1. 复制函数 [[scope]] 属性创建作用域链
+   2. 用 arguments 创建活动对象
+   3. 初始化活动对象，即加入形参、函数声明、变量声明
+   4. 将活动对象压入 checkscope 作用域链顶端
 
-    同时 f 函数被创建，保存作用域链到 f 函数的内部属性[[scope]]
+   同时 f 函数被创建，保存作用域链到 f 函数的内部属性[[scope]]
 
-    ```js
-    checkscopeContext = {
-      AO: {
-        arguments: {
-          length: 0
-        },
-        scope: undefined,
-        f: reference to function f(){}
-      },
-      Scope: [AO, globalContext.VO],
-      this: undefined
-    }
-    ```
+   ```js
+   checkscopeContext = {
+     AO: {
+       arguments: {
+         length: 0
+       },
+       scope: undefined,
+       f: reference to function f(){}
+     },
+     Scope: [AO, globalContext.VO],
+     this: undefined
+   }
+   ```
 
 6. 执行 f 函数，创建 f 函数执行上下文，f 函数执行上下文被压入执行上下文栈
 
-    ```js
-    ECStack = [
-      fContext,
-      checkscopeContext,
-      globalContext
-    ];
-    ```
+   ```js
+   ECStack = [fContext, checkscopeContext, globalContext];
+   ```
 
 7. f 函数执行上下文初始化, 以下跟第 4 步相同：
 
-    1. 复制函数 [[scope]] 属性创建作用域链
-    2. 用 arguments 创建活动对象
-    3. 初始化活动对象，即加入形参、函数声明、变量声明
-    4. 将活动对象压入 f 作用域链顶端
+   1. 复制函数 [[scope]] 属性创建作用域链
+   2. 用 arguments 创建活动对象
+   3. 初始化活动对象，即加入形参、函数声明、变量声明
+   4. 将活动对象压入 f 作用域链顶端
 
-    ```js
-    fContext = {
-      AO: {
-        arguments: {
-          length: 0
-        }
-      },
-      Scope: [
-        AO, 
-        checkscopeContext.AO, 
-        globalContext.VO
-      ],
-      this: undefined
-    }
-    ```
+   ```js
+   fContext = {
+     AO: {
+       arguments: {
+         length: 0
+       }
+     },
+     Scope: [AO, checkscopeContext.AO, globalContext.VO],
+     this: undefined
+   };
+   ```
 
 8. f 函数执行，沿着作用域链查找 scope 值，返回 scope 值
 9. f 函数执行完毕，f 函数上下文从执行上下文栈中弹出
 
-    ```js
-    ECStack = [
-      checkscopeContext,
-      globalContext
-    ];
-    ```
+   ```js
+   ECStack = [checkscopeContext, globalContext];
+   ```
 
 10. checkscope 函数执行完毕，checkscope 执行上下文从执行上下文栈中弹出
 
     ```js
-    ECStack = [
-      globalContext
-    ];
+    ECStack = [globalContext];
     ```
 
 第二段代码就留给大家去尝试模拟它的执行过程
 
 ```js
-var scope = "global scope";
-function checkscope(){
-    var scope = "local scope";
-    function f(){
-        return scope;
-    }
-    return f;
+var scope = 'global scope';
+function checkscope() {
+  var scope = 'local scope';
+  function f() {
+    return scope;
+  }
+  return f;
 }
 checkscope()();
 ```
@@ -1482,15 +1456,15 @@ checkscope()();
 
 MDN 对闭包的定义为：
 
->闭包是指那些能够访问自由变量的函数。
+> 闭包是指那些能够访问自由变量的函数。
 
 那什么是自由变量呢？
 
->自由变量是指在函数中使用的，但既不是函数参数也不是函数的局部变量的变量。
+> 自由变量是指在函数中使用的，但既不是函数参数也不是函数的局部变量的变量。
 
 由此，我们可以看出闭包共有两部分组成：
 
->闭包 = 函数 + 函数能够访问的自由变量
+> 闭包 = 函数 + 函数能够访问的自由变量
 
 举个例子：
 
@@ -1498,7 +1472,7 @@ MDN 对闭包的定义为：
 var a = 1;
 
 function foo() {
-    console.log(a);
+  console.log(a);
 }
 
 foo();
@@ -1510,33 +1484,33 @@ foo 函数可以访问变量 a，但是 a 既不是 foo 函数的局部变量，
 
 还真是这样的！
 
-所以在《JavaScript权威指南》中就讲到：从技术的角度讲，所有的JavaScript函数都是闭包。
+所以在《JavaScript 权威指南》中就讲到：从技术的角度讲，所有的 JavaScript 函数都是闭包。
 
 咦，这怎么跟我们平时看到的讲到的闭包不一样呢！？
 
 别着急，这是理论上的闭包，其实还有一个实践角度上的闭包，让我们看看汤姆大叔翻译的关于闭包的文章中的定义：
 
-ECMAScript中，闭包指的是：
+ECMAScript 中，闭包指的是：
 
 1. 从理论角度：所有的函数。因为它们都在创建的时候就将上层上下文的数据保存起来了。哪怕是简单的全局变量也是如此，因为函数中访问全局变量就相当于是在访问自由变量，这个时候使用最外层的作用域。
 2. 从实践角度：以下函数才算是闭包：
-    1. 即使创建它的上下文已经销毁，它仍然存在（比如，内部函数从父函数中返回）
-    2. 在代码中引用了自由变量
+   1. 即使创建它的上下文已经销毁，它仍然存在（比如，内部函数从父函数中返回）
+   2. 在代码中引用了自由变量
 
 接下来就来讲讲实践上的闭包。
 
 ## 分析
 
-让我们先写个例子，例子依然是来自《JavaScript权威指南》，稍微做点改动：
+让我们先写个例子，例子依然是来自《JavaScript 权威指南》，稍微做点改动：
 
 ```js
-var scope = "global scope";
-function checkscope(){
-    var scope = "local scope";
-    function f(){
-        return scope;
-    }
-    return f;
+var scope = 'global scope';
+function checkscope() {
+  var scope = 'local scope';
+  function f() {
+    return scope;
+  }
+  return f;
 }
 
 var foo = checkscope();
@@ -1552,17 +1526,17 @@ foo();
 1. 进入全局代码，创建全局执行上下文，全局执行上下文压入执行上下文栈
 2. 全局执行上下文初始化
 3. 执行 checkscope 函数，创建 checkscope 函数执行上下文，checkscope 执行上下文被压入执行上下文栈
-4. checkscope 执行上下文初始化，创建变量对象、作用域链、this等
+4. checkscope 执行上下文初始化，创建变量对象、作用域链、this 等
 5. checkscope 函数执行完毕，checkscope 执行上下文从执行上下文栈中弹出
 6. 执行 f 函数，创建 f 函数执行上下文，f 执行上下文被压入执行上下文栈
-7. f 执行上下文初始化，创建变量对象、作用域链、this等
+7. f 执行上下文初始化，创建变量对象、作用域链、this 等
 8. f 函数执行完毕，f 函数上下文从执行上下文栈中弹出
 
 了解到这个过程，我们应该思考一个问题，那就是：
 
 当 f 函数执行的时候，checkscope 函数上下文已经被销毁了啊(即从执行上下文栈中被弹出)，怎么还会读取到 checkscope 作用域下的 scope 值呢？
 
-以上的代码，要是转换成 PHP，就会报错，因为在 PHP 中，f 函数只能读取到自己作用域和全局作用域里的值，所以读不到 checkscope 下的 scope 值。(这段我问的PHP同事……)
+以上的代码，要是转换成 PHP，就会报错，因为在 PHP 中，f 函数只能读取到自己作用域和全局作用域里的值，所以读不到 checkscope 下的 scope 值。(这段我问的 PHP 同事……)
 
 然而 JavaScript 却是可以的！
 
@@ -1570,8 +1544,8 @@ foo();
 
 ```js
 fContext = {
-  Scope: [AO, checkscopeContext.AO, globalContext.VO],
-}
+  Scope: [AO, checkscopeContext.AO, globalContext.VO]
+};
 ```
 
 对的，就是因为这个作用域链，f 函数依然可以读取到 checkscopeContext.AO 的值，说明当 f 函数引用了 checkscopeContext.AO 中的值的时候，即使 checkscopeContext 被销毁了，但是 JavaScript 依然会让 checkscopeContext.AO 活在内存中，f 函数依然可以通过 f 函数的作用域链找到它，正是因为 JavaScript 做到了这一点，从而实现了闭包这个概念。
@@ -1581,7 +1555,7 @@ fContext = {
 1. 即使创建它的上下文已经销毁，它仍然存在（比如，内部函数从父函数中返回）
 2. 在代码中引用了自由变量
 
-在这里再补充一个《JavaScript权威指南》英文原版对闭包的定义:
+在这里再补充一个《JavaScript 权威指南》英文原版对闭包的定义:
 
 > This combination of a function object and a scope (a set of variable bindings) in which the function’s variables are resolved is called a closure in the computer science literature.
 
@@ -1593,7 +1567,7 @@ fContext = {
 var data = [];
 
 for (var i = 0; i < 3; i++) {
-  data[i] = function () {
+  data[i] = function() {
     console.log(i);
   };
 }
@@ -1634,10 +1608,10 @@ data[1] 和 data[2] 是一样的道理。
 var data = [];
 
 for (var i = 0; i < 3; i++) {
-  data[i] = (function (i) {
-        return function(){
-            console.log(i);
-        }
+  data[i] = (function(i) {
+    return function() {
+      console.log(i);
+    };
   })(i);
 }
 
@@ -1667,21 +1641,21 @@ data[0]Context = {
 }
 ```
 
-匿名函数执行上下文的AO为：
+匿名函数执行上下文的 AO 为：
 
 ```js
 匿名函数Context = {
-    AO: {
-        arguments: {
-            0: 0,
-            length: 1
-        },
-        i: 0
-    }
-}
+  AO: {
+    arguments: {
+      0: 0,
+      length: 1
+    },
+    i: 0
+  }
+};
 ```
 
-data[0]Context 的 AO 并没有 i 值，所以会沿着作用域链从匿名函数 Context.AO 中查找，这时候就会找 i 为 0，找到了就不会往 globalContext.VO 中查找了，即使 globalContext.VO 也有 i 的值(值为3)，所以打印的结果就是0。
+data[0]Context 的 AO 并没有 i 值，所以会沿着作用域链从匿名函数 Context.AO 中查找，这时候就会找 i 为 0，找到了就不会往 globalContext.VO 中查找了，即使 globalContext.VO 也有 i 的值(值为 3)，所以打印的结果就是 0。
 
 data[1] 和 data[2] 是一样的道理。
 
@@ -1689,9 +1663,9 @@ data[1] 和 data[2] 是一样的道理。
 
 ## 定义
 
-在《JavaScript高级程序设计》第三版 4.1.3，讲到传递参数：
+在《JavaScript 高级程序设计》第三版 4.1.3，讲到传递参数：
 
-> ECMAScript中所有函数的参数都是按值传递的。
+> ECMAScript 中所有函数的参数都是按值传递的。
 
 什么是按值传递呢？
 
@@ -1704,14 +1678,14 @@ data[1] 和 data[2] 是一样的道理。
 ```js
 var value = 1;
 function foo(v) {
-    v = 2;
-    console.log(v); //2
+  v = 2;
+  console.log(v); //2
 }
 foo(value);
-console.log(value) // 1
+console.log(value); // 1
 ```
 
-很好理解，当传递 value 到函数 foo 中，相当于拷贝了一份 value，假设拷贝的这份叫 _value，函数中修改的都是 _value 的值，而不会影响原来的 value 值。
+很好理解，当传递 value 到函数 foo 中，相当于拷贝了一份 value，假设拷贝的这份叫 \_value，函数中修改的都是 \_value 的值，而不会影响原来的 value 值。
 
 ## 引用传递？
 
@@ -1725,14 +1699,14 @@ console.log(value) // 1
 
 ```js
 var obj = {
-    value: 1
+  value: 1
 };
 function foo(o) {
-    o.value = 2;
-    console.log(o.value); //2
+  o.value = 2;
+  console.log(o.value); //2
 }
 foo(obj);
-console.log(obj.value) // 2
+console.log(obj.value); // 2
 ```
 
 哎，不对啊，连我们的红宝书都说了 ECMAScript 中所有函数的参数都是按值传递的，这怎么能按"引用传递"成功呢？
@@ -1745,14 +1719,14 @@ console.log(obj.value) // 2
 
 ```js
 var obj = {
-    value: 1
+  value: 1
 };
 function foo(o) {
-    o = 2;
-    console.log(o); //2
+  o = 2;
+  console.log(o); //2
 }
 foo(obj);
-console.log(obj.value) // 1
+console.log(obj.value); // 1
 ```
 
 如果 JavaScript 采用的是引用传递，外层的值也会被修改，这怎么又没被改呢？所以真的不是引用传递吗？
@@ -1783,11 +1757,11 @@ console.log(obj.value) // 1
 
 ```js
 var foo = {
-    value: 1
+  value: 1
 };
 
 function bar() {
-    console.log(this.value);
+  console.log(this.value);
 }
 
 bar.call(foo); // 1
@@ -1806,10 +1780,10 @@ bar.call(foo); // 1
 
 ```js
 var foo = {
-    value: 1,
-    bar: function() {
-        console.log(this.value)
-    }
+  value: 1,
+  bar: function() {
+    console.log(this.value);
+  }
 };
 
 foo.bar(); // 1
@@ -1831,11 +1805,11 @@ foo.bar(); // 1
 
 ```js
 // 第一步
-foo.fn = bar
+foo.fn = bar;
 // 第二步
-foo.fn()
+foo.fn();
 // 第三步
-delete foo.fn
+delete foo.fn;
 ```
 
 fn 是对象的属性名，反正最后也要删除它，所以起成什么都无所谓。
@@ -1845,25 +1819,25 @@ fn 是对象的属性名，反正最后也要删除它，所以起成什么都�
 ```js
 // 第一版
 Function.prototype.call2 = function(context) {
-    // 首先要获取调用 call 的函数，用 this 可以获取
-    context.fn = this;
-    context.fn();
-    delete context.fn;
-}
+  // 首先要获取调用 call 的函数，用 this 可以获取
+  context.fn = this;
+  context.fn();
+  delete context.fn;
+};
 
 // 测试一下
 var foo = {
-    value: 1
+  value: 1
 };
 
 function bar() {
-    console.log(this.value);
+  console.log(this.value);
 }
 
 bar.call2(foo); // 1
 ```
 
-正好可以打印 1 
+正好可以打印 1
 
 ## 模拟实现第二步（传参、调用）
 
@@ -1871,13 +1845,13 @@ bar.call2(foo); // 1
 
 ```js
 var foo = {
-    value: 1
+  value: 1
 };
 
 function bar(name, age) {
-    console.log(name)
-    console.log(age)
-    console.log(this.value);
+  console.log(name);
+  console.log(age);
+  console.log(this.value);
 }
 
 bar.call(foo, 'kevin', 18);
@@ -1902,8 +1876,8 @@ bar.call(foo, 'kevin', 18);
 // }
 // 因为arguments是类数组对象，所以可以用for循环
 var args = [];
-for(var i = 1, len = arguments.length; i < len; i++) {
-    args.push('arguments[' + i + ']');
+for (var i = 1, len = arguments.length; i < len; i++) {
+  args.push('arguments[' + i + ']');
 }
 
 // 执行后 args为 ["arguments[1]", "arguments[2]", "arguments[3]"]
@@ -1913,7 +1887,7 @@ for(var i = 1, len = arguments.length; i < len; i++) {
 
 ```js
 // 将数组里的元素作为多个参数放进函数的形参里
-context.fn(args.join(','))
+context.fn(args.join(','));
 // (O_o)??
 // 这个方法肯定是不行的啦！！！
 ```
@@ -1921,7 +1895,7 @@ context.fn(args.join(','))
 也许有人想到用 ES6 的方法，不过 call 是 ES3 的方法，我们为了模拟实现一个 ES3 的方法，要用到 ES6 的方法，好像……，嗯，也可以啦。但是我们这次用 eval 方法拼成一个函数，类似于这样：
 
 ```js
-eval('context.fn(' + args +')')
+eval('context.fn(' + args + ')');
 ```
 
 这里 args 会自动调用 Array.toString() 这个方法。
@@ -1931,27 +1905,27 @@ eval('context.fn(' + args +')')
 ```js
 // 第二版
 Function.prototype.call2 = function(context) {
-    context.fn = this;
-    var args = [];
-    for(var i = 1, len = arguments.length; i < len; i++) {
-        args.push('arguments[' + i + ']');
-    }
-    eval('context.fn(' + args +')');
-    delete context.fn;
-}
+  context.fn = this;
+  var args = [];
+  for (var i = 1, len = arguments.length; i < len; i++) {
+    args.push('arguments[' + i + ']');
+  }
+  eval('context.fn(' + args + ')');
+  delete context.fn;
+};
 
 // 测试一下
 var foo = {
-    value: 1
+  value: 1
 };
 
 function bar(name, age) {
-    console.log(name)
-    console.log(age)
-    console.log(this.value);
+  console.log(name);
+  console.log(age);
+  console.log(this.value);
 }
 
-bar.call2(foo, 'kevin', 18); 
+bar.call2(foo, 'kevin', 18);
 // kevin
 // 18
 // 1
@@ -1969,7 +1943,7 @@ bar.call2(foo, 'kevin', 18);
 var value = 1;
 
 function bar() {
-    console.log(this.value);
+  console.log(this.value);
 }
 
 bar.call(null); // 1
@@ -1983,15 +1957,15 @@ bar.call(null); // 1
 
 ```js
 var obj = {
-    value: 1
-}
+  value: 1
+};
 
 function bar(name, age) {
-    return {
-        value: this.value,
-        name: name,
-        age: age
-    }
+  return {
+    value: this.value,
+    name: name,
+    age: age
+  };
 }
 
 console.log(bar.call(obj, 'kevin', 18));
@@ -2006,35 +1980,35 @@ console.log(bar.call(obj, 'kevin', 18));
 
 ```js
 // 第三版
-Function.prototype.call2 = function (context) {
-    var context = context || window;
-    context.fn = this;
+Function.prototype.call2 = function(context) {
+  var context = context || window;
+  context.fn = this;
 
-    var args = [];
-    for(var i = 1, len = arguments.length; i < len; i++) {
-        args.push('arguments[' + i + ']');
-    }
+  var args = [];
+  for (var i = 1, len = arguments.length; i < len; i++) {
+    args.push('arguments[' + i + ']');
+  }
 
-    var result = eval('context.fn(' + args +')');
+  var result = eval('context.fn(' + args + ')');
 
-    delete context.fn;
-    return result;
-}
+  delete context.fn;
+  return result;
+};
 
 // 测试一下
 var value = 2;
 
 var obj = {
-    value: 1
-}
+  value: 1
+};
 
 function bar(name, age) {
-    console.log(this.value);
-    return {
-        value: this.value,
-        name: name,
-        age: age
-    }
+  console.log(this.value);
+  return {
+    value: this.value,
+    name: name,
+    age: age
+  };
 }
 
 bar.call2(null); // 2
@@ -2055,25 +2029,24 @@ console.log(bar.call2(obj, 'kevin', 18));
 apply 的实现跟 call 类似，在这里直接给代码，代码来自于知乎 @郑航的实现：
 
 ```js
-Function.prototype.apply = function (context, arr) {
-    var context = Object(context) || window;
-    context.fn = this;
+Function.prototype.apply = function(context, arr) {
+  var context = Object(context) || window;
+  context.fn = this;
 
-    var result;
-    if (!arr) {
-        result = context.fn();
+  var result;
+  if (!arr) {
+    result = context.fn();
+  } else {
+    var args = [];
+    for (var i = 0, len = arr.length; i < len; i++) {
+      args.push('arr[' + i + ']');
     }
-    else {
-        var args = [];
-        for (var i = 0, len = arr.length; i < len; i++) {
-            args.push('arr[' + i + ']');
-        }
-        result = eval('context.fn(' + args + ')');
-    }
+    result = eval('context.fn(' + args + ')');
+  }
 
-    delete context.fn;
-    return result;
-}
+  delete context.fn;
+  return result;
+};
 ```
 
 # bind 的模拟实现
@@ -2093,15 +2066,15 @@ Function.prototype.apply = function (context, arr) {
 
 ```js
 var foo = {
-    value: 1
+  value: 1
 };
 
 function bar() {
-    console.log(this.value);
+  console.log(this.value);
 }
 
 // 返回了一个函数
-var bindFoo = bar.bind(foo); 
+var bindFoo = bar.bind(foo);
 
 bindFoo(); // 1
 ```
@@ -2110,23 +2083,23 @@ bindFoo(); // 1
 
 ```js
 // 第一版
-Function.prototype.bind2 = function (context) {
-    var self = this;
-    return function () {
-        return self.apply(context);
-    }
-}
+Function.prototype.bind2 = function(context) {
+  var self = this;
+  return function() {
+    return self.apply(context);
+  };
+};
 ```
 
 此外，之所以 return self.apply(context)，是考虑到绑定函数可能是有返回值的，依然是这个例子
 
 ```js
 var foo = {
-    value: 1
+  value: 1
 };
 
 function bar() {
-	return this.value;
+  return this.value;
 }
 
 var bindFoo = bar.bind(foo);
@@ -2140,14 +2113,14 @@ console.log(bindFoo()); // 1
 
 ```js
 var foo = {
-    value: 1
+  value: 1
 };
 
 function bar(name, age, gender) {
-    console.log(this.value);
-    console.log(name);
-    console.log(age);
-    console.log(gender);
+  console.log(this.value);
+  console.log(name);
+  console.log(age);
+  console.log(gender);
 }
 
 var bindFoo = bar.bind(foo, 'daisy');
@@ -2164,37 +2137,37 @@ bindFoo('18', 'woman');
 ```js
 // 第二版
 Function.prototype.bind2 = function(context) {
-    // this 代表 bar
-    var self = this;
-    // 获取 bind2 函数从第二个参数到最后一个参数
-    var args = Array.prototype.slice.call(arguments, 1);
+  // this 代表 bar
+  var self = this;
+  // 获取 bind2 函数从第二个参数到最后一个参数
+  var args = Array.prototype.slice.call(arguments, 1);
 
-    return function() {
-        // 这个时候的 arguments 是指 bind 返回的函数传入的参数
-        var bindArgs = Array.prototype.slice.call(arguments);
-        return self.apply(context, args.concat(bindArgs));
-    }
-}
+  return function() {
+    // 这个时候的 arguments 是指 bind 返回的函数传入的参数
+    var bindArgs = Array.prototype.slice.call(arguments);
+    return self.apply(context, args.concat(bindArgs));
+  };
+};
 ```
 
 同理于以下的 add 函数
 
 ```js
 function add() {
-    var args = Array.prototype.slice.call(arguments);
+  var args = Array.prototype.slice.call(arguments);
 
-    function fn() {
-        var args2 = Array.prototype.slice.call(arguments);
-        return add.apply(null, args.concat(args2));
-    }
+  function fn() {
+    var args2 = Array.prototype.slice.call(arguments);
+    return add.apply(null, args.concat(args2));
+  }
 
-    fn.toString = function () {
-      return args.reduce(function(total, item) {
-        return total + item;
-      })
-    }
+  fn.toString = function() {
+    return args.reduce(function(total, item) {
+      return total + item;
+    });
+  };
 
-    return fn;
+  return fn;
 }
 console.log(add(1)(2)(3));
 console.log(add(1, 2)(3));
@@ -2213,14 +2186,14 @@ console.log(add(1, 2, 3));
 var value = 2;
 
 var foo = {
-    value: 1
+  value: 1
 };
 
 function bar(name, age) {
-    this.habit = 'shopping';
-    console.log(this.value);
-    console.log(name);
-    console.log(age);
+  this.habit = 'shopping';
+  console.log(this.value);
+  console.log(name);
+  console.log(age);
 }
 
 bar.prototype.friend = 'kevin';
@@ -2244,24 +2217,24 @@ console.log(obj.friend);
 ```js
 // 第二版
 Function.prototype.bind2 = function(context) {
-    // this 代表 bar
-    var self = this;
-    // 获取 bind2 函数从第二个参数到最后一个参数
-    var args = Array.prototype.slice.call(arguments, 1);
+  // this 代表 bar
+  var self = this;
+  // 获取 bind2 函数从第二个参数到最后一个参数
+  var args = Array.prototype.slice.call(arguments, 1);
 
-    var fn = function() {
-        // 这个时候的 arguments 是指 bind 返回的函数传入的参数
-        var bindArgs = Array.prototype.slice.call(arguments);
-        // 当作为构造函数时，this 指向实例，此时结果为 true，将绑定函数的 this 指向该实例，可以让实例获得来自绑定函数的值
-        // 以上面的 demo 为例，如果改成 `this instanceof fn ? null : context`，实例只是一个空对象，将 null 改成 this ，实例会具有 habit 属性
-        // 当作为普通函数时，this 指向 window，此时结果为 false，将绑定函数的 this 指向 context
-        return self.apply(this instanceof fn ? this : context, args.concat(bindArgs));
-    }
+  var fn = function() {
+    // 这个时候的 arguments 是指 bind 返回的函数传入的参数
+    var bindArgs = Array.prototype.slice.call(arguments);
+    // 当作为构造函数时，this 指向实例，此时结果为 true，将绑定函数的 this 指向该实例，可以让实例获得来自绑定函数的值
+    // 以上面的 demo 为例，如果改成 `this instanceof fn ? null : context`，实例只是一个空对象，将 null 改成 this ，实例会具有 habit 属性
+    // 当作为普通函数时，this 指向 window，此时结果为 false，将绑定函数的 this 指向 context
+    return self.apply(this instanceof fn ? this : context, args.concat(bindArgs));
+  };
 
-    // 修改返回函数的 prototype 为绑定函数的 prototype，实例就可以继承绑定函数的原型中的值
-    fn.prototype = this.prototype;
-    return fn;
-}
+  // 修改返回函数的 prototype 为绑定函数的 prototype，实例就可以继承绑定函数的原型中的值
+  fn.prototype = this.prototype;
+  return fn;
+};
 ```
 
 ## 构造函数效果的优化实现
@@ -2270,22 +2243,22 @@ Function.prototype.bind2 = function(context) {
 
 ```js
 // 第四版
-Function.prototype.bind2 = function (context) {
-    var self = this;
-    var args = Array.prototype.slice.call(arguments, 1);
+Function.prototype.bind2 = function(context) {
+  var self = this;
+  var args = Array.prototype.slice.call(arguments, 1);
 
-    var fn = function () {
-        var bindArgs = Array.prototype.slice.call(arguments);
-        // new 时忽略传入的 this
-        return self.apply(this instanceof fn ? this : context, args.concat(bindArgs));
-    }
+  var fn = function() {
+    var bindArgs = Array.prototype.slice.call(arguments);
+    // new 时忽略传入的 this
+    return self.apply(this instanceof fn ? this : context, args.concat(bindArgs));
+  };
 
-    // 类似于 fn.prototype = Object.create(this.prototype);
-    var fNOP = function () {};
-    fNOP.prototype = this.prototype;
-    fn.prototype = new fNOP();
-    return fn;
-}
+  // 类似于 fn.prototype = Object.create(this.prototype);
+  var fNOP = function() {};
+  fNOP.prototype = this.prototype;
+  fn.prototype = new fNOP();
+  return fn;
+};
 ```
 
 ## 三个小问题
@@ -2297,7 +2270,7 @@ Function.prototype.bind2 = function (context) {
 在 MDN 中文版讲 bind 的模拟实现时，apply 这里的代码是：
 
 ```js
-self.apply(this instanceof self ? this : context || this, args.concat(bindArgs))
+self.apply(this instanceof self ? this : context || this, args.concat(bindArgs));
 ```
 
 多了一个关于 context 是否存在的判断，然而这个是错误的！
@@ -2307,30 +2280,30 @@ self.apply(this instanceof self ? this : context || this, args.concat(bindArgs))
 ```js
 var value = 2;
 var foo = {
-    value: 1,
-    bar: bar.bind(null)
+  value: 1,
+  bar: bar.bind(null)
 };
 
 function bar() {
-    console.log(this.value);
+  console.log(this.value);
 }
 
-foo.bar() // 2
+foo.bar(); // 2
 ```
 
 以上代码正常情况下会打印 2，如果换成了 context || this，这段代码就会打印 1！
 
 所以这里不应该进行 context 的判断，大家查看 MDN 同样内容的英文版，就不存在这个判断！
 
-(2018 年 3 月 27 日更新，中文版已经改了😀)
+(2018 年 3 月 27 日更新，中文版已经改了 😀)
 
 2. 调用 bind 的不是函数咋办？
 
 不行，我们要报错！
 
 ```js
-if (typeof this !== "function") {
-  throw new Error("Function.prototype.bind - what is trying to be bound is not callable");
+if (typeof this !== 'function') {
+  throw new Error('Function.prototype.bind - what is trying to be bound is not callable');
 }
 ```
 
@@ -2349,26 +2322,26 @@ Function.prototype.bind = Function.prototype.bind || function () {
 ## 最终代码
 
 ```js
-Function.prototype.bind2 = function (context) {
-    if (typeof this !== "function") {
-      throw new Error("Function.prototype.bind - what is trying to be bound is not callable");
-    }
+Function.prototype.bind2 = function(context) {
+  if (typeof this !== 'function') {
+    throw new Error('Function.prototype.bind - what is trying to be bound is not callable');
+  }
 
-    var self = this;
-    var args = Array.prototype.slice.call(arguments, 1);
+  var self = this;
+  var args = Array.prototype.slice.call(arguments, 1);
 
-    var fNOP = function () {};
+  var fNOP = function() {};
 
-    var fn = function () {
-        var bindArgs = Array.prototype.slice.call(arguments);
-        // this instanceof fNOP 这里的 fNOP 也可换成 fn，因为 fn.prototype = new fNOP();
-        return self.apply(this instanceof fNOP ? this : context, args.concat(bindArgs));
-    }
+  var fn = function() {
+    var bindArgs = Array.prototype.slice.call(arguments);
+    // this instanceof fNOP 这里的 fNOP 也可换成 fn，因为 fn.prototype = new fNOP();
+    return self.apply(this instanceof fNOP ? this : context, args.concat(bindArgs));
+  };
 
-    fNOP.prototype = this.prototype;
-    fn.prototype = new fNOP();
-    return fn;
-}
+  fNOP.prototype = this.prototype;
+  fn.prototype = new fNOP();
+  return fn;
+};
 ```
 
 # new 的模拟实现
@@ -2384,24 +2357,24 @@ Function.prototype.bind2 = function (context) {
 ```js
 // Otaku 御宅族，简称宅
 function Otaku(name, age) {
-    this.name = name;
-    this.age = age;
+  this.name = name;
+  this.age = age;
 
-    this.habit = 'Games';
+  this.habit = 'Games';
 }
 
 // 因为缺乏锻炼的缘故，身体强度让人担忧
 Otaku.prototype.strength = 60;
 
-Otaku.prototype.sayYourName = function () {
-    console.log('I am ' + this.name);
-}
+Otaku.prototype.sayYourName = function() {
+  console.log('I am ' + this.name);
+};
 
 var person = new Otaku('Kevin', '18');
 
-console.log(person.name) // Kevin
-console.log(person.habit) // Games
-console.log(person.strength) // 60
+console.log(person.name); // Kevin
+console.log(person.habit); // Games
+console.log(person.strength); // 60
 
 person.sayYourName(); // I am Kevin
 ```
@@ -2442,7 +2415,7 @@ function objectFactory() {
   obj.__proto__ = Constructor.prototype;
   Constructor.apply(obj, arguments);
   return obj;
-};
+}
 ```
 
 在这一版中，我们：
@@ -2457,31 +2430,31 @@ function objectFactory() {
 
 ```js
 function Otaku(name, age) {
-    this.name = name;
-    this.age = age;
+  this.name = name;
+  this.age = age;
 
-    this.habit = 'Games';
+  this.habit = 'Games';
 }
 
 Otaku.prototype.strength = 60;
 
-Otaku.prototype.sayYourName = function () {
-    console.log('I am ' + this.name);
-}
-
-function objectFactory() {
-    var obj = new Object(),
-    Constructor = [].shift.call(arguments);
-    obj.__proto__ = Constructor.prototype;
-    Constructor.apply(obj, arguments);
-    return obj;
+Otaku.prototype.sayYourName = function() {
+  console.log('I am ' + this.name);
 };
 
-var person = objectFactory(Otaku, 'Kevin', '18')
+function objectFactory() {
+  var obj = new Object(),
+    Constructor = [].shift.call(arguments);
+  obj.__proto__ = Constructor.prototype;
+  Constructor.apply(obj, arguments);
+  return obj;
+}
 
-console.log(person.name) // Kevin
-console.log(person.habit) // Games
-console.log(person.strength) // 60
+var person = objectFactory(Otaku, 'Kevin', '18');
+
+console.log(person.name); // Kevin
+console.log(person.habit); // Games
+console.log(person.strength); // 60
 
 person.sayYourName(); // I am Kevin
 ```
@@ -2492,21 +2465,21 @@ person.sayYourName(); // I am Kevin
 
 ```js
 function Otaku(name, age) {
-    this.strength = 60;
-    this.age = age;
+  this.strength = 60;
+  this.age = age;
 
-    return {
-        name: name,
-        habit: 'Games'
-    }
+  return {
+    name: name,
+    habit: 'Games'
+  };
 }
 
 var person = new Otaku('Kevin', '18');
 
-console.log(person.name) // Kevin
-console.log(person.habit) // Games
-console.log(person.strength) // undefined
-console.log(person.age) // undefined
+console.log(person.name); // Kevin
+console.log(person.habit); // Games
+console.log(person.strength); // undefined
+console.log(person.age); // undefined
 ```
 
 在这个例子中，构造函数返回了一个对象，在实例 person 中只能访问返回的对象中的属性。
@@ -2517,18 +2490,18 @@ console.log(person.age) // undefined
 
 ```js
 function Otaku(name, age) {
-    this.strength = 60;
-    this.age = age;
+  this.strength = 60;
+  this.age = age;
 
-    return 'handsome boy';
+  return 'handsome boy';
 }
 
 var person = new Otaku('Kevin', '18');
 
-console.log(person.name) // undefined
-console.log(person.habit) // undefined
-console.log(person.strength) // 60
-console.log(person.age) // 18
+console.log(person.name); // undefined
+console.log(person.habit); // undefined
+console.log(person.strength); // 60
+console.log(person.age); // 18
 ```
 
 结果完全颠倒过来，这次尽管有返回值，但是相当于没有返回值进行处理。
@@ -2540,13 +2513,13 @@ console.log(person.age) // 18
 ```js
 // 第二版的代码
 function objectFactory() {
-    var obj = new Object();
-    var Constructor = [].shift.call(arguments);
-    // 相当于 var obj = Object.create(Constructor.prototype)
-    obj.__proto__ = Constructor.prototype;
-    var ret = Constructor.apply(obj, arguments);
-    return typeof ret === 'object' ? ret : obj;
-};
+  var obj = new Object();
+  var Constructor = [].shift.call(arguments);
+  // 相当于 var obj = Object.create(Constructor.prototype)
+  obj.__proto__ = Constructor.prototype;
+  var ret = Constructor.apply(obj, arguments);
+  return typeof ret === 'object' ? ret : obj;
+}
 ```
 
 # 类数组对象与 arguments
@@ -2561,11 +2534,11 @@ function objectFactory() {
 var array = ['name', 'age', 'sex'];
 
 var arrayLike = {
-    0: 'name',
-    1: 'age',
-    2: 'sex',
-    length: 3
-}
+  0: 'name',
+  1: 'age',
+  2: 'sex',
+  length: 3
+};
 ```
 
 即便如此，为什么叫做类数组对象呢？
@@ -2617,15 +2590,15 @@ arrayLike.push('4');
 既然无法直接调用，我们可以用 Function.call 间接调用：
 
 ```js
-var arrayLike = { 0: 'name', 1: 'age', 2: 'sex', length: 3 }
+var arrayLike = { 0: 'name', 1: 'age', 2: 'sex', length: 3 };
 
 Array.prototype.join.call(arrayLike, '&'); // name&age&sex
 
-Array.prototype.slice.call(arrayLike, 0); // ["name", "age", "sex"] 
+Array.prototype.slice.call(arrayLike, 0); // ["name", "age", "sex"]
 // slice 可以做到类数组转数组
 
 Array.prototype.map.call(arrayLike, function(item) {
-    return item.toUpperCase();
+  return item.toUpperCase();
 });
 // ["NAME", "AGE", "SEX"]
 ```
@@ -2635,15 +2608,15 @@ Array.prototype.map.call(arrayLike, function(item) {
 在上面的例子中已经提到了一种类数组转数组的方法，再补充三个：
 
 ```js
-var arrayLike = {0: 'name', 1: 'age', 2: 'sex', length: 3 }
+var arrayLike = { 0: 'name', 1: 'age', 2: 'sex', length: 3 };
 // 1. slice
-Array.prototype.slice.call(arrayLike); // ["name", "age", "sex"] 
+Array.prototype.slice.call(arrayLike); // ["name", "age", "sex"]
 // 2. splice
-Array.prototype.splice.call(arrayLike, 0); // ["name", "age", "sex"] 
+Array.prototype.splice.call(arrayLike, 0); // ["name", "age", "sex"]
 // 3. ES6 Array.from
-Array.from(arrayLike); // ["name", "age", "sex"] 
+Array.from(arrayLike); // ["name", "age", "sex"]
 // 4. apply
-Array.prototype.concat.apply([], arrayLike)
+Array.prototype.concat.apply([], arrayLike);
 ```
 
 那么为什么会讲到类数组对象呢？以及类数组有什么应用吗？
@@ -2660,10 +2633,10 @@ Arguments 对象只定义在函数体中，包括了函数的参数和其他属�
 
 ```js
 function foo(name, age, sex) {
-    console.log(arguments);
+  console.log(arguments);
 }
 
-foo('name', 'age', 'sex')
+foo('name', 'age', 'sex');
 ```
 
 打印结果如下：
@@ -2677,13 +2650,13 @@ foo('name', 'age', 'sex')
 Arguments 对象的 length 属性，表示实参的长度，举个例子：
 
 ```js
-function foo(b, c, d){
-    console.log("实参的长度为：" + arguments.length)
+function foo(b, c, d) {
+  console.log('实参的长度为：' + arguments.length);
 }
 
-console.log("形参的长度为：" + foo.length)
+console.log('形参的长度为：' + foo.length);
 
-foo(1)
+foo(1);
 
 // 形参的长度为：3
 // 实参的长度为：1
@@ -2699,9 +2672,9 @@ Arguments 对象的 callee 属性，通过它可以调用函数自身。
 var data = [];
 
 for (var i = 0; i < 3; i++) {
-    (data[i] = function () {
-       console.log(arguments.callee.i) 
-    }).i = i;
+  (data[i] = function() {
+    console.log(arguments.callee.i);
+  }).i = i;
 }
 
 data[0]();
@@ -2734,7 +2707,7 @@ function foo(name, age, sex, hobbit) {
   console.log(hobbit, arguments[3]); // undefined new hobbit
 }
 
-foo('name', 'age')
+foo('name', 'age');
 ```
 
 传入的参数，实参和 arguments 的值会共享，当没有传入时，实参与 arguments 值不会共享
@@ -2748,23 +2721,23 @@ foo('name', 'age')
 ```js
 // 使用 apply 将 foo 的参数传递给 bar
 function foo() {
-    bar.apply(this, arguments);
+  bar.apply(this, arguments);
 }
 
 function bar(a, b, c) {
-   console.log(a, b, c);
+  console.log(a, b, c);
 }
 
-foo(1, 2, 3)
+foo(1, 2, 3);
 ```
 
-## 强大的ES6
+## 强大的 ES6
 
 使用 ES6 的 ... 运算符，我们可以轻松转成数组。
 
 ```js
 function func(...arguments) {
-    console.log(arguments); // [1, 2, 3]
+  console.log(arguments); // [1, 2, 3]
 }
 
 func(1, 2, 3);
@@ -2772,7 +2745,7 @@ func(1, 2, 3);
 
 ## 应用
 
-arguments的应用其实很多，在下个系列，也就是 JavaScript 专题系列中，我们会在 jQuery 的 extend 实现、函数柯里化、递归等场景看见 arguments 的身影。这篇文章就不具体展开了。
+arguments 的应用其实很多，在下个系列，也就是 JavaScript 专题系列中，我们会在 jQuery 的 extend 实现、函数柯里化、递归等场景看见 arguments 的身影。这篇文章就不具体展开了。
 
 如果要总结这些场景的话，暂时能想到的包括：
 
@@ -2789,13 +2762,13 @@ arguments的应用其实很多，在下个系列，也就是 JavaScript 专题�
 
 ```js
 function createPerson(name) {
-    var o = new Object();
-    o.name = name;
-    o.getName = function () {
-        console.log(this.name);
-    };
+  var o = new Object();
+  o.name = name;
+  o.getName = function() {
+    console.log(this.name);
+  };
 
-    return o;
+  return o;
 }
 
 var person1 = createPerson('kevin');
@@ -2807,10 +2780,10 @@ var person1 = createPerson('kevin');
 
 ```js
 function Person(name) {
-    this.name = name;
-    this.getName = function () {
-        console.log(this.name);
-    };
+  this.name = name;
+  this.getName = function() {
+    console.log(this.name);
+  };
 }
 
 var person1 = new Person('kevin');
@@ -2824,12 +2797,12 @@ var person1 = new Person('kevin');
 
 ```js
 function Person(name) {
-    this.name = name;
-    this.getName = getName;
+  this.name = name;
+  this.getName = getName;
 }
 
 function getName() {
-    console.log(this.name);
+  console.log(this.name);
 }
 
 var person1 = new Person('kevin');
@@ -2842,13 +2815,11 @@ var person1 = new Person('kevin');
 ## 原型模式
 
 ```js
-function Person(name) {
-
-}
+function Person(name) {}
 
 Person.prototype.name = 'keivn';
-Person.prototype.getName = function () {
-    console.log(this.name);
+Person.prototype.getName = function() {
+  console.log(this.name);
 };
 
 var person1 = new Person();
@@ -2861,15 +2832,13 @@ var person1 = new Person();
 ### 原型模式优化一
 
 ```js
-function Person(name) {
-
-}
+function Person(name) {}
 
 Person.prototype = {
-    name: 'kevin',
-    getName: function () {
-        console.log(this.name);
-    }
+  name: 'kevin',
+  getName: function() {
+    console.log(this.name);
+  }
 };
 
 var person1 = new Person();
@@ -2882,16 +2851,14 @@ var person1 = new Person();
 ### 原型模式优化
 
 ```js
-function Person(name) {
-
-}
+function Person(name) {}
 
 Person.prototype = {
-    constructor: Person,
-    name: 'kevin',
-    getName: function () {
-        console.log(this.name);
-    }
+  constructor: Person,
+  name: 'kevin',
+  getName: function() {
+    console.log(this.name);
+  }
 };
 
 var person1 = new Person();
@@ -2907,14 +2874,14 @@ var person1 = new Person();
 
 ```js
 function Person(name) {
-    this.name = name;
+  this.name = name;
 }
 
 Person.prototype = {
-    constructor: Person,
-    getName: function () {
-        console.log(this.name);
-    }
+  constructor: Person,
+  getName: function() {
+    console.log(this.name);
+  }
 };
 
 var person1 = new Person();
@@ -2928,12 +2895,12 @@ var person1 = new Person();
 
 ```js
 function Person(name) {
-    this.name = name;
-    if (typeof this.getName != "function") {
-        Person.prototype.getName = function () {
-            console.log(this.name);
-        }
-    }
+  this.name = name;
+  if (typeof this.getName != 'function') {
+    Person.prototype.getName = function() {
+      console.log(this.name);
+    };
+  }
 }
 
 var person1 = new Person();
@@ -2945,15 +2912,15 @@ var person1 = new Person();
 
 ```js
 function Person(name) {
-    this.name = name;
-    if (typeof this.getName != "function") {
-        Person.prototype = {
-            constructor: Person,
-            getName: function () {
-                console.log(this.name);
-            }
-        }
-    }
+  this.name = name;
+  if (typeof this.getName != 'function') {
+    Person.prototype = {
+      constructor: Person,
+      getName: function() {
+        console.log(this.name);
+      }
+    };
+  }
 }
 
 var person1 = new Person('kevin');
@@ -2984,41 +2951,41 @@ person2.getName();
 
 ```js
 function Person(name) {
-    this.name = name;
-    if (typeof this.getName != "function") {
-        Person.prototype = {
-            constructor: Person,
-            getName: function () {
-                console.log(this.name);
-            }
-        }
+  this.name = name;
+  if (typeof this.getName != 'function') {
+    Person.prototype = {
+      constructor: Person,
+      getName: function() {
+        console.log(this.name);
+      }
+    };
 
-        return new Person(name);
-    }
+    return new Person(name);
+  }
 }
 
 var person1 = new Person('kevin');
 var person2 = new Person('daisy');
 
 person1.getName(); // kevin
-person2.getName();  // daisy
+person2.getName(); // daisy
 ```
 
 ## 寄生构造函数模式
 
 ```js
 function Person(name) {
-    var o = new Object();
-    o.name = name;
-    o.getName = function () {
-        console.log(this.name);
-    };
-    return o;
+  var o = new Object();
+  o.name = name;
+  o.getName = function() {
+    console.log(this.name);
+  };
+  return o;
 }
 
 var person1 = new Person('kevin');
-console.log(person1 instanceof Person) // false
-console.log(person1 instanceof Object)  // true
+console.log(person1 instanceof Person); // false
+console.log(person1 instanceof Object); // true
 ```
 
 寄生构造函数模式，我个人认为应该这样读：
@@ -3027,25 +2994,24 @@ console.log(person1 instanceof Object)  // true
 
 也就是说打着构造函数的幌子挂羊头卖狗肉，你看创建的实例使用 instanceof 都无法指向构造函数！
 
-这样方法可以在特殊情况下使用。比如我们想创建一个具有额外方法的特殊数组，但是又不想直接修改Array构造函数，我们可以这样写：
+这样方法可以在特殊情况下使用。比如我们想创建一个具有额外方法的特殊数组，但是又不想直接修改 Array 构造函数，我们可以这样写：
 
 ```js
 function SpecialArray() {
-    var values = new Array();
+  var values = new Array();
 
-    for (var i = 0, len = arguments.length; i < len; i++) {
-        values.push(arguments[i]);
-    }
+  for (var i = 0, len = arguments.length; i < len; i++) {
+    values.push(arguments[i]);
+  }
 
-    values.toPipedString = function () {
-        return this.join("|");
-    };
-    return values;
+  values.toPipedString = function() {
+    return this.join('|');
+  };
+  return values;
 }
 
 var colors = new SpecialArray('red', 'blue', 'green');
 var colors2 = SpecialArray('red2', 'blue2', 'green2');
-
 
 console.log(colors);
 console.log(colors.toPipedString()); // red|blue|green
@@ -3054,7 +3020,7 @@ console.log(colors2);
 console.log(colors2.toPipedString()); // red2|blue2|green2
 ```
 
-你会发现，其实所谓的寄生构造函数模式就是比工厂模式在创建对象的时候，多使用了一个new，实际上两者的结果是一样的。
+你会发现，其实所谓的寄生构造函数模式就是比工厂模式在创建对象的时候，多使用了一个 new，实际上两者的结果是一样的。
 
 但是作者可能是希望能像使用普通 Array 一样使用 SpecialArray，虽然把 SpecialArray 当成函数也一样能用，但是这并不是作者的本意，也变得不优雅。
 
@@ -3064,7 +3030,7 @@ console.log(colors2.toPipedString()); // red2|blue2|green2
 
 ```js
 for (var i = 0, len = arguments.length; i < len; i++) {
-    values.push(arguments[i]);
+  values.push(arguments[i]);
 }
 ```
 
@@ -3078,18 +3044,18 @@ values.push.apply(values, arguments);
 
 ```js
 function person(name) {
-    var o = new Object();
-    o.sayName = function() {
-        console.log(name);
-    };
-    return o;
+  var o = new Object();
+  o.sayName = function() {
+    console.log(name);
+  };
+  return o;
 }
 
 var person1 = person('kevin');
 
 person1.sayName(); // kevin
 
-person1.name = "daisy";
+person1.name = 'daisy';
 
 person1.sayName(); // kevin
 
@@ -3116,23 +3082,21 @@ console.log(person1.name); // daisy
 ## 原型链继承
 
 ```js
-function Parent () {
-    this.name = 'kevin';
+function Parent() {
+  this.name = 'kevin';
 }
 
-Parent.prototype.getName = function () {
-    console.log(this.name);
-}
+Parent.prototype.getName = function() {
+  console.log(this.name);
+};
 
-function Child () {
-
-}
+function Child() {}
 
 Child.prototype = new Parent();
 
 var child1 = new Child();
 
-console.log(child1.getName()) // kevin
+console.log(child1.getName()); // kevin
 ```
 
 问题：
@@ -3140,13 +3104,11 @@ console.log(child1.getName()) // kevin
 1. 引用类型的属性被所有实例共享，举个例子：
 
 ```js
-function Parent () {
-    this.names = ['kevin', 'daisy'];
+function Parent() {
+  this.names = ['kevin', 'daisy'];
 }
 
-function Child () {
-
-}
+function Child() {}
 
 Child.prototype = new Parent();
 
@@ -3166,12 +3128,12 @@ console.log(child2.names); // ["kevin", "daisy", "yayu"]
 ## 借用构造函数（经典继承）
 
 ```js
-function Parent () {
-    this.names = ['kevin', 'daisy'];
+function Parent() {
+  this.names = ['kevin', 'daisy'];
 }
 
-function Child () {
-    Parent.call(this);
+function Child() {
+  Parent.call(this);
 }
 
 var child1 = new Child();
@@ -3194,11 +3156,11 @@ console.log(child2.names); // ["kevin", "daisy"]
 举个例子：
 
 ```js
-function Parent (name) {
-    this.name = name;
+function Parent(name) {
+  this.name = name;
 }
-function Child (name) {
-    Parent.call(this, name);
+function Child(name) {
+  Parent.call(this, name);
 }
 var child1 = new Child('kevin');
 console.log(child1.name); // kevin
@@ -3213,18 +3175,18 @@ console.log(child2.name); // daisy
 原型链继承和经典继承双剑合璧。
 
 ```js
-function Parent (name) {
-    this.name = name;
-    this.colors = ['red', 'blue', 'green'];
+function Parent(name) {
+  this.name = name;
+  this.colors = ['red', 'blue', 'green'];
 }
 
-Parent.prototype.getName = function () {
-    console.log(this.name);
-}
+Parent.prototype.getName = function() {
+  console.log(this.name);
+};
 
-function Child (name, age) {
-    Parent.call(this, name);
-    this.age = age;
+function Child(name, age) {
+  Parent.call(this, name);
+  this.age = age;
 }
 
 Child.prototype = new Parent();
@@ -3249,9 +3211,9 @@ console.log(child2.colors); // ["red", "blue", "green"]
 
 ```js
 function createObj(o) {
-    function F(){}
-    F.prototype = o;
-    return new F();
+  function F() {}
+  F.prototype = o;
+  return new F();
 }
 ```
 
@@ -3261,9 +3223,9 @@ function createObj(o) {
 
 ```js
 var person = {
-    name: 'kevin',
-    friends: ['daisy', 'kelly']
-}
+  name: 'kevin',
+  friends: ['daisy', 'kelly']
+};
 
 var person1 = createObj(person);
 var person2 = createObj(person);
@@ -3285,12 +3247,12 @@ console.log(person2.friends); // ["daisy", "kelly", "taylor"]
 创建一个仅用于封装继承过程的函数，该函数在内部以某种形式来做增强对象，最后返回对象。
 
 ```js
-function createObj (o) {
-    var clone = Object.create(o);
-    clone.sayName = function () {
-        console.log('hi');
-    }
-    return clone;
+function createObj(o) {
+  var clone = Object.create(o);
+  clone.sayName = function() {
+    console.log('hi');
+  };
+  return clone;
 }
 ```
 
@@ -3301,18 +3263,18 @@ function createObj (o) {
 为了方便大家阅读，在这里重复一下组合继承的代码：
 
 ```js
-function Parent (name) {
-    this.name = name;
-    this.colors = ['red', 'blue', 'green'];
+function Parent(name) {
+  this.name = name;
+  this.colors = ['red', 'blue', 'green'];
 }
 
-Parent.prototype.getName = function () {
-    console.log(this.name)
-}
+Parent.prototype.getName = function() {
+  console.log(this.name);
+};
 
-function Child (name, age) {
-    Parent.call(this, name);
-    this.age = age;
+function Child(name, age) {
+  Parent.call(this, name);
+  this.age = age;
 }
 
 Child.prototype = new Parent();
@@ -3353,27 +3315,26 @@ Parent.call(this, name);
 看看如何实现：
 
 ```js
-function Parent (name) {
-    this.name = name;
-    this.colors = ['red', 'blue', 'green'];
+function Parent(name) {
+  this.name = name;
+  this.colors = ['red', 'blue', 'green'];
 }
 
-Parent.prototype.getName = function () {
-    console.log(this.name)
-}
+Parent.prototype.getName = function() {
+  console.log(this.name);
+};
 
-function Child (name, age) {
-    Parent.call(this, name);
-    this.age = age;
+function Child(name, age) {
+  Parent.call(this, name);
+  this.age = age;
 }
 
 // 关键的三步
-var F = function () {};
+var F = function() {};
 
 F.prototype = Parent.prototype;
 
 Child.prototype = new F();
-
 
 var child1 = new Child('kevin', '18');
 
@@ -3384,22 +3345,22 @@ console.log(child1);
 
 ```js
 function object(o) {
-    function F() {}
-    F.prototype = o;
-    return new F();
+  function F() {}
+  F.prototype = o;
+  return new F();
 }
 
 function prototype(child, parent) {
-    var prototype = object(parent.prototype);
-    prototype.constructor = child;
-    child.prototype = prototype;
+  var prototype = object(parent.prototype);
+  prototype.constructor = child;
+  child.prototype = prototype;
 }
 
 // 当我们使用的时候：
 prototype(Child, Parent);
 ```
 
-引用《JavaScript高级程序设计》中对寄生组合式继承的夸赞就是：
+引用《JavaScript 高级程序设计》中对寄生组合式继承的夸赞就是：
 
 这种方式的高效率体现它只调用了一次 Parent 构造函数，并且因此避免了在 Parent.prototype 上面创建不必要的、多余的属性。与此同时，原型链还能保持不变；因此，还能够正常使用 instanceof 和 isPrototypeOf。开发人员普遍认为寄生组合式继承是引用类型最理想的继承范式。
 
@@ -3411,43 +3372,43 @@ prototype(Child, Parent);
 
 ECMAScript 中的 Number 类型使用 IEEE754 标准来表示整数和浮点数值。所谓 IEEE754 标准，全称 IEEE 二进制浮点数算术标准，这个标准定义了表示浮点数的格式等内容。
 
-在 IEEE754 中，规定了四种表示浮点数值的方式：单精确度（32位）、双精确度（64位）、延伸单精确度、与延伸双精确度。像 ECMAScript 采用的就是双精确度，也就是说，会用 64 位字节来储存一个浮点数。
+在 IEEE754 中，规定了四种表示浮点数值的方式：单精确度（32 位）、双精确度（64 位）、延伸单精确度、与延伸双精确度。像 ECMAScript 采用的就是双精确度，也就是说，会用 64 位字节来储存一个浮点数。
 
 ## 浮点数转二进制
 
 我们来看下 1020 用十进制的表示：
 
-> 1020 = 1 * 10^3 + 0 * 10^2 + 2 * 10^1 + 0 * 10^0
+> 1020 = 1 _ 10^3 + 0 _ 10^2 + 2 _ 10^1 + 0 _ 10^0
 
 所以 1020 用十进制表示就是 1020……(哈哈)
 
 如果 1020 用二进制来表示呢？
 
-> 1020 = 1 * 2^9 + 1 * 2^8 + 1 * 2^7 + 1 * 2^6 + 1 * 2^5 + 1 * 2^4 + 1 * 2^3 + 1 * 2^2 + 0 * 2^1 + 0 * 2^0
+> 1020 = 1 _ 2^9 + 1 _ 2^8 + 1 _ 2^7 + 1 _ 2^6 + 1 _ 2^5 + 1 _ 2^4 + 1 _ 2^3 + 1 _ 2^2 + 0 _ 2^1 + 0 _ 2^0
 
 所以 1020 的二进制为 `1111111100`
 
 那如果是 0.75 用二进制表示呢？同理应该是：
 
-> 0.75 = a * 2^-1 + b * 2^-2 + c * 2^-3 + d * 2^-4 + ...
+> 0.75 = a _ 2^-1 + b _ 2^-2 + c _ 2^-3 + d _ 2^-4 + ...
 
 因为使用的是二进制，这里的 abcd……的值的要么是 0 要么是 1。
 
 那怎么算出 abcd…… 的值呢，我们可以两边不停的乘以 2 算出来，解法如下：
 
-> 0.75 = a * 2^-1 + b * 2^-2 + c * 2^-3 + d * 2^-4...
+> 0.75 = a _ 2^-1 + b _ 2^-2 + c _ 2^-3 + d _ 2^-4...
 
 两边同时乘以 2
 
-> 1 + 0.5 = a * 2^0 + b * 2^-1 + c * 2^-2 + d * 2^-3... (所以 a = 1)
+> 1 + 0.5 = a _ 2^0 + b _ 2^-1 + c _ 2^-2 + d _ 2^-3... (所以 a = 1)
 
 剩下的：
 
-> 0.5 = b * 2^-1 + c * 2^-2 + d * 2^-3...
+> 0.5 = b _ 2^-1 + c _ 2^-2 + d \* 2^-3...
 
 再同时乘以 2
 
-> 1 + 0 = b * 2^0 + c * 2^-1 + d * 2^-2... (所以 b = 1)
+> 1 + 0 = b _ 2^0 + c _ 2^-1 + d \* 2^-2... (所以 b = 1)
 
 所以 0.75 用二进制表示就是 0.ab，也就是 0.11
 
@@ -3475,13 +3436,13 @@ ECMAScript 中的 Number 类型使用 IEEE754 标准来表示整数和浮点数�
 
 这个标准认为，一个浮点数 (Value) 可以这样表示：
 
-> Value = sign * exponent * fraction
+> Value = sign _ exponent _ fraction
 
 看起来很抽象的样子，简单理解就是科学计数法……
 
 比如 -1020，用科学计数法表示就是:
 
-> -1 * 10^3 * 1.02
+> -1 _ 10^3 _ 1.02
 
 sign 就是 -1，exponent 就是 10^3，fraction 就是 1.02
 
@@ -3489,13 +3450,13 @@ sign 就是 -1，exponent 就是 10^3，fraction 就是 1.02
 
 可以表示为：
 
-> 1 * 2^-4 * 1.1001100110011……
+> 1 _ 2^-4 _ 1.1001100110011……
 
 其中 sign 就是 1，exponent 就是 2^-4，fraction 就是 1.1001100110011……
 
 而当只做二进制科学计数法的表示时，这个 Value 的表示可以再具体一点变成：
 
-> V = (-1)^S * (1 + Fraction) * 2^E
+> V = (-1)^S _ (1 + Fraction) _ 2^E
 
 (如果所有的浮点数都可以这样表示，那么我们存储的时候就把这其中会变化的一些值存储起来就好了)
 
@@ -3503,11 +3464,11 @@ sign 就是 -1，exponent 就是 10^3，fraction 就是 1.02
 
 (-1)^S 表示符号位，当 S = 0，V 为正数；当 S = 1，V 为负数。
 
-再看 (1 + Fraction)，这是因为所有的浮点数都可以表示为 1.xxxx * 2^xxx 的形式，前面的一定是 `1.xxx`，那干脆我们就不存储这个 1 了，直接存后面的 xxxxx 好了，这也就是 Fraction 的部分。
+再看 (1 + Fraction)，这是因为所有的浮点数都可以表示为 1.xxxx \* 2^xxx 的形式，前面的一定是 `1.xxx`，那干脆我们就不存储这个 1 了，直接存后面的 xxxxx 好了，这也就是 Fraction 的部分。
 
 最后再看 2^E
 
-如果是 1020.75，对应二进制数就是 1111111100.11，对应二进制科学计数法就是 1 * 1.11111110011 * 2^9，E 的值就是 9，而如果是 0.1 ，对应二进制是 1 * 1.1001100110011…… * 2^-4， E 的值就是 -4，也就是说，E 既可能是负数，又可能是正数，那问题就来了，那我们该怎么储存这个 E 呢？
+如果是 1020.75，对应二进制数就是 1111111100.11，对应二进制科学计数法就是 1 _ 1.11111110011 _ 2^9，E 的值就是 9，而如果是 0.1 ，对应二进制是 1 _ 1.1001100110011…… _ 2^-4， E 的值就是 -4，也就是说，E 既可能是负数，又可能是正数，那问题就来了，那我们该怎么储存这个 E 呢？
 
 我们这样解决，假如我们用 8 位字节来存储 E 这个数，如果只有正数的话，储存的值的范围是 0 ~ 254，而如果要储存正负数的话，值的范围就是 -127~127，我们在存储的时候，把要存储的数字加上 127，这样当我们存 -127 的时候，我们存 0，当存 127 的时候，存 254，这样就解决了存负数的问题。对应的，当取值的时候，我们再减去 127。
 
@@ -3525,7 +3486,7 @@ sign 就是 -1，exponent 就是 10^3，fraction 就是 1.02
 
 用 52 位存储 Fraction。
 
-举个例子，就拿 0.1 来看，对应二进制是 1 * 1.1001100110011…… * 2^-4， Sign 是 0，E + bias 是 -4 + 1023 = 1019，1019 用二进制表示是 1111111011，Fraction 是 1001100110011……
+举个例子，就拿 0.1 来看，对应二进制是 1 _ 1.1001100110011…… _ 2^-4， Sign 是 0，E + bias 是 -4 + 1023 = 1019，1019 用二进制表示是 1111111011，Fraction 是 1001100110011……
 
 对应 64 个字节位的完整表示就是：
 
@@ -3541,7 +3502,7 @@ sign 就是 -1，exponent 就是 10^3，fraction 就是 1.02
 
 关于浮点数的运算，一般由以下五个步骤完成：对阶、尾数运算、规格化、舍入处理、溢出判断。我们来简单看一下 0.1 和 0.2 的计算。
 
-首先是对阶，所谓对阶，就是把阶码调整为相同，比如 0.1 是 1.1001100110011…… * 2^-4，阶码是 -4，而 0.2 就是 1.10011001100110...* 2^-3，阶码是 -3，两个阶码不同，所以先调整为相同的阶码再进行计算，调整原则是小阶对大阶，也就是 0.1 的 -4 调整为 -3，对应变成 0.11001100110011…… * 2^-3
+首先是对阶，所谓对阶，就是把阶码调整为相同，比如 0.1 是 1.1001100110011…… _ 2^-4，阶码是 -4，而 0.2 就是 1.10011001100110..._ 2^-3，阶码是 -3，两个阶码不同，所以先调整为相同的阶码再进行计算，调整原则是小阶对大阶，也就是 0.1 的 -4 调整为 -3，对应变成 0.11001100110011…… \* 2^-3
 
 接下来是尾数计算:
 
@@ -3552,15 +3513,15 @@ sign 就是 -1，exponent 就是 10^3，fraction 就是 1.02
  10.0110011001100110011001100110011001100110011001100111
 ```
 
-我们得到结果为 10.0110011001100110011001100110011001100110011001100111 * 2^-3
+我们得到结果为 10.0110011001100110011001100110011001100110011001100111 \* 2^-3
 
-将这个结果处理一下，即结果规格化，变成 1.0011001100110011001100110011001100110011001100110011(1) * 2^-2
+将这个结果处理一下，即结果规格化，变成 1.0011001100110011001100110011001100110011001100110011(1) \* 2^-2
 
 括号里的 1 意思是说计算后这个 1 超出了范围，所以要被舍弃了。
 
 再然后是舍入，四舍五入对应到二进制中，就是 0 舍 1 入，因为我们要把括号里的 1 丢了，所以这里会进一，结果变成
 
-> 1.0011001100110011001100110011001100110011001100110100 * 2^-2
+> 1.0011001100110011001100110011001100110011001100110100 \* 2^-2
 
 本来还有一个溢出判断，因为这里不涉及，就不讲了。
 

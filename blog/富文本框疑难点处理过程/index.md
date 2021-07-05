@@ -2,7 +2,7 @@
 title: 富文本框疑难点处理过程
 date: 2019-2-13 20:13:58
 categories:
-- 前端
+  - 前端
 tags: 前端, 富文本框, contenteditable, 预研
 path: /rich-input-question/
 ---
@@ -22,7 +22,7 @@ path: /rich-input-question/
 input 和 textarea 能轻松实现 placeholder 提示语的效果，但作用于 contenteditable 的元素，placeholder 不起作用，可以通过 css 的:empty 解决：
 
 ```css
-[contenteditable=true]:empty::before {
+[contenteditable='true']:empty::before {
   content: attr(placeholder);
 }
 ```
@@ -161,7 +161,8 @@ this.setState(innerHTML, () => {
 经过一步步的调试，发现取出函数 getCurrentCursorPosition 的光标位置是不对的，它取出的是在 span 内部光标的位置，比如说`3233<span> 我是 </span>`，此时取出的光标位置值为 2，而不是 6，考虑到修改 getCurrentCursorPosition 会影响之前的 bug，所以只能在删除遇到标签时做下特殊处理，在遇到 span 标签删除后，光标强制移到文本最后
 
 ```js
-function selectAllText(elem) { // 将光标移到文本末尾
+function selectAllText(elem) {
+  // 将光标移到文本末尾
   if (window.getSelection) {
     elem.focus();
     const range = window.getSelection();
@@ -176,7 +177,8 @@ function selectAllText(elem) { // 将光标移到文本末尾
 }
 
 const selection = window.getSelection();
-if (selection.focusNode.id === this.id) { // 焦点在 span 内部，即光标遇到 span 标签
+if (selection.focusNode.id === this.id) {
+  // 焦点在 span 内部，即光标遇到 span 标签
   this.props.onChange(innerHTML, () => {
     const that = document.getElementById(this.id);
     selectAllText(that);
@@ -196,7 +198,7 @@ if (selection.focusNode.id === this.id) { // 焦点在 span 内部，即光标�
   <script>
     handlingComposition = () => {
       this.isCompositionEnd = false;
-    }
+    };
 
     handleComposition = (e) => {
       this.isCompositionEnd = true;
@@ -205,20 +207,20 @@ if (selection.focusNode.id === this.id) { // 焦点在 span 内部，即光标�
         const that = document.getElementById(this.id);
         selectAllText(that); // 光标跳转到最后
       });
-    }
+    };
 
     emitChange = (e) => {
       if (!this.isCompositionEnd) {
         return; // 直接跳过，不赋值
       }
-    }
+    };
   </script>
   <div
-    contentEditable
-    onInput={this.emitChange}
-    onCompositionStart={this.handlingComposition}
-    onCompositionUpdate={this.handlingComposition}
-    onCompositionEnd={this.handleComposition}
+    contenteditable
+    onInput="{this.emitChange}"
+    onCompositionStart="{this.handlingComposition}"
+    onCompositionUpdate="{this.handlingComposition}"
+    onCompositionEnd="{this.handleComposition}"
   />
 </html>
 ```
@@ -233,8 +235,7 @@ if (selection.focusNode.id === this.id) { // 焦点在 span 内部，即光标�
 
 ## 代码注释
 
-以上方法有很多未知的 bug，比较明显的问题就是光标会到处乱跑，自己解决起来有太多的坑，故采用业界比较成熟的 
-[draft-js-plugins](https://github.com/draft-js-plugins/draft-js-plugins)，底层采用 facebook 的开源库 [draft-js](https://github.com/facebook/draft-js)，期间也遇到不少问题，详见代码注释
+以上方法有很多未知的 bug，比较明显的问题就是光标会到处乱跑，自己解决起来有太多的坑，故采用业界比较成熟的 [draft-js-plugins](https://github.com/draft-js-plugins/draft-js-plugins)，底层采用 facebook 的开源库 [draft-js](https://github.com/facebook/draft-js)，期间也遇到不少问题，详见代码注释
 
 ```jsx{12-13,23-29}
 import React from 'react';
@@ -251,26 +252,27 @@ import styles from './styles.css';
 // 为了解决ie9下parseFromString('', 'text/html')的报错
 import './DomParserPloyfill';
 
-class GraphHintTextArea extends React.PureComponent { // eslint-disable-line react/prefer-stateless-function
+class GraphHintTextArea extends React.PureComponent {
+  // eslint-disable-line react/prefer-stateless-function
   constructor(props) {
     super(props);
     let theme = {
       ...defaultTheme,
-      mention: styles.mention,
+      mention: styles.mention
     };
     const browser = utils.getBrowserInfo();
     if (browser.name === 'msie' && browser.version === '9') {
       theme = {
         ...defaultTheme,
         mention: styles.mention,
-        mentionSuggestions: styles.mentionSuggestions,
+        mentionSuggestions: styles.mentionSuggestions
       };
     }
     // 设置mention标签的可变性、触发字符、样式
     this.mentionPlugin = createMentionPlugin({
       entityMutability: 'IMMUTABLE',
       mentionTrigger: '$',
-      theme,
+      theme
     });
 
     const { value } = this.props;
@@ -284,16 +286,16 @@ class GraphHintTextArea extends React.PureComponent { // eslint-disable-line rea
           return createEntity('$mention', 'IMMUTABLE', {
             mention: {
               name,
-              _id: node.id,
-            },
+              _id: node.id
+            }
           });
         }
-      },
+      }
     })(value);
 
     this.state = {
       editorState: EditorState.createWithContent(contentState),
-      suggestions: [],
+      suggestions: []
     };
   }
 
@@ -313,18 +315,18 @@ class GraphHintTextArea extends React.PureComponent { // eslint-disable-line rea
           return createEntity('$mention', 'IMMUTABLE', {
             mention: {
               name,
-              _id: node.id,
-            },
+              _id: node.id
+            }
           });
         }
-      },
+      }
     })(text);
     const { editorState } = this.state;
     // 这里必须用push方法，不然会导致编辑器提示框不能弹出
     // https://github.com/draft-js-plugins/draft-js-plugins/issues/210
     const newEditorState = EditorState.push(editorState, contentState);
     this.setState({
-      editorState: newEditorState,
+      editorState: newEditorState
     });
   }
 
@@ -344,17 +346,20 @@ class GraphHintTextArea extends React.PureComponent { // eslint-disable-line rea
     // if (pureText.length > maxLength) {
     //   return;
     // }
-    this.setState({
-      editorState,
-    }, () => {
-      this.triggerChange(contentState, pureText);
-    });
+    this.setState(
+      {
+        editorState
+      },
+      () => {
+        this.triggerChange(contentState, pureText);
+      }
+    );
   };
 
   handleSearchChange = ({ value }) => {
     const { hints } = this.props;
     this.setState({
-      suggestions: defaultSuggestionsFilter(value, hints),
+      suggestions: defaultSuggestionsFilter(value, hints)
     });
   };
 
@@ -368,14 +373,14 @@ class GraphHintTextArea extends React.PureComponent { // eslint-disable-line rea
           return {
             start: '',
             end: '',
-            empty: '',
+            empty: ''
           };
         }
-      },
+      }
     })(contentState);
     htmlToPureText = htmlToPureText.replace(/<\/?.+?\/?>|\s+/g, '');
     return htmlToPureText;
-  }
+  };
 
   // 这里是转成要传给后端的效果
   triggerChange = (contentState, pureText) => {
@@ -398,10 +403,10 @@ class GraphHintTextArea extends React.PureComponent { // eslint-disable-line rea
             start: '',
             end: '',
             // empty属性代表所有换行都去掉，而不是转为空格
-            empty: '',
+            empty: ''
           };
         }
-      },
+      }
     })(contentState);
     // 语音合成需求要求，去掉所有空白字符（包含空格、制表符、换页符）和html标签（包含<div class="test"></div>、<img />、<My-Tag></My-Tag>这几种）
     html = html.replace(/<\/?.+?\/?>|\s+/g, '');
@@ -409,41 +414,42 @@ class GraphHintTextArea extends React.PureComponent { // eslint-disable-line rea
       onChange(html, pureText);
     }
     return html;
-  }
+  };
 
   handleFocus = () => {
     const { onFocus } = this.props;
     if (typeof onFocus === 'function') {
       onFocus();
     }
-  }
+  };
 
   handleBlur = () => {
     const { onBlur } = this.props;
     if (typeof onBlur === 'function') {
       onBlur();
     }
-  }
+  };
 
   render() {
     const { placeholder, className } = this.props;
     const { MentionSuggestions } = this.mentionPlugin;
     const plugins = [this.mentionPlugin];
-    return (<div className={classnames(styles.editor, className)}>
-      <Editor
-        editorState={this.state.editorState}
-        onChange={this.handleChange}
-        plugins={plugins}
-        placeholder={placeholder}
-        onFocus={this.handleFocus}
-        onBlur={this.handleBlur}
-        ref={(r) => { this.editor = r; }}
-      />
-      <MentionSuggestions
-        onSearchChange={this.handleSearchChange}
-        suggestions={this.state.suggestions}
-      />
-    </div>);
+    return (
+      <div className={classnames(styles.editor, className)}>
+        <Editor
+          editorState={this.state.editorState}
+          onChange={this.handleChange}
+          plugins={plugins}
+          placeholder={placeholder}
+          onFocus={this.handleFocus}
+          onBlur={this.handleBlur}
+          ref={(r) => {
+            this.editor = r;
+          }}
+        />
+        <MentionSuggestions onSearchChange={this.handleSearchChange} suggestions={this.state.suggestions} />
+      </div>
+    );
   }
 }
 
@@ -454,7 +460,7 @@ GraphHintTextArea.propTypes = {
   hints: PropTypes.array,
   className: PropTypes.string,
   onFocus: PropTypes.func,
-  onBlur: PropTypes.func,
+  onBlur: PropTypes.func
 };
 
 export default GraphHintTextArea;
@@ -484,23 +490,22 @@ export default GraphHintTextArea;
 /* global document, DOMParser*/
 
 // eslint-disable-next-line func-names
-(function (DOMParser) {
+(function(DOMParser) {
   // eslint-disable-next-line
-  const DOMParser_proto = DOMParser.prototype, real_parseFromString = DOMParser_proto.parseFromString;
+  const DOMParser_proto = DOMParser.prototype,
+    real_parseFromString = DOMParser_proto.parseFromString;
   // Firefox/Opera/IE throw errors on unsupported types
   try {
     // WebKit returns null on unsupported types
-    if ((new DOMParser()).parseFromString('', 'text/html')) {
+    if (new DOMParser().parseFromString('', 'text/html')) {
       // text/html parsing is natively supported
       return;
     }
-  // eslint-disable-next-line no-empty
-  } catch (ex) {
-
-  }
+    // eslint-disable-next-line no-empty
+  } catch (ex) {}
 
   // eslint-disable-next-line func-names
-  DOMParser_proto.parseFromString = function (markup, type) {
+  DOMParser_proto.parseFromString = function(markup, type) {
     if (/^\s*text\/html\s*(?:;|$)/i.test(type)) {
       const doc = document.implementation.createHTMLDocument('');
       if (markup.toLowerCase().indexOf('<!doctype') > -1) {
@@ -509,13 +514,13 @@ export default GraphHintTextArea;
         doc.body.innerHTML = markup;
       }
       return doc;
-    // eslint-disable-next-line no-else-return
+      // eslint-disable-next-line no-else-return
     } else {
       // eslint-disable-next-line prefer-rest-params
       return real_parseFromString.apply(this, arguments);
     }
   };
-}(DOMParser));
+})(DOMParser);
 ```
 
 - IE9 下不能弹出下拉框，这里查看了源码发现了是 IE9 transfrom 属性需要兼容下 IE9，去掉 transfrom 变换或者添加 -ms 前缀

@@ -68,19 +68,14 @@ Diff 算法的本质是对比 1 和 4，生成 2。
 
 ```js
 // 根据 newChild 类型选择不同 diff 函数处理
-function reconcileChildFibers(
-  returnFiber: Fiber,
-  currentFirstChild: Fiber | null,
-  newChild: any,
-): Fiber | null {
-
+function reconcileChildFibers(returnFiber: Fiber, currentFirstChild: Fiber | null, newChild: any): Fiber | null {
   const isObject = typeof newChild === 'object' && newChild !== null;
 
   if (isObject) {
     // object 类型，可能是 REACT_ELEMENT_TYPE 或 REACT_PORTAL_TYPE
     switch (newChild.$$typeof) {
       case REACT_ELEMENT_TYPE:
-        // 调用 reconcileSingleElement 处理
+      // 调用 reconcileSingleElement 处理
       // // ...省略其他 case
     }
   }
@@ -123,7 +118,7 @@ if (isObject) {
   // 对象类型，可能是 REACT_ELEMENT_TYPE 或 REACT_PORTAL_TYPE
   switch (newChild.$$typeof) {
     case REACT_ELEMENT_TYPE:
-      // 调用 reconcileSingleElement 处理
+    // 调用 reconcileSingleElement 处理
     // ...其他 case
   }
 }
@@ -136,33 +131,28 @@ if (isObject) {
 让我们看看第二步判断 DOM 节点是否可以复用是如何实现的。
 
 ```js
-function reconcileSingleElement(
-  returnFiber: Fiber,
-  currentFirstChild: Fiber | null,
-  element: ReactElement
-): Fiber {
+function reconcileSingleElement(returnFiber: Fiber, currentFirstChild: Fiber | null, element: ReactElement): Fiber {
   const key = element.key;
   let child = currentFirstChild;
-  
+
   // 首先判断是否存在对应 DOM 节点
   while (child !== null) {
     // 上一次更新存在 DOM 节点，接下来判断是否可复用
 
     // 首先比较 key 是否相同
     if (child.key === key) {
-
       // key 相同，接下来比较 type 是否相同
 
       switch (child.tag) {
         // ...省略 case
-        
+
         default: {
           if (child.elementType === element.type) {
             // type 相同则表示可以复用
             // 返回复用的 fiber
             return existing;
           }
-          
+
           // type 不同则跳出 switch
           break;
         }
@@ -241,28 +231,28 @@ ul > p
 
 公布答案：
 
-习题1: 未设置 key prop 默认 key = null;，所以更新前后 key 相同，都为 null，但是更新前 type 为 div，更新后为 p，type 改变则不能复用。
+习题 1: 未设置 key prop 默认 key = null;，所以更新前后 key 相同，都为 null，但是更新前 type 为 div，更新后为 p，type 改变则不能复用。
 
-习题2: 更新前后 key 改变，不需要再判断 type，不能复用。
+习题 2: 更新前后 key 改变，不需要再判断 type，不能复用。
 
-习题3: 更新前后 key 改变，不需要再判断 type，不能复用。
+习题 3: 更新前后 key 改变，不需要再判断 type，不能复用。
 
-习题4: 更新前后 key 与 type 都未改变，可以复用。children 变化，DOM 的子元素需要更新。
+习题 4: 更新前后 key 与 type 都未改变，可以复用。children 变化，DOM 的子元素需要更新。
 
 ## 多节点 Diff
 
 上一节我们介绍了单一节点的 Diff，现在考虑我们有一个 FunctionComponent：
 
 ```jsx
-function List () {
+function List() {
   return (
     <ul>
-      <li key="0">0</li>
-      <li key="1">1</li>
-      <li key="2">2</li>
-      <li key="3">3</li>
+      <li key='0'>0</li>
+      <li key='1'>1</li>
+      <li key='2'>2</li>
+      <li key='3'>3</li>
     </ul>
-  )
+  );
 }
 ```
 
@@ -304,7 +294,7 @@ if (isArray(newChild)) {
 
 我们以之前代表更新前的 JSX 对象，之后代表更新后的 JSX 对象
 
-#### 情况1：节点更新
+#### 情况 1：节点更新
 
 ```jsx
 // 之前
@@ -326,7 +316,7 @@ if (isArray(newChild)) {
 </ul>
 ```
 
-#### 情况2：节点新增或减少
+#### 情况 2：节点新增或减少
 
 ```jsx
 // 之前
@@ -348,7 +338,7 @@ if (isArray(newChild)) {
 </ul>
 ```
 
-#### 情况3：节点位置变化
+#### 情况 3：节点位置变化
 
 ```jsx
 // 之前
@@ -379,15 +369,15 @@ if (isArray(newChild)) {
 
 但是 React 团队发现，在日常开发中，相较于新增和删除，更新组件发生的频率更高。所以 Diff 会优先判断当前节点是否属于更新。
 
->注意
+> 注意
 >
->在我们做数组相关的算法题时，经常使用双指针从数组头和尾同时遍历以提高效率，但是这里却不行。
+> 在我们做数组相关的算法题时，经常使用双指针从数组头和尾同时遍历以提高效率，但是这里却不行。
 >
->虽然本次更新的 JSX 对象 newChildren为数组形式，但是和 newChildren 中每个组件进行比较的是 current fiber，同级的 Fiber 节点是由 sibling 指针链接形成的单链表，即不支持双指针遍历。
+> 虽然本次更新的 JSX 对象 newChildren 为数组形式，但是和 newChildren 中每个组件进行比较的是 current fiber，同级的 Fiber 节点是由 sibling 指针链接形成的单链表，即不支持双指针遍历。
 >
->即 `newChildren[0]` 与 fiber 比较，`newChildren[1]` 与 fiber.sibling 比较。
+> 即 `newChildren[0]` 与 fiber 比较，`newChildren[1]` 与 fiber.sibling 比较。
 >
->所以无法使用双指针优化。
+> 所以无法使用双指针优化。
 
 基于以上原因，Diff 算法的整体逻辑会经历两轮遍历：
 
@@ -402,9 +392,9 @@ if (isArray(newChild)) {
 1. let i = 0，遍历 newChildren，将 `newChildren[i]` 与 oldFiber 比较，判断 DOM 节点是否可复用。
 2. 如果可复用，i++，继续比较 `newChildren[i]` 与 oldFiber.sibling，可以复用则继续遍历。
 3. 如果不可复用，分两种情况：
-    1. key 不同导致不可复用，立即跳出整个遍历，第一轮遍历结束。
-    2. key 相同 type 不同导致不可复用，会将 oldFiber 标记为 DELETION，并继续遍历
-4. 如果 newChildren 遍历完（即i === newChildren.length - 1）或者 oldFiber 遍历完（即 oldFiber.sibling === null），跳出遍历，第一轮遍历结束。
+   1. key 不同导致不可复用，立即跳出整个遍历，第一轮遍历结束。
+   2. key 相同 type 不同导致不可复用，会将 oldFiber 标记为 DELETION，并继续遍历
+4. 如果 newChildren 遍历完（即 i === newChildren.length - 1）或者 oldFiber 遍历完（即 oldFiber.sibling === null），跳出遍历，第一轮遍历结束。
 
 > 你可以从[这里](https://github.com/facebook/react/blob/1fb18e22ae66fdb1dc127347e169e73948778e5a/packages/react-reconciler/src/ReactChildFiber.new.js#L818)看到这轮遍历的源码
 
@@ -421,7 +411,7 @@ if (isArray(newChild)) {
 <li key="0">0</li>
 <li key="1">1</li>
 <li key="2">2</li>
-            
+
 // 之后
 <li key="0">0</li>
 <li key="2">1</li>
@@ -442,17 +432,17 @@ if (isArray(newChild)) {
 // 之前
 <li key="0" className="a">0</li>
 <li key="1" className="b">1</li>
-            
+
 // 之后 情况1 —— newChildren 与 oldFiber 都遍历完
 <li key="0" className="aa">0</li>
 <li key="1" className="bb">1</li>
-            
+
 // 之后 情况2 —— newChildren 没遍历完，oldFiber 遍历完
 // newChildren 剩下 key === "2" 未遍历
 <li key="0" className="aa">0</li>
 <li key="1" className="bb">1</li>
 <li key="2" className="cc">2</li>
-            
+
 // 之后 情况3 —— newChildren 遍历完，oldFiber 没遍历完
 // oldFiber 剩下 key === "1" 未遍历
 <li key="0" className="aa">0</li>
@@ -494,7 +484,7 @@ if (isArray(newChild)) {
 
 我们需要使用 key。
 
-为了快速的找到 key 对应的 oldFiber，我们将所有还未处理的 oldFiber 存入以 key 为 key，oldFiber 为value 的 Map 中。
+为了快速的找到 key 对应的 oldFiber，我们将所有还未处理的 oldFiber 存入以 key 为 key，oldFiber 为 value 的 Map 中。
 
 ```js
 const existingChildren = mapRemainingChildren(returnFiber, oldFiber);
@@ -516,7 +506,7 @@ const existingChildren = mapRemainingChildren(returnFiber, oldFiber);
 
 我们用变量 oldIndex 表示遍历到的可复用节点在 oldFiber 中的位置索引。如果 oldIndex < lastPlacedIndex，代表本次更新该节点需要向右移动。
 
-lastPlacedIndex 初始为 0，每遍历一个可复用的节点，如果 oldIndex >= lastPlacedIndex，则lastPlacedIndex = oldIndex。
+lastPlacedIndex 初始为 0，每遍历一个可复用的节点，如果 oldIndex >= lastPlacedIndex，则 lastPlacedIndex = oldIndex。
 
 单纯文字表达比较晦涩，这里我们提供两个 Demo，你可以对照着理解。
 
@@ -532,14 +522,14 @@ abcd
 acdb
 
 ===第一轮遍历开始===
-a（之后）vs a（之前）  
+a（之后）vs a（之前）
 key 不变，可复用
 此时 a 对应的 oldFiber（之前的 a）在之前的数组（abcd）中索引为 0
 所以 lastPlacedIndex = 0;
 
 继续第一轮遍历...
 
-c（之后）vs b（之前）  
+c（之后）vs b（之前）
 key 改变，不能复用，跳出第一轮遍历
 此时 lastPlacedIndex === 0;
 ===第一轮遍历结束===
@@ -603,7 +593,7 @@ abcd
 dabc
 
 ===第一轮遍历开始===
-d（之后）vs a（之前）  
+d（之后）vs a（之前）
 key 改变，不能复用，跳出遍历
 ===第一轮遍历结束===
 
@@ -764,18 +754,11 @@ commit阶段（`commitRoot`）
 ```js
 if (newCallbackPriority === SyncLanePriority) {
   // 任务已经过期，需要同步执行 render 阶段
-  newCallbackNode = scheduleSyncCallback(
-    performSyncWorkOnRoot.bind(null, root)
-  );
+  newCallbackNode = scheduleSyncCallback(performSyncWorkOnRoot.bind(null, root));
 } else {
   // 根据任务优先级异步执行 render 阶段
-  var schedulerPriorityLevel = lanePriorityToSchedulerPriority(
-    newCallbackPriority
-  );
-  newCallbackNode = scheduleCallback(
-    schedulerPriorityLevel,
-    performConcurrentWorkOnRoot.bind(null, root)
-  );
+  var schedulerPriorityLevel = lanePriorityToSchedulerPriority(newCallbackPriority);
+  newCallbackNode = scheduleCallback(schedulerPriorityLevel, performConcurrentWorkOnRoot.bind(null, root));
 }
 ```
 
@@ -915,7 +898,7 @@ const update: Update<*> = {
   payload: null,
   callback: null,
 
-  next: null,
+  next: null
 };
 ```
 
@@ -925,14 +908,14 @@ const update: Update<*> = {
 
 - eventTime：任务时间，通过 performance.now() 获取的毫秒数。由于该字段在未来会重构，当前我们不需要理解他。
 - lane：优先级相关字段。当前还不需要掌握他，只需要知道不同 Update 优先级可能是不同的。
-    > 你可以将 lane 类比心智模型中需求的紧急程度。
+  > 你可以将 lane 类比心智模型中需求的紧急程度。
 - suspenseConfig：Suspense 相关，暂不关注。
 - tag：更新的类型，包括 UpdateState | ReplaceState | ForceUpdate | CaptureUpdate。
 - payload：更新挂载的数据，不同类型组件挂载的数据不同。对于 ClassComponent，payload 为 this.setState 的第一个传参。对于 HostRoot，payload 为 ReactDOM.render 的第一个传参。
 - callback：更新的回调函数。即在 commit 阶段的 layout 子阶段一节中提到的回调函数。
 - next：与其他 Update 连接形成链表。
 
-### Update 与 Fiber的联系
+### Update 与 Fiber 的联系
 
 我们发现，Update 存在一个连接其他 Update 形成链表的字段 next。联系 React 中另一种以链表形式组成的结构 Fiber，他们之间有什么关联么？
 
@@ -947,12 +930,12 @@ const update: Update<*> = {
 
 > 什么情况下一个 Fiber 节点会存在多个 Update？
 >
->你可能疑惑为什么一个 Fiber 节点会存在多个 Update。这其实是很常见的情况。
+> 你可能疑惑为什么一个 Fiber 节点会存在多个 Update。这其实是很常见的情况。
 >
->在这里介绍一种最简单的情况：
+> 在这里介绍一种最简单的情况：
 >
->```js
->onClick() {
+> ```js
+> onClick() {
 > this.setState({
 >   a: 1
 > })
@@ -960,8 +943,9 @@ const update: Update<*> = {
 > this.setState({
 >   b: 2
 > })
->}
->```
+> }
+> ```
+>
 > 在一个 ClassComponent 中触发 this.onClick 方法，方法内部调用了两次 this.setState。这会在该 fiber 中产生两个 Update。
 
 Fiber 节点最多同时存在两个 updateQueue：
@@ -985,9 +969,9 @@ const queue: UpdateQueue<State> = {
   firstBaseUpdate: null,
   lastBaseUpdate: null,
   shared: {
-    pending: null,
+    pending: null
   },
-  effects: null,
+  effects: null
 };
 ```
 
@@ -997,15 +981,15 @@ const queue: UpdateQueue<State> = {
 
 - baseState：本次更新前该 Fiber 节点的 state，Update 基于该 state 计算更新后的 state。
 
-    > 你可以将 baseState 类比心智模型中的 master 分支。
+  > 你可以将 baseState 类比心智模型中的 master 分支。
 
 - firstBaseUpdate 与 lastBaseUpdate：本次更新前该 Fiber 节点已保存的 Update。以链表形式存在，链表头为 firstBaseUpdate，链表尾为 lastBaseUpdate。之所以在更新产生前该 Fiber 节点内就存在 Update，是由于某些 Update 优先级较低所以在上次 render 阶段由 Update 计算 state 时被跳过。
 
-    > 你可以将 baseUpdate 类比心智模型中执行 git rebase 基于的 commit（节点 D）。
+  > 你可以将 baseUpdate 类比心智模型中执行 git rebase 基于的 commit（节点 D）。
 
 - shared.pending：触发更新时，产生的 Update 会保存在 shared.pending 中形成单向环状链表。当由 Update 计算 state 时这个环会被剪开并连接在 lastBaseUpdate 后面。
 
-    > 你可以将 shared.pending 类比心智模型中本次需要提交的 commit（节点 ABC）。
+  > 你可以将 shared.pending 类比心智模型中本次需要提交的 commit（节点 ABC）。
 
 - effects：数组。保存 update.callback !== null 的 Update。
 
@@ -1044,8 +1028,8 @@ u4.next === u3;
 由于 shared.pending 是环状链表，用图表示为：
 
 ```js
-fiber.updateQueue.shared.pending:   u3 --> u4 
-                                     ^      |                                    
+fiber.updateQueue.shared.pending:   u3 --> u4
+                                     ^      |
                                      |______|
 ```
 
@@ -1200,7 +1184,7 @@ fiber.updateQueue = {
 };
 ```
 
-我们可以看见，u2 对应的更新执行了两次，相应的 render 阶段的生命周期勾子 componentWillXXX 也会触发两次。这也是为什么这些勾子会被标记为 unsafe_。
+我们可以看见，u2 对应的更新执行了两次，相应的 render 阶段的生命周期勾子 componentWillXXX 也会触发两次。这也是为什么这些勾子会被标记为 unsafe\_。
 
 ### 如何保证状态正确
 
@@ -1211,7 +1195,7 @@ fiber.updateQueue = {
 
 我们分别讲解下。
 
-#### 如何保证Update不丢失
+#### 如何保证 Update 不丢失
 
 在上一节例子中我们讲到，在 render 阶段，shared.pending 的环被剪开并连接在 updateQueue.lastBaseUpdate 后面。
 
@@ -1239,10 +1223,10 @@ shared.pending: A1 --> B2 --> C1 --> D2
 第一次 render，优先级为 1。
 
 ```js
-baseState: ''
-baseUpdate: null
-render阶段使用的Update: [A1, C1]
-memoizedState: 'AC'
+baseState: '';
+baseUpdate: null;
+render阶段使用的Update: [A1, C1];
+memoizedState: 'AC';
 ```
 
 其中 B2 由于优先级为 2，低于当前优先级，所以他及其后面的所有 Update 会被保存在 baseUpdate 中作为下次更新的 Update（即 B2 C1 D2）。
@@ -1252,10 +1236,10 @@ memoizedState: 'AC'
 第二次 render，优先级为 2。
 
 ```js
-baseState: 'A'
-baseUpdate: B2 --> C1 --> D2
-render阶段使用的Update: [B2, C1, D2]
-memoizedState: 'ABCD'
+baseState: 'A';
+baseUpdate: B2-- > C1-- > D2;
+render阶段使用的Update: [B2, C1, D2];
+memoizedState: 'ABCD';
 ```
 
 注意这里 baseState 并不是上一次更新的 memoizedState。这是由于 B2 被跳过了。
@@ -1280,10 +1264,7 @@ memoizedState: 'ABCD'
 
 ```js
 // container 指 ReactDOM.render 的第二个参数（即应用挂载的 DOM 节点）
-root = container._reactRootContainer = legacyCreateRootFromDOMContainer(
-  container,
-  forceHydrate,
-);
+root = container._reactRootContainer = legacyCreateRootFromDOMContainer(container, forceHydrate);
 fiberRoot = root._internalRoot;
 ```
 
@@ -1296,11 +1277,11 @@ export function createFiberRoot(
   containerInfo: any,
   tag: RootTag,
   hydrate: boolean,
-  hydrationCallbacks: null | SuspenseHydrationCallbacks,
+  hydrationCallbacks: null | SuspenseHydrationCallbacks
 ): FiberRoot {
   // 创建 fiberRootNode
   const root: FiberRoot = (new FiberRootNode(containerInfo, tag, hydrate): any);
-  
+
   // 创建 rootFiber
   const uninitializedFiber = createHostRootFiber(tag);
 
@@ -1332,15 +1313,15 @@ export function updateContainer(
   element: ReactNodeList,
   container: OpaqueRoot,
   parentComponent: ?React$Component<any, any>,
-  callback: ?Function,
+  callback: ?Function
 ): Lane {
   // ...省略与逻辑不相关代码
 
   // 创建 update
   const update = createUpdate(eventTime, lane, suspenseConfig);
-  
+
   // update.payload 为需要挂载在根节点的组件
-  update.payload = {element};
+  update.payload = { element };
 
   // callback 为 ReactDOM.render 的第三个参数 —— 回调函数
   callback = callback === undefined ? null : callback;
@@ -1409,31 +1390,31 @@ commit 阶段（`commitRoot`）
 
 - legacy，这是当前 React 使用的方式。当前没有计划删除本模式，但是这个模式可能不支持一些新功能。
 - blocking，开启部分 concurrent 模式特性的中间模式。目前正在实验中。作为迁移到 concurrent 模式的第一个步骤。
-- concurrent，面向未来的开发模式。我们之前讲的任务中断/任务优先级都是针对concurrent模式。
+- concurrent，面向未来的开发模式。我们之前讲的任务中断/任务优先级都是针对 concurrent 模式。
 
 你可以从下表看出各种模式对特性的支持：
 
-||legacy 模式|blocking 模式|concurrent 模式|
-|:--:|:--:|:--:|:--:|
-|String Refs|✅|🚫**	|🚫**|
-|Legacy Context|✅|🚫** |🚫**|
-|findDOMNode|✅|🚫** |🚫**|
-|Suspense|✅|✅|✅|
-|SuspenseList|🚫|✅|✅|
-|Suspense SSR + Hydration|🚫|✅|✅|
-|Progressive Hydration|🚫|✅|✅|
-|Selective Hydration|🚫|🚫|✅|
-|Cooperative Multitasking|🚫|🚫|✅|
-|Automatic batching of multiple setStates|🚫*|✅|✅|
-|Priority-based Rendering|🚫|🚫|✅|
-|Interruptible Prerendering|🚫|🚫|✅|
-|useTransition|🚫|🚫|✅|
-|useDeferredValue|🚫|🚫|✅|
-|Suspense Reveal "Train"|🚫|🚫|✅|
+|                                          | legacy 模式 | blocking 模式 | concurrent 模式 |
+| :--------------------------------------: | :---------: | :-----------: | :-------------: |
+|               String Refs                |     ✅      |    🚫\*\*     |     🚫\*\*      |
+|              Legacy Context              |     ✅      |    🚫\*\*     |     🚫\*\*      |
+|               findDOMNode                |     ✅      |    🚫\*\*     |     🚫\*\*      |
+|                 Suspense                 |     ✅      |      ✅       |       ✅        |
+|               SuspenseList               |     🚫      |      ✅       |       ✅        |
+|         Suspense SSR + Hydration         |     🚫      |      ✅       |       ✅        |
+|          Progressive Hydration           |     🚫      |      ✅       |       ✅        |
+|           Selective Hydration            |     🚫      |      🚫       |       ✅        |
+|         Cooperative Multitasking         |     🚫      |      🚫       |       ✅        |
+| Automatic batching of multiple setStates |    🚫\*     |      ✅       |       ✅        |
+|         Priority-based Rendering         |     🚫      |      🚫       |       ✅        |
+|        Interruptible Prerendering        |     🚫      |      🚫       |       ✅        |
+|              useTransition               |     🚫      |      🚫       |       ✅        |
+|             useDeferredValue             |     🚫      |      🚫       |       ✅        |
+|         Suspense Reveal "Train"          |     🚫      |      🚫       |       ✅        |
 
-*：legacy 模式在合成事件中有自动批处理的功能，但仅限于一个浏览器任务。非 React 事件想使用这个功能必须使用 unstable_batchedUpdates。在 blocking 模式和 concurrent 模式下，所有的 setState 在默认情况下都是批处理的。
+\*：legacy 模式在合成事件中有自动批处理的功能，但仅限于一个浏览器任务。非 React 事件想使用这个功能必须使用 unstable_batchedUpdates。在 blocking 模式和 concurrent 模式下，所有的 setState 在默认情况下都是批处理的。
 
-**：会在开发中发出警告。
+\*\*：会在开发中发出警告。
 
 模式的变化影响整个应用的工作方式，所以无法只针对某个组件开启不同模式。
 
@@ -1456,10 +1437,12 @@ commit 阶段（`commitRoot`）
 可以看到，this.setState 内会调用 this.updater.enqueueSetState 方法。
 
 ```js
-Component.prototype.setState = function (partialState, callback) {
+Component.prototype.setState = function(partialState, callback) {
   if (!(typeof partialState === 'object' || typeof partialState === 'function' || partialState == null)) {
     {
-      throw Error( "setState(...): takes an object of state variables to update or a function which returns an object of state variables." );
+      throw Error(
+        'setState(...): takes an object of state variables to update or a function which returns an object of state variables.'
+      );
     }
   }
   this.updater.enqueueSetState(this, partialState, callback, 'setState');
@@ -1538,16 +1521,8 @@ enqueueForceUpdate(inst, callback) {
 
 ```js
 const shouldUpdate =
-checkHasForceUpdateAfterProcessing() ||
-checkShouldComponentUpdate(
-  workInProgress,
-  ctor,
-  oldProps,
-  newProps,
-  oldState,
-  newState,
-  nextContext,
-);
+  checkHasForceUpdateAfterProcessing() ||
+  checkShouldComponentUpdate(workInProgress, ctor, oldProps, newProps, oldState, newState, nextContext);
 ```
 
 > 你可以在[这里](https://github.com/facebook/react/blob/1fb18e22ae66fdb1dc127347e169e73948778e5a/packages/react-reconciler/src/ReactFiberClassComponent.old.js#L1137)看到这段代码
@@ -1561,7 +1536,7 @@ checkShouldComponentUpdate(
 
 ### 总结
 
-至此，我们学习完了 `HostRoot | ClassComponent` 所使用的Update的更新流程。
+至此，我们学习完了 `HostRoot | ClassComponent` 所使用的 Update 的更新流程。
 
 在下一章我们会学习另一种数据结构的 Update —— 用于 Hooks 的 Update。
 
@@ -1600,18 +1575,18 @@ ClassComponent 作为 React 世界的原子，他的生命周期（componentWill
 可能有些同学会回答，是 useEffect：
 
 ```js
-useEffect( () => {
+useEffect(() => {
   console.log('something updated');
-}, [props.something])
+}, [props.something]);
 ```
 
 但是 componentWillReceiveProps 是在 render 阶段执行，而 useEffect 是在 commit 阶段完成渲染后异步执行。
 
-> 这篇文章可以帮你更好理解 componentWillReceiveProps：[深入源码剖析componentWillXXX为什么UNSAFE](https://juejin.im/post/5f05a3e25188252e5c576cdb)
+> 这篇文章可以帮你更好理解 componentWillReceiveProps：[深入源码剖析 componentWillXXX 为什么 UNSAFE](https://juejin.im/post/5f05a3e25188252e5c576cdb)
 
 所以，从源码运行规律的角度看待 Hooks，可能是更好的角度。这也是为什么上文说 Hooks 是 React 世界的电子而不是原子的原因。
 
-> 以上见解参考自[React Core Team Dan在 React Conf2018的演讲](https://www.youtube.com/watch?v=dpw9EHDh2bM&feature=youtu.be)
+> 以上见解参考自[React Core Team Dan 在 React Conf2018 的演讲](https://www.youtube.com/watch?v=dpw9EHDh2bM&feature=youtu.be)
 
 ### 总结
 
@@ -1631,7 +1606,7 @@ Concurrent Mode 是 React 未来的发展方向，而 Hooks 是能够最大限�
 function App() {
   const [num, updateNum] = useState(0);
 
-  return <p onClick={() => updateNum(num => num + 1)}>{num}</p>;
+  return <p onClick={() => updateNum((num) => num + 1)}>{num}</p>;
 }
 ```
 
@@ -1661,7 +1636,7 @@ const update = {
   action,
   // 与同一个 Hook 的其他更新形成链表
   next: null
-}
+};
 ```
 
 对于 App 来说，点击 p 标签产生的 update 的 action 为 num => num + 1。
@@ -1670,14 +1645,20 @@ const update = {
 
 ```js
 // 之前
-return <p onClick={() => updateNum(num => num + 1)}>{num}</p>;
+return <p onClick={() => updateNum((num) => num + 1)}>{num}</p>;
 
 // 之后
-return <p onClick={() => {
-  updateNum(num => num + 1);
-  updateNum(num => num + 1);
-  updateNum(num => num + 1);
-}}>{num}</p>;
+return (
+  <p
+    onClick={() => {
+      updateNum((num) => num + 1);
+      updateNum((num) => num + 1);
+      updateNum((num) => num + 1);
+    }}
+  >
+    {num}
+  </p>
+);
 ```
 
 那么点击 p 标签会产生三个 update。
@@ -1696,7 +1677,7 @@ function dispatchAction(queue, action) {
   const update = {
     action,
     next: null
-  }
+  };
 
   // 环状单向链表操作
   if (queue.pending === null) {
@@ -1734,7 +1715,7 @@ queue.pending = u0 ---> u0
 然后 `queue.pending = update;` 即 `queue.pending = u1`
 
 ```js
-queue.pending = u1 ---> u0   
+queue.pending = u1 ---> u0
                 ^       |
                 |       |
                 ---------
@@ -1780,16 +1761,16 @@ hook = {
   memoizedState: initialState,
   // 与下一个 Hook 连接形成单向无环链表
   next: null
-}
+};
 ```
 
->注意
+> 注意
 >
->注意区分 update 与 hook 的所属关系：
+> 注意区分 update 与 hook 的所属关系：
 >
->每个 useState 对应一个 hook 对象。
+> 每个 useState 对应一个 hook 对象。
 >
->调用 `const [num, updateNum] = useState(0);` 时 updateNum（即上文介绍的 dispatchAction）产生的 update 保存在 useState 对应的 hook.queue 中。
+> 调用 `const [num, updateNum] = useState(0);` 时 updateNum（即上文介绍的 dispatchAction）产生的 update 保存在 useState 对应的 hook.queue 中。
 
 ### 模拟 React 调度更新流程
 
@@ -1798,7 +1779,7 @@ hook = {
 ```js
 function dispatchAction(queue, action) {
   // ...创建 update
-  
+
   // ...环状单向链表操作
 
   // 模拟 React 开始调度更新
@@ -1882,7 +1863,7 @@ if (isMount) {
     },
     memoizedState: initialState,
     next: null
-  }
+  };
 
   // 将 hook 插入 fiber.memoizedState 链表末尾
   if (!fiber.memoizedState) {
@@ -1917,7 +1898,7 @@ if (hook.queue.pending) {
     firstUpdate = firstUpdate.next;
 
     // 最后一个 update 执行完后跳出循环
-  } while (firstUpdate !== hook.queue.pending.next)
+  } while (firstUpdate !== hook.queue.pending.next);
 
   // 清空 queue.pending
   hook.queue.pending = null;
@@ -1940,7 +1921,7 @@ function useState(initialState) {
       },
       memoizedState: initialState,
       next: null
-    }
+    };
     if (!fiber.memoizedState) {
       fiber.memoizedState = hook;
     } else {
@@ -1960,7 +1941,7 @@ function useState(initialState) {
       const action = firstUpdate.action;
       baseState = action(baseState);
       firstUpdate = firstUpdate.next;
-    } while (firstUpdate !== hook.queue.pending)
+    } while (firstUpdate !== hook.queue.pending);
 
     hook.queue.pending = null;
   }
@@ -1984,9 +1965,9 @@ function App() {
 
   return {
     click() {
-      updateNum(num => num + 1);
+      updateNum((num) => num + 1);
     }
-  }
+  };
 }
 ```
 
@@ -2032,7 +2013,7 @@ const HooksDispatcherOnMount: Dispatcher = {
   useMemo: mountMemo,
   useReducer: mountReducer,
   useRef: mountRef,
-  useState: mountState,
+  useState: mountState
   // ...省略
 };
 
@@ -2046,7 +2027,7 @@ const HooksDispatcherOnUpdate: Dispatcher = {
   useMemo: updateMemo,
   useReducer: updateReducer,
   useRef: updateRef,
-  useState: updateState,
+  useState: updateState
   // ...省略
 };
 ```
@@ -2056,16 +2037,14 @@ const HooksDispatcherOnUpdate: Dispatcher = {
 在 FunctionComponent render 前，会根据 FunctionComponent 对应 fiber 的以下条件区分 mount 与 update。
 
 ```js
-current === null || current.memoizedState === null
+current === null || current.memoizedState === null;
 ```
 
 并将不同情况对应的 dispatcher 赋值给全局变量 ReactCurrentDispatcher 的 current 属性。
 
 ```js
 ReactCurrentDispatcher.current =
-      current === null || current.memoizedState === null
-        ? HooksDispatcherOnMount
-        : HooksDispatcherOnUpdate;  
+  current === null || current.memoizedState === null ? HooksDispatcherOnMount : HooksDispatcherOnUpdate;
 ```
 
 > 你可以在[这里](https://github.com/acdlite/react/blob/1fb18e22ae66fdb1dc127347e169e73948778e5a/packages/react-reconciler/src/ReactFiberHooks.new.js#L409)看到这行代码
@@ -2074,7 +2053,7 @@ ReactCurrentDispatcher.current =
 
 换言之，不同的调用栈上下文为 ReactCurrentDispatcher.current 赋值不同的 dispatcher，则 FunctionComponent render 时调用的 hook 也是不同的函数。
 
-> 除了这两个 dispatcher，你可以在[这里](https://github.com/acdlite/react/blob/1fb18e22ae66fdb1dc127347e169e73948778e5a/packages/react-reconciler/src/ReactFiberHooks.new.js#L1775)看到其他dispatcher定义
+> 除了这两个 dispatcher，你可以在[这里](https://github.com/acdlite/react/blob/1fb18e22ae66fdb1dc127347e169e73948778e5a/packages/react-reconciler/src/ReactFiberHooks.new.js#L1775)看到其他 dispatcher 定义
 
 ### 一个 dispatcher 使用场景
 
@@ -2106,7 +2085,7 @@ const hook: Hook = {
   baseQueue: null,
   queue: null,
 
-  next: null,
+  next: null
 };
 ```
 
@@ -2149,16 +2128,16 @@ Redux 的作者 Dan 加入 React 核心团队后的一大贡献就是“将 Redu
 
 ```js
 function App() {
-  const [state, dispatch] = useReducer(reducer, {a: 1});
+  const [state, dispatch] = useReducer(reducer, { a: 1 });
 
   const [num, updateNum] = useState(0);
-  
+
   return (
     <div>
-      <button onClick={() => dispatch({type: 'a'})}>{state.a}</button>  
-      <button onClick={() => updateNum(num => num + 1)}>{num}</button>  
+      <button onClick={() => dispatch({ type: 'a' })}>{state.a}</button>
+      <button onClick={() => updateNum((num) => num + 1)}>{num}</button>
     </div>
-  )
+  );
 }
 ```
 
@@ -2198,9 +2177,7 @@ mount 时，useReducer 会调用 [mountReducer](https://github.com/acdlite/react
 我们来简单对比这这两个方法：
 
 ```js
-function mountState<S>(
-  initialState: (() => S) | S,
-): [S, Dispatch<BasicStateAction<S>>] {
+function mountState<S>(initialState: (() => S) | S): [S, Dispatch<BasicStateAction<S>>] {
   // 创建并返回当前的 hook
   const hook = mountWorkInProgressHook();
 
@@ -2211,18 +2188,14 @@ function mountState<S>(
     pending: null,
     dispatch: null,
     lastRenderedReducer: basicStateReducer,
-    lastRenderedState: (initialState: any),
+    lastRenderedState: (initialState: any)
   });
 
   // ...创建 dispatch
   return [hook.memoizedState, dispatch];
 }
 
-function mountReducer<S, I, A>(
-  reducer: (S, A) => S,
-  initialArg: I,
-  init?: I => S,
-): [S, Dispatch<A>] {
+function mountReducer<S, I, A>(reducer: (S, A) => S, initialArg: I, init?: (I) => S): [S, Dispatch<A>] {
   // 创建并返回当前的 hook
   const hook = mountWorkInProgressHook();
 
@@ -2233,7 +2206,7 @@ function mountReducer<S, I, A>(
     pending: null,
     dispatch: null,
     lastRenderedReducer: reducer,
-    lastRenderedState: (initialState: any),
+    lastRenderedState: (initialState: any)
   });
 
   // ...创建 dispatch
@@ -2256,7 +2229,7 @@ const queue = (hook.queue = {
   // 上一次 render 时使用的 reducer
   lastRenderedReducer: reducer,
   // 上一次 render 时的 state
-  lastRenderedState: (initialState: any),
+  lastRenderedState: (initialState: any)
 });
 ```
 
@@ -2279,15 +2252,11 @@ mount 时的整体运行逻辑与极简实现的 isMount 逻辑类似，你可�
 如果说 mount 时这两者还有区别，那 update 时，useReducer 与 useState 调用的则是同一个函数 [updateReducer](https://github.com/acdlite/react/blob/1fb18e22ae66fdb1dc127347e169e73948778e5a/packages/react-reconciler/src/ReactFiberHooks.new.js#L665)。
 
 ```js
-function updateReducer<S, I, A>(
-  reducer: (S, A) => S,
-  initialArg: I,
-  init?: I => S,
-): [S, Dispatch<A>] {
+function updateReducer<S, I, A>(reducer: (S, A) => S, initialArg: I, init?: (I) => S): [S, Dispatch<A>] {
   // 获取当前 hook
   const hook = updateWorkInProgressHook();
   const queue = hook.queue;
-  
+
   queue.lastRenderedReducer = reducer;
 
   // ...同 update 与 updateQueue 类似的更新逻辑

@@ -2,12 +2,12 @@
 title: CSS数据上报和HTML验证
 date: 2019-12-16 22:55:12
 categories:
-- 前端
+  - 前端
 tags: 前端, CSS, CSS知识点
 path: /css-data-report-html-validate/
 ---
 
-# 纯CSS实现数据上报
+# 纯 CSS 实现数据上报
 
 举个例子，要跟踪并统计某个按钮的点击事件：
 
@@ -22,15 +22,15 @@ path: /css-data-report-html-validate/
 }
 ```
 
-此时，当我们点击按钮的时候，相关行为数据就会上报给服务器，这种上报，就算把JS禁掉也无法阻止。
+此时，当我们点击按钮的时候，相关行为数据就会上报给服务器，这种上报，就算把 JS 禁掉也无法阻止。
 
 点击页面的两个按钮，可以看到发出了如下的请求：
 
 ![](2019-12-16-22-57-12.png)
 
-当然，我们可以统计的不仅仅是单击行为，hover行为，focus行为都可以统计，当然，还有很多其他方面的。例如：
+当然，我们可以统计的不仅仅是单击行为，hover 行为，focus 行为都可以统计，当然，还有很多其他方面的。例如：
 
-## 不支持CSS3浏览器比例统计
+## 不支持 CSS3 浏览器比例统计
 
 ```css
 .any-element {
@@ -39,13 +39,13 @@ path: /css-data-report-html-validate/
 }
 ```
 
-例如，我的Chrome发出的图片请求地址就是：
+例如，我的 Chrome 发出的图片请求地址就是：
 
 ![](2019-12-16-22-58-08.png)
 
-类似的，我们可以检测支持其他一些CSS属性的比例，要比单纯看浏览器的占比要精准的多。因为同样是Chrome浏览器，不同用户版本可能不一样，要想准确知道某些CSS新特性支持情况，这种CSS上报方法要更准确。
+类似的，我们可以检测支持其他一些 CSS 属性的比例，要比单纯看浏览器的占比要精准的多。因为同样是 Chrome 浏览器，不同用户版本可能不一样，要想准确知道某些 CSS 新特性支持情况，这种 CSS 上报方法要更准确。
 
-可以使用@supports规则。
+可以使用@supports 规则。
 
 ```css
 .any-element {
@@ -59,9 +59,9 @@ path: /css-data-report-html-validate/
 }
 ```
 
-## retina屏幕占比统计
+## retina 屏幕占比统计
 
-要么上报0，要么上报1，最后可以知道retina屏幕的比例。
+要么上报 0，要么上报 1，最后可以知道 retina 屏幕的比例。
 
 ```css
 .any-element {
@@ -75,7 +75,7 @@ path: /css-data-report-html-validate/
 }
 ```
 
-例如，我家里的window普通显示屏：
+例如，我家里的 window 普通显示屏：
 
 ![](2019-12-17-01-15-29.png)
 
@@ -96,7 +96,7 @@ path: /css-data-report-html-validate/
 }
 ```
 
-这个要看font请求，如果你的浏览器没有安装思源黑体，则会尝试加载anyFontName这个字体，于是发起了请求，如下图所示：
+这个要看 font 请求，如果你的浏览器没有安装思源黑体，则会尝试加载 anyFontName 这个字体，于是发起了请求，如下图所示：
 
 ![](2019-12-17-01-16-50.png)
 
@@ -114,26 +114,29 @@ path: /css-data-report-html-validate/
 }
 ```
 
-每当表单提交的时候，我们给form元素添加类名.track，此时，其会自动上报表单是否填写完全成功，:invalid和:valid都是标准的原生的CSS伪类选择器，我们无需自己写验证逻辑。
+每当表单提交的时候，我们给 form 元素添加类名.track，此时，其会自动上报表单是否填写完全成功，:invalid 和:valid 都是标准的原生的 CSS 伪类选择器，我们无需自己写验证逻辑。
 
-JS如下：
+JS 如下：
 
 ```js
-forms.addEventListener('submit', function (event) {
+forms.addEventListener('submit', function(event) {
   event.preventDefault();
   // 上报成功与否
   this.classList.add('track');
   // 这个是不影响原生表单的提交行为，实际开发多走Ajax
   if (this.reportValidity()) {
-      this.submit();
+    this.submit();
   }
-  setTimeout(function () {
+  setTimeout(
+    function() {
       this.classList.remove('track');
-  }.bind(this), 0);    
+    }.bind(this),
+    0
+  );
 });
 ```
 
-HTML这里也需要novalidate属性配合下：
+HTML 这里也需要 novalidate 属性配合下：
 
 ```html
 <form novalidate></form>
@@ -141,24 +144,24 @@ HTML这里也需要novalidate属性配合下：
 
 不过，这种方法有个缺陷，无论成功与失败，只能上报一次。
 
-表单的reportValidity()方法虽然很省力，但是会呼起浏览器原生的提示，过不了设计师那一关的，因此，恩，大家high一下即可。
+表单的 reportValidity()方法虽然很省力，但是会呼起浏览器原生的提示，过不了设计师那一关的，因此，恩，大家 high 一下即可。
 
-# 纯CSS实现HTML验证与提示
+# 纯 CSS 实现 HTML 验证与提示
 
-再说说另外一个纯CSS应该，那就是进行HTML验证，并且直接在页面上输出来。
+再说说另外一个纯 CSS 应该，那就是进行 HTML 验证，并且直接在页面上输出来。
 
-举个简单例子，图片如果空alt属性，则高亮这个图片：
+举个简单例子，图片如果空 alt 属性，则高亮这个图片：
 
 ```css
-img[alt=""] { 
-  outline: 2px solid red; 
+img[alt=''] {
+  outline: 2px solid red;
 }
 ```
 
-又或者_blank链接的rel属性没有加noopener和noreferrer。
+又或者\_blank 链接的 rel 属性没有加 noopener 和 noreferrer。
 
 ```css
-a[target="_blank"]:not([rel="noopener noreferrer"]) {
+a[target='_blank']:not([rel='noopener noreferrer']) {
   outline: 2px solid red;
 }
 ```
@@ -174,20 +177,20 @@ script[src]:not([async])::after {
 }
 ```
 
-然后，就有清闲的有志之士还专门搞了个通过CSS验证检测HTML合法性的CSS库，名为construct.css，项目地址为：https://github.com/t7/construct.css
+然后，就有清闲的有志之士还专门搞了个通过 CSS 验证检测 HTML 合法性的 CSS 库，名为 construct.css，项目地址为：https://github.com/t7/construct.css
 
-这里有个demo，有兴趣的可以进去瞅瞅。
+这里有个 demo，有兴趣的可以进去瞅瞅。
 
-使用很简单，你的项目引入这个CSS，那些使用有问题的HTML就会标记并提示，类似下面截图：
+使用很简单，你的项目引入这个 CSS，那些使用有问题的 HTML 就会标记并提示，类似下面截图：
 
 ![](2019-12-17-01-24-23.png)
 
 # 应用
 
-本文提到的两个CSS的新奇应用，怎么说呢，有点像手工耿哥的的各种手工作品，很有新意，很有特色，可惜，并不实用。
+本文提到的两个 CSS 的新奇应用，怎么说呢，有点像手工耿哥的的各种手工作品，很有新意，很有特色，可惜，并不实用。
 
-比方说一开始的数据上报，局限很大，很多行为你无法统计；另外维护非常不方便，把一大堆URL地址塞到CSS中，回头要是改个什么东西，很啰嗦的。CSS是偏前前端的玩具，而数据上报偏后的前端更合适，实际开发肯定不会这么玩的，人力资源利用完全没有最大化嘛。
+比方说一开始的数据上报，局限很大，很多行为你无法统计；另外维护非常不方便，把一大堆 URL 地址塞到 CSS 中，回头要是改个什么东西，很啰嗦的。CSS 是偏前前端的玩具，而数据上报偏后的前端更合适，实际开发肯定不会这么玩的，人力资源利用完全没有最大化嘛。
 
-还有那个HTML验证，这年头，还有谁关心HTML语义，结构啥的嘛，小程序，Vue这种HTML结构都是自定义的，和标准越走越远了，没有市场，就没有价值。而且里面很多验证，有些想得太多，空div为什么就不能存在呢？我就想不通了。
+还有那个 HTML 验证，这年头，还有谁关心 HTML 语义，结构啥的嘛，小程序，Vue 这种 HTML 结构都是自定义的，和标准越走越远了，没有市场，就没有价值。而且里面很多验证，有些想得太多，空 div 为什么就不能存在呢？我就想不通了。
 
-因此看来，本文介绍的这两个CSS应用，只适合远观，不适合亵玩。
+因此看来，本文介绍的这两个 CSS 应用，只适合远观，不适合亵玩。

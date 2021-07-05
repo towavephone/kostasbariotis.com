@@ -2,7 +2,7 @@
 title: 基于wavesurfer.js声音波形图的研究
 date: 2019-2-13 20:39:46
 categories:
-- 前端
+  - 前端
 tags: 前端, wavesurfer, 声音波形图, 预研
 path: /wavesurfer-voice-wave-research/
 ---
@@ -159,21 +159,22 @@ function secondaryLabelInterval(pxPerSec) {
   return Math.floor(10 / timeInterval(pxPerSec));
 }
 
-export class WaveFormDivider extends React.PureComponent { // eslint-disable-line react/prefer-stateless-function
+export class WaveFormDivider extends React.PureComponent {
+  // eslint-disable-line react/prefer-stateless-function
   static defaultProps = {
     startTime: undefined,
     endTime: undefined,
-    src: '',
-  }
+    src: ''
+  };
 
   static initState = {
     data: fromJS({
       zoom: 0,
-      playing: false,
-    }),
-  }
+      playing: false
+    })
+  };
 
-  state = WaveFormDivider.initState
+  state = WaveFormDivider.initState;
 
   componentDidMount() {
     const { src } = this.props;
@@ -185,15 +186,18 @@ export class WaveFormDivider extends React.PureComponent { // eslint-disable-lin
   }
 
   setImmState = (fn, cb) => {
-    this.setState(({ data }) => ({
-      data: fn(data),
-    }), cb);
-  }
+    this.setState(
+      ({ data }) => ({
+        data: fn(data)
+      }),
+      cb
+    );
+  };
 
   destroyWaveSurfer = () => {
     this.setState(WaveFormDivider.initState);
     this.waveSurfer && this.waveSurfer.destroy();
-  }
+  };
 
   initWaveSurfer = () => {
     const { data } = this.state;
@@ -207,8 +211,8 @@ export class WaveFormDivider extends React.PureComponent { // eslint-disable-lin
         MinimapPlugin.create(),
         RegionsPlugin.create({
           dragSelection: {
-            slop: 5,
-          },
+            slop: 5
+          }
         }),
         TimelinePlugin.create({
           container: this.waveTimeline,
@@ -219,9 +223,9 @@ export class WaveFormDivider extends React.PureComponent { // eslint-disable-lin
           primaryColor: 'blue',
           secondaryColor: 'red',
           primaryFontColor: 'blue',
-          secondaryFontColor: 'red',
-        }),
-      ],
+          secondaryFontColor: 'red'
+        })
+      ]
     });
     this.waveSurfer.load(src);
     this.waveSurfer.on('ready', () => {
@@ -259,15 +263,15 @@ export class WaveFormDivider extends React.PureComponent { // eslint-disable-lin
         region.play();
       }
     });
-  }
+  };
 
   addWaveFormRegion = (start, end) => {
     this.waveSurfer.addRegion({
       start,
       end,
-      color: 'hsla(400, 100%, 30%, 0.5)',
+      color: 'hsla(400, 100%, 30%, 0.5)'
     });
-  }
+  };
 
   handleWaveFormZoom = (value) => {
     let tmp = value;
@@ -278,7 +282,7 @@ export class WaveFormDivider extends React.PureComponent { // eslint-disable-lin
       tmp = 1000;
     }
     this.waveSurfer.zoom(tmp);
-  }
+  };
 
   handleWaveFormPlayOrPause = () => {
     const { data } = this.state;
@@ -288,24 +292,36 @@ export class WaveFormDivider extends React.PureComponent { // eslint-disable-lin
     } else {
       this.waveSurfer.play(startTime, endTime);
     }
-  }
+  };
 
   render() {
     const { data } = this.state;
     return (
       <div className={styles.container}>
-        <div ref={(r) => { this.waveForm = r; }} className={styles.waveForm} />
-        <div ref={(r) => { this.waveTimeline = r; }} />
+        <div
+          ref={(r) => {
+            this.waveForm = r;
+          }}
+          className={styles.waveForm}
+        />
+        <div
+          ref={(r) => {
+            this.waveTimeline = r;
+          }}
+        />
         <div className={styles.control}>
           <div className={styles.zoomContainer}>
-            <Icon type="minus-circle-o" onClick={() => this.handleWaveFormZoom((data.get('zoom') - 100))} />
-            <Slider tipFormatter={(value) => `${value}%`} max={1000} onChange={(value) => this.handleWaveFormZoom(value)} value={data.get('zoom')} />
-            <Icon type="plus-circle-o" onClick={() => this.handleWaveFormZoom((data.get('zoom') + 100))} />
+            <Icon type='minus-circle-o' onClick={() => this.handleWaveFormZoom(data.get('zoom') - 100)} />
+            <Slider
+              tipFormatter={(value) => `${value}%`}
+              max={1000}
+              onChange={(value) => this.handleWaveFormZoom(value)}
+              value={data.get('zoom')}
+            />
+            <Icon type='plus-circle-o' onClick={() => this.handleWaveFormZoom(data.get('zoom') + 100)} />
           </div>
-          <Button className={styles.playBtn} type="primary" onClick={this.handleWaveFormPlayOrPause}>
-            {
-              data.get('playing') ? '暂停' : '播放'
-            }
+          <Button className={styles.playBtn} type='primary' onClick={this.handleWaveFormPlayOrPause}>
+            {data.get('playing') ? '暂停' : '播放'}
           </Button>
         </div>
       </div>
@@ -317,7 +333,7 @@ WaveFormDivider.propTypes = {
   src: React.PropTypes.string,
   handleChangeStartEnd: React.PropTypes.func,
   startTime: React.PropTypes.number,
-  endTime: React.PropTypes.number,
+  endTime: React.PropTypes.number
 };
 
 export default WaveFormDivider;
@@ -326,7 +342,7 @@ export default WaveFormDivider;
 ## WaveFormDivider/styles.css
 
 ```css
-@import "styles/vars.css";
+@import 'styles/vars.css';
 
 .control {
   text-align: center;

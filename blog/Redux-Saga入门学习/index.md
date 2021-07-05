@@ -4,6 +4,7 @@ path: /redux-saga-introduce-learn/
 date: 2018-7-11 14:47:00
 tags: 前端, Redux, Redux-Saga
 ---
+
 # 自述
 
 redux-saga 是一个用于管理应用程序 Side Effect（副作用，例如异步获取数据，访问浏览器缓存等）的 library，它的目标是让副作用管理更容易，执行更高效，测试更简单，在处理故障时更容易。
@@ -34,17 +35,17 @@ class UserComponent extends React.Component {
 `sagas.js`
 
 ```js
-import { call, put, takeEvery, takeLatest } from 'redux-saga/effects'
-import Api from '...'
+import { call, put, takeEvery, takeLatest } from 'redux-saga/effects';
+import Api from '...';
 
 // worker Saga : 将在 USER_FETCH_REQUESTED action 被 dispatch 时调用
 function* fetchUser(action) {
-   try {
-      const user = yield call(Api.fetchUser, action.payload.userId);
-      yield put({type: "USER_FETCH_SUCCEEDED", user: user});
-   } catch (e) {
-      yield put({type: "USER_FETCH_FAILED", message: e.message});
-   }
+  try {
+    const user = yield call(Api.fetchUser, action.payload.userId);
+    yield put({ type: 'USER_FETCH_SUCCEEDED', user: user });
+  } catch (e) {
+    yield put({ type: 'USER_FETCH_FAILED', message: e.message });
+  }
 }
 
 /*
@@ -52,7 +53,7 @@ function* fetchUser(action) {
   允许并发（译注：即同时处理多个相同的 action）
 */
 function* mySaga() {
-  yield takeEvery("USER_FETCH_REQUESTED", fetchUser);
+  yield takeEvery('USER_FETCH_REQUESTED', fetchUser);
 }
 
 /*
@@ -63,7 +64,7 @@ function* mySaga() {
   那么处理中的 action 会被取消，只会执行当前的
 */
 function* mySaga() {
-  yield takeLatest("USER_FETCH_REQUESTED", fetchUser);
+  yield takeLatest('USER_FETCH_REQUESTED', fetchUser);
 }
 
 export default mySaga;
@@ -74,22 +75,19 @@ export default mySaga;
 `main.js`
 
 ```js
-import { createStore, applyMiddleware } from 'redux'
-import createSagaMiddleware from 'redux-saga'
+import { createStore, applyMiddleware } from 'redux';
+import createSagaMiddleware from 'redux-saga';
 
-import reducer from './reducers'
-import mySaga from './sagas'
+import reducer from './reducers';
+import mySaga from './sagas';
 
 // create the saga middleware
-const sagaMiddleware = createSagaMiddleware()
+const sagaMiddleware = createSagaMiddleware();
 // mount it on the Store
-const store = createStore(
-  reducer,
-  applyMiddleware(sagaMiddleware)
-)
+const store = createStore(reducer, applyMiddleware(sagaMiddleware));
 
 // then run the saga
-sagaMiddleware.run(mySaga)
+sagaMiddleware.run(mySaga);
 
 // render the application
 ```
@@ -119,16 +117,13 @@ export function* helloSaga() {
 
 ```js
 // ...
-import { createStore, applyMiddleware } from 'redux'
-import createSagaMiddleware from 'redux-saga'
+import { createStore, applyMiddleware } from 'redux';
+import createSagaMiddleware from 'redux-saga';
 
 //...
-import { helloSaga } from './sagas'
+import { helloSaga } from './sagas';
 
-const store = createStore(
-  reducer,
-  applyMiddleware(createSagaMiddleware(helloSaga))
-)
+const store = createStore(reducer, applyMiddleware(createSagaMiddleware(helloSaga)));
 
 // rest unchanged
 ```
@@ -146,24 +141,14 @@ const store = createStore(
 首先，我们需要在 UI 组件上添加一个额外的按钮和一个回调 onIncrementAsync。
 
 ```js
-const Counter = ({ value, onIncrement, onDecrement, onIncrementAsync }) =>
+const Counter = ({ value, onIncrement, onDecrement, onIncrementAsync }) => (
   <div>
-    <button onClick={onIncrementAsync}>
-      Increment after 1 second
-    </button>
-    {' '}
-    <button onClick={onIncrement}>
-      Increment
-    </button>
-    {' '}
-    <button onClick={onDecrement}>
-      Decrement
-    </button>
+    <button onClick={onIncrementAsync}>Increment after 1 second</button>{' '}
+    <button onClick={onIncrement}>Increment</button> <button onClick={onDecrement}>Decrement</button>
     <hr />
-    <div>
-      Clicked: {value} times
-    </div>
+    <div>Clicked: {value} times</div>
   </div>
+);
 ```
 
 接下来我们需要将组件的 onIncrementAsync 与 Store action 连接起来。
@@ -177,9 +162,10 @@ function render() {
       value={store.getState()}
       onIncrement={() => action('INCREMENT')}
       onDecrement={() => action('DECREMENT')}
-      onIncrementAsync={() => action('INCREMENT_ASYNC')} />,
+      onIncrementAsync={() => action('INCREMENT_ASYNC')}
+    />,
     document.getElementById('root')
-  )
+  );
 }
 ```
 
@@ -187,26 +173,25 @@ function render() {
 
 现在我们将介绍另一种执行异步调用的 Saga。我们的用例如下：
 
->我们需要在每个 INCREMENT_ASYNC action 启动一个做以下事情的任务：
->等待 1 秒，然后增加计数
+> 我们需要在每个 INCREMENT_ASYNC action 启动一个做以下事情的任务：等待 1 秒，然后增加计数
 
 添加以下代码到 sagas.js 模块：
 
 ```js
-import { delay } from 'redux-saga'
-import { put, takeEvery } from 'redux-saga/effects'
+import { delay } from 'redux-saga';
+import { put, takeEvery } from 'redux-saga/effects';
 
 // ...
 
 // Our worker Saga: 将执行异步的 increment 任务
 export function* incrementAsync() {
-  yield delay(1000)
-  yield put({ type: 'INCREMENT' })
+  yield delay(1000);
+  yield put({ type: 'INCREMENT' });
 }
 
 // Our watcher Saga: 在每个 INCREMENT_ASYNC action spawn 一个新的 incrementAsync 任务
 export function* watchIncrementAsync() {
-  yield takeEvery('INCREMENT_ASYNC', incrementAsync)
+  yield takeEvery('INCREMENT_ASYNC', incrementAsync);
 }
 ```
 
@@ -223,28 +208,22 @@ put 就是我们称作 Effect 的一个例子。Effects 是一些简单 Javascri
 现在我们有了 2 个 Sagas，我们需要同时启动它们。为了做到这一点，我们将添加一个 rootSaga，负责启动其他的 Sagas。在同样的 sagas.js 文件中，重构文件如下：
 
 ```js
-import { delay } from 'redux-saga'
-import { put, takeEvery, all } from 'redux-saga/effects'
-
+import { delay } from 'redux-saga';
+import { put, takeEvery, all } from 'redux-saga/effects';
 
 function* incrementAsync() {
-  yield delay(1000)
-  yield put({ type: 'INCREMENT' })
+  yield delay(1000);
+  yield put({ type: 'INCREMENT' });
 }
-
 
 function* watchIncrementAsync() {
-  yield takeEvery('INCREMENT_ASYNC', incrementAsync)
+  yield takeEvery('INCREMENT_ASYNC', incrementAsync);
 }
-
 
 // notice how we now only export the rootSaga
 // single entry point to start all Sagas at once
 export default function* rootSaga() {
-  yield all([
-    helloSaga(),
-    watchIncrementAsync()
-  ])
+  yield all([helloSaga(), watchIncrementAsync()]);
 }
 ```
 
@@ -263,38 +242,38 @@ sagaMiddleware.run(rootSaga)
 
 # 基础概念
 
-## 使用Saga辅助函数
+## 使用 Saga 辅助函数
 
 redux-saga 提供了一些辅助函数，包装了一些内部方法，用来在一些特定的 action 被发起到 Store 时派生任务。
 
 这些辅助函数构建在低阶 API 之上。我们将会在高级概念一章看到这些函数是如何实现的。
 
-第一个函数takeEvery ，是最常见的，它提供了类似 redux-thunk 的行为。
+第一个函数 takeEvery ，是最常见的，它提供了类似 redux-thunk 的行为。
 
 让我们通过常见的 AJAX 例子来演示一下。每次点击 Fetch 按钮时，我们发起一个 FETCH_REQUESTED 的 action。 我们想通过启动一个从服务器获取一些数据的任务，来处理这个 action。
 
 首先我们创建一个将执行异步 action 的任务：
 
 ```js
-import { call, put } from 'redux-saga/effects'
+import { call, put } from 'redux-saga/effects';
 
 export function* fetchData(action) {
-   try {
-      const data = yield call(Api.fetchUser, action.payload.url);
-      yield put({type: "FETCH_SUCCEEDED", data});
-   } catch (error) {
-      yield put({type: "FETCH_FAILED", error});
-   }
+  try {
+    const data = yield call(Api.fetchUser, action.payload.url);
+    yield put({ type: 'FETCH_SUCCEEDED', data });
+  } catch (error) {
+    yield put({ type: 'FETCH_FAILED', error });
+  }
 }
 ```
 
 然后在每次 FETCH_REQUESTED action 被发起时启动上面的任务。
 
 ```js
-import { takeEvery } from 'redux-saga'
+import { takeEvery } from 'redux-saga';
 
 function* watchFetchData() {
-  yield* takeEvery('FETCH_REQUESTED', fetchData)
+  yield* takeEvery('FETCH_REQUESTED', fetchData);
 }
 ```
 
@@ -303,10 +282,10 @@ function* watchFetchData() {
 如果我们只想得到最新那个请求的响应（例如，始终显示最新版本的数据）。我们可以使用 takeLatest 辅助函数。
 
 ```js
-import { takeLatest } from 'redux-saga'
+import { takeLatest } from 'redux-saga';
 
 function* watchFetchData() {
-  yield* takeLatest('FETCH_REQUESTED', fetchData)
+  yield* takeLatest('FETCH_REQUESTED', fetchData);
 }
 ```
 
@@ -345,20 +324,19 @@ Sagas 可以多种形式 yield Effect。最简单的方式是 yield 一个 Promi
 举个例子，假设我们有一个监听 PRODUCTS_REQUESTED action 的 Saga。每次匹配到 action，它会启动一个从服务器上获取产品列表的任务。
 
 ```js
-import { takeEvery } from 'redux-saga/effects'
-import Api from './path/to/api'
+import { takeEvery } from 'redux-saga/effects';
+import Api from './path/to/api';
 
 function* watchFetchProducts() {
-  yield takeEvery('PRODUCTS_REQUESTED', fetchProducts)
+  yield takeEvery('PRODUCTS_REQUESTED', fetchProducts);
 }
 
 function* fetchProducts() {
-  const products = yield Api.fetch('/products')
-  console.log(products)
+  const products = yield Api.fetch('/products');
+  console.log(products);
 }
 ```
 
 在上面的例子中，我们在 Generator 中直接调用了 Api.fetch（在 Generator 函数中，yield 右边的任何表达式都会被求值，结果会被 yield 给调用者）。
 
 Api.fetch('/products') 触发了一个 AJAX 请求并返回一个 Promise，Promise 会 resolve 请求的响应， 这个 AJAX 请求将立即执行。看起来简单又地道，但...
-

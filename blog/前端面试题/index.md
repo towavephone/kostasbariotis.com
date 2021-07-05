@@ -2,7 +2,7 @@
 title: 前端面试题
 date: 2018-1-5 23:08:08
 categories:
-- 面试
+  - 面试
 tags: 面试, 前端
 path: /front-end-interview/
 ---
@@ -112,30 +112,31 @@ webpack 打包，最基本的实现方式，是将所有的模块代码放到一
 
 ```js
 /************************************************************************/
-/******/ ([
-/* 0 */
-/***/ function(module, exports, __webpack_require__) {
-
+/******/ [
+  /* 0 */
+  /***/ function(module, exports, __webpack_require__) {
     __webpack_require__(1);
     __webpack_require__(2);
     console.log('Hello, world!');
 
-/***/ },
-/* 1 */
-/***/ function(module, exports) {
-
+    /***/
+  },
+  /* 1 */
+  /***/ function(module, exports) {
     var a = 'a.js';
     console.log("I'm a.js");
 
-/***/ },
-/* 2 */
-/***/ function(module, exports) {
-
+    /***/
+  },
+  /* 2 */
+  /***/ function(module, exports) {
     var b = 'b.js';
     console.log("I'm b.js");
 
-/***/ }
-/******/ ]);
+    /***/
+  }
+  /******/
+];
 ```
 
 可以发现入口 entry.js 的代码是放在数组索引 0 的位置，其它 a.js 和 b.js 的代码分别放在了数组索引 1 和 2 的位置，而 webpack 引用的时候，主要通过 `__webpack_require__` 的方法引用不同索引的模块。
@@ -176,19 +177,21 @@ module.exports = HelloWorldPlugin;
 
 #### 说说你知道的移动端 web 的兼容性 bug
 
-1. 一些情况下对非可点击元素如(label,span)监听click事件，ios下不会触发，css增加cursor:pointer就搞定了。
+1. 一些情况下对非可点击元素如(label,span)监听 click 事件，ios 下不会触发，css 增加 cursor:pointer 就搞定了。
 2. position 在 Safari 下的两个定位需要都写，只写一个容易发生错乱
 3. Input 的 placeholder 会出现文本位置偏上的情况
 
-    PC 端设置 line-height 等于 height 能够对齐，而移动端仍然是偏上，解决是设置line-height：normal
-4. zepto点击穿透问题
+   PC 端设置 line-height 等于 height 能够对齐，而移动端仍然是偏上，解决是设置 line-height：normal
 
-    引入fastclick解决；event.preventDefault
+4. zepto 点击穿透问题
+
+   引入 fastclick 解决；event.preventDefault
+
 5. 当输入框在最底部的时候，弹起的虚拟键盘会把输入框挡住。
 
-    ```js
-    Element.scrollIntoViewIfNeeded(opt_center)
-    ```
+   ```js
+   Element.scrollIntoViewIfNeeded(opt_center);
+   ```
 
 ### react 和 vue 的区别
 
@@ -205,12 +208,15 @@ module.exports = HelloWorldPlugin;
 - virtual DOM 不一样
 
   vue 会跟踪每一个组件的依赖关系，不需要重新渲染整个组件树。而对于 React 而言，每当应用的状态被改变时，全部子组件都会重新渲染。当然，这可以通过 shouldComponentUpdate 这个生命周期方法来进行控制
+
 - 组件写法不一样
 
   React 推荐的做法是 JSX + inline style，也就是把 HTML 和 CSS 全都写进 JavaScript 了，即”all in js”，Vue 推荐的是使用 `webpack + vue-loader` 的单文件组件格式，即 html, css, js 写在同一个文件；
+
 - 数据绑定
 
   Vue 实现了双向数据绑定，React 数据流动是单向的
+
 - state 对象在 react 应用中是不可变的，需要使用 setState 方法更新状态；在 Vue 中，state 对象并不是必须的，数据由 data 属性在 Vue 对象中进行管理。
 
 #### react 的优缺点
@@ -231,7 +237,7 @@ module.exports = HelloWorldPlugin;
 - jsx 的一个问题是，渲染函数常常包含大量逻辑，最终看着更像是程序片段，而不是视觉呈现。后期如果发生需求更改，维护起来工作量将是巨大的
 - 大而全，上手有难度
 
-#### jsx的优缺点
+#### jsx 的优缺点
 
 - 允许使用熟悉的语法来定义 HTML 元素树
 - JSX 让小组件更加简单、明了、直观，更加语义化且易懂的标签
@@ -245,13 +251,13 @@ React 中的 render 方法，返回一个 DOM 描述，结果仅仅是轻量级�
 
 React.js 厉害的地方并不是说它比 DOM 快（这句话本来就是错的），而是说不管你数据怎么变化，我都可以以最小的代价来更新 DOM。方法就是我在内存里面用新的数据刷新一个虚拟的 DOM 树，然后新旧 DOM 树进行比较，找出差异，再更新到真正的 DOM 树上。
 
-当我们修改了DOM 树上一些节点对应绑定的 state，React 会立即将它标记为“脏状态”。在事件循环的最后才重新渲染所有的脏节点。在实际的代码中，会对新旧两棵树进行一个深度优先的遍历，这样每个节点都会有一个唯一的标记，每遍历到一个节点就把该节点和新的的树进行对比。如果有差异的话就记录到一个对象里面，最后把差异应用到真正的 DOM 树上。
+当我们修改了 DOM 树上一些节点对应绑定的 state，React 会立即将它标记为“脏状态”。在事件循环的最后才重新渲染所有的脏节点。在实际的代码中，会对新旧两棵树进行一个深度优先的遍历，这样每个节点都会有一个唯一的标记，每遍历到一个节点就把该节点和新的的树进行对比。如果有差异的话就记录到一个对象里面，最后把差异应用到真正的 DOM 树上。
 
 算法实现
 
-1. 步骤一：用 JS 对象模拟DOM树
-2. 步骤二：比较两棵虚拟DOM树的差异
-3. 步骤三：把差异应用到真正的DOM树上
+1. 步骤一：用 JS 对象模拟 DOM 树
+2. 步骤二：比较两棵虚拟 DOM 树的差异
+3. 步骤三：把差异应用到真正的 DOM 树上
 
 这就是所谓的 diff 算法
 
@@ -287,6 +293,7 @@ dom diff 采用的是增量更新的方式，类似于打补丁。React 需要�
   ```
 
   这样可以避免直接频繁地操作 DOM，只需要在 js 对象模拟的虚拟 DOM 进行比对，再将更改的部分应用到真实的 DOM 树上
+
 - react 组件性能优化
 
   使用 PureRenderMixin、shouldComponentUpdate 来避免不必要的虚拟 DOM diff，在 render 内部优化虚拟 DOM 的 diff 速度，以及让 diff 结果最小化。
@@ -296,26 +303,27 @@ dom diff 采用的是增量更新的方式，类似于打补丁。React 需要�
 1. 兄弟组件不能直接相互传送数据，此时可以将数据挂载在父组件中，由两个组件共享
 2. 子组件向父组件通讯，可以通过父组件定义事件（回调函数），子组件调用该函数，通过实参的形式来改变父组件的数据来通信
 
-    ```js
-    // 子组件
-    this.props.onCommentSubmit({
-      author, 
-      content, 
-      date: new Date().getTime()
-    });
-    // 父组件
-    render() {
-      return (
-        <div className="m-index">
-          <div>
-            <h1>评论</h1>
-          </div>
-          <CommentList data={this.state.data} />
-          <CommentForm onCommentSubmit={this.handleCommentSubmit.bind(this)} />
-        </div>
-      )
-    }
-    ```
+   ```js
+   // 子组件
+   this.props.onCommentSubmit({
+     author,
+     content,
+     date: new Date().getTime()
+   });
+   // 父组件
+   render() {
+     return (
+       <div className="m-index">
+         <div>
+           <h1>评论</h1>
+         </div>
+         <CommentList data={this.state.data} />
+         <CommentForm onCommentSubmit={this.handleCommentSubmit.bind(this)} />
+       </div>
+     )
+   }
+   ```
+
 3. 非父子组件间的通信：可以使用全局事件来实现组件间的沟通，React 中可以引入 eventProxy 模块，利用 `eventProxy.trigger()` 方法发布消息，`eventProxy.on()` 方法监听并接收消息。
 4. 组件间层级太深，可以使用上下文方式，让子组件直接访问祖先的数据或函数，通过 `this.context.xx`
 
@@ -324,16 +332,11 @@ dom diff 采用的是增量更新的方式，类似于打补丁。React 需要�
 无状态组件其实本质上就是一个函数，传入 props 即可，没有 state，也没有生命周期方法。组件本身对应的就是 render 方法。例子如下：
 
 ```javascript
-function Title({
-  color = 'red', 
-  text = '标题'
-}) {
+function Title({ color = 'red', text = '标题' }) {
   let style = {
-    'color': color
-  }
-  return (
-    <div style={style}>{text}</div>
-  )
+    color: color
+  };
+  return <div style={style}>{text}</div>;
 }
 ```
 
@@ -357,7 +360,7 @@ function Title({
       render() {
         return <WrappedComponent {...this.props} />;
       }
-  }
+    };
   // 普通的组件
   class WrappedComponent extends Component {
     render() {
@@ -365,7 +368,7 @@ function Title({
     }
   }
   // 高阶组件使用
-  export default HOC(WrappedComponent)
+  export default HOC(WrappedComponent);
   ```
 
 - 反向继承
@@ -378,12 +381,12 @@ function Title({
       render() {
         return super.render();
       }
-    }
+    };
   ```
 
 我们可以看见返回的组件确实都继承自 WrappedComponent，那么所有的调用将是反向调用的(例如: super.render())，这也就是为什么叫做反向继承。
 
-#### react事件和传统事件有什么区别吗
+#### react 事件和传统事件有什么区别吗
 
 React 实现了一个“合成事件”层（synthetic event system），这个事件模型保证了和 W3C 标准保持一致，所以不用担心有什么诡异的用法，并且这个事件层消除了 IE 与 W3C 标准实现之间的兼容问题。
 
@@ -397,12 +400,12 @@ react 组件更新过程：
 
 1. componentWillReceiveProps(nextProps)
 
-    只要是父组件的 render 被调用，在 render 中被渲染的子组件就会经历更新的过程。不管父组件传给子组件的 props 有没有改变，都会触发子组件的此函数被调用。注意：通过 setState 方法触发的更新不会调用此函数
+   只要是父组件的 render 被调用，在 render 中被渲染的子组件就会经历更新的过程。不管父组件传给子组件的 props 有没有改变，都会触发子组件的此函数被调用。注意：通过 setState 方法触发的更新不会调用此函数
 
-2. shouldComponentUpdate(nextProps,nextState)  
-3. componentWillUpdate  
-4. render  
-5. componentDidUpdate  
+2. shouldComponentUpdate(nextProps,nextState)
+3. componentWillUpdate
+4. render
+5. componentDidUpdate
 
 ### vue 相关
 
@@ -430,8 +433,7 @@ vue.js 采用数据劫持的方式，结合发布者-订阅者模式，通过 `O
 
 非父子组件间通信，Vue 有提供 Vuex，以状态共享方式来实现通信，对于这一点，应该注意考虑平衡，从整体设计角度去考量，确保引入的必要。
 
-父传子: `this.$refs.xxx`
-子传父: `this.$parent.xxx`
+父传子: `this.$refs.xxx` 子传父: `this.$parent.xxx`
 
 还可以通过 `$emit` 方法发一个消息，然后 `$on` 接收这个消息
 
@@ -503,9 +505,9 @@ Vue 虽然通过 v-model 支持双向绑定，但是如果引入了类似 redux 
 双绑跟单绑之间的差异只在于，双向绑定把数据变更的操作隐藏在框架内部，调用者并不会直接感知。
 
 ```html
-<input v-model="something">
+<input v-model="something" />
 <!-- 等价于以下内容 -->
-<input :value="something" @input="something=$event.target.value">
+<input :value="something" @input="something=$event.target.value" />
 ```
 
 也就是说，你只需要在组件中声明一个 name 为 value 的 props，并且通过触发 input 事件传入一个值，就能修改这个 value。
@@ -521,7 +523,7 @@ Hash 就是 url 中看到 #，我们需要一个根据监听哈希变化触发�
 可以为 hash 的改变添加监听事件：
 
 ```js
-window.addEventListener("hashchange", funcRef, false);
+window.addEventListener('hashchange', funcRef, false);
 ```
 
 - 优点
@@ -539,8 +541,8 @@ window.addEventListener("hashchange", funcRef, false);
 History interface 提供了两个新的方法：`pushState()`，`replaceState()` 使得我们可以对浏览器历史记录栈进行修改：
 
 ```js
-window.history.pushState(stateObject, title, URL)
-window.history.replaceState(stateObject, title, URL)
+window.history.pushState(stateObject, title, URL);
+window.history.replaceState(stateObject, title, URL);
 ```
 
 ### 浏览器渲染原理解析
@@ -580,7 +582,7 @@ window.history.replaceState(stateObject, title, URL)
 
 #### async，Promise，Generator 函数，co 函数库区别
 
-`async...await` 写法最简洁，最符合语义。async/await 让异步代码看起来、表现起来更像同步代码，这正是其威力所在。async 函数就是 Generator 函数的语法糖，只不过 async 内置了自动执行器。async 函数就是将 Generator 函数的星号（*）替换成 async，将 yield 替换成 await
+`async...await` 写法最简洁，最符合语义。async/await 让异步代码看起来、表现起来更像同步代码，这正是其威力所在。async 函数就是 Generator 函数的语法糖，只不过 async 内置了自动执行器。async 函数就是将 Generator 函数的星号（\*）替换成 async，将 yield 替换成 await
 
 #### async 函数优点
 
@@ -599,14 +601,17 @@ co 函数库其实就是将两种自动执行器（Thunk 函数和 Promise 对�
 co 函数接收一个 Generator 生成器函数作为参数。执行 co 函数的时候，生成器函数内部的逻辑像 async 函数调用时一样被执行。不同之处只是这里的 await 变成了 yield（产出）。
 
 ```javascript
-co(function* () {
+co(function*() {
   var result = yield Promise.resolve(true);
   return result;
-}).then(function (value) {
-  console.log(value);
-}, function (err) {
-  console.error(err.stack);
-});
+}).then(
+  function(value) {
+    console.log(value);
+  },
+  function(err) {
+    console.error(err.stack);
+  }
+);
 ```
 
 Promise 是异步编程的一种解决方案，比传统的解决方案——回调函数和事件监听——更合理和更强大。
@@ -616,7 +621,7 @@ promise catch 函数和 then 第二个函数参数：
 ```js
 promise.catch();
 // 等价于
-promise.then(null, function(reason){});
+promise.then(null, function(reason) {});
 ```
 
 有许多场景是异步的：
@@ -632,12 +637,11 @@ js 异步编程模型（es5）：
 - 发布/订阅（观察者模式）把事件全部交给控制器管理，可以完全掌握事件被订阅的次数，以及订阅者的信息，管理起来特别方便。
 - Promise 对象实现方式
 
-async 函数与 Promise、Generator 函数一样，是用来取代回调函数、解决异步操作的一种方法。它本质上是 Generator 函数的语法糖。
-Promise，generator/yield，await/async 都是现在和未来 JS 解决异步的标准做法
+async 函数与 Promise、Generator 函数一样，是用来取代回调函数、解决异步操作的一种方法。它本质上是 Generator 函数的语法糖。 Promise，generator/yield，await/async 都是现在和未来 JS 解决异步的标准做法
 
 ### Restful
 
-REST的意思是表征状态转移，是一种基于 HTTP 协议的网络应用接口风格，充分利用 HTTP 的方法实现统一风格接口的服务，HTTP 定义了以下 8 种标准的方法：
+REST 的意思是表征状态转移，是一种基于 HTTP 协议的网络应用接口风格，充分利用 HTTP 的方法实现统一风格接口的服务，HTTP 定义了以下 8 种标准的方法：
 
 - GET：请求获取指定资源
 - HEAD：请求指定资源的响应头
@@ -710,18 +714,19 @@ let 暂时性死区的原因：var 会变量提升，let 不会。
 - Symbol 是一种特殊的、不可变的数据类型，可以作为对象属性的标识符使用(`Symbol([description])`)
 
 ```javascript
-let mySet = new Set()
-mySet.add(1)
-mySet.add('hello')
-mySet.add('hello')
-console.log(mySet.size);//2
-console.log(mySet);//Set {1,'hello'}
+let mySet = new Set();
+mySet.add(1);
+mySet.add('hello');
+mySet.add('hello');
+console.log(mySet.size); //2
+console.log(mySet); //Set {1,'hello'}
 
 // Map 保存键值对也不能有重复的
 let myMap = new Map();
-let key1 = 'China', key2 = 'America';
-myMap.set(key1, 'welcome')
-myMap.set(key2, 'gold bless you')
+let key1 = 'China',
+  key2 = 'America';
+myMap.set(key1, 'welcome');
+myMap.set(key2, 'gold bless you');
 console.log(myMap); // Map { 'China' => 'welcome', 'America' => 'gold bless you' }
 console.log(myMap.get(key1)); // welcome
 console.log(myMap.get(key2)); // gold bless you
@@ -730,13 +735,13 @@ let mySymbol = Symbol('symbol1');
 let mySymbol2 = Symbol('symbol1');
 console.log(mySymbol == mySymbol2); // false
 // Symbols 在 for...in 迭代中不可枚举。
-let obj = {}
-obj['c'] = 'c'
-obj.d ='d'
-obj[Symbol('a')] = 'a'
-obj[Symbol.for('b')] = 'b'
+let obj = {};
+obj['c'] = 'c';
+obj.d = 'd';
+obj[Symbol('a')] = 'a';
+obj[Symbol.for('b')] = 'b';
 for (let k in obj) {
-  console.log(k);//logs 'c' and 'd'
+  console.log(k); //logs 'c' and 'd'
 }
 ```
 
@@ -748,20 +753,24 @@ script、image、iframe 的 src 都不受同源策略的影响。
 
 1. JSONP, 回调函数 + 数据就是 JSON With Padding，简单、易部署。
 
-    做法：动态插入 script 标签，设置其 src 属性指向提供 JSONP 服务的 URL 地址，查询字符串中加入 callback 指定回调函数，返回的 JSON 被包裹在回调函数中以字符串的形式被返回，需将 script 标签插入 body 底部。缺点是只支持 GET，不支持 POST（原因是通过地址栏传参所以只能使用 GET）
+   做法：动态插入 script 标签，设置其 src 属性指向提供 JSONP 服务的 URL 地址，查询字符串中加入 callback 指定回调函数，返回的 JSON 被包裹在回调函数中以字符串的形式被返回，需将 script 标签插入 body 底部。缺点是只支持 GET，不支持 POST（原因是通过地址栏传参所以只能使用 GET）
+
 2. document.domain 跨子域
 
-    例如 `a.qq.com` 嵌套一个 `b.qq.com` 的 iframe ，如果 `a.qq.com` 设置 `document.domain` 为 `qq.com`。`b.qq.com` 设置 `document.domain` 为 `qq.com`， 那么他俩就能互相通信了，不受跨域限制了。 注意：只能跨子域
+   例如 `a.qq.com` 嵌套一个 `b.qq.com` 的 iframe ，如果 `a.qq.com` 设置 `document.domain` 为 `qq.com`。`b.qq.com` 设置 `document.domain` 为 `qq.com`， 那么他俩就能互相通信了，不受跨域限制了。 注意：只能跨子域
+
 3. window.name + iframe
 
-    支持跨主域，不支持 POST
+   支持跨主域，不支持 POST
+
 4. HTML5 的 `postMessage()`
 
-    允许来自不同源的脚本采用异步方式进行有限的通信，可以实现跨文本档、多窗口、跨域消息传递。适用于不同窗口 iframe 之间的跨域
+   允许来自不同源的脚本采用异步方式进行有限的通信，可以实现跨文本档、多窗口、跨域消息传递。适用于不同窗口 iframe 之间的跨域
+
 5. CORS（Cross Origin Resource Share）对方服务端设置响应头
 6. 服务端代理
 
-    在浏览器客户端不能跨域访问，而服务器端调用 HTTP 接口只是使用 HTTP 协议，不会执行 JS 脚本，不需要同源策略，也就没有跨越问题。简单地说，就是浏览器不能跨域，后台服务器可以跨域。（一种是通过 http-proxy-middleware 插件设置后端代理；另一种是通过使用 http 模块发出请求）
+   在浏览器客户端不能跨域访问，而服务器端调用 HTTP 接口只是使用 HTTP 协议，不会执行 JS 脚本，不需要同源策略，也就没有跨越问题。简单地说，就是浏览器不能跨域，后台服务器可以跨域。（一种是通过 http-proxy-middleware 插件设置后端代理；另一种是通过使用 http 模块发出请求）
 
 CORS 请求默认不发送 Cookie 和 HTTP 认证信息。如果要把 Cookie 发到服务器，一方面要服务器同意，指定 `Access-Control-Allow-Credentials` 字段。
 
@@ -774,14 +783,16 @@ CORS 请求默认不发送 Cookie 和 HTTP 认证信息。如果要把 Cookie �
 - 原型链继承的缺点
 
   一是字面量重写原型会中断关系，使用引用类型的原型，并且子类型还无法给超类型传递参数。
+
 - 借用构造函数（类式继承）
 
   借用构造函数虽然解决了刚才两种问题，但没有原型，则复用无从谈起。所以我们需要原型链 + 借用构造函数的模式，这种模式称为组合继承
+
 - 组合式继承
 
   组合式继承是比较常用的一种继承方法，其背后的思路是使用原型链实现对原型属性和方法的继承，而通过借用构造函数来实现对实例属性的继承。这样，既通过在原型上定义方法实现了函数复用，又保证每个实例都有它自己的属性。
 
-> For detail：[JavaScript继承方式详解](https://segmentfault.com/a/1190000002440502)
+> For detail：[JavaScript 继承方式详解](https://segmentfault.com/a/1190000002440502)
 
 ### fetch 和 Ajax 有什么不同
 
@@ -795,9 +806,10 @@ Fetch 优点主要有：
 - 基于标准 Promise 实现，支持 `async/await`
 
 ```javascript
-fetch(url).then(response => response.json())
-  .then(data => console.log(data))
-  .catch(e => console.log("Oops, error", e))
+fetch(url)
+  .then((response) => response.json())
+  .then((data) => console.log(data))
+  .catch((e) => console.log('Oops, error', e));
 ```
 
 ### Cookie 相关
@@ -849,8 +861,8 @@ HTTPS 协议是由 SSL + HTTP 协议构建的可进行加密传输、身份认�
   优点：更高效，性能更高。因为避免了建立/释放连接的开销
 
 - http1.0 和 http1.1 区别：
-    - 缓存处理，在 HTTP1.0 中主要使用 header 里的 If-Modified-Since，Expires 来做为缓存判断的标准，HTTP1.1 则引入更多缓存控制策略，例如 Entity tag, If-Match, If-None-Match 等
-    - Http1.1 支持长连接和请求的流水线（pipeline）处理，在一个 TCP 连接上可以传送多个 HTTP 请求和响应，减少了建立和关闭连接的消耗和延迟，默认开启 Connection: keep-alive
+  - 缓存处理，在 HTTP1.0 中主要使用 header 里的 If-Modified-Since，Expires 来做为缓存判断的标准，HTTP1.1 则引入更多缓存控制策略，例如 Entity tag, If-Match, If-None-Match 等
+  - Http1.1 支持长连接和请求的流水线（pipeline）处理，在一个 TCP 连接上可以传送多个 HTTP 请求和响应，减少了建立和关闭连接的消耗和延迟，默认开启 Connection: keep-alive
 
 ### async 和 defer
 
@@ -891,14 +903,16 @@ GET 和 POST 最大的区别主要是 GET 请求是幂等性的，POST 请求不
 
 1. 浏览器输入 url 之后敲下回车，刷新 F5 与强制刷新(Ctrl + F5)，又有什么区别？
 
-    实际上浏览器输入 url 之后敲下回车就是先看本地 cache-control、expires 的情况，刷新(F5)就是忽略先看本地 cache-control、expires 的情况，带上条件 If-None-Match、If-Modified-Since，强制刷新(Ctrl + F5)就是不带条件的访问。
+   实际上浏览器输入 url 之后敲下回车就是先看本地 cache-control、expires 的情况，刷新(F5)就是忽略先看本地 cache-control、expires 的情况，带上条件 If-None-Match、If-Modified-Since，强制刷新(Ctrl + F5)就是不带条件的访问。
+
 2. etag，cache-control，last-modified
 
-    如果比较粗的说先后顺序应该是这样：
-    - Cache-Control —— 请求服务器之前
-    - Expires —— 请求服务器之前
-    - If-None-Match (Etag) —— 请求服务器
-    - If-Modified-Since (Last-Modified) —— 请求服务器
+   如果比较粗的说先后顺序应该是这样：
+
+   - Cache-Control —— 请求服务器之前
+   - Expires —— 请求服务器之前
+   - If-None-Match (Etag) —— 请求服务器
+   - If-Modified-Since (Last-Modified) —— 请求服务器
 
 需要注意的是如果同时有 etag 和 last-modified 存在，在发送请求的时候会一次性的发送给服务器，没有优先级，服务器会比较这两个信息
 
@@ -929,12 +943,12 @@ xhr.open('GET', url);
 // 请求内容
 xhr.send();
 // 响应状态
-xhr.status
+xhr.status;
 // xhr 对象的事件响应
-xhr.onreadystatechange = function() {}
-xhr.readyState
+xhr.onreadystatechange = function() {};
+xhr.readyState;
 // 响应内容
-xhr.responseText
+xhr.responseText;
 ```
 
 - AJAX 的工作原理
@@ -967,19 +981,19 @@ Ajax 的工作原理相当于在用户和服务器之间加了—个中间层(AJ
 HTTP 是一个基于请求与响应，无状态的，应用层的协议，基于 TCP/IP 协议传输数据。
 
 1. 域名解析，查找缓存
-    - 查找浏览器缓存（DNS 缓存）
-    - 查找操作系统缓存（如果浏览器缓存没有，浏览器会从 hosts 文件查找是否有 DNS 信息）
-    - 查找路由器缓存
-    - 查找 ISP 缓存
+   - 查找浏览器缓存（DNS 缓存）
+   - 查找操作系统缓存（如果浏览器缓存没有，浏览器会从 hosts 文件查找是否有 DNS 信息）
+   - 查找路由器缓存
+   - 查找 ISP 缓存
 2. 浏览器获得对应的 ip 地址后，浏览器与远程 `Web` 服务器通过 `TCP` 三次握手协商来建立一个 `TCP/IP` 连接。
 3. TCP/IP 连接建立起来后，浏览器就可以向服务器发送 HTTP 请求
 4. 服务器处理请求，返回资源（MVC 设计模式）
 5. 浏览器处理（加载，解析，渲染）
-    - HTML 页面加载顺序从上而下
-    - 解析文档为有意义的结构，DOM 树；解析 css 文件为样式表对象
-    - 渲染。将 DOM 树进行可视化表示
+   - HTML 页面加载顺序从上而下
+   - 解析文档为有意义的结构，DOM 树；解析 css 文件为样式表对象
+   - 渲染。将 DOM 树进行可视化表示
 6. 绘制网页
-    - 浏览器根据 HTML 和 CSS 计算得到渲染数，最终绘制到屏幕上
+   - 浏览器根据 HTML 和 CSS 计算得到渲染数，最终绘制到屏幕上
 
 一个完整 HTTP 请求的过程为：
 
@@ -991,52 +1005,50 @@ cookie 优点：
 
 // 读到这里
 
-1. 可以解决HTTP无状态的问题，与服务器进行交互
+1. 可以解决 HTTP 无状态的问题，与服务器进行交互
 
 缺点：
 
-1. 数量和长度限制，每个域名最多20条，每个cookie长度不能超过4kb
+1. 数量和长度限制，每个域名最多 20 条，每个 cookie 长度不能超过 4kb
 2. 安全性问题。容易被人拦截
-3. 浪费带宽，每次请求新页面，cookie都会被发送过去
+3. 浪费带宽，每次请求新页面，cookie 都会被发送过去
 
-#### cookie和session区别
+#### cookie 和 session 区别
 
-1. cookie数据存放在客户的浏览器上，session数据放在服务器上。
-2. session会在一定时间内保存在服务器上。当访问增多，会比较占用你服务器的性能。考虑到减轻服务器性能方面，应当使用COOKIE。
+1. cookie 数据存放在客户的浏览器上，session 数据放在服务器上。
+2. session 会在一定时间内保存在服务器上。当访问增多，会比较占用你服务器的性能。考虑到减轻服务器性能方面，应当使用 COOKIE。
 
-sessionStorage是当前对话的缓存，浏览器窗口关闭即消失，localStorage持久存在，除非清除浏览器缓存。
+sessionStorage 是当前对话的缓存，浏览器窗口关闭即消失，localStorage 持久存在，除非清除浏览器缓存。
 
 #### 页面缓存原理
 
-页面缓存状态是由http header决定的，一个浏览器请求信息，一个是服务器响应信息。主要包括Pragma: no-cache、Cache-Control、 Expires、 Last-Modified、If-Modified-Since。
+页面缓存状态是由 http header 决定的，一个浏览器请求信息，一个是服务器响应信息。主要包括 Pragma: no-cache、Cache-Control、 Expires、 Last-Modified、If-Modified-Since。
 
-### Promise实现原理
+### Promise 实现原理
 
-现在回顾下Promise的实现过程，其主要使用了设计模式中的观察者模式：
+现在回顾下 Promise 的实现过程，其主要使用了设计模式中的观察者模式：
 
-- 通过`Promise.prototype.then`和`Promise.prototype.catch`方法将观察者方法注册到被观察者Promise对象中，同时返回一个新的Promise对象，以便可以链式调用。
+- 通过`Promise.prototype.then`和`Promise.prototype.catch`方法将观察者方法注册到被观察者 Promise 对象中，同时返回一个新的 Promise 对象，以便可以链式调用。
 
-- 被观察者管理内部pending、fulfilled和rejected的状态转变，同时通过构造函数中传递的resolve和reject方法以主动触发状态转变和通知观察者。
+- 被观察者管理内部 pending、fulfilled 和 rejected 的状态转变，同时通过构造函数中传递的 resolve 和 reject 方法以主动触发状态转变和通知观察者。
 
-`Promise.then()`是异步调用的，这也是Promise设计上规定的，其原因在于同步调用和异步调用同时存在会导致混乱。
+`Promise.then()`是异步调用的，这也是 Promise 设计上规定的，其原因在于同步调用和异步调用同时存在会导致混乱。
 
 为了暂停当前的 promise，或者要它等待另一个 promise 完成，只需要简单地在 then() 函数中返回另一个 promise。
 
 Promise 也有一些缺点。首先，无法取消 Promise，一旦新建它就会立即执行，无法中途取消。其次，如果不设置回调函数，Promise 内部抛出的错误，不会反应到外部。第三，当处于 Pending 状态时，无法得知目前进展到哪一个阶段（刚刚开始还是即将完成）。
 
-一般来说，不要在then方法里面定义Reject状态的回调函数（即then的第二个参数），总是使用catch方法，理由是更接近同步的写法。
-then的第二个函数参数和catch等价
+一般来说，不要在 then 方法里面定义 Reject 状态的回调函数（即 then 的第二个参数），总是使用 catch 方法，理由是更接近同步的写法。 then 的第二个函数参数和 catch 等价
 
-- Promise.all和Promise.race的区别？
+- Promise.all 和 Promise.race 的区别？
 
-Promise.all 把多个promise实例当成一个promise实例,当这些实例的状态都发生改变时才会返回一个新的promise实例，才会执行then方法。
-Promise.race 只要该数组中的 Promise 对象的状态发生变化（无论是resolve还是reject）该方法都会返回。
+Promise.all 把多个 promise 实例当成一个 promise 实例,当这些实例的状态都发生改变时才会返回一个新的 promise 实例，才会执行 then 方法。 Promise.race 只要该数组中的 Promise 对象的状态发生变化（无论是 resolve 还是 reject）该方法都会返回。
 
-### HTML5相关
+### HTML5 相关
 
 #### websocket
 
-WebSocket 使用ws或wss协议，Websocket是一个持久化的协议，相对于HTTP这种非持久的协议来说。WebSocket API最伟大之处在于服务器和客户端可以在给定的时间范围内的任意时刻，相互推送信息。WebSocket并不限于以Ajax(或XHR)方式通信，因为Ajax技术需要客户端发起请求，而WebSocket服务器和客户端可以彼此相互推送信息；XHR受到域的限制，而WebSocket允许跨域通信。
+WebSocket 使用 ws 或 wss 协议，Websocket 是一个持久化的协议，相对于 HTTP 这种非持久的协议来说。WebSocket API 最伟大之处在于服务器和客户端可以在给定的时间范围内的任意时刻，相互推送信息。WebSocket 并不限于以 Ajax(或 XHR)方式通信，因为 Ajax 技术需要客户端发起请求，而 WebSocket 服务器和客户端可以彼此相互推送信息；XHR 受到域的限制，而 WebSocket 允许跨域通信。
 
 ```js
 // 创建一个Socket实例
@@ -1044,38 +1056,36 @@ var socket = new WebSocket('ws://localhost:8080');
 // 打开Socket
 socket.onopen = function(event) {
   // 发送一个初始化消息
-  socket.send('I am the client and I\'m listening!');
+  socket.send("I am the client and I'm listening!");
   // 监听消息
   socket.onmessage = function(event) {
-    console.log('Client received a message',event);
+    console.log('Client received a message', event);
   };
   // 监听Socket的关闭
   socket.onclose = function(event) {
-    console.log('Client notified socket has closed',event);
+    console.log('Client notified socket has closed', event);
   };
   // 关闭Socket....
   //socket.close()
 };
 ```
 
-#### HTML5新特性
+#### HTML5 新特性
 
 - 画布(Canvas) API
 - 地理(Geolocation) API
--  音频、视频API(audio,video)
--  localStorage和sessionStorage
--  webworker, websocket
--  header,nav,footer,aside,article,section
+- 音频、视频 API(audio,video)
+- localStorage 和 sessionStorage
+- webworker, websocket
+- header,nav,footer,aside,article,section
 
-web worker是运行在浏览器后台的js程序，他不影响主程序的运行，是另开的一个js线程，可以用这个线程执行复杂的数据操作，然后把操作结果通过postMessage传递给主线程，这样在进行复杂且耗时的操作时就不会阻塞主线程了。
+web worker 是运行在浏览器后台的 js 程序，他不影响主程序的运行，是另开的一个 js 线程，可以用这个线程执行复杂的数据操作，然后把操作结果通过 postMessage 传递给主线程，这样在进行复杂且耗时的操作时就不会阻塞主线程了。
 
 ### 网络知识相关
 
-#### http状态码
+#### http 状态码
 
-301 Moved Permanently 永久重定向，资源已永久分配新的URI
-302 Found 临时重定向，资源已临时分配新URI
-303 See Other 临时重定向，期望使用GET定向获取
+301 Moved Permanently 永久重定向，资源已永久分配新的 URI 302 Found 临时重定向，资源已临时分配新 URI 303 See Other 临时重定向，期望使用 GET 定向获取
 
 400 (错误请求) 服务器不理解请求的语法。
 
@@ -1097,7 +1107,7 @@ web worker是运行在浏览器后台的js程序，他不影响主程序的运�
 
 504 (网关超时) 服务器作为网关或代理，但是没有及时从上游服务器收到请求。
 
-#### http报头有哪些
+#### http 报头有哪些
 
 请求头：
 
@@ -1109,32 +1119,26 @@ web worker是运行在浏览器后台的js程序，他不影响主程序的运�
 
 响应头：
 
-1. Cache-Control:max-age  避免了服务端和客户端时间不一致的问题。
+1. Cache-Control:max-age 避免了服务端和客户端时间不一致的问题。
 2. content-type
 3. Date
 4. Expires
-5. Last-Modified   标记此文件在服务期端最后被修改的时间
+5. Last-Modified 标记此文件在服务期端最后被修改的时间
 
-httpOnly 设置cookie是否能通过 js 去访问。在客户端是不能通过js代码去设置一个`httpOnly`类型的cookie的，这种类型的cookie只能通过服务端来设置。在发生跨域时，cookie 作为一种 credential 信息是不会被传送到服务端的。必须要进行额外设置才可以。
+httpOnly 设置 cookie 是否能通过 js 去访问。在客户端是不能通过 js 代码去设置一个`httpOnly`类型的 cookie 的，这种类型的 cookie 只能通过服务端来设置。在发生跨域时，cookie 作为一种 credential 信息是不会被传送到服务端的。必须要进行额外设置才可以。
 
 #### 代理和反向代理
 
-正向代理： 用浏览器访问时，被残忍的block，于是你可以在国外搭建一台代理服务器，让代理帮我去请求google.com，代理把请求返回的相应结构再返回给我。
+正向代理： 用浏览器访问时，被残忍的 block，于是你可以在国外搭建一台代理服务器，让代理帮我去请求 google.com，代理把请求返回的相应结构再返回给我。
 
-反向代理：反向代理服务器会帮我们把请求转发到真实的服务器那里去。Nginx就是性能非常好的反向代理服务器，用来做负载均衡。
-正向代理的对象是客户端，反向代理的对象是服务端
+反向代理：反向代理服务器会帮我们把请求转发到真实的服务器那里去。Nginx 就是性能非常好的反向代理服务器，用来做负载均衡。正向代理的对象是客户端，反向代理的对象是服务端
 
-#### CDN工作原理
+#### CDN 工作原理
 
-CDN做了两件事，一是让用户访问最近的节点，二是从缓存或者源站获取资源
+CDN 做了两件事，一是让用户访问最近的节点，二是从缓存或者源站获取资源
 
-CDN的工作原理：通过dns服务器来实现优质节点的选择，通过缓存来减少源站的压力。
+CDN 的工作原理：通过 dns 服务器来实现优质节点的选择，通过缓存来减少源站的压力。
 
 #### 网络优化/性能优化
 
-使用CDN，让用户访问最近的资源，减少来回传输时间
-合并压缩CSS、js、图片、静态资源，服务器开启GZIP
-css放顶部，js放底部（css可以并行下载，而js加载之后会造成阻塞）
-图片预加载和首屏图片之外的做懒加载
-做HTTP缓存（添加Expires头和配置Etag）用户可以重复使用本地缓存，减少对服务器压力
-大小超过 10KB 的 css/img 建议外
+使用 CDN，让用户访问最近的资源，减少来回传输时间合并压缩 CSS、js、图片、静态资源，服务器开启 GZIP css 放顶部，js 放底部（css 可以并行下载，而 js 加载之后会造成阻塞）图片预加载和首屏图片之外的做懒加载做 HTTP 缓存（添加 Expires 头和配置 Etag）用户可以重复使用本地缓存，减少对服务器压力大小超过 10KB 的 css/img 建议外

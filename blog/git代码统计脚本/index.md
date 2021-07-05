@@ -13,7 +13,7 @@ date: 2020-4-24 11:17:09
 
 # 代码展示
 
-以下是统计 G:/project/tungee/ 目录下的代码量，其中标红部分需要修改为自己的项目路径和git邮箱
+以下是统计 G:/project/tungee/ 目录下的代码量，其中标红部分需要修改为自己的项目路径和 git 邮箱
 
 ## 第一版
 
@@ -29,10 +29,10 @@ trap "echo 'error: Script failed: see failed command above'" ERR
 {
   function to_array(){
     x=$1
-    OLD_IFS="$IFS" 
+    OLD_IFS="$IFS"
     IFS=","
-    array=($x) 
-    IFS="$OLD_IFS" 
+    array=($x)
+    IFS="$OLD_IFS"
     for each in ${array[*]}
     do
     echo $each
@@ -90,10 +90,10 @@ trap "echo 'error: Script failed: see failed command above'" ERR
 {
   function to_array() {
     x=$1
-    OLD_IFS="$IFS" 
+    OLD_IFS="$IFS"
     IFS=","
-    array=($x) 
-    IFS="$OLD_IFS" 
+    array=($x)
+    IFS="$OLD_IFS"
     for each in ${array[*]}
     do
     echo $each
@@ -172,7 +172,7 @@ trap "echo 'error: Script failed: see failed command above'" ERR
 
 ## 第三版
 
-### 增加按分支统计的功能，去掉shell参数输入（暂时不支持）
+### 增加按分支统计的功能，去掉 shell 参数输入（暂时不支持）
 
 ```bash
 #!/bin/sh
@@ -185,10 +185,10 @@ trap "echo 'error: Script failed: see failed command above'" ERR
 {
   function to_array() {
     x=$1
-    OLD_IFS="$IFS" 
+    OLD_IFS="$IFS"
     IFS=","
-    array=($x) 
-    IFS="$OLD_IFS" 
+    array=($x)
+    IFS="$OLD_IFS"
     for each in ${array[*]}
     do
     echo $each
@@ -315,10 +315,10 @@ trap "echo 'error: Script failed: see failed command above'" ERR
 {
   function to_array() {
     x=$1
-    OLD_IFS="$IFS" 
+    OLD_IFS="$IFS"
     IFS=","
-    array=($x) 
-    IFS="$OLD_IFS" 
+    array=($x)
+    IFS="$OLD_IFS"
     for each in ${array[*]}
     do
     echo $each
@@ -454,10 +454,10 @@ trap "echo 'error: Script failed: see failed command above'" ERR
 {
   function to_array() {
     x=$1
-    OLD_IFS="$IFS" 
+    OLD_IFS="$IFS"
     IFS=","
-    array=($x) 
-    IFS="$OLD_IFS" 
+    array=($x)
+    IFS="$OLD_IFS"
     for each in ${array[*]}
     do
     echo $each

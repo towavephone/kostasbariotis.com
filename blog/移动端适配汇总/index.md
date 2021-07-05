@@ -13,7 +13,7 @@ tags: 前端, 移动端, 兼容性, 预研
 
 ## 解决方案
 
-当然在用 absolute 的时候，需要注意 body、html 的定位（设置为relative或者不设），放在 body 的下面等等问题
+当然在用 absolute 的时候，需要注意 body、html 的定位（设置为 relative 或者不设），放在 body 的下面等等问题
 
 # 微信下 IOS13 输入法不恢复
 
@@ -27,13 +27,13 @@ tags: 前端, 移动端, 兼容性, 预研
 
 ```js
 let currentPosition;
-const speed = 1;// 页面滚动距离
+const speed = 1; // 页面滚动距离
 const timer = setInterval(() => {
   currentPosition = document.documentElement.scrollTop || document.body.scrollTop;
   currentPosition -= speed;
-  window.scrollTo(0, currentPosition);// 页面向上滚动
+  window.scrollTo(0, currentPosition); // 页面向上滚动
   currentPosition += speed; // speed变量
-  window.scrollTo(0, currentPosition);// 页面向下滚动
+  window.scrollTo(0, currentPosition); // 页面向下滚动
   clearInterval(timer);
 }, 1);
 ```
@@ -75,7 +75,7 @@ window.onresize = function() {
     // const container = document.getElementById("container")
     // 例如 container.style.height = originalHeight;
   }
-}
+};
 ```
 
 键盘不能回落问题出现在 iOS 12+ 和 wechat 6.7.4+ 中，而在微信 H5 开发中是比较常见的 Bug。
@@ -89,15 +89,15 @@ window.onresize = function() {
 const isWechat = window.navigator.userAgent.match(/MicroMessenger\/([\d\.]+)/i);
 if (!isWechat) return;
 const wechatVersion = wechatInfo[1];
-const version = (navigator.appVersion).match(/OS (\d+)_(\d+)_?(\d+)?/);
- 
- // 如果设备类型为iOS 12+ 和wechat 6.7.4+，恢复成原来的视口
+const version = navigator.appVersion.match(/OS (\d+)_(\d+)_?(\d+)?/);
+
+// 如果设备类型为iOS 12+ 和wechat 6.7.4+，恢复成原来的视口
 if (+wechatVersion.replace(/\./g, '') >= 674 && +version[1] >= 12) {
   window.scrollTo(0, Math.max(document.body.clientHeight, document.documentElement.clientHeight));
 }
 ```
 
-> window.scrollTo(x-coord, y-coord)，其中window.scrollTo(0, clientHeight)恢复成原来的视口
+> window.scrollTo(x-coord, y-coord)，其中 window.scrollTo(0, clientHeight)恢复成原来的视口
 
 # IOS 第三方输入法会遮挡（不完美）
 
@@ -111,13 +111,13 @@ IOS 第三方输入法比如搜狗，打开输入法时工具栏会遮挡输入�
 
 ```js
 // 会造成移动端bug，暂时不用
-const timer = setInterval(function () {
+const timer = setInterval(function() {
   element.scrollIntoView(true);
   clearInterval(timer);
 }, 100);
 ```
 
-# IOS滑动不流畅
+# IOS 滑动不流畅
 
 ## 现象
 
@@ -170,9 +170,9 @@ body {
 
 移动端触摸事件有三个，分别定义为
 
-1. touchstart ：手指放在一个DOM元素上。
-2. touchmove ：手指拖曳一个DOM元素。
-3. touchend ：手指从一个DOM元素上移开。
+1. touchstart ：手指放在一个 DOM 元素上。
+2. touchmove ：手指拖曳一个 DOM 元素。
+3. touchend ：手指从一个 DOM 元素上移开。
 
 touchmove 事件的速度是可以实现定义的，取决于硬件性能和其他实现细节，同时 preventDefault 方法，阻止同一触点上所有默认行为，比如滚动。
 
@@ -181,14 +181,18 @@ touchmove 事件的速度是可以实现定义的，取决于硬件性能和其�
 > 值得注意的是我们要过滤掉具有滚动容器的元素。
 
 ```js
-document.body.addEventListener('touchmove', function(e) {
-  if(e._isScroller) return;
-  // 阻止默认事件
-  e.preventDefault();
-}, {
-  // 防止 treated as passive 报错
-  passive: false
-});
+document.body.addEventListener(
+  'touchmove',
+  function(e) {
+    if (e._isScroller) return;
+    // 阻止默认事件
+    e.preventDefault();
+  },
+  {
+    // 防止 treated as passive 报错
+    passive: false
+  }
+);
 ```
 
 ### 滚动妥协填充空白，装饰成其他功能
@@ -222,7 +226,10 @@ HTML meta 元标签标准中有个 viewport 属性，用来控制页面的缩放
 因此我们可以设置 maximum-scale、minimum-scale 与 user-scalable=no 用来避免这个问题
 
 ```html
-<meta name=viewport content="width=device-width, initial-scale=1.0, minimum-scale=1.0 maximum-scale=1.0, user-scalable=no">
+<meta
+  name="viewport"
+  content="width=device-width, initial-scale=1.0, minimum-scale=1.0 maximum-scale=1.0, user-scalable=no"
+/>
 ```
 
 # click 点击事件延时与穿透
@@ -250,7 +257,13 @@ iOS 中的 safari，为了实现双击缩放操作，在单击 300ms 之后，�
 移动设备不仅支持点击，还支持几个触摸事件。那么我们现在基本思路就是用 touch 事件代替 click 事件。将 click 替换成 touchstart 不仅解决了 click 事件都延时问题，还解决了穿透问题。因为穿透问题是在 touch 和 click 混用时产生。
 
 ```js
-el.addEventListener("touchstart", () => { console.log("ok"); }, false);
+el.addEventListener(
+  'touchstart',
+  () => {
+    console.log('ok');
+  },
+  false
+);
 ```
 
 那么，是否可以将 click 事件全部替换成 touchstart 呢？为什么开源框架还会给出 click 事件呢？
@@ -263,7 +276,7 @@ el.addEventListener("touchstart", () => { console.log("ok"); }, false);
 
 所以呢，在具有滚动的情况下，还是建议使用 click 处理。
 
-在接下来的fastclick开源库中也做了如下处理。 针对 touchstart 和 touchend，截取了部分源码。
+在接下来的 fastclick 开源库中也做了如下处理。 针对 touchstart 和 touchend，截取了部分源码。
 
 ```js
 // If the target element is a child of a scrollable layer (using -webkit-overflow-scrolling: touch) and:
@@ -357,7 +370,7 @@ viewport-fit 有 3 个值分别为：
 }
 ```
 
-> safe-area-inset-top, safe-area-inset-right, safe-area-inset-bottom, safe-area-inset-left, safe-area-inset-*由四个定义了视口边缘内矩形的 top, right, bottom 和 left 的环境变量组成，这样可以安全地放入内容，而不会有被非矩形的显示切断的风险。对于矩形视口，例如普通的笔记本电脑显示器，其值等于零。 对于非矩形显示器（如圆形表盘，iPhoneX 屏幕），在用户代理设置的四个值形成的矩形内，所有内容均可见。
+> safe-area-inset-top, safe-area-inset-right, safe-area-inset-bottom, safe-area-inset-left, safe-area-inset-\*由四个定义了视口边缘内矩形的 top, right, bottom 和 left 的环境变量组成，这样可以安全地放入内容，而不会有被非矩形的显示切断的风险。对于矩形视口，例如普通的笔记本电脑显示器，其值等于零。 对于非矩形显示器（如圆形表盘，iPhoneX 屏幕），在用户代理设置的四个值形成的矩形内，所有内容均可见。
 
 其中 env() 用法为 `env( <custom-ident> , <declaration-value>? )`，第一个参数为自定义的区域，第二个为备用值。
 
@@ -382,13 +395,13 @@ import QRCode from 'qrcode';
 // 使用 async 生成图片
 const options = {};
 const url = window.location.href;
-async url => {
+async (url) => {
   try {
-    console.log(await QRCode.toDataURL(url, options))
+    console.log(await QRCode.toDataURL(url, options));
   } catch (err) {
     console.error(err);
   }
-}
+};
 ```
 
 将 await QRCode.toDataURL(url, options) 赋值给 图片 url 即可
@@ -467,7 +480,7 @@ html2canvas(document.querySelector('.demo'), { canvas: newCanvas }).then(functio
 
 至于最新版本的 chrome 是由于默认开启了 SameSite: Lax
 
->Chrome 计划将Lax变为默认设置。这时网站可以选择显式关闭 SameSite 属性，将其设为None。不过前提是必须同时设置 Secure 属性（Cookie 只能通过 HTTPS 协议发送），否则无效。
+> Chrome 计划将 Lax 变为默认设置。这时网站可以选择显式关闭 SameSite 属性，将其设为 None。不过前提是必须同时设置 Secure 属性（Cookie 只能通过 HTTPS 协议发送），否则无效。
 
 下面的设置无效：
 

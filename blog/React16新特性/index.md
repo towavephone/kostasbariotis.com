@@ -2,7 +2,7 @@
 title: React16新特性
 date: 2019-6-4 20:43:46
 categories:
-- 前端
+  - 前端
 tags: 前端, React
 path: /react-16-new-feature/
 ---
@@ -107,10 +107,7 @@ createPortal 的出现为弹窗、对话框等脱离文档流的组件开发提�
 ```js
 const isReact16 = ReactDOM.createPortal !== undefined;
 
-const getCreatePortal = () =>
-  isReact16
-    ? ReactDOM.createPortal
-    : ReactDOM.unstable_renderSubtreeIntoContainer;
+const getCreatePortal = () => (isReact16 ? ReactDOM.createPortal : ReactDOM.unstable_renderSubtreeIntoContainer);
 ```
 
 使用 createPortal 可以快速创建 Dialog 组件，且不需要牵扯到 componentDidMount、componentDidUpdate 等生命周期函数。
@@ -118,14 +115,14 @@ const getCreatePortal = () =>
 并且通过 createPortal 渲染的 DOM，事件可以从 portal 的入口端冒泡上来，如果入口端存在 onDialogClick 等事件，createPortal 中的 DOM 也能够被调用到。
 
 ```js
-import React from "react";
-import { createPortal } from "react-dom";
+import React from 'react';
+import { createPortal } from 'react-dom';
 
 class Dialog extends React.Component {
   constructor() {
     super(props);
 
-    this.node = document.createElement("div");
+    this.node = document.createElement('div');
     document.body.appendChild(this.node);
   }
 
@@ -196,10 +193,10 @@ React16 支持的 react-call-return，提供了两个函数 unstable_createCall 
 针对普通场景来说，react-call-return 有点过度设计的感觉，但是如果针对一些特定场景的话，它的作用还是非常明显，比如，在渲染瀑布流布局时，利用 react-call-return 可以先缓存子组件的 ReactElement，等必要的信息足够之后父组件再触发 render，完成渲染。
 
 ```js
-import React from "react";
-import { unstable_createReturn, unstable_createCall } from "react-call-return";
+import React from 'react';
+import { unstable_createReturn, unstable_createCall } from 'react-call-return';
 
-const Child = props => {
+const Child = (props) => {
   return unstable_createReturn({
     size: props.children.length,
     renderItem: (partSize, totalSize) => {
@@ -212,15 +209,13 @@ const Child = props => {
   });
 };
 
-const Parent = props => {
+const Parent = (props) => {
   return (
     <div>
       {unstable_createCall(
         props.children,
         (props, returnValues) => {
-          const totalSize = returnValues
-            .map(v => v.size)
-            .reduce((a, b) => a + b, 0);
+          const totalSize = returnValues.map((v) => v.size).reduce((a, b) => a + b, 0);
           return returnValues.map(({ size, renderItem }) => {
             return renderItem(size, totalSize);
           });
@@ -263,27 +258,19 @@ render() {
 - Consumer 组件是数据的订阅方，它的 props.children 是一个函数，接收被发布的数据，并且返回 React Element；
 
 ```js
-const ThemeContext = React.createContext("light");
+const ThemeContext = React.createContext('light');
 
 class ThemeProvider extends React.Component {
-  state = { theme: "light" };
+  state = { theme: 'light' };
 
   render() {
-    return (
-      <ThemeContext.Provider value={this.state.theme}>
-        {this.props.children}
-      </ThemeContext.Provider>
-    );
+    return <ThemeContext.Provider value={this.state.theme}>{this.props.children}</ThemeContext.Provider>;
   }
 }
 
 class ThemedButton extends React.Component {
   render() {
-    return (
-      <ThemeContext.Consumer>
-        {theme => <Button theme={theme} />}
-      </ThemeContext.Consumer>
-    );
+    return <ThemeContext.Consumer>{(theme) => <Button theme={theme} />}</ThemeContext.Consumer>;
   }
 }
 ```
@@ -322,9 +309,7 @@ React16 规范了 Ref 的获取方式，通过 React.createRef 取得 Ref 对象
 React.forwardRef 是 Ref 的转发, 它能够让父组件访问到子组件的 Ref，从而操作子组件的 DOM。 React.forwardRef 接收一个函数，函数参数有 props 和 ref。
 
 ```js
-const TextInput = React.forwardRef((props, ref) => (
-  <input type="text" placeholder="Hello forwardRef" ref={ref} />
-));
+const TextInput = React.forwardRef((props, ref) => <input type='text' placeholder='Hello forwardRef' ref={ref} />);
 
 const inputRef = React.createRef();
 
@@ -335,17 +320,17 @@ class App extends Component {
     this.myRef = React.createRef();
   }
 
-  handleSubmit = event => {
+  handleSubmit = (event) => {
     event.preventDefault();
 
-    alert("input value is:" + inputRef.current.value);
+    alert('input value is:' + inputRef.current.value);
   };
 
   render() {
     return (
       <form onSubmit={this.handleSubmit}>
         <TextInput ref={inputRef} />
-        <button type="submit">Submit</button>
+        <button type='submit'>Submit</button>
       </form>
     );
   }
@@ -441,7 +426,7 @@ React 16.5 添加了对新的 profiler DevTools 插件的支持。这个插件�
 React.memo() 只能作用在简单的函数组件上，本质是一个高阶函数，可以自动帮助组件执行 shouldComponentUpdate()，但只是执行浅比较，其意义和价值有限。
 
 ```js
-const MemoizedComponent = React.memo(props => {
+const MemoizedComponent = React.memo((props) => {
   /* 只在 props 更改的时候才会重新渲染 */
 });
 ```
@@ -455,8 +440,8 @@ Suspense 作用是在等待组件时 suspend（暂停）渲染，并显示加载
 目前 React v16.6 中 Suspense 只支持一个场景，即使用 React.lazy() 和 <React.Suspense> 实现的动态加载组件。
 
 ```js
-import React, { lazy, Suspense } from "react";
-const OtherComponent = lazy(() => import("./OtherComponent"));
+import React, { lazy, Suspense } from 'react';
+const OtherComponent = lazy(() => import('./OtherComponent'));
 
 function MyComponent() {
   return (
@@ -546,14 +531,10 @@ function App() {
 
   return (
     <>
-      <Button type="primary" onClick={() => setOpen(true)}>
+      <Button type='primary' onClick={() => setOpen(true)}>
         Open Modal
       </Button>
-      <Modal
-        visible={open}
-        onOk={() => setOpen(false)}
-        onCancel={() => setOpen(false)}
-      />
+      <Modal visible={open} onOk={() => setOpen(false)} onCancel={() => setOpen(false)} />
     </>
   );
 }
@@ -576,8 +557,8 @@ Suspense 通过 ComponentDidCatch 实现用同步的方式编写异步数据的�
 无论是什么异常，JavaScript 都能捕获，React 就是利用了这个语言特性，通过 ComponentDidCatch 捕获了所有生命周期函数、render 函数等，以及事件回调中的错误。如果有缓存则读取缓存数据，如果没有缓存，则会抛出一个异常 promise，利用异常做逻辑流控制是一种拥有较深的调用堆栈时的手段，它是在虚拟 DOM 渲染层做的暂停拦截，代码可在服务端复用。
 
 ```js
-import { fetchMovieDetails } from "../api";
-import { createFetch } from "../future";
+import { fetchMovieDetails } from '../api';
+import { createFetch } from '../future';
 
 const movieDetailsFetch = createFetch(fetchMovieDetails);
 

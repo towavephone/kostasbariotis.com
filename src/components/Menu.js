@@ -6,13 +6,13 @@ class Menu extends React.Component {
     super(props);
 
     this.state = {
-      menuOpened: false,
+      menuOpened: false
     };
   }
 
   handleClick() {
     this.setState({
-      menuOpened: !this.state.menuOpened,
+      menuOpened: !this.state.menuOpened
     });
   }
 
@@ -22,34 +22,27 @@ class Menu extends React.Component {
 
   render() {
     return (
-      <nav className="navbar navbar-default">
+      <nav className='navbar navbar-default'>
         {/* <div className="image-placeholder" /> */}
-        <div className="container">
-          <div className="medium-8 medium-offset-2 large-10 large-offset-1">
-            <div className="navbar-header">
-              <button
-                type="button"
-                className="navbar-toggle collapsed"
-                onClick={this.handleClick.bind(this)}
-              >
-                <span className="sr-only">Toggle navigation</span>
-                <span className="icon-bar" />
-                <span className="icon-bar" />
-                <span className="icon-bar" />
+        <div className='container'>
+          <div className='medium-8 medium-offset-2 large-10 large-offset-1'>
+            <div className='navbar-header'>
+              <button type='button' className='navbar-toggle collapsed' onClick={this.handleClick.bind(this)}>
+                <span className='sr-only'>Toggle navigation</span>
+                <span className='icon-bar' />
+                <span className='icon-bar' />
+                <span className='icon-bar' />
               </button>
             </div>
-            <div
-              className={`collapse navbar-collapse ${this.state.menuOpened ? 'in' : ''}`}
-              id="main-menu"
-            >
-              <ul className="nav navbar-nav navbar-right">
+            <div className={`collapse navbar-collapse ${this.state.menuOpened ? 'in' : ''}`} id='main-menu'>
+              <ul className='nav navbar-nav navbar-right'>
                 <li onClick={() => this.openLink.bind(this)}>
                   <GatsbyLink
                     exact
                     activeStyle={{
-                      color: '#d23669',
+                      color: '#d23669'
                     }}
-                    to="/"
+                    to='/'
                   >
                     首页
                   </GatsbyLink>
@@ -58,9 +51,9 @@ class Menu extends React.Component {
                   <GatsbyLink
                     exact
                     activeStyle={{
-                      color: '#d23669',
+                      color: '#d23669'
                     }}
-                    to="/tags"
+                    to='/tags'
                   >
                     标签
                   </GatsbyLink>
@@ -69,9 +62,9 @@ class Menu extends React.Component {
                   <GatsbyLink
                     exact
                     activeStyle={{
-                      color: '#d23669',
+                      color: '#d23669'
                     }}
-                    to="/about"
+                    to='/about'
                   >
                     关于
                   </GatsbyLink>
@@ -80,9 +73,9 @@ class Menu extends React.Component {
                   <GatsbyLink
                     exact
                     activeStyle={{
-                      color: '#d23669',
+                      color: '#d23669'
                     }}
-                    to="/search"
+                    to='/search'
                   >
                     搜索
                   </GatsbyLink>
@@ -92,9 +85,9 @@ class Menu extends React.Component {
                     <GatsbyLink
                       exact
                       activeStyle={{
-                        color: '#d23669',
+                        color: '#d23669'
                       }}
-                      to="/drafts"
+                      to='/drafts'
                     >
                       草稿
                     </GatsbyLink>

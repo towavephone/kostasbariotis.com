@@ -2,7 +2,7 @@
 title: 客服新窗口技术探索
 date: 2020-7-1 20:15:50
 categories:
-- 前端
+  - 前端
 tags: 前端, 跨域通信, webpack, 预研
 path: /new-window-technology-research/
 ---
@@ -74,8 +74,8 @@ var caller = new Bus('http://127.0.0.1:10001', [
     fn: (data) => {
       console.log('收到新窗口的消息', data);
     }
-  },
-])
+  }
+]);
 
 document.querySelector('#button').addEventListener('click', function() {
   var popup = window.open('http://127.0.0.1:10001/popup.html', '', 'width=300,height=300,top=100,left=200');
@@ -89,9 +89,9 @@ document.querySelector('#button').addEventListener('click', function() {
         }
       },
       'http://127.0.0.1:10001'
-    )
-  }, 2000)
-})
+    );
+  }, 2000);
+});
 ```
 
 ```js
@@ -110,9 +110,9 @@ var caller = new Bus('http://localhost:10001', [
           }
         },
         'http://localhost:10001'
-      )
+      );
     }
-  },
+  }
 ]);
 ```
 
@@ -134,8 +134,8 @@ var caller = new Bus('http://127.0.0.1:10001', [
     fn: (data) => {
       console.log('收到新窗口的消息', data);
     }
-  },
-])
+  }
+]);
 
 document.querySelector('#button').addEventListener('click', function() {
   var popup = window.open('http://127.0.0.1:10001/popup.html', '', 'width=300,height=300,top=100,left=200');
@@ -149,9 +149,9 @@ document.querySelector('#button').addEventListener('click', function() {
         }
       },
       'http://127.0.0.1:10001'
-    )
-  }
-})
+    );
+  };
+});
 ```
 
 刚开始打算监听 window.open 的 onload 事件，但是在不同域名下会报错
@@ -177,7 +177,7 @@ var caller = new Bus('http://127.0.0.1:10001', [
       console.log('新窗口加载完成');
     }
   }
-])
+]);
 
 document.querySelector('#button').addEventListener('click', function() {
   var popup = window.open('http://127.0.0.1:10001/popup.html', '', 'width=300,height=300,top=100,left=200');
@@ -196,9 +196,9 @@ document.querySelector('#button').addEventListener('click', function() {
         }
       },
       'http://127.0.0.1:10001'
-    )
+    );
   }, 0);
-})
+});
 ```
 
 ```js{21-27}
@@ -217,18 +217,18 @@ var caller = new Bus('http://localhost:10001', [
           }
         },
         'http://localhost:10001'
-      )
+      );
     }
-  },
+  }
 ]);
 
 caller.postMessage(
   window.opener,
   {
-    name: 'newWindowLoad',
+    name: 'newWindowLoad'
   },
   'http://localhost:10001'
-)
+);
 ```
 
 当新窗口的页面加载完毕时会发出 `newWindowLoad` 消息，主页面接收后，标志变量 `isLoaded` 置为 `true`，此时尚在轮询的消息就可以发出。
@@ -243,10 +243,8 @@ caller.postMessage(
 
 由于客服组件需要嵌入公司产品端，因为采用的技术栈和公司产品端的技术栈一致，这时会遇到很多问题：
 
-1. react 和 react-lite 的冲突，react 16 与 react 15 不能同时引入到一个页面，具体见 https://github.com/facebook/react/issues/16029
-    ![](2020-07-01-22-25-58.png)
-2. babel-polyfill 引入 2 次导致不能正常加载
-    ![](2020-07-01-22-30-23.png)
+1. react 和 react-lite 的冲突，react 16 与 react 15 不能同时引入到一个页面，具体见 https://github.com/facebook/react/issues/16029 ![](2020-07-01-22-25-58.png)
+2. babel-polyfill 引入 2 次导致不能正常加载 ![](2020-07-01-22-30-23.png)
 
 ### 独立运行环境
 
@@ -290,10 +288,7 @@ output: {
 
 ```js
 // 兼容左右分屏情况
-const {
-  availTop,
-  availLeft,
-} = window.screen;
+const { availTop, availLeft } = window.screen;
 if (availLeft) {
   left += availLeft;
 }
@@ -302,7 +297,7 @@ if (availTop) {
 }
 ```
 
-[chrome弹窗在双屏情况下left居中定位异常分析](https://segmentfault.com/a/1190000017989734)
+[chrome 弹窗在双屏情况下 left 居中定位异常分析](https://segmentfault.com/a/1190000017989734)
 
 ## 监听新窗口打开情况
 
@@ -327,17 +322,13 @@ renderText = (text) => {
   const renderContent = [];
   text.replace(/\[([^[\]]+?)\]|./g, (symbol) => {
     if (/\[([^[\]]+?)\]/.test(symbol) && EmojiList.find((item) => item.symbol === symbol)) {
-      renderContent.push(<span
-        dangerouslySetInnerHTML={{ __html: symbolToHTML(symbol) }}
-      />);
+      renderContent.push(<span dangerouslySetInnerHTML={{ __html: symbolToHTML(symbol) }} />);
     } else {
       renderContent.push(symbol);
     }
   });
-  return (<div>
-    {renderContent}
-  </div>);
-}
+  return <div>{renderContent}</div>;
+};
 ```
 
 # 效果截图
