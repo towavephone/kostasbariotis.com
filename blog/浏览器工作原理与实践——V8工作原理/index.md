@@ -59,7 +59,7 @@ foo();
 int main()
 {
    int a = 1;
-   char* b = " 极客时间 ";
+   char* b = "极客时间";
    bool c = true;
    return 0;
 }
@@ -105,17 +105,17 @@ bar = { name: '极客时间' };
 
 ```js
 var bar;
-console.log(typeof bar); //undefined
+console.log(typeof bar); // undefined
 bar = 12;
-console.log(typeof bar); //number
+console.log(typeof bar); // number
 bar = '极客时间';
-console.log(typeof bar); //string
+console.log(typeof bar); // string
 bar = true;
-console.log(typeof bar); //boolean
+console.log(typeof bar); // boolean
 bar = null;
-console.log(typeof bar); //object
+console.log(typeof bar); // object
 bar = { name: '极客时间' };
-console.log(typeof bar); //object
+console.log(typeof bar); // object
 ```
 
 执行这段代码，你可以看到打印出来了不同的数据类型，有 undefined、number、boolean、object 等。那么接下来我们就来谈谈 JavaScript 到底有多少种数据类型。
@@ -133,7 +133,7 @@ console.log(typeof bar); //object
 ```js
 let myObj = {
   name: '极客时间',
-  update: function(){....}
+  update: function() {....}
 }
 ```
 
@@ -189,7 +189,7 @@ foo();
 
 在 JavaScript 中，赋值操作和其他语言有很大的不同，原始类型的赋值会完整复制变量值，而引用类型的赋值是复制引用地址。
 
-所以 d=c 的操作就是把 c 的引用地址赋值给 d，你可以参考下图
+所以 `d=c` 的操作就是把 c 的引用地址赋值给 d，你可以参考下图
 
 ![](res/2021-07-05-13-37-35.png)
 
@@ -226,15 +226,16 @@ console.log(bar.getName());
 要解释这个现象，我们就得站在内存模型的角度来分析这段代码的执行流程。
 
 - 当 JavaScript 引擎执行到 foo 函数时，首先会编译，并创建一个空执行上下文。
-- 在编译过程中，遇到内部函数 setName，JavaScript 引擎还要对内部函数做一次快速的词法扫描，发现该内部函数引用了 foo - 函数中的 myName 变量，由于是内部函数引用了外部函数的变量，所以 JavaScript 引擎判断这是一个闭包，于是在堆空间创建换一个“closure(foo)”的对象（这是一个内部对象，JavaScript 是无法访问的），用来保存 myName 变量。
+- 在编译过程中，遇到内部函数 setName，JavaScript 引擎还要对内部函数做一次快速的词法扫描，发现该内部函数引用了 foo
+- 函数中的 myName 变量，由于是内部函数引用了外部函数的变量，所以 JavaScript 引擎判断这是一个闭包，于是在堆空间创建换一个“closure(foo)”的对象（这是一个内部对象，JavaScript 是无法访问的），用来保存 myName 变量。
 - 接着继续扫描到 getName 方法时，发现该函数内部还引用变量 test1，于是 JavaScript 引擎又将 test1 添加到“closure(foo)”对象中。这时候堆中的“closure(foo)”对象中就包含了 myName 和 test1 两个变量了。
 - 由于 test2 并没有被内部函数引用，所以 test2 依然保存在调用栈中
 
-通过上面的分析，我们可以画出执行到 foo 函数中“return innerBar”语句时的调用栈状态，如下图所示：
+通过上面的分析，我们可以画出执行到 foo 函数中 `return innerBar` 语句时的调用栈状态，如下图所示：
 
 ![](res/2021-07-05-13-39-10.png)
 
-从上图你可以清晰地看出，当执行到 foo 函数时，闭包就产生了；当 foo 函数执行结束之后，返回的 getName 和 setName 方法都引用“clourse(foo)”对象，所以即使 foo 函数退出了，“clourse(foo)”依然被其内部的 getName 和 setName 方法引用。所以在下次调用 bar.setName 或者 bar.getName 时，创建的执行上下文中就包含了“clourse(foo)”。
+从上图你可以清晰地看出，当执行到 foo 函数时，闭包就产生了；当 foo 函数执行结束之后，返回的 getName 和 setName 方法都引用 `clourse(foo)` 对象，所以即使 foo 函数退出了，`clourse(foo)` 依然被其内部的 getName 和 setName 方法引用。所以在下次调用 bar.setName 或者 bar.getName 时，创建的执行上下文中就包含了 `clourse(foo)`。
 
 总的来说，产生闭包的核心有两步：第一步是需要预扫描内部函数；第二步是把内部函数引用的外部变量保存到堆中。
 
@@ -286,14 +287,14 @@ console.log(jack.like.dog.color); // 打印出来的应该是 "black"
 
 关于 foo 函数执行上下文销毁过程：foo 函数执行结束之后，当前执行状态的指针下移到栈中的全局执行上下文的位置，foo 函数的执行上下文的那块数据就挪出来，这也就是 foo 函数执行上下文的销毁过程，这个文中有提到，你可以参考“调用栈中切换执行上下文状态“图。
 
-第二个问题：innerBar 返回后，含有 setName 和 getName 对象，这两个对象里面包含了堆中的 closure(foo)的引用。虽然 foo 执行上下文销毁了，foo 函数中的对 closure(foo)的引用也断开了，但是 setName 和 getName 里面又重新建立起来了对 closure(foo)引用。
+第二个问题：innerBar 返回后，含有 setName 和 getName 对象，这两个对象里面包含了堆中的 closure(foo) 的引用。虽然 foo 执行上下文销毁了，foo 函数中的对 closure(foo) 的引用也断开了，但是 setName 和 getName 里面又重新建立起来了对 closure(foo) 引用。
 
 你可以：
 
-- 打开“开发者工具”
+- 打开开发者工具
 - 在控制台执行上述代码
-- 然后选择“Memory”标签，点击"take snapshot" 获取 V8 的堆内存快照。
-- 然后“command+f"(mac) 或者 "ctrl+f"(win),搜索“setName”，然后你就会发现 setName 对象下面包含了 raw_outer_scope_info_or_feedback_metadata，对闭包的引用数据就在这里面。`
+- 然后选择 Memory 标签，点击 take snapshot 获取 V8 的堆内存快照。
+- 然后 `command+f(mac)` 或者 `ctrl+f(win)`，搜索 setName，然后你就会发现 setName 对象下面包含了 raw_outer_scope_info_or_feedback_metadata，对闭包的引用数据就在这里面。
 
 # 垃圾回收：垃圾数据如何自动回收
 
@@ -307,12 +308,13 @@ console.log(jack.like.dog.color); // 打印出来的应该是 "black"
 
 ```c++
 // 在堆中分配内存
-char* p =  (char*)malloc(2048);  // 在堆空间中分配 2048 字节的空间，并将分配后的引用地址保存到 p 中
+// 在堆空间中分配 2048 字节的空间，并将分配后的引用地址保存到 p 中
+char* p = (char*)malloc(2048);
 
- // 使用 p 指向的内存
- {
-   //....
- }
+// 使用 p 指向的内存
+{
+  //....
+}
 
 // 使用结束后，销毁这段内存
 free(p)；
@@ -336,7 +338,7 @@ function foo() {
   var a = 1;
   var b = { name: '极客邦' };
   function showName() {
-    var c = '极客时间';
+    var c = 1;
     var d = { name: '极客时间' };
   }
   showName();
@@ -478,7 +480,7 @@ foo();
 
 今天这篇文章我们就继续“向下”分析，站在 JavaScript 引擎 V8 的视角，来分析 JavaScript 代码是如何被执行的。
 
-前端工具和框架的自身更新速度非常块，而且还不断有新的出现。要想追赶上前端工具和框架的更新速度，你就需要抓住那些本质的知识，然后才能更加轻松地理解这些上层应用。比如我们接下来要介绍的 V8 执行机制，能帮助你从底层了解 JavaScript，也能帮助你深入理解语言转换器 Babel、语法检查工具 ESLint、前端框架 Vue 和 React 的一些底层实现机制。因此，了解 V8 的编译流程能让你对语言以及相关工具有更加充分的认识。
+前端工具和框架的自身更新速度非常快，而且还不断有新的出现。要想追赶上前端工具和框架的更新速度，你就需要抓住那些本质的知识，然后才能更加轻松地理解这些上层应用。比如我们接下来要介绍的 V8 执行机制，能帮助你从底层了解 JavaScript，也能帮助你深入理解语言转换器 Babel、语法检查工具 ESLint、前端框架 Vue 和 React 的一些底层实现机制。因此，了解 V8 的编译流程能让你对语言以及相关工具有更加充分的认识。
 
 要深入理解 V8 的工作原理，你需要搞清楚一些概念和原理，比如接下来我们要详细讲解的编译器（Compiler）、解释器（Interpreter）、抽象语法树（AST）、字节码（Bytecode）、即时编译器（JIT）等概念，都是你需要重点关注的。
 
