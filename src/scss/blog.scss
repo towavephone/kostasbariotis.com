@@ -404,6 +404,31 @@ code[class*='language-'] {
   }
 }
 
+.gatsby-code-button-container {
+  top: 0;
+  left: 0;
+}
+
+.gatsby-code-button {
+  position: absolute;
+  top: 16px;
+  right: 14px;
+}
+
+.gatsby-highlight pre[class*="language-"].line-numbers {
+  padding-left: 2.8em;
+}
+
+.line-numbers-rows > span:before {
+  padding: 0 0.4em;
+  text-align: center;
+}
+
+.line-numbers .line-numbers-rows {
+  margin: 1em 0;
+  border-right: none;
+}
+
 .blog-section {
   margin-top: 2.5em;
 

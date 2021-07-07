@@ -124,9 +124,17 @@ module.exports = {
             }
           },
           {
+            resolve: `gatsby-remark-code-buttons-towavephone`,
+            options: {
+              tooltipText: '复制',
+              toasterText: '复制成功'
+            }
+          },
+          {
             resolve: `gatsby-remark-prismjs`,
             options: {
-              classPrefix: 'language-'
+              classPrefix: 'language-',
+              showLineNumbers: true
             }
           },
           `gatsby-remark-smartypants`
