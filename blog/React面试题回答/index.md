@@ -2638,7 +2638,7 @@ test('adds 1 + 2 to equal 3', () => {
 
 最后，运行`yarn test`或`npm test`，Jest 将打印结果：
 
-```console
+```bash
 $ yarn test
 PASS ./sum.test.js
 ✓ adds 1 + 2 to equal 3 (2ms)
@@ -3068,7 +3068,7 @@ import ConnectedComponent from './containers/ConnectedComponent';
 
 这个包在 NPM 上有发布:
 
-```console
+```bash
 $ npm install --save redux-saga
 ```
 

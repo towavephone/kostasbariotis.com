@@ -265,7 +265,7 @@ var timerID = setTimeout(showName, 200);
 
 源码中延迟执行队列的定义如下所示：
 
-```
+```cpp
 DelayedIncomingQueue delayed_incoming_queue;
 ```
 
@@ -286,7 +286,7 @@ timerTask.delay_time = 200; // 设置延迟执行时间
 
 创建好回调任务之后，再将该任务添加到延迟执行队列中，代码如下所示：
 
-```
+```cpp
 delayed_incoming_queue.push(timerTask);
 ```
 
@@ -294,7 +294,7 @@ delayed_incoming_queue.push(timerTask);
 
 我们可以来完善上一篇文章中消息循环的代码，在其中加入执行延迟队列的代码，如下所示
 
-```c
+```cpp
 void ProcessTimerTask(){
   // 从 delayed_incoming_queue 中取出已经到期的定时器任务
   // 依次执行这些任务
@@ -322,7 +322,7 @@ void MainTherad(){
 
 设置一个定时器，JavaScript 引擎会返回一个定时器的 ID。那通常情况下，当一个定时器的任务还没有被执行的时候，也是可以取消的，具体方法是调用 clearTimeout 函数，并传入需要取消的定时器的 ID。如下面代码所示：
 
-```
+```cpp
 clearTimeout(timer_id)
 ```
 
@@ -379,7 +379,7 @@ setTimeout(cb, 0);
 
 上图中的竖线就是定时器的函数回调过程，从图中可以看出，前面五次调用的时间间隔比较小，嵌套调用超过五次以上，后面每次的调用最小时间间隔是 4 毫秒。之所以出现这样的情况，是因为在 Chrome 中，定时器被嵌套调用 5 次以上，系统会判断该函数方法被阻塞了，如果定时器的调用时间间隔小于 4 毫秒，那么浏览器会将每次调用的时间间隔设置为 4 毫秒。下面是 Chromium 实现 4 毫秒延迟的代码，你可以看下：
 
-```c
+```cpp
 static const int kMaxTimerNestingLevel = 5;
 
 // Chromium uses a minimum timer interval of 4ms. We'd like to go
@@ -390,7 +390,7 @@ static const int kMaxTimerNestingLevel = 5;
 static constexpr base::TimeDelta kMinimumInterval = base::TimeDelta::FromMilliseconds(4);
 ```
 
-```
+```cpp
 base::TimeDelta interval_milliseconds =
       std::max(base::TimeDelta::FromMilliseconds(1), interval);
 

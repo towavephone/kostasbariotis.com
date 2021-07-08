@@ -44,7 +44,7 @@ iter.next(); // {value:undefined，done:true}
 
 让我们先看一个示例，下面方法声明实现了一个产生和返回枚举数的迭代器
 
-```c#
+```cs
 public IEnumerable <int> Example() {
   yield return 1;
   yield return 2;
@@ -56,7 +56,7 @@ public IEnumerable <int> Example() {
 
 使用迭代器来创建可枚举类型的类
 
-```c#
+```cs
 class YieldClass {
   public IEnumerable<int> Example() { // 迭代器
     yield return 1;
@@ -88,7 +88,7 @@ class Program {
 
 继续研究上述示例，通过 Reflector 反编译工具可以看到，编译器为我们生成了一个带有如下声明的内部类
 
-```c#
+```cs
 [CompilerGenerated]
 private sealed class YieldEnumerator :
    IEnumerable<object>, IEnumerator<object>
@@ -129,7 +129,7 @@ private sealed class YieldEnumerator :
 
 Example() 方法中代码被转换为 YieldingEnumerator.MoveNext()，在我们的示例中转换后代码如下
 
-```c#
+```cs
 bool MoveNext() {
   switch (state) {
     case 0:

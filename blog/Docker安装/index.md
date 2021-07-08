@@ -16,11 +16,11 @@ tags: 后端, Docker, Docker安装
 ### 设置存储库
 
 1. 更新`apt`软件包索引：
-   ```sh
+   ```bash
    $ sudo apt-get update
    ```
 2. 安装软件包允许`apt`通过`HTTPS`使用存储库：
-   ```sh
+   ```bash
    $ sudo apt-get install \
        apt-transport-https \
        ca-certificates \
@@ -29,13 +29,13 @@ tags: 后端, Docker, Docker安装
    ```
 3. 添加`Docker`官方`GPG`密钥：
 
-   ```sh
+   ```bash
    $ curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
    ```
 
    `9DC8 5822 9FC7 DD38 854A E2D8 8D81 803C 0EBF CD88`通过搜索指纹的最后 8 个字符，确认您现在拥有指纹的密钥 。
 
-   ```sh
+   ```bash
    $ sudo apt-key fingerprint 0EBFCD88
 
    pub   4096R/0EBFCD88 2017-02-22
@@ -46,7 +46,7 @@ tags: 后端, Docker, Docker安装
 
 4. 使用以下命令来设置稳定的存储库：
 
-   ```sh
+   ```bash
    $ sudo add-apt-repository \
    "deb [arch=amd64] https://download.docker.com/linux/ubuntu \
    $(lsb_release -cs) \
@@ -56,15 +56,15 @@ tags: 后端, Docker, Docker安装
 ### 安装 DOCKER CE
 
 1. 更新`apt`软件包索引。
-   ```sh
+   ```bash
    $ sudo apt-get update
    ```
 2. 安装最新版本的`Docker CE`，任何现有的`Docker`安装都将被替换。
-   ```sh
+   ```bash
    $ sudo apt-get install docker-ce
    ```
 3. 通过运行`hello-world`镜像验证是否正确安装了`Docker CE`。
-   ```sh
+   ```bash
    $ sudo docker run hello-world
    ```
    这个命令下载一个测试并在容器中运行。容器运行时，会打印一条信息消息并退出。
@@ -76,10 +76,10 @@ tags: 后端, Docker, Docker安装
 ## 卸载 Docker CE
 
 1. 卸载`Docker CE`软件包：
-   ```sh
+   ```bash
    $ sudo apt-get purge docker-ce
    ```
 2. 主机上的镜像，容器，卷或自定义配置文件不会自动删除，必须手动删除任何已编辑的配置文件：
-   ```sh
+   ```bash
    $ sudo rm -rf /var/lib/docker
    ```

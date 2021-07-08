@@ -689,7 +689,7 @@ commit 阶段开始于 commitRoot 方法的调用。其中 rootFiber 会作为�
 
 我们已经知道，render 阶段完成后会进入 commit 阶段，让我们继续补全从触发状态更新到 render 阶段的路径。
 
-```sh
+```
 触发状态更新（根据场景调用不同方法）
 
     |

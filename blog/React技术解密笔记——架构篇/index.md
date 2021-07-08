@@ -82,7 +82,7 @@ ReactDOM.render(<App />, document.getElementById('root'));
 
 render 阶段会依次执行：
 
-```sh
+```
 1. rootFiber beginWork
 2. App Fiber beginWork
 3. div Fiber beginWork

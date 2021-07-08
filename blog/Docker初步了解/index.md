@@ -33,7 +33,7 @@ categories:
 
 现在我们使用 -i（交互式）和 -t（临时终端）参数运行一个容器，然后输入一些交互命令：
 
-```sh
+```bash
 (HOST) # docker run -it ubuntu /bin/bash
 (CONTAINER) root@1f608dc4e5b4:/# echo hello docker > /message.txt
 (CONTAINER) root@1f608dc4e5b4:/# cat /message.txt
@@ -43,7 +43,7 @@ hello docker
 
 在上面那个容器内，我们创建了 /message.txt 文件，现在我们尝试重新读取这个文件：
 
-```sh
+```bash
 (HOST) # docker run -it ubuntu cat /message.txt
 cat: /message.txt: No such file or directory
 ```
@@ -54,7 +54,7 @@ cat: /message.txt: No such file or directory
 
 好吧，那么我们用 docker ps -a 命令列出所有容器，然后仔细观察一下：
 
-```sh
+```bash
 (HOST) # docker ps -a
 CONTAINER ID        IMAGE                 COMMAND              CREATED             STATUS                      PORTS               NAMES
 b3d8c3ef31a0        ubuntu:latest         "cat /message.txt"   33 minutes ago      Exited (1) 33 minutes ago                       admiring_lalande
@@ -77,7 +77,7 @@ b3d8c3ef31a0        ubuntu:latest         "cat /message.txt"   33 minutes ago   
 
 那么现在我们现在运行上面例子中已经停止的 insane_wright 容器：
 
-```sh
+```bash
 (HOST) # docker start -ai insane_wright
 (CONTAINER) root@1f608dc4e5b4:/# cat /message.txt
 hello docker
@@ -94,7 +94,7 @@ hello docker
 
 对于上面例子中的容器，我们可以用下面这条命令将其打包成镜像：
 
-```sh
+```bash
 (HOST) $ docker commit -a "Jordan Bach" -m "saved my message" insane_wright jbgo/message:v0.0.1
 1c9195e4c24c894a274f857a60b46fb828ee70ff0e78d18017dfb79c5bf68409
 ```
@@ -105,7 +105,7 @@ hello docker
 
 可以用如下命令检查当前的镜像：
 
-```sh
+```bash
 (HOST) # docker images
 REPOSITORY          TAG                 IMAGE ID            CREATED             VIRTUAL SIZE
 jbgo/message        v0.0.1              1c9195e4c24c        18 seconds ago      188.3 MB
@@ -116,7 +116,7 @@ ubuntu              latest              b7cf8f0d9e82        4 days ago          
 
 不信？那我运行给你看。
 
-```sh
+```bash
 (HOST) # docker run -it jbgo/message:v0.0.1 cat /message.txt
 hello docker
 这里我们并没有运行刚刚的 insane_wright 容器，而是运行了我们刚刚保存的镜像。
@@ -125,7 +125,7 @@ hello docker
 
 还不信？那我检查给你看。
 
-```sh
+```bash
 (HOST) # docker ps -a
 CONTAINER ID        IMAGE                 COMMAND              CREATED             STATUS                      PORTS               NAMES
 01bd4c098203        jbgo/message:v0.0.1   "cat /message.txt"   10 seconds ago      Exited (0) 9 seconds ago                        hopeful_lovelace
@@ -143,7 +143,7 @@ b3d8c3ef31a0        ubuntu:latest         "cat /message.txt"   33 minutes ago   
 
 使用如下操作将镜像上传到 Docker Registry 上：
 
-```sh
+```bash
 (HOST) # docker push jbgo/message
 The push refers to a repository [jbgo/message] (len: 1)
 1c9195e4c24c: Image push failed
@@ -169,7 +169,7 @@ Digest: sha256:b2a98b19e06a4df91150f8a2cd47a6e440cbc13b39f1fc235d46f97f631ad117
 
 当然，如果你按照上面的来操作的话，可能会出现一点小问题：
 
-```sh
+```bash
 (HOST) # docker pull jbgo/message
 Pulling repository jbgo/message
 FATA[0007] Tag latest not found in repository jbgo/message
@@ -177,7 +177,7 @@ FATA[0007] Tag latest not found in repository jbgo/message
 
 下面我来解释一下到底出了什么问题：当你使用 docker push jbgo/message 命令的时候，默认上传标签为 latest 的镜像。如果没有便会报错。你可以采用如下命令解决： docker tag jbgo/message:v0.0.1 jbgo/message:latest。这次再尝试推送：
 
-```sh
+```bash
 (HOST) # docker push jbgo/message:latest
 The push refers to a repository [jbgo/message] (len: 1)
 1c9195e4c24c: Image already exists
@@ -192,7 +192,7 @@ Digest: sha256:cc2fbbb2029c6402cea639b2454da08ef05672da81176ae97f57d4f51be19fc3
 
 你不信？那我验证给你看：
 
-```sh
+```bash
 (HOST) # docker pull jbgo/message
 latest: Pulling from jbgo/message
 1c9195e4c24c: Already exists
@@ -214,7 +214,7 @@ Status: Downloaded newer image for jbgo/message:latest
 
 使用如下命令删除多个容器：
 
-```sh
+```bash
 (HOST) # docker rm hopeful_lovelace insane_wright admiring_lalande
 hopeful_lovelace
 insane_wright
@@ -223,7 +223,7 @@ admiring_lalande
 
 现在再检查一下还有没有这些容器：
 
-```sh
+```bash
 (HOST) # docker ps -a
 CONTAINER ID        IMAGE               COMMAND             CREATED             STATUS              PORTS               NAMES
 ```
@@ -234,7 +234,7 @@ CONTAINER ID        IMAGE               COMMAND             CREATED             
 
 有心人注意到，刚刚我们第一次上传 jbgo/message 镜像的时候，Docker 上传了不止一个镜像。
 
-```sh
+```bash
 (HOST) # docker push jbgo/message:v0.0.1
 ...
 1c9195e4c24c: Image already exists
@@ -248,7 +248,7 @@ a62a42e77c9c: Image successfully pushed
 
 首先使用 docker history 检查一下镜像改动历史：
 
-```sh
+```bash
 (HOST) # docker history jbgo/message:v0.0.1
 IMAGE               CREATED             CREATED BY                                      SIZE
 1c9195e4c24c        33 minutes ago      /bin/bash                                       108 B
@@ -260,7 +260,7 @@ a62a42e77c9c        4 days ago          /bin/sh -c echo '#!/bin/sh' > /usr/sbin/
 
 会发现，其实我们创建了不止一个镜像，也就是有不止一个改动层。使用 docker inspect 命令仔细观察第一个镜像（第一层）进行过的改动：
 
-```sh
+```bash
 (HOST) # docker inspect 1c9195e4c24c
 [{
     "Architecture": "amd64",
@@ -273,7 +273,7 @@ a62a42e77c9c        4 days ago          /bin/sh -c echo '#!/bin/sh' > /usr/sbin/
 
 jbgo/message 是基于 ubuntu 镜像的，我们来检查一下 ubuntu 镜像的改动历史：
 
-```sh
+```bash
 (HOST) # docker history ubuntu
 IMAGE               CREATED             CREATED BY                                      SIZE
 b7cf8f0d9e82        4 days ago          /bin/sh -c #(nop) CMD ["/bin/bash"]             0 B
@@ -288,7 +288,7 @@ a62a42e77c9c        4 days ago          /bin/sh -c echo '#!/bin/sh' > /usr/sbin/
 
 > 前面提到过，我们删除容器，那么我们本机上仍然保存着镜像，如何删掉它们？
 
-```sh
+```bash
 （HOST） # docker rmi jbgo/message
 Error response from daemon: Conflict, cannot delete 1c9195e4c24c because the container 2ea39e64a130 is using it, use -f to force
 FATA[0000] Error: failed to remove one or more images
@@ -300,7 +300,7 @@ FATA[0000] Error: failed to remove one or more images
 
 检查所有容器，发现容器 2ea39e64a130。
 
-```sh
+```bash
 (HOST) # docker ps -a
 CONTAINER ID        IMAGE                 COMMAND              CREATED             STATUS                     PORTS               NAMES
 2ea39e64a130        jbgo/message:latest   "cat /message.txt"   2 minutes ago       Exited (0) 2 minutes ago                       lonely_jones
@@ -312,7 +312,7 @@ CONTAINER ID        IMAGE                 COMMAND              CREATED          
 
 然后删除镜像：
 
-```sh
+```bash
 (HOST) # docker rmi jbgo/message
 Untagged: jbgo/message:latest
 Deleted: 1c9195e4c24c894a274f857a60b46fb828ee70ff0e78d18017dfb79c5bf68409
@@ -324,7 +324,7 @@ Deleted: 706766fe101906a1a6628173c2677173a5f8c6c469075083f3cf3a8f5e5eb367
 
 这次我们可以很轻松地删除掉 jbgo/message 镜像了。确认一下：
 
-```sh
+```bash
 (HOST) # docker images
 REPOSITORY          TAG                 IMAGE ID            CREATED             VIRTUAL SIZE
 ```

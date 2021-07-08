@@ -118,7 +118,7 @@ sendKeys 方法直接赋值给 input 控件也是不成功，原因同上
 
 2. 打开编辑器，添加以下代码
 
-   ```c#
+   ```cs
    ControlFocus("[Class:#32770]","","Edit1") // 对文件名发起焦点事件
    WinWait("[Class:#32770]","",10) // 等待 10 ms
    ControlSetText("[Class:#32770]","","Edit1",$CmdLine[1]) // 对文件名赋值，其中 $CmdLine[1] 代表调用命令的第一个参数
