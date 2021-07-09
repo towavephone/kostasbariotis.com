@@ -301,6 +301,12 @@
         p {
           margin-bottom: 0;
           display: inline-block;
+          // 这里不确定目录的宽度是多少
+          max-width: calc(100% - 60px);
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+          vertical-align: bottom;
         }
         &::before {
           content: '# ';
