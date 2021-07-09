@@ -86,6 +86,7 @@
     "lodash": "^4.17.10",
     "pngquant-bin": "^6.0.0",
     "prop-types": "^15.6.1",
+    "re-resizable": "^6.9.0",
     "react-helmet": "^5.2.0",
     "react-instantsearch": "^5.0.3",
     "react-share": "^2.1.1"

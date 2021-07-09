@@ -264,18 +264,23 @@
 
   .headings {
     position: absolute;
-    top: 0;
+    top: 48px;
     left: -420px;
     bottom: 0;
-    width: 350px;
-    background-color: $darkblue;
     transition: left 0.2s ease-in-out;
     z-index: 3;
-    overflow: auto;
-    box-shadow: 3px 0px 4px #b7afc4;
+    height: calc(100% - 48px);
     &.fixed {
       position: fixed;
-      top: 48px;
+    }
+    .index-resizable {
+      height: 100% !important;
+    }
+    .index-container {
+      overflow: auto;
+      box-shadow: 3px 0px 4px #b7afc4;
+      background-color: $darkblue;
+      height: 100%;
     }
     .index-title {
       margin: 10px 0;
@@ -324,7 +329,6 @@
   .collapse-icon {
     padding: 8px;
     position: fixed;
-    left: -100px;
     bottom: 40px;
     cursor: pointer;
     border-radius: 30px;
@@ -407,6 +411,7 @@ code[class*='language-'] {
 .gatsby-code-button-container {
   top: 0;
   left: 0;
+  z-index: 1;
 }
 
 .gatsby-code-button {

@@ -9,12 +9,15 @@ import events from 'dom-helpers/events';
 import domQuery from 'dom-helpers/query';
 import { throttle, get } from 'lodash';
 import cx from 'classnames';
+import { Resizable } from 're-resizable';
 
 import BulletListTags from '../components/BulletListTags';
 import NavigateLink from '../components/NavigateLink';
 import Separator from '../components/Separator';
 import MetaTags from '../components/MetaTags';
 import Icon from '../components/Icon';
+
+const minWidth = 350;
 
 export default class Template extends Component {
   constructor(props) {
@@ -168,7 +171,9 @@ export default class Template extends Component {
     const { prePost: pre } = data;
     const { siteUrl } = data.site.siteMetadata;
     const fullUrl = `${siteUrl}${post.frontmatter.path}`;
-    const { collapse, transparent } = this.state;
+    const { categoryWidth = minWidth } = window.localStorage;
+    const isMobile = window.innerWidth <= 768;
+    const { collapse, transparent, width = isMobile ? window.innerWidth : +categoryWidth } = this.state;
     return (
       <div>
         <ArticleSchema
@@ -295,20 +300,55 @@ export default class Template extends Component {
               </section>
             </article>
           </div>
-          <div className={cx({ headings: true, fixed: !transparent })}>
-            <div className='index-title'>目录</div>
-            <div
-              ref={(el) => (this.$category = el)}
-              className={cx('index-list', {
-                catalog:
-                  post.frontmatter.catalog_number !== undefined && post.frontmatter.catalog_number !== null
-                    ? post.frontmatter.catalog_number
-                    : true
-              })}
-              dangerouslySetInnerHTML={{ __html: post.tableOfContents }}
-            />
+          <div
+            className={cx({ headings: true, fixed: !transparent })}
+            style={{
+              width,
+              left: collapse ? 0 : `-${width + 70}px`
+            }}
+          >
+            <Resizable
+              enable={{
+                bottom: false,
+                right: true
+              }}
+              size={{
+                width
+              }}
+              minWidth={isMobile ? 'auto' : minWidth}
+              maxWidth={isMobile ? 'auto' : Math.max(window.innerWidth - 200, 0)}
+              onResizeStop={(e, direction, ref, d) => {
+                const calcWidth = width + d.width;
+                this.setState({
+                  width: calcWidth
+                });
+                window.localStorage.setItem('categoryWidth', calcWidth);
+              }}
+              className='index-resizable'
+            >
+              <div className='index-container'>
+                <div className='index-title'>目录</div>
+                <div
+                  ref={(el) => (this.$category = el)}
+                  className={cx('index-list', {
+                    catalog:
+                      post.frontmatter.catalog_number !== undefined && post.frontmatter.catalog_number !== null
+                        ? post.frontmatter.catalog_number
+                        : true
+                  })}
+                  dangerouslySetInnerHTML={{ __html: post.tableOfContents }}
+                />
+              </div>
+            </Resizable>
           </div>
-          <div className={cx({ 'collapse-icon': true, show: !transparent })} onClick={this.handleToggleCollapse}>
+          <div
+            className={cx({ 'collapse-icon': true })}
+            onClick={this.handleToggleCollapse}
+            style={{
+              // 透明时代表隐藏此组件，展开收起是另一种状态
+              left: transparent ? -100 : collapse ? (isMobile ? width - 70 : width + 25) : 25
+            }}
+          >
             <Icon type={collapse ? 'cross' : 'text-document'} style={{ fontSize: '24px' }} />
           </div>
         </main>
