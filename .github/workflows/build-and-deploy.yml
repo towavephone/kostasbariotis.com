@@ -22,31 +22,31 @@ jobs:
     # 切代码
     - name: Checkout
       uses: actions/checkout@v2
-    # # 得到 yarn 缓存位置
-    # - name: Get yarn cache directory path
-    #   id: yarn-cache-dir-path
-    #   run: echo "::set-output name=dir::$(yarn cache dir)"
-    # # 缓存 yarn
-    # - name: Cache yarn cache
-    #   uses: actions/cache@v2
-    #   id: cache-yarn-cache
-    #   with:
-    #     path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
-    #     key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
-    #     restore-keys: |
-    #       ${{ runner.os }}-yarn-
-    # # 缓存操作
-    # - name: Cache node modules
-    #   id: cache-node-modules # use this to check for `cache-hit` (`steps.yarn-cache.outputs.cache-hit != 'true'`)
-    #   uses: actions/cache@v2
-    #   with:
-    #     # npm cache files are stored in `~/.npm` on Linux/macOS
-    #     path: |
-    #       node_modules
-    #       .cache
-    #     key: ${{ runner.os }}-nodemodules-${{ hashFiles('**/yarn.lock') }}
-    #     restore-keys: |
-    #       ${{ runner.os }}-nodemodules-
+    # 打印 yarn 缓存位置
+    - name: Yarn cache directory
+      id: yarn-cache-dir
+      run: echo "::set-output name=dir::$(yarn cache dir)"
+    # 缓存 yarn
+    - name: Yarn cache
+      uses: actions/cache@v2
+      id: yarn-cache
+      with:
+        path: ${{ steps.yarn-cache-dir.outputs.dir }}
+        key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+        restore-keys: |
+          ${{ runner.os }}-yarn-
+    # 缓存项目
+    - name: Caching Gatsby
+      id: gatsby-cache-build
+      uses: actions/cache@v2
+      with:
+        path: |
+          public
+          .cache
+          node_modules
+        key: ${{ runner.os }}-gatsby-site-build-${{ github.run_id }}
+        restore-keys: |
+          ${{ runner.os }}-gatsby-site-build-
     # 构建部署代码
     - name: Build and Deploy to GitHub Pages
       uses: JamesIves/github-pages-deploy-action@releases/v2
@@ -59,10 +59,11 @@ jobs:
         BRANCH: gh-pages
         FOLDER: public
         NODE_OPTIONS: --max_old_space_size=4096
-        BUILD_SCRIPT: yarn && yarn build
+        # 不生成 lockfile
+        BUILD_SCRIPT: yarn --pure-lockfile && yarn build
     # 上传压缩包
-    - name: Archive production artifacts
-      uses: actions/upload-artifact@v1
-      with:
-        name: public
-        path: public
+    # - name: Archive production artifacts
+    #   uses: actions/upload-artifact@v1
+    #   with:
+    #     name: public
+    #     path: public
