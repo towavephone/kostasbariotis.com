@@ -15,7 +15,7 @@
   },
   "scripts": {
     "start": "yarn dev",
-    "build": "gatsby build --prefix-paths",
+    "build": "cross-env NODE_OPTIONS=--max-old-space-size=4048 gatsby build --prefix-paths",
     "deploy:github": "gh-pages -d public -r git@github.com:towavephone/towavephone.github.io.git -b master",
     "deploy:coding": "gh-pages -d public -r git@git.coding.net:towavephone/towavephone.coding.me.git -b master",
     "deploy:gitee": "gh-pages -d public -r git@gitee.com:towavephone/towavephone.github.io.git -b master",

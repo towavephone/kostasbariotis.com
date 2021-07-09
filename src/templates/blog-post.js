@@ -171,9 +171,10 @@ export default class Template extends Component {
     const { prePost: pre } = data;
     const { siteUrl } = data.site.siteMetadata;
     const fullUrl = `${siteUrl}${post.frontmatter.path}`;
-    const { categoryWidth = minWidth } = window.localStorage;
-    const isMobile = window.innerWidth <= 768;
-    const { collapse, transparent, width = isMobile ? window.innerWidth : +categoryWidth } = this.state;
+    const windowGlobal = typeof window !== 'undefined' ? window : {}
+    const { categoryWidth = minWidth } = windowGlobal
+    const isMobile = windowGlobal.innerWidth <= 768;
+    const { collapse, transparent, width = isMobile ? windowGlobal.innerWidth : +categoryWidth } = this.state;
     return (
       <div>
         <ArticleSchema
@@ -316,13 +317,13 @@ export default class Template extends Component {
                 width
               }}
               minWidth={isMobile ? 'auto' : minWidth}
-              maxWidth={isMobile ? 'auto' : Math.max(window.innerWidth - 200, 0)}
+              maxWidth={isMobile ? 'auto' : Math.max(windowGlobal.innerWidth - 200, 0)}
               onResizeStop={(e, direction, ref, d) => {
                 const calcWidth = width + d.width;
                 this.setState({
                   width: calcWidth
                 });
-                window.localStorage.setItem('categoryWidth', calcWidth);
+                windowGlobal.localStorage && windowGlobal.localStorage.setItem('categoryWidth', calcWidth);
               }}
               className='index-resizable'
             >
