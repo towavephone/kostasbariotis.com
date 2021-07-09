@@ -60,7 +60,7 @@ jobs:
         FOLDER: public
         NODE_OPTIONS: --max_old_space_size=4096
         # 不生成 lockfile
-        BUILD_SCRIPT: yarn --pure-lockfile && yarn build
+        BUILD_SCRIPT: yarn install --prefer-offline --frozen-lockfile && yarn build
     # 上传压缩包
     # - name: Archive production artifacts
     #   uses: actions/upload-artifact@v1
