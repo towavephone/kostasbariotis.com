@@ -358,7 +358,9 @@
   &.collapse-catalog {
     .post {
       @media (min-width: 768px) {
-        transform: translate(200px, 0);
+        position: absolute;
+        right: 0;
+        margin: 0;
       }
     }
     .headings {

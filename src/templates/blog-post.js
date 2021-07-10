@@ -17,7 +17,8 @@ import Separator from '../components/Separator';
 import MetaTags from '../components/MetaTags';
 import Icon from '../components/Icon';
 
-const minWidth = 350;
+const windowGlobal = typeof window !== 'undefined' ? window : {};
+const minWidth = 200;
 
 export default class Template extends Component {
   constructor(props) {
@@ -25,7 +26,7 @@ export default class Template extends Component {
     this.isProduction = process.env.NODE_ENV === 'production';
     this.state = {
       collapse: false,
-      collapseFirst: true,
+      initWidth: 350,
       transparent: true,
       anchors: []
     };
@@ -53,15 +54,26 @@ export default class Template extends Component {
     // 监听滚动事件
     events.on(window.document, 'scroll', this._handleScroll);
     events.on(window, 'hashchange', this.handleHashChange);
+    events.on(window, 'resize', () => this.dealWithCategory(this._handleScroll));
     const hash = decodeURIComponent(window.location.hash);
     if (hash) this.props.scrollTo(hash);
+    this.dealWithCategory(this._handleScroll);
+    this.handleSetInitWidth();
   }
   componentWillUnmount() {
     events.off(window.document, 'scroll', this._handleScroll);
     events.off(window, 'hashchange', this.handleHashChange);
+    events.off(window, 'resize', () => this.dealWithCategory(this._handleScroll));
 
     this.props.enableHideHeader(true);
   }
+  // 计算出侧边栏的宽度
+  handleSetInitWidth = () => {
+    const postWidth = document.querySelector('.post').offsetWidth;
+    this.setState({
+      initWidth: window.innerWidth - postWidth
+    });
+  };
   handleHashChange = () => {
     const hash = decodeURIComponent(window.location.hash);
 
@@ -111,7 +123,7 @@ export default class Template extends Component {
     }
   };
   // 处理目录，获取一些数据信息
-  dealWithCategory(cb) {
+  dealWithCategory = (cb) => {
     const scrollTop = domQuery.scrollTop(window);
     const anchorList = this.$category.querySelectorAll('a');
     const anchors = [];
@@ -146,7 +158,7 @@ export default class Template extends Component {
     }
 
     this.setState({ anchors }, cb);
-  }
+  };
   // 切换侧边栏
   handleToggleCollapse = () => {
     if (!this.state.collapse) {
@@ -154,15 +166,18 @@ export default class Template extends Component {
     } else {
       this.props.enableHideHeader(true);
     }
-
-    if (this.state.collapseFirst) {
-      this.dealWithCategory(this._handleScroll);
-    }
-
-    this.setState({
-      collapse: !this.state.collapse,
-      collapseFirst: false
-    });
+    this.setState(
+      {
+        collapse: !this.state.collapse
+      },
+      () => {
+        // 每开启一次侧边栏就要更新一次具体的位置信息
+        if (this.state.collapse) {
+          this.dealWithCategory();
+          // TODO 开启侧边栏前后需要保持滚动位置
+        }
+      }
+    );
   };
   render() {
     const { data } = this.props;
@@ -171,8 +186,7 @@ export default class Template extends Component {
     const { prePost: pre } = data;
     const { siteUrl } = data.site.siteMetadata;
     const fullUrl = `${siteUrl}${post.frontmatter.path}`;
-    const windowGlobal = typeof window !== 'undefined' ? window : {}
-    const { categoryWidth = minWidth } = windowGlobal.localStorage || {}
+    const { categoryWidth = this.state.initWidth } = windowGlobal.localStorage || {};
     const isMobile = windowGlobal.innerWidth <= 768;
     const { collapse, transparent, width = isMobile ? windowGlobal.innerWidth : +categoryWidth } = this.state;
     return (
@@ -198,7 +212,17 @@ export default class Template extends Component {
           })}
           role='main'
         >
-          <div className='medium-10 medium-offset-1 large-10 large-offset-1 post'>
+          <div
+            className='medium-10 medium-offset-1 large-10 large-offset-1 post'
+            style={
+              collapse && !isMobile
+                ? {
+                    left: width,
+                    width: `calc(100% - ${width}px)`
+                  }
+                : null
+            }
+          >
             <header className='post-head'>
               <h1 className='post-title'>{post.frontmatter.title}</h1>
             </header>
@@ -319,9 +343,14 @@ export default class Template extends Component {
               minWidth={isMobile ? 'auto' : minWidth}
               onResizeStop={(e, direction, ref, d) => {
                 const calcWidth = width + d.width;
-                this.setState({
-                  width: calcWidth
-                });
+                this.setState(
+                  {
+                    width: calcWidth
+                  },
+                  () => {
+                    this.dealWithCategory(this._handleScroll);
+                  }
+                );
                 windowGlobal.localStorage && windowGlobal.localStorage.setItem('categoryWidth', calcWidth);
               }}
               className='index-resizable'
