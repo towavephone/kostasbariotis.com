@@ -19,6 +19,7 @@ import Icon from '../components/Icon';
 
 const windowGlobal = typeof window !== 'undefined' ? window : {};
 const minWidth = 200;
+const initWidth = 350;
 
 export default class Template extends Component {
   constructor(props) {
@@ -26,11 +27,12 @@ export default class Template extends Component {
     this.isProduction = process.env.NODE_ENV === 'production';
     this.state = {
       collapse: false,
-      initWidth: 350,
       transparent: true,
       anchors: []
     };
     this._handleScroll = throttle(this.handleScroll, 200);
+    this.targetEle = null;
+    this.topPOffset = null;
   }
 
   componentDidMount() {
@@ -52,32 +54,55 @@ export default class Template extends Component {
       gitalk.render('gitalk-container');
     }
     // 监听滚动事件
-    events.on(window.document, 'scroll', this._handleScroll);
+    events.on(window, 'scroll', this._handleScroll);
+    events.on(window, 'scroll', this.handleSaveScrollTop);
     events.on(window, 'hashchange', this.handleHashChange);
     events.on(window, 'resize', () => this.dealWithCategory(this._handleScroll));
     const hash = decodeURIComponent(window.location.hash);
     if (hash) this.props.scrollTo(hash);
     this.dealWithCategory(this._handleScroll);
-    this.handleSetInitWidth();
   }
   componentWillUnmount() {
-    events.off(window.document, 'scroll', this._handleScroll);
+    events.off(window, 'scroll', this._handleScroll);
+    events.off(window, 'scroll', this.handleSaveScrollTop);
     events.off(window, 'hashchange', this.handleHashChange);
     events.off(window, 'resize', () => this.dealWithCategory(this._handleScroll));
 
     this.props.enableHideHeader(true);
   }
-  // 计算出侧边栏的宽度
-  handleSetInitWidth = () => {
-    const postWidth = document.querySelector('.post').offsetWidth;
-    this.setState({
-      initWidth: window.innerWidth - postWidth
-    });
-  };
   handleHashChange = () => {
     const hash = decodeURIComponent(window.location.hash);
 
     if (hash) this.props.scrollTo(hash);
+  };
+  handleSaveScrollTop = () => {
+    const eleBox = document.documentElement || document.body;
+    const bounce = eleBox.getBoundingClientRect();
+    const pointX = bounce.left + eleBox.clientWidth / 2;
+    // 因为有 hash 标题定位的原因这里需要间隔 54px 去提前识别标题
+    const pointY = -bounce.top + 54 - window.pageYOffset;
+
+    this.targetEle = document.elementFromPoint(pointX, pointY);
+
+    if (this.targetEle == eleBox) {
+      this.topPOffset = false;
+      return;
+    }
+
+    this.topPOffset = Math.round(this.targetEle.getBoundingClientRect().top - bounce.top);
+  };
+  handleRestoreScrollTop = () => {
+    const eleBox = document.documentElement || document.body;
+    if (this.topPOffset === false) {
+      return;
+    }
+
+    const scrollTop = eleBox.scrollTop;
+    // 之前最靠近边缘元素当前的偏移等
+    const currentTopPOffset =
+      Math.round(eleBox.getBoundingClientRect().top) - Math.round(this.targetEle.getBoundingClientRect().top);
+    // 滚动修正
+    eleBox.scrollTop = scrollTop - currentTopPOffset - this.topPOffset;
   };
   // 滚动事件
   handleScroll = (e) => {
@@ -171,6 +196,8 @@ export default class Template extends Component {
         collapse: !this.state.collapse
       },
       () => {
+        this.handleRestoreScrollTop();
+        this.handleSaveScrollTop();
         // 每开启一次侧边栏就要更新一次具体的位置信息
         if (this.state.collapse) {
           this.dealWithCategory();
@@ -186,7 +213,7 @@ export default class Template extends Component {
     const { prePost: pre } = data;
     const { siteUrl } = data.site.siteMetadata;
     const fullUrl = `${siteUrl}${post.frontmatter.path}`;
-    const { categoryWidth = this.state.initWidth } = windowGlobal.localStorage || {};
+    const { categoryWidth = initWidth } = windowGlobal.localStorage || {};
     const isMobile = windowGlobal.innerWidth <= 768;
     const { collapse, transparent, width = isMobile ? windowGlobal.innerWidth : +categoryWidth } = this.state;
     return (

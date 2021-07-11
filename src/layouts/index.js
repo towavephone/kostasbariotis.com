@@ -57,15 +57,15 @@ export default class IndexLayout extends Component {
     this.lastScrollTop = scrollTop;
 
     if (scrollTop >= contentToTop) {
-      if (scrollDirection && scrollDistance >= 20 && this.state.showHeader) {
-        // 向下滚动，隐藏 header
-        state.showHeader = false;
-      }
+      // if (scrollDirection && scrollDistance >= 20 && this.state.showHeader) {
+      //   // 向下滚动，隐藏 header
+      //   state.showHeader = false;
+      // }
 
-      if (!scrollDirection && scrollDistance >= 20 && !this.state.showHeader) {
-        // 向上滚动，显示 header
-        state.showHeader = true;
-      }
+      // if (!scrollDirection && scrollDistance >= 20 && !this.state.showHeader) {
+      //   // 向上滚动，显示 header
+      //   state.showHeader = true;
+      // }
 
       if (transparent) {
         state.transparent = false;
@@ -120,7 +120,8 @@ export default class IndexLayout extends Component {
 
   enableHideHeader = (enable) => {
     this.setState({
-      enableHideHeader: enable
+      enableHideHeader: enable,
+      showHeader: false
     });
   };
 
