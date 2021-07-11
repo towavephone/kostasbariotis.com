@@ -201,7 +201,6 @@ export default class Template extends Component {
         // 每开启一次侧边栏就要更新一次具体的位置信息
         if (this.state.collapse) {
           this.dealWithCategory();
-          // TODO 开启侧边栏前后需要保持滚动位置
         }
       }
     );
