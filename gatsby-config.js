@@ -126,7 +126,7 @@ module.exports = {
           {
             resolve: `gatsby-remark-code-buttons-towavephone`,
             options: {
-              tooltipText: '复制',
+              buttonText: '复制代码',
               toasterText: '复制成功'
             }
           },

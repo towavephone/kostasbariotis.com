@@ -5494,10 +5494,10 @@ gatsby-remark-autolink-headers@^1.4.18:
     mdast-util-to-string "^1.0.2"
     unist-util-visit "^1.1.1"
 
-gatsby-remark-code-buttons-towavephone@^2.0.7:
-  version "2.0.7"
-  resolved "https://registry.nlark.com/gatsby-remark-code-buttons-towavephone/download/gatsby-remark-code-buttons-towavephone-2.0.7.tgz#c2e3b01569314c46f63e355c435ab43e5ac53371"
-  integrity sha1-wuOwFWkxTEb2PjVcQ1q0PlrFM3E=
+gatsby-remark-code-buttons-towavephone@^2.0.8:
+  version "2.0.8"
+  resolved "https://registry.nlark.com/gatsby-remark-code-buttons-towavephone/download/gatsby-remark-code-buttons-towavephone-2.0.8.tgz#ab92db3393fea038be1eb5b2eb3d24f64b51a39c"
+  integrity sha1-q5LbM5P+oDi+HrWy6z0k9ktRo5w=
   dependencies:
     query-string "6.14.1"
     unist-util-visit "2.0.3"

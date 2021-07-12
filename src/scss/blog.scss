@@ -417,15 +417,7 @@ code[class*='language-'] {
 }
 
 .gatsby-code-button-container {
-  top: 0;
-  left: 0;
   z-index: 1;
-}
-
-.gatsby-code-button {
-  position: absolute;
-  top: 16px;
-  right: 14px;
 }
 
 .gatsby-highlight pre[class*="language-"].line-numbers {
@@ -437,8 +429,12 @@ code[class*='language-'] {
   text-align: center;
 }
 
+pre[class*="language-"] {
+  padding: 1.4em 0.8em;
+}
+
 .line-numbers .line-numbers-rows {
-  margin: 1em 0;
+  margin: 1.4em 0;
   border-right: none;
 }
 
