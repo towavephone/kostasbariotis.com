@@ -357,6 +357,7 @@
 
   &.collapse-catalog {
     .post {
+      padding: 0 24px;
       @media (min-width: 768px) {
         position: absolute;
         right: 0;
