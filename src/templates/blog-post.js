@@ -20,6 +20,7 @@ import Icon from '../components/Icon';
 const windowGlobal = typeof window !== 'undefined' ? window : {};
 const minWidth = 200;
 const initWidth = 350;
+const isMobile = windowGlobal.innerWidth <= 768;
 
 export default class Template extends Component {
   constructor(props) {
@@ -76,6 +77,9 @@ export default class Template extends Component {
     if (hash) this.props.scrollTo(hash);
   };
   handleSaveScrollTop = () => {
+    if (isMobile) {
+      return
+    }
     const eleBox = document.documentElement || document.body;
     const bounce = eleBox.getBoundingClientRect();
     const pointX = bounce.left + eleBox.clientWidth / 2;
@@ -92,6 +96,9 @@ export default class Template extends Component {
     this.topPOffset = Math.round(this.targetEle.getBoundingClientRect().top - bounce.top);
   };
   handleRestoreScrollTop = () => {
+    if (isMobile) {
+      return
+    }
     const eleBox = document.documentElement || document.body;
     if (this.topPOffset === false) {
       return;
@@ -213,7 +220,6 @@ export default class Template extends Component {
     const { siteUrl } = data.site.siteMetadata;
     const fullUrl = `${siteUrl}${post.frontmatter.path}`;
     const { categoryWidth = initWidth } = windowGlobal.localStorage || {};
-    const isMobile = windowGlobal.innerWidth <= 768;
     const { collapse, transparent, width = isMobile ? windowGlobal.innerWidth : +categoryWidth } = this.state;
     return (
       <div>
