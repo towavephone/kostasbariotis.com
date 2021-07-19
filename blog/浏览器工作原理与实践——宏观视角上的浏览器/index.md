@@ -3,7 +3,7 @@ title: 浏览器工作原理与实践——宏观视角上的浏览器
 date: 2021-7-1 14:44:27
 categories:
   - 前端
-tags: 前端, JS, 高级前端
+tags: 前端, 浏览器, 高级前端
 path: /browser-working-principle-macro-view/
 ---
 
