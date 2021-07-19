@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+        body {
+            background-color: white;
+        }
+
+        .reset {
+            padding-left: 20px;
+            counter-reset: wangxiaoer;
+        }
+
+        .counter:before {
+            content: counters(wangxiaoer, '-') '. ';
+            counter-increment: wangxiaoer;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="reset">
+        <div class="counter">我是王小二
+            <div class="reset">
+                <div class="counter">我是王小二的大儿子</div>
+                <div class="counter">我是王小二的二儿子
+                    <div class="reset">
+                        <div class="counter">我是王小二的二儿子的大孙子</div>
+                        <div class="counter">我是王小二的二儿子的二孙子</div>
+                        <div class="counter">我是王小二的二儿子的小孙子</div>
+                    </div>
+                </div>
+                <div class="counter">我是王小二的三儿子</div>
+            </div>
+        </div>
+        <div class="counter">我是王小三</div>
+        <div class="counter">我是王小四
+            <div class="reset">
+                <div class="counter">我是王小四的大儿子</div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

@@ -1,0 +1,9 @@
+<body 
+    oninput="i.srcdoc=h.value+'<style>'+c.value+'</style><script>'+j.value+'</script>'" 
+    onload="i.srcdoc=getQueryString('html')+'<style>'+getQueryString('css')+'</style><script>'+getQueryString('js')+'</script>';h.value=getQueryString('html');c.value=getQueryString('css');j.value=getQueryString('js')"><script>function getQueryString(name) {
+    var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)", "i");
+    var r = window.location.search.substr(1).match(reg);
+    if (r != null) return unescape(r[2]);
+    return null;
+}
+</script><style>textarea,iframe{box-sizing: border-box;width:100%;height:50%;background: #fff}body{margin:0}textarea{width:33.33%;font-size:18}</style><textarea placeholder=HTML id=h></textarea><textarea placeholder=CSS id=c></textarea><textarea placeholder=JS id=j></textarea><iframe id=i></iframe>

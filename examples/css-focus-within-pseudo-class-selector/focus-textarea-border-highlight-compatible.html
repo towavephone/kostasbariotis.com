@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+  <style>
+    html,
+    body {
+      background-color: white;
+      margin: 0;
+    }
+
+    .textarea-x {
+      max-width: 300px;
+      padding: 1px 1px 24px 0;
+      border-radius: 4px;
+      -ms-box-sizing: border-box;
+      box-sizing: border-box;
+      overflow: hidden;
+      position: relative;
+      z-index: 0;
+    }
+
+    .textarea-count {
+      position: absolute;
+      font-size: 12px;
+      line-height: 16px;
+      bottom: 5px; right: 10px;
+      color: #999;
+    }
+
+    .textarea-x > textarea {
+      display: block;
+      width: 100%;
+      padding: 7px 9px;
+      border: 0;
+      background: none;
+      -ms-box-sizing: border-box;
+      box-sizing: border-box;
+      outline: 0;
+      resize: none;
+      position: relative;
+    }
+
+    .textarea-x > .textarea {
+      position: absolute;
+      border: 1px solid #d0d0d5;
+      border-radius: 4px;
+      background-color: #fff;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      transition: border-color .2s;
+      z-index: -1;
+    }
+
+    .textarea-x > :focus + .textarea {
+      border-color: #00a5e0;
+    }
+  </style>
+</head>
+<body>
+  <div class="textarea-x">
+    <textarea id="forFocus" maxlength="250" rows="5"></textarea>
+    <div class="textarea"></div>
+    <label for="forFocus" class="textarea-count">0/250</label>
+  </div>
+</body>
+</html>

@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Document</title>
+    <style>
+      html,
+      body {
+        background-color: white;
+        margin: 0;
+      }
+
+      .log-output {
+        width: 100%;
+        box-sizing: border-box;
+        height: 12.7rem;
+        font: inherit;
+        line-height: 1.5;
+      }
+    </style>
+  </head>
+  <body>
+    <button class="btn clear-log-1">清空日志</button>
+    <button class="btn test-1">运行</button>
+    <textarea class="log-output log-output-1" readonly></textarea>
+    <script>
+      function log1(str) {
+        var logEl = document.querySelector(".log-output-1");
+        logEl.value += (logEl.value ? "\n" : "") + str;
+      }
+
+      document
+        .querySelector(".clear-log-1")
+        .addEventListener("click", function() {
+          document.querySelector(".log-output-1").value = "";
+        });
+
+      document.querySelector(".test-1").addEventListener("click", function() {
+        log1("script start");
+
+        setTimeout(function() {
+          log1("setTimeout");
+        }, 0);
+
+        Promise.resolve()
+          .then(function() {
+            log1("promise1");
+          })
+          .then(function() {
+            log1("promise2");
+          });
+
+        log1("script end");
+      });
+    </script>
+  </body>
+</html>

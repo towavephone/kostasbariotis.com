@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>clearfix</title>
+    <style>
+        body {
+            background-color: white
+        }
+
+        .box {
+            padding: 10px;
+            background-color: #cd0000;
+        }
+
+        .box>img {
+            float: left;
+        }
+
+        .clear:after {
+            content: "";
+            display: list-item;
+            clear: both;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="box clear">
+        <img src="../images/favicon.jpg">
+    </div>
+</body>
+
+</html>

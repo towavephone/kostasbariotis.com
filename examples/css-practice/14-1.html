@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+  <style>
+    html,
+    body {
+      background-color: white;
+      margin: 0;
+      height: 100%;
+    }
+
+    .nav {
+      font-size: 16px;
+      line-height: 1;
+    }
+
+    .menu {
+      list-style: none;
+      counter-reset: count;
+    }
+
+    .item {
+      display: inline-block;
+      padding: 1em;
+      position: relative;
+      color: rgb(64, 183, 239);
+      border-color: rgb(237, 249, 255);
+      background: rgb(237, 249, 255);
+      cursor: pointer;
+    }
+
+    .item + .item {
+      margin-left: 1.5em;
+    }
+
+    .item:first-child {
+      padding-left: 2em;
+    }
+
+    .item a::before {
+      content: counter(count) "-";
+      counter-increment: count;
+    }
+
+    a {
+      text-decoration: none;
+    }
+
+    a:visited {
+      color: currentColor;
+    }
+
+    .active {
+      background: rgb(0, 159, 233);
+      color: #fff;
+      border-color: rgb(0, 159, 233);
+    }
+
+    .active ~ .item {
+      background: rgb(235, 237, 240);
+      color: rgb(183, 184, 185);
+      border-color: rgb(235, 237, 240);
+    }
+
+    .item:not(:first-child)::before {
+      content: '';
+      position: absolute;
+      right: 100%;
+      bottom: 0;
+      border: 1.5em solid;
+      border-color: inherit;
+      border-right: none;
+      border-left: 1em solid transparent;
+    }
+
+    .item:after {
+      content: '';
+      position: absolute;
+      left: 100%;
+      bottom: 0;
+      border: 1.5em solid transparent;
+      border-left: 1em solid;
+      border-left-color: inherit;
+    }
+  </style>
+</head>
+
+<body>
+  <nav class="nav">
+    <ol class="menu">
+      <li class="item">
+        <a href="">
+          规则说明
+        </a>
+      </li>
+      <li class="item">
+        <a href="">
+          参与活动
+        </a>
+      </li>
+      <li class="item active">
+        <a href="">
+          参与抽奖
+        </a>
+      </li>
+      <li class="item">
+        <a href="">
+          奖品发放
+        </a>
+      </li>
+      <li class="item">
+        <a href="">
+          查看结果
+        </a>
+      </li>
+    </ol>
+  </nav>
+</body>
+
+</html>

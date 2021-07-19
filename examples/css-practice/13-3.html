@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+  <style>
+    html,
+    body {
+      background-color: white;
+      margin: 0;
+      height: 100%;
+    }
+
+    .icon-container {
+      padding: 0;
+      font-size: 0;
+    }
+
+    .icon-group {
+      display: inline-block;
+      margin-left: 10px;
+      list-style-type: none;
+    }
+
+    .icon-group a {
+      display: inline-block;
+      line-height: 26px;
+      font-size: 12px;
+      font-weight: bold;
+      text-decoration: none;
+      color: #24292e;
+    }
+
+    .icon-description {
+      padding: 0 10px 0 30px;
+      border: 1px solid rgba(27, 31, 35, .2);
+      border-radius: 3px 0 0 3px;
+      background-image: linear-gradient(to bottom,#fafbfc,#eff3f6);
+    }
+
+    .icon-description:hover {
+      border-color: rgba(27, 31, 35, .35);
+      background-image: linear-gradient(to bottom,#f0f3f6,#e6ebf1 90%);
+    }
+
+    .icon-number {
+      padding: 0 10px;
+      border: 1px solid rgba(27, 31, 35, .2);
+      border-left: 0;
+      border-radius: 0 3px 3px 0px;
+    }
+
+    .icon-number:hover {
+      color: #0366d6;
+    }
+
+    .icon-description::before {
+      content: '';
+      position: absolute;
+      width: 16px;
+      height: 16px;
+      margin: 5px 0 0 -20px;
+    }
+
+    .icon-description[icon-watch]::before {
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 16 16' width='16' height='16' xmlns='http://www.w3.org/2000/svg' fill='%2324292e' aria-hidden='true'%3E%3Cpath fill-rule='evenodd' d='M8.06 2C3 2 0 8 0 8s3 6 8.06 6C13 14 16 8 16 8s-3-6-7.94-6zM8 12c-2.2 0-4-1.78-4-4 0-2.2 1.8-4 4-4 2.22 0 4 1.8 4 4 0 2.22-1.78 4-4 4zm2-4c0 1.11-.89 2-2 2-1.11 0-2-.89-2-2 0-1.11.89-2 2-2 1.11 0 2 .89 2 2z'/%3E%3C/svg%3E");
+    }
+
+    .icon-description[icon-star]::before {
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 16 16' width='16' height='16' xmlns='http://www.w3.org/2000/svg' fill='%2324292e' aria-hidden='true'%3E%3Cpath fill-rule='evenodd' d='M14 6l-4.9-.64L7 1 4.9 5.36 0 6l3.6 3.26L2.67 14 7 11.67 11.33 14l-.93-4.74L14 6z'/%3E%3C/svg%3E");
+    }
+
+    .icon-description[icon-fork]::before {
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 16 16' width='16' height='16' xmlns='http://www.w3.org/2000/svg' fill='%2324292e' aria-hidden='true'%3E%3Cpath fill-rule='evenodd' d='M8 1a1.993 1.993 0 00-1 3.72V6L5 8 3 6V4.72A1.993 1.993 0 002 1a1.993 1.993 0 00-1 3.72V6.5l3 3v1.78A1.993 1.993 0 005 15a1.993 1.993 0 001-3.72V9.5l3-3V4.72A1.993 1.993 0 008 1zM2 4.2C1.34 4.2.8 3.65.8 3c0-.65.55-1.2 1.2-1.2.65 0 1.2.55 1.2 1.2 0 .65-.55 1.2-1.2 1.2zm3 10c-.66 0-1.2-.55-1.2-1.2 0-.65.55-1.2 1.2-1.2.65 0 1.2.55 1.2 1.2 0 .65-.55 1.2-1.2 1.2zm3-10c-.66 0-1.2-.55-1.2-1.2 0-.65.55-1.2 1.2-1.2.65 0 1.2.55 1.2 1.2 0 .65-.55 1.2-1.2 1.2z'%3E%3C/path%3E%3C/svg%3E")
+    }
+  </style>
+</head>
+
+<body>
+  <ul class="icon-container">
+    <li class="icon-group">
+      <a class="icon-description" href="javascript:void;" role="button" icon-watch>
+        Unwatch
+      </a>
+      <a class="icon-number" href="javascript:void;" role="button" aria-label="63 users are watching this repository">63</a>
+    </li>
+    <li class="icon-group">
+      <a class="icon-description" href="javascript:void;" role="button" icon-star>
+        Star
+      </a>
+      <a class="icon-number" href="javascript:void;" role="button" aria-label="445 users starred this repository">445</a>
+    </li>
+    <li class="icon-group">
+      <a class="icon-description" href="javascript:void;" role="button" icon-fork>
+        Fork
+      </a>
+      <a class="icon-number" href="javascript:void;" role="button" aria-label="25 users forked this repository">25</a>
+    </li>
+  </ul>
+</body>
+
+</html>

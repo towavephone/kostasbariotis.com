@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+        body {
+            background-color: white;
+        }
+
+        .center {
+            /* position: absolute;
+            left: 50%;
+            transform: translateX(-50%); */
+            /* position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: fit-content;
+            width: fit-content;
+            margin: auto; */
+            /* display: table;
+            margin: 0 auto; */
+            text-align: center;
+        }
+
+        img {
+            display: inline-block;
+            width: 100px;
+            height: 150px;
+            /* 隐藏Firefox alt文字 */
+            color: transparent;
+            position: relative;
+            overflow: hidden;
+        }
+
+        img:not([src]) {
+            /* 隐藏Chrome alt文字以及银色边框 */
+            visibility: hidden;
+        }
+
+        img::before {
+            /* 淡蓝色占位背景 */
+            content: "";
+            position: absolute;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #c8d5f0;
+            visibility: visible;
+        }
+
+        img::after {
+            /* 黑色alt信息条 */
+            content: attr(alt);
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            width: 100%;
+            line-height: 30px;
+            background-color: rgba(0, 0, 0, .5);
+            color: white;
+            font-size: 14px;
+            transform: translateY(100%);
+            /* 来点过渡动画效果 */
+            transition: transform .2s;
+            visibility: visible;
+        }
+
+        img:hover::after {
+            transform: translateY(0);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="center">
+        <img alt="博客头像" data-src="../images/avatar.png">
+        <p>
+            <button>设置src属性显示图片</button>
+        </p>
+    </div>
+    <script>
+        var eleButton = document.querySelector('button'),
+            eleImg = document.querySelector('img');
+
+        if (eleButton && eleImg) {
+            var initValueButton = eleButton.innerHTML;
+            // 图片地址
+            var srcImage = eleImg.getAttribute('data-src');
+            // 移除该属性
+            eleImg.removeAttribute('data-src');
+            // 按钮点击事件
+            eleButton.addEventListener('click', function () {
+                if (this.innerHTML == initValueButton) {
+                    this.innerHTML = '移除src属性';
+                    // 图片显示
+                    eleImg.setAttribute('src', srcImage);
+                } else {
+                    this.innerHTML = initValueButton;
+                    // src属性移除
+                    eleImg.removeAttribute('src');
+                }
+            });
+        }
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+  <style>
+    html,
+    body {
+      background-color: white;
+      margin: 0;
+    }
+
+    nav {
+      overflow: hidden;
+    }
+
+    a {
+      text-decoration: none;
+      color: currentColor;
+    }
+
+    .server_list {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      /* 遮住顶部、左边的线 */
+      margin: -2px 0 0 -2px;
+      padding: 0;
+      list-style: none;
+      font-size: 24px;
+      background-color: #524840;
+    }
+
+    .server_item {
+      position: relative;
+      flex: 1 1 33%;
+      min-width: 140px;
+      text-align: center;
+      padding: 40px 0;
+      color: #ece5e4;
+    }
+
+    .server_item::before,
+    .server_item::after {
+      content: '';
+      position: absolute;
+      background-color: #8f8a85;
+    }
+
+    .server_item::before {
+      top: 0;
+      right: 12px;
+      left: 12px;
+      height: 2px;
+    }
+
+    .server_item::after {
+      top: 12px;
+      bottom: 12px;
+      left: 0;
+      width: 2px;
+    }
+
+    .server_icon {
+      display: block;
+      width: 50px;
+      height: 50px;
+      background-size: 50px 50px;
+      margin: 0 auto 15px;
+    }
+
+    .server_icon_clock {
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E %3Cpath fill='%23ece5e4' d='M256 8C119 8 8 119 8 256s111 248 248 248 248-111 248-248S393 8 256 8zm0 448c-110.5 0-200-89.5-200-200S145.5 56 256 56s200 89.5 200 200-89.5 200-200 200zm61.8-104.4l-84.9-61.7c-3.1-2.3-4.9-5.9-4.9-9.7V116c0-6.6 5.4-12 12-12h32c6.6 0 12 5.4 12 12v141.7l66.8 48.6c5.4 3.9 6.5 11.4 2.6 16.8L334.6 349c-3.9 5.3-11.4 6.5-16.8 2.6z'%3E%3C/path%3E %3C/svg%3E");
+    }
+
+    .server_icon_enterprise {
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 640 512'%3E %3Cpath fill='%23ece5e4' d='M504 352H136.4c-4.4 0-8 3.6-8 8l-.1 48c0 4.4 3.6 8 8 8H504c4.4 0 8-3.6 8-8v-48c0-4.4-3.6-8-8-8zm0 96H136.1c-4.4 0-8 3.6-8 8l-.1 48c0 4.4 3.6 8 8 8h368c4.4 0 8-3.6 8-8v-48c0-4.4-3.6-8-8-8zm0-192H136.6c-4.4 0-8 3.6-8 8l-.1 48c0 4.4 3.6 8 8 8H504c4.4 0 8-3.6 8-8v-48c0-4.4-3.6-8-8-8zm106.5-139L338.4 3.7a48.15 48.15 0 0 0-36.9 0L29.5 117C11.7 124.5 0 141.9 0 161.3V504c0 4.4 3.6 8 8 8h80c4.4 0 8-3.6 8-8V256c0-17.6 14.6-32 32.6-32h382.8c18 0 32.6 14.4 32.6 32v248c0 4.4 3.6 8 8 8h80c4.4 0 8-3.6 8-8V161.3c0-19.4-11.7-36.8-29.5-44.3z'%3E%3C/path%3E %3C/svg%3E");
+    }
+
+    .server_icon_aisle {
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 496 512'%3E %3Cpath fill='%23ece5e4' d='M248 8.8c-137 0-248 111-248 248s111 248 248 248 248-111 248-248-111-248-248-248zm0 482.8c-129.7 0-234.8-105.1-234.8-234.8S118.3 22 248 22s234.8 105.1 234.8 234.8S377.7 491.6 248 491.6zm155.1-328.5v-46.8H209.3V198H54.2l36.7 46h117.7v196.8h48.8V245h83.3v-47h-83.3v-34.8h145.7zm-73.3 45.1v23.9h-82.9v197.4h-26.8V232.1H96.3l-20.1-23.9h143.9v-80.6h171.8V152h-145v56.2zm-161.3-69l-12.4-20.7 2.1 23.8-23.5 5.4 23.3 5.4-2.1 24 12.3-20.5 22.2 9.5-15.7-18.1 15.8-18.1zm-29.6-19.7l9.3-11.5-12.7 5.9-8-12.4 1.7 13.9-14.3 3.8 13.7 2.7-.8 14.7 6.8-12.2 13.8 5.3zm165.4 145.2l-13.1 5.6-7.3-12.2 1.3 14.2-13.9 3.2 13.9 3.2-1.2 14.2 7.3-12.2 13.1 5.5-9.4-10.7zm106.9-77.2l-20.9 9.1-12-19.6 2.2 22.7-22.3 5.4 22.2 4.9-1.8 22.9 11.5-19.6 21.2 8.8-15.1-17zM248 29.9c-125.3 0-226.9 101.6-226.9 226.9S122.7 483.7 248 483.7s226.9-101.6 226.9-226.9S373.3 29.9 248 29.9zM342.6 196v51h-83.3v195.7h-52.7V245.9H89.9l-40-49.9h157.4v-81.6h197.8v50.7H259.4V196zM248 43.2c60.3 0 114.8 25 153.6 65.2H202.5V190H45.1C73.1 104.8 153.4 43.2 248 43.2zm0 427.1c-117.9 0-213.6-95.6-213.6-213.5 0-21.2 3.1-41.8 8.9-61.1L87.1 252h114.7v196.8h64.6V253h83.3v-62.7h-83.2v-19.2h145.6v-50.8c30.8 37 49.3 84.6 49.3 136.5.1 117.9-95.5 213.5-213.4 213.5zM178.8 275l-11-21.4 1.7 24.5-23.7 3.9 23.8 5.9-3.7 23.8 13-20.9 21.5 10.8-15.8-18.8 16.9-17.1z'%3E%3C/path%3E %3C/svg%3E");
+    }
+
+    .server_icon_fans {
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 384 512'%3E %3Cpath fill='%23ece5e4' d='M320 0H128L0 128v320c0 35.3 28.7 64 64 64h256c35.3 0 64-28.7 64-64V64c0-35.3-28.7-64-64-64zM160 160h-48V64h48v96zm80 0h-48V64h48v96zm80 0h-48V64h48v96z'%3E%3C/path%3E %3C/svg%3E");
+    }
+
+    .server_icon_change {
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 640 512'%3E %3Cpath fill='%23ece5e4' d='M629.657 343.598L528.971 444.284c-9.373 9.372-24.568 9.372-33.941 0L394.343 343.598c-9.373-9.373-9.373-24.569 0-33.941l10.823-10.823c9.562-9.562 25.133-9.34 34.419.492L480 342.118V160H292.451a24.005 24.005 0 0 1-16.971-7.029l-16-16C244.361 121.851 255.069 96 276.451 96H520c13.255 0 24 10.745 24 24v222.118l40.416-42.792c9.285-9.831 24.856-10.054 34.419-.492l10.823 10.823c9.372 9.372 9.372 24.569-.001 33.941zm-265.138 15.431A23.999 23.999 0 0 0 347.548 352H160V169.881l40.416 42.792c9.286 9.831 24.856 10.054 34.419.491l10.822-10.822c9.373-9.373 9.373-24.569 0-33.941L144.971 67.716c-9.373-9.373-24.569-9.373-33.941 0L10.343 168.402c-9.373 9.373-9.373 24.569 0 33.941l10.822 10.822c9.562 9.562 25.133 9.34 34.419-.491L96 169.881V392c0 13.255 10.745 24 24 24h243.549c21.382 0 32.09-25.851 16.971-40.971l-16.001-16z'%3E%3C/path%3E %3C/svg%3E");
+    }
+
+    .server_icon_charge {
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 384 512'%3E %3Cpath fill='%23ece5e4' d='M351.2 32h-65.3c-4.6 0-8.8 2.6-10.8 6.7l-55.4 113.2c-14.5 34.7-27.1 71.9-27.1 71.9h-1.3s-12.6-37.2-27.1-71.9L108.8 38.7c-2-4.1-6.2-6.7-10.8-6.7H32.8c-9.1 0-14.8 9.7-10.6 17.6L102.3 200H44c-6.6 0-12 5.4-12 12v32c0 6.6 5.4 12 12 12h88.2l19.8 37.2V320H44c-6.6 0-12 5.4-12 12v32c0 6.6 5.4 12 12 12h108v92c0 6.6 5.4 12 12 12h56c6.6 0 12-5.4 12-12v-92h108c6.6 0 12-5.4 12-12v-32c0-6.6-5.4-12-12-12H232v-26.8l19.8-37.2H340c6.6 0 12-5.4 12-12v-32c0-6.6-5.4-12-12-12h-58.3l80.1-150.4c4.3-7.9-1.5-17.6-10.6-17.6z'%3E%3C/path%3E %3C/svg%3E");
+    }
+
+    @media (min-width: 560px) {
+      .server_item {
+        flex-basis: 25%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <nav>
+    <ul class="server_list">
+      <li class="server_item">
+        <a href="#" aria-label="商品秒杀">
+          <i class="server_icon server_icon_clock"></i>商品秒杀
+        </a>
+      </li>
+      <li class="server_item">
+        <a href="#" aria-label="企业团购">
+          <i class="server_icon server_icon_enterprise"></i>企业团购
+        </a>
+      </li>
+      <li class="server_item">
+        <a href="#" aria-label="私码通道">
+          <i class="server_icon server_icon_aisle"></i>私码通道
+        </a>
+      </li>
+      <li class="server_item">
+        <a href="#" aria-label="铁粉卡">
+          <i class="server_icon server_icon_fans"></i>铁粉卡
+        </a>
+      </li>
+      <li class="server_item">
+        <a href="#" aria-label="以旧换新">
+          <i class="server_icon server_icon_change"></i>以旧换新
+        </a>
+      </li>
+      <li class="server_item">
+        <a href="#" aria-label="话费充值">
+          <i class="server_icon server_icon_charge"></i>话费充值
+        </a>
+      </li>
+
+    </ul>
+  </nav>
+</body>
+</html>

@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+  <style>
+    html,
+    body {
+      background-color: white;
+      margin: 0;
+      height: 100%;
+    }
+
+    /* zxx: 计数器的使用加分 */
+    .navigation {
+      display: flex;
+      list-style: none;
+      counter-reset: listCounter;
+      font-size: 16px;
+      line-height: 1;
+    }
+
+    a {
+      text-decoration: none;
+    }
+
+    a:visited {
+      color: currentColor;
+    }
+
+    .navigation-item a::before {
+      content: counter(listCounter) "-";
+    }
+
+    .navigation-item {
+      position: relative;
+      counter-increment: listCounter;
+      color: #499fe9;
+      border-color: #edf9fe;
+      background: #edf9fe;
+      padding: 1em;
+      white-space: nowrap;
+      cursor: pointer;
+    }
+
+    .navigation-item:first-child {
+      padding-left: 2.3em;
+    }
+
+    .navigation-item:not(:first-child)::before {
+      border: 1.5em solid;
+      border-color: inherit;
+      border-left: 1.3em solid transparent;
+      border-right: none;
+      position: absolute;
+      /* 父容器的左边界之外 */
+      right: 100%;
+      top: 0;
+      content: '';
+    }
+
+    .navigation-item::after {
+      border: 1.5em solid transparent;
+      border-left: 1.3em solid;
+      border-left-color: inherit;
+      position: absolute;
+      /* 父容器的右边界之外 */
+      left: 100%;
+      top: 0;
+      content: '';
+    }
+
+    .navigation-item + .navigation-item {
+      margin-left: 1.5em;
+    }
+
+    [aria-current] {
+      background: #499fe9;
+      border-color: #499fe9;
+      color: #edf9fe;
+    }
+
+    [aria-current] ~ .navigation-item {
+      background: #eee;
+      border-color: #eee;
+      color: #999;
+    }
+  </style>
+</head>
+
+<body>
+  <nav role="navigation">
+    <ol class="navigation">
+      <li class="navigation-item"><a href="">规则说明</a></li>
+      <li class="navigation-item"><a href="">参与活动</a></li>
+      <li class="navigation-item" aria-current="true"><a href="">参与抽奖</a></li>
+      <li class="navigation-item"><a href="">奖品发放</a></li>
+      <li class="navigation-item"><a href="">查看结果</a></li>
+    </ol>
+  </nav>
+</body>
+
+</html>

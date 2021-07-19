@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+  <style>
+    html,
+    body {
+      background-color: white;
+      margin: 0;
+      height: 100%;
+    }
+
+    img {
+      width: 120px;
+      height: 160px;
+    }
+
+    .tag {
+      position: absolute;
+      background: #cd0000;
+      color: white;
+      font-size: 12px;
+    }
+
+    .tag-normal {
+      padding: 2px 4px;
+    }
+
+    .tag-triangle {
+      width: 28px;
+      height: 28px;
+      text-indent: 4px;
+      clip-path: polygon(0 0,100% 0,0 100%);
+    }
+
+    .tag-trapezoid {
+      padding: 3px 12px 3px 4px;
+      clip-path: polygon(0 0,100% 0, calc(100% - 10px) 100%,0 100%);
+    }
+
+    .tag-ellipse {
+      line-height: 1em;
+      min-width: 1em;
+      padding: 4px 10px 8px 2px;
+      clip-path: ellipse(100% 100% at 0 0);
+    }
+  </style>
+</head>
+
+<body>
+  <span class="tag tag-normal">No.1</span>
+  <img src="../../images/2019-09-26-19-49-51.png">
+  <span class="tag tag-triangle">1</span>
+  <img src="../../images/2019-09-26-19-49-51.png">
+  <span class="tag tag-trapezoid">火热连载</span>
+  <img src="../../images/2019-09-26-19-49-51.png">
+  <span class="tag tag-ellipse">1</span>
+  <img src="../../images/2019-09-26-19-49-51.png">
+  <span class="tag tag-ellipse">100</span>
+  <img src="../../images/2019-09-26-19-49-51.png">
+</body>
+
+</html>

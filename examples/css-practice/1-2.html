@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+        body {
+            background-color: white;
+        }
+
+        .list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .item {
+            display: flex;
+        }
+
+        .title {
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+            color: rgb(182, 185, 190);
+            font-size: 18px;
+            /* flex-grow: 1; 定义项目的放大比例，默认值为0，即如果存在剩余空间，也不放大
+                flex-shrink: 1; 定义了项目的缩小比例，默认为1，即如果空间不足，项目将缩小。
+                flex-basis: 0%; 定义了在分配多余空间之前，项目占据的主轴空间（main size）。
+                浏览器根据这个属性，计算主轴是否有多余空间。它的默认值为auto，即项目的本来大小
+            */
+            flex: 1;
+        }
+
+        .tag-list {
+            margin-left: 10px;
+        }
+
+        .tag-list > span {
+            border: 1px solid;
+            padding: 2px;
+            font-size: 14px;
+        }
+
+        .tag-list > span:nth-child(1) {
+            border-color: rgb(182, 185, 190);
+            color: rgb(182, 185, 190);
+        }
+
+        .tag-list > span:nth-child(2) {
+            border-color: rgb(223, 98, 97);
+            color: rgb(223, 98, 97);
+        }
+
+        .tag-list > span:nth-child(3) {
+            border-color: rgb(116, 162, 234);
+            color: rgb(116, 162, 234);
+        }
+    </style>
+</head>
+
+<body>
+  <ul class="list">
+    <li class="item">
+        <div class="title">这是一个长度不确定的标题标题这是一个长度不确定的标题标题这是一个长度不确定的标题标题这是一个长度不确定的标题标题这是一个长度不确定的标题标题这是一个长度不确定的标题标题</div>
+        <div class="tag-list">
+            <span class="tag">标签1</span>
+            <span class="tag">标签2</span>
+            <span class="tag">标签3</span>
+        </div>
+    </li>
+    <li class="item">
+        <div class="title">这是一个长度不确定的标题标题这是一个长度不确定的标题标题这是一个长度不确定的标题标题这是一个长度不确定的标题标题这是一个长度不确定的标题标题这是一个长度不确定的标题标题</div>
+        <div class="tag-list">
+            <span class="tag">标签1</span>
+            <span class="tag">标签2</span>
+            <span class="tag">标签3</span>
+        </div>
+    </li>
+    <li class="item">
+        <div class="title">这是一个长度不确定的标题标题这是一个长度不确定的标题标题这是一个长度不确定的标题标题这是一个长度不确定的标题标题这是一个长度不确定的标题标题这是一个长度不确定的标题标题</div>
+        <div class="tag-list">
+            <span class="tag">标签1</span>
+            <span class="tag">标签2</span>
+            <span class="tag">标签3</span>
+        </div>
+    </li>
+  </ul>
+</body>
+
+</html>

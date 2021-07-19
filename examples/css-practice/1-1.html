@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+        body {
+            background-color: white;
+        }
+
+        .list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .item {
+            height: 40px;
+            line-height: 40px;
+            overflow: hidden; /* 创建BFC，以利于自动分配空间 */
+        }
+
+        .title {
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+            color: rgb(182, 185, 190);
+            font-size: 18px;
+        }
+
+        .tag-list {
+            float: right;
+            margin-left: 10px;
+        }
+
+        .tag-list > span {
+            border: 1px solid;
+            padding: 2px;
+            font-size: 14px;
+        }
+
+        .tag-list > span:nth-child(1) {
+            border-color: rgb(182, 185, 190);
+            color: rgb(182, 185, 190);
+        }
+
+        .tag-list > span:nth-child(2) {
+            border-color: rgb(223, 98, 97);
+            color: rgb(223, 98, 97);
+        }
+
+        .tag-list > span:nth-child(3) {
+            border-color: rgb(116, 162, 234);
+            color: rgb(116, 162, 234);
+        }
+        /* 注意 title 必须放在后面 */
+
+        /* 所有的方法都是按照此方法，不再举例 */
+        .list[reserve] .title{
+            direction: rtl;
+        }
+    </style>
+</head>
+<body>
+    <ul class="list">
+        <li class="item">
+            <div class="tag-list">
+                <span class="tag">标签1</span>
+                <span class="tag">标签2</span>
+                <span class="tag">标签3</span>
+            </div>
+            <div class="title">这是一个长度不确定的标题标题这是一个长度不确定的标题标题这是一个长度不确定的标题标题这是一个长度不确定的标题标题这是一个长度不确定的标题标题这是一个长度不确定的标题标题</div>
+        </li>
+        <li class="item">
+            <div class="tag-list">
+                <span class="tag">标签1</span>
+                <span class="tag">标签2</span>
+                <span class="tag">标签3</span>
+            </div>
+            <div class="title">这是一个长度不确定的标题标题这是一个长度不确定的标题标题这是一个长度不确定的标题标题这是一个长度不确定的标题标题这是一个长度不确定的标题标题这是一个长度不确定的标题标题</div>
+        </li>
+        <li class="item">
+            <div class="tag-list">
+                <span class="tag">标签1</span>
+                <span class="tag">标签2</span>
+                <span class="tag">标签3</span>
+            </div>
+            <div class="title">这是一个长度不确定的标题标题这是一个长度不确定的标题标题这是一个长度不确定的标题标题这是一个长度不确定的标题标题这是一个长度不确定的标题标题这是一个长度不确定的标题标题</div>
+        </li>
+    </ul>
+
+    <ul class="list" reserve>
+        <li class="item">
+            <div class="tag-list">
+                <span class="tag">标签1</span>
+                <span class="tag">标签2</span>
+                <span class="tag">标签3</span>
+            </div>
+            <div class="title">这是一个长度不确定的标题标题这是一个长度不确定的标题标题这是一个长度不确定的标题标题这是一个长度不确定的标题标题这是一个长度不确定的标题标题这是一个长度不确定的标题标题</div>
+        </li>
+        <li class="item">
+            <div class="tag-list">
+                <span class="tag">标签1</span>
+                <span class="tag">标签2</span>
+                <span class="tag">标签3</span>
+            </div>
+            <div class="title">这是一个长度不确定的标题标题这是一个长度不确定的标题标题这是一个长度不确定的标题标题这是一个长度不确定的标题标题这是一个长度不确定的标题标题这是一个长度不确定的标题标题</div>
+        </li>
+        <li class="item">
+            <div class="tag-list">
+                <span class="tag">标签1</span>
+                <span class="tag">标签2</span>
+                <span class="tag">标签3</span>
+            </div>
+            <div class="title">这是一个长度不确定的标题标题这是一个长度不确定的标题标题这是一个长度不确定的标题标题这是一个长度不确定的标题标题这是一个长度不确定的标题标题这是一个长度不确定的标题标题</div>
+        </li>
+    </ul>
+</body>
+
+</html>

@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+  <style>
+    html,
+    body {
+      background-color: white;
+      margin: 0;
+    }
+
+    .box {
+      line-height: 400px;
+      text-align: center;
+      position: relative;
+      perspective: 200px;
+    }
+
+    .box img {
+      vertical-align: middle;
+    }
+  </style>
+</head>
+<body>
+  <div class="box">
+    <img id="image" src="./avatar.png">
+  </div>
+  <script>
+    var eleImage = document.getElementById('image');
+    if (eleImage) {
+      // 起始值
+      var moveX = 0, moveY = 0;
+      // 图片无限变换的方法
+      var rotate3D = function (event) {
+        moveX = moveX + event.movementX;
+        moveY = moveY + event.movementY;
+
+        eleImage.style.transform = 'rotateX(' + moveY + 'deg) rotateY(' + moveX + 'deg)';
+      };
+
+      // 触发鼠标锁定
+      eleImage.addEventListener('click', function () {
+        eleImage.requestPointerLock();
+      });
+
+      // 再次点击页面，取消鼠标锁定处理
+      document.addEventListener('click', function () {
+        if (document.pointerLockElement == eleImage) {
+            document.exitPointerLock();
+        }
+      });
+
+      // 检测鼠标锁定状态变化
+      document.addEventListener('pointerlockchange', function () {
+        if (document.pointerLockElement == eleImage) {
+            document.addEventListener("mousemove", rotate3D, false);
+        } else {
+            document.removeEventListener("mousemove", rotate3D, false);
+        }
+      }, false);
+    }
+  </script>
+</body>
+</html>

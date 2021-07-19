@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+  <style>
+    body {
+      background-color: white;
+    }
+
+    /* css reset */
+    html {
+      font-size: 16px;
+    }
+
+    ul {
+      padding: 0;
+      margin: 0;
+      list-style: none;
+    }
+
+    /* 布局 */
+    .square-box {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);  /* 划分 5 个等宽片段 */
+      grid-template-rows: 1fr 1fr;
+      grid-gap: .5rem .375rem;
+    }
+
+    .square-item {
+      padding-bottom: 100%;  /* 容器的 padding 百分比值按其宽度来计算 */
+      outline: .15rem solid transparent;
+    }
+
+    .square-item.active {
+      outline-color: #222;
+    }
+
+    /* 颜色 */
+    .bg-dark {
+      background: #424242;
+    }
+
+    .bg-gray {
+      background: #8c8c8c;
+    }
+
+    .bg-sienna {
+      background: #d48b69;
+    }
+
+    .bg-gold {
+      background: #fecb66;
+    }
+
+    .bg-crimson {
+      background: #c54941;
+    }
+
+    .bg-orchid {
+      background: #591c93;
+    }
+
+    .bg-silver {
+      background: #e6e6e6;
+    }
+
+    /* 响应式断点（CSS基础测试4），基于 iPhone6 尺寸 */
+    @media screen and (min-width: 375px) {
+      html {
+        font-size: calc(100% + 2 * (100vw - 375px) / 39);
+        font-size: calc(16px + 2 * (100vw - 375px) / 39);
+      }
+    }
+
+    @media screen and (min-width: 414px) {
+      html {
+        font-size: calc(112.5% + 4 * (100vw - 414px) / 586);
+        font-size: calc(18px + 4 * (100vw - 414px) / 586);
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <ul class="square-box">
+    <li class="square-item bg-dark"></li>
+    <li class="square-item bg-gray"></li>
+    <li class="square-item bg-sienna active"></li>
+    <li class="square-item bg-gold"></li>
+    <li class="square-item bg-crimson"></li>
+    <li class="square-item bg-orchid"></li>
+    <li class="square-item bg-silver"></li>
+  </ul>
+</body>
+</html>

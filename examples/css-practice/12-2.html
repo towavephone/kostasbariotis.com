@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+  <style>
+    html,
+    body {
+      background-color: white;
+      margin: 0;
+      height: 100%;
+    }
+
+    .tag {
+      position: absolute;
+      color: white;
+      background: #cd0000;
+      font-size: 12px;
+    }
+
+    .img {
+      width: 120px;
+      height: 160px;
+    }
+
+    .tag[type="square"] {
+      padding: 0.1em .5em;
+    }
+
+    .tag[type="triangle"] {
+      width: 2.5em;
+      height: 2.5em;
+      background: linear-gradient(to right bottom, #cd0000 50%, transparent 50%);
+      text-indent: .5em;
+    }
+
+    .tag[type="trapezoidal"] {
+      padding: .1em 3em .1em .5em;
+      background: linear-gradient(135deg, #cd0000 calc(100% - 2em), transparent 2em);
+    }
+
+    .tag[type="circle"] {
+      border-bottom-right-radius: 100%;
+      padding: .1em 1.2em .6em .5em;
+    }
+  </style>
+</head>
+
+<body>
+  <ol>
+    <li>
+      <h4>方形，宽度跟随内容</h4>
+      <span class="tag" type="square">No.1</span>
+      <img src="../../images/2019-09-26-19-49-51.png" alt="" class="img">
+    </li>
+    <li>
+      <h4>三角，多用在top3场景，因此只需考虑一个字符</h4>
+      <span class="tag" type="triangle">1</span>
+      <img src="../../images/2019-09-26-19-49-51.png" alt="" class="img">
+    </li>
+    <li>
+      <h4>方形带三角</h4>
+      <span class="tag" type="trapezoidal">火热连载</span>
+      <img src="../../images/2019-09-26-19-49-51.png" alt="" class="img">
+    </li>
+    <li>
+      <h4>1/4圆 1/4椭圆</h4>
+      <span class="tag" type="circle">1</span>
+      <img src="../../images/2019-09-26-19-49-51.png" alt="" class="img">
+    </li>
+  </ol>
+</body>
+
+</html>

@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+        body {
+            background-color: white;
+        }
+        
+        .container {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        .footer {
+            /* 元素如果没有高宽，尺寸会拉伸（或处在可拉伸上下文中）*/
+            /* 则此时auto会智能分配剩余空间，实现上下左右或者居中对齐效果 */
+            margin-top: auto;
+            color:#fff;
+            background:#78a5f1;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="content">内容</div>
+        <footer class="footer">底部</footer>
+    </div>
+</body>
+
+</html>
